@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "biodevas-enroll/pagina-inscripcion",
+    "version": "1.0.0",
+    "title": "Página de Inscripciones",
+    "category": "biodevas-enroll",
+    "icon": "list-view",
+    "description": "Página completa de inscripciones mostrando todas las actividades disponibles con enlace al panel de reservas.",
+    "keywords": ["inscripciones", "actividades", "listado", "biodevas"],
+    "supports": { "html": false, "align": ["wide", "full"] },
+    "attributes": {},
+    "textdomain": "biodevas-enroll",
+    "editorScript": "biodevas-enroll-blocks"
+}

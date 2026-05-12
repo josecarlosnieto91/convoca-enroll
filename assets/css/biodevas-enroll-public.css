@@ -1,0 +1,150 @@
+/**
+ * Biodevas Enroll — Public CSS v2
+ * Aligned with Biodevas Theme v2.
+ * Uses theme CSS variables exclusively (with fallbacks).
+ * Scoped selectors avoid conflicts with Members plugin.
+ */
+
+/* ── Activity Card ────────────────────────────── */
+.bde-activity-card {
+    background: linear-gradient(135deg,
+            var(--wp--preset--color--violeta, #320028),
+            var(--wp--preset--color--granate, #7d0032));
+    color: var(--wp--preset--color--blanco, #fff);
+    border-radius: var(--wp--custom--radius--default, 12px);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.bde-activity-card::after {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(255, 135, 0, 0.1);
+    pointer-events: none;
+}
+
+.bde-activity-card--lugg {
+    background: linear-gradient(135deg,
+            var(--wp--preset--color--verde, #2d5a27),
+            var(--wp--preset--color--violeta, #320028));
+}
+
+.bde-activity-title {
+    font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
+    font-size: 1.3rem;
+    margin: 0 0 0.5rem;
+    color: var(--wp--preset--color--amarillo, #ffab00);
+    position: relative;
+    z-index: 1;
+}
+
+.bde-activity-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.9rem;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+}
+
+.biodevas-badge--lugg {
+    background: var(--wp--preset--color--verde, #2d5a27);
+    color: var(--wp--preset--color--blanco, #fff);
+    padding: 0.15rem 0.6rem;
+    border-radius: var(--wp--custom--radius--pill, 50px);
+    font-size: 0.75rem;
+    font-weight: 700;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1;
+}
+
+/* ── Plazas badge ─────────────────────────────── */
+.bde-plazas--disponible {
+    background: rgba(45, 90, 39, 0.2);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--wp--custom--radius--pill, 50px);
+    font-weight: 600;
+}
+
+.bde-plazas--agotada {
+    background: rgba(255, 80, 10, 0.2);
+    color: var(--wp--preset--color--naranja-intenso, #ff500a);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--wp--custom--radius--pill, 50px);
+    font-weight: 600;
+}
+
+/* ── Price toggle ─────────────────────────────── */
+.bde-price-toggle {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    position: relative;
+    z-index: 1;
+}
+
+.bde-price {
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--wp--custom--radius--small, 8px);
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.5;
+    transition: all var(--wp--custom--transition, 0.3s ease);
+}
+
+.bde-price--active,
+.bde-price--general {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.bde-price--socio.bde-price--active {
+    background: var(--wp--preset--color--amarillo, #ffab00);
+    color: var(--wp--preset--color--violeta, #320028);
+    opacity: 1;
+}
+
+/* Common styles removed in favor of biodevas-common.css */
+
+/* ── Waitlist form ────────────────────────────── */
+.bde-form--waitlist .bde-submit-btn {
+    background: var(--wp--preset--color--amarillo, #ffab00);
+    border-color: var(--wp--preset--color--amarillo, #ffab00);
+    color: var(--wp--preset--color--violeta, #320028);
+}
+
+.bde-form--waitlist .bde-submit-btn:hover {
+    background: #e69a00;
+    border-color: #e69a00;
+}
+
+/* ── Editor preview ───────────────────────────── */
+.bde-block-preview {
+    border: 2px dashed #c3c4c7;
+    border-radius: var(--wp--custom--radius--small, 8px);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.bde-block-preview__header {
+    font-size: 0.95rem;
+}
+
+/* Badges, small styles, etc moved to biodevas-common.css */
+
+/* ── Print ────────────────────────────────────── */
+@media print {
+    .bde-activity-card {
+        break-inside: avoid;
+    }
+}

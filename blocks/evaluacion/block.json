@@ -1,0 +1,16 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "biodevas-enroll/evaluacion",
+    "title": "Biodevas: Formulario de Evaluación",
+    "category": "biodevas-enroll",
+    "icon": "star-filled",
+    "description": "Muestra un formulario de evaluación para una actividad finalizada.",
+    "attributes": {
+        "actividadId": {
+            "type": "number",
+            "default": 0
+        }
+    },
+    "editorScript": "biodevas-enroll-blocks"
+}

@@ -1,0 +1,222 @@
+/**
+ * Biodevas Enroll — Panel de Reservas CSS
+ * Follows Biodevas Theme v2 design system.
+ */
+
+/* ── Panel wrapper ────────────────────────── */
+
+.bde-panel-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* ── Panel header ─────────────────────────── */
+
+.bde-panel-header {
+    text-align: center;
+    padding: var(--wp--preset--spacing--30, 1.5rem);
+    margin-bottom: 1.5rem;
+}
+
+.bde-panel-header h3 {
+    margin: 0 0 .5rem;
+    font-size: 1.4rem;
+}
+
+.bde-panel-header p {
+    margin: .25rem 0;
+    color: var(--wp--preset--color--contrast-2, #555);
+}
+
+/* ── Login form ───────────────────────────── */
+
+.bde-panel-login {
+    margin-bottom: 2rem;
+}
+
+/* ── Cards list ───────────────────────────── */
+
+.bde-panel-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.bde-panel-card {
+    padding: 1.25rem;
+    transition: opacity .3s, transform .3s;
+}
+
+.bde-panel-card--cancelled {
+    opacity: .55;
+}
+
+.bde-panel-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: .75rem;
+    margin-bottom: .75rem;
+    flex-wrap: wrap;
+}
+
+.bde-panel-card-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    flex: 1;
+    min-width: 200px;
+}
+
+.bde-panel-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem .75rem;
+    font-size: .9rem;
+    color: var(--wp--preset--color--contrast-2, #666);
+    margin-bottom: .75rem;
+}
+
+.bde-panel-tag {
+    background: rgba(255, 171, 0, .1);
+    color: #b8860b;
+    border-radius: 4px;
+    padding: .1rem .5rem;
+    font-size: .85rem;
+    font-weight: 600;
+}
+
+.bde-panel-card-footer {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+    padding-top: .75rem;
+    border-top: 1px solid rgba(0, 0, 0, .06);
+}
+
+.bde-panel-code {
+    font-family: monospace;
+    font-size: .9rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: rgba(0, 0, 0, .04);
+    padding: .2rem .6rem;
+    border-radius: 4px;
+}
+
+.bde-panel-card-footer .bde-small {
+    font-size: .8rem;
+    color: var(--wp--preset--color--contrast-2, #888);
+    flex: 1;
+}
+
+/* ── Empty state ──────────────────────────── */
+
+.bde-panel-empty {
+    text-align: center;
+    padding: 2rem;
+    color: var(--wp--preset--color--contrast-2, #888);
+}
+
+/* ── Modal ─────────────────────────────────── */
+
+.bde-panel-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.bde-panel-modal-content {
+    background: var(--wp--preset--color--base, #fff);
+    border-radius: var(--wp--custom--radius--medium, 12px);
+    padding: 2rem;
+    max-width: 480px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
+    text-align: center;
+}
+
+.bde-panel-modal-content h3 {
+    margin: 0 0 1rem;
+    font-size: 1.2rem;
+}
+
+.bde-panel-modal-content p {
+    margin: 0 0 1.5rem;
+    color: var(--wp--preset--color--contrast-2, #555);
+    line-height: 1.5;
+}
+
+.bde-modal-actions {
+    display: flex;
+    gap: .75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ── Buttons ──────────────────────────────── */
+
+.btn-sm {
+    padding: .35rem .75rem;
+    font-size: .85rem;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: var(--wp--custom--radius--small, 6px);
+    padding: .5rem 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background .2s;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+.btn-danger:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+/* ── Alert success override ───────────────── */
+
+.biodevas-alert--success {
+    background: rgba(40, 167, 69, .08);
+    border: 1px solid rgba(40, 167, 69, .25);
+    color: #155724;
+    padding: 1rem;
+    border-radius: var(--wp--custom--radius--small, 8px);
+    margin-bottom: 1rem;
+}
+
+/* ── Responsive ───────────────────────────── */
+
+@media (max-width: 600px) {
+    .bde-panel-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .bde-panel-card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .bde-modal-actions {
+        flex-direction: column;
+    }
+
+    .bde-modal-actions .btn {
+        width: 100%;
+    }
+}

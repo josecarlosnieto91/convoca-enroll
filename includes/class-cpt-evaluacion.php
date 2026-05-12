@@ -1,0 +1,49 @@
+<?php
+namespace Convoca\Enroll;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+class CPT_Evaluacion {
+
+    public static function init() {
+        add_action( 'init', [ __CLASS__, 'register_cpt' ] );
+    }
+
+    public static function register_cpt() {
+        $labels = [
+            'name'                  => __( 'Evaluaciones', 'convoca-enroll' ),
+            'singular_name'         => __( 'Evaluación', 'convoca-enroll' ),
+            'menu_name'             => __( 'Evaluaciones', 'convoca-enroll' ),
+            'name_admin_bar'        => __( 'Evaluación', 'convoca-enroll' ),
+            'add_new'               => __( 'Añadir nueva', 'convoca-enroll' ),
+            'add_new_item'          => __( 'Añadir nueva evaluación', 'convoca-enroll' ),
+            'new_item'              => __( 'Nueva evaluación', 'convoca-enroll' ),
+            'edit_item'             => __( 'Editar evaluación', 'convoca-enroll' ),
+            'view_item'             => __( 'Ver evaluación', 'convoca-enroll' ),
+            'all_items'             => __( 'Todas las evaluaciones', 'convoca-enroll' ),
+            'search_items'          => __( 'Buscar evaluaciones', 'convoca-enroll' ),
+            'not_found'             => __( 'No se encontraron evaluaciones.', 'convoca-enroll' ),
+            'not_found_in_trash'    => __( 'No se encontraron evaluaciones en la papelera.', 'convoca-enroll' ),
+        ];
+
+        $args = [
+            'labels'             => $labels,
+            'public'             => false,
+            'publicly_queryable' => false,
+            'show_ui'            => true,
+            'show_in_menu'       => false,
+            'query_var'          => false,
+            'rewrite'            => false,
+            'capability_type'    => 'post',
+            'has_archive'        => false,
+            'hierarchical'       => false,
+            'menu_position'      => null,
+            'supports'           => ['title', 'author'],
+            'show_in_rest'       => false,
+        ];
+
+        register_post_type( 'bdv_evaluacion', $args );
+    }
+}

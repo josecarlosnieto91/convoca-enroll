@@ -1,0 +1,19 @@
+{
+    "name": "biodevas/enroll",
+    "description": "Plugin de inscripción para Biodevas",
+    "type": "wordpress-plugin",
+    "require": {
+        "google/apiclient": "^2.15",
+        "eluceo/ical": "2.x-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Biodevas\\Enroll\\": "includes/"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
+    }
+}

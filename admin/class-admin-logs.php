@@ -1,0 +1,145 @@
+<?php
+/**
+ * Admin Logs page: visualize logs from the centralized Biodevas logs table.
+ *
+ * @package Convoca\Enroll
+ */
+
+namespace Convoca\Enroll;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class Admin_Logs
+{
+    /**
+     * Render the logs page.
+     */
+    public static function render(): void
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'biodevas_logs';
+
+        // Check if table exists
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+            echo '<div class="wrap"><h1>Logs</h1><p>La tabla de logs no ha sido creada. Desactiva y reactiva el plugin <strong>Biodevas Common</strong> para crearla.</p></div>';
+            return;
+        }
+
+        // Handle delete action
+        if (isset($_GET['action']) && $_GET['action'] === 'clear' && current_user_can('manage_options')) {
+            check_admin_referer('bde_clear_logs');
+            $wpdb->query($wpdb->prepare("DELETE FROM $table_name WHERE context LIKE %s", '%Enroll%'));
+            echo '<div class="updated"><p>Logs de Enroll borrados.</p></div>';
+        }
+
+        $pagenum = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
+        $per_page = 50;
+        $offset = ($pagenum - 1) * $per_page;
+
+        // Filter to Enroll-related logs
+        $total_items = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_name WHERE context LIKE %s",
+            '%Enroll%'
+        ));
+        $num_pages = ceil($total_items / $per_page);
+
+        $logs = $wpdb->get_results($wpdb->prepare("
+            SELECT * FROM $table_name 
+            WHERE context LIKE %s
+            ORDER BY created_at DESC 
+            LIMIT %d OFFSET %d
+        ", '%Enroll%', $per_page, $offset));
+
+        ?>
+        <div class="wrap">
+            <h1>Logs del Sistema</h1>
+
+            <p>
+                <a href="<?php echo wp_nonce_url(admin_url('edit.php?post_type=actividad&page=bde-logs&action=clear'), 'bde_clear_logs'); ?>"
+                    class="button button-secondary"
+                    onclick="return confirm('¿Estás seguro de que quieres borrar todos los logs de Enroll?');">
+                    Borrar logs de Enroll
+                </a>
+            </p>
+
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th style="width: 170px;">Fecha</th>
+                        <th style="width: 100px;">Nivel</th>
+                        <th>Mensaje</th>
+                        <th style="width: 150px;">Contexto</th>
+                        <th style="width: 100px;">ID Objeto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($logs): ?>
+                        <?php foreach ($logs as $log): ?>
+                            <tr>
+                                <td>
+                                    <?php echo esc_html(wp_date('d/m/Y H:i', strtotime($log->created_at))); ?>
+                                </td>
+                                <td>
+                                    <?php echo \Convoca\Core\Utils::render_log_level_badge($log->level); ?>
+                                </td>
+                                <td>
+                                    <?php echo esc_html($log->message); ?>
+                                </td>
+                                <td><code><?php echo esc_html($log->context); ?></code></td>
+                                <td>
+                                    <?php if ($log->object_id): ?>
+                                        <a href="<?php echo get_edit_post_link($log->object_id); ?>">#
+                                            <?php echo (int) $log->object_id; ?>
+                                        </a>
+                                    <?php else: ?>
+                                        —
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="5">No hay logs registrados.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+
+            <?php if ($num_pages > 1): ?>
+                <div class="tablenav">
+                    <div class="tablenav-pages">
+                        <?php
+                        echo paginate_links([
+                            'base' => add_query_arg('paged', '%#%'),
+                            'format' => '',
+                            'prev_text' => '&laquo;',
+                            'next_text' => '&raquo;',
+                            'total' => $num_pages,
+                            'current' => $pagenum,
+                        ]);
+                        ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+        <?php
+    }
+
+    private static function get_level_color(string $level): string
+    {
+        switch ($level) {
+            case 'error':
+                return '#d63638';
+            case 'warning':
+                return '#ffb900';
+            case 'info':
+                return '#72aee6';
+            case 'success':
+                return '#00a32a';
+            default:
+                return '#646970';
+        }
+    }
+}

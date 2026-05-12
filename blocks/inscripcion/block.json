@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "biodevas-enroll/formulario-inscripcion",
+    "version": "1.0.0",
+    "title": "Formulario de Inscripción Biodevas",
+    "category": "biodevas-enroll",
+    "icon": "clipboard",
+    "description": "Formulario de inscripción dinámico vinculado a una actividad.",
+    "keywords": [
+        "inscripción",
+        "actividad",
+        "formulario",
+        "biodevas"
+    ],
+    "supports": {
+        "html": false,
+        "align": [
+            "wide",
+            "full"
+        ]
+    },
+    "attributes": {
+        "actividadId": {
+            "type": "number",
+            "default": 0
+        },
+        "mostrarPlazas": {
+            "type": "boolean",
+            "default": true
+        },
+        "mostrarPrecios": {
+            "type": "boolean",
+            "default": true
+        }
+    },
+    "textdomain": "biodevas-enroll",
+    "editorScript": "biodevas-enroll-blocks"
+}
