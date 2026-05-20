@@ -1,6 +1,6 @@
 {
     "name": "biodevas/enroll",
-    "description": "Plugin de inscripción para Biodevas",
+    "description": "Plugin de inscripci\u00f3n para Biodevas",
     "type": "wordpress-plugin",
     "require": {
         "google/apiclient": "^2.15",
@@ -15,5 +15,10 @@
         "platform": {
             "php": ">=8.1"
         }
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.1",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "wp-coding-standards/wpcs": "^3.1"
     }
 }
