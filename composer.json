@@ -1,14 +1,13 @@
 {
     "name": "convoca/enroll",
-    "description": "Plugin de inscripci\u00f3n para Biodevas",
+    "description": "Plugin de inscripcion para Convoca",
     "type": "wordpress-plugin",
     "require": {
-        "google/apiclient": "^2.15",
-        "eluceo/ical": "2.x-dev"
+        "php": ">=8.1"
     },
     "autoload": {
         "psr-4": {
-            "Biodevas\\Enroll\\": "includes/"
+            "Convoca\\Enroll\\": "includes/"
         }
     },
     "config": {
