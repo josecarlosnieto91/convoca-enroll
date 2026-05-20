@@ -570,7 +570,7 @@ class Email_Automation
     private function get_checkin_url(int $inscripcion_id): string
     {
         $token = get_post_meta($inscripcion_id, '_bde_checkin_token', true);
-        return home_url('/checkin/?token=' . $token);
+        return home_url('/checkin/?token=' . $token . '&h=' . hash_hmac('sha256', (string)$inscripcion_id, wp_salt('nonce')));
     }
 
     private function get_ics_link(int $inscripcion_id): string
