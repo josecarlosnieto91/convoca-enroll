@@ -578,7 +578,7 @@ class Email_Automation
         $token = get_post_meta($inscripcion_id, '_bde_checkin_token', true);
         if (!$token)
             return '#';
-        return rest_url('biodevas-enroll/v1/ics?id=' . $inscripcion_id . '&token=' . $token);
+        return rest_url('convoca-enroll/v1/ics?id=' . $inscripcion_id . '&token=' . $token);
     }
 
 

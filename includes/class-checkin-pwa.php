@@ -27,7 +27,7 @@ class Checkin_PWA
 
         // Register rest route for online check-in queue flush
         add_action('rest_api_init', function () {
-            register_rest_route('biodevas-enroll/v1', '/checkin/flush', [
+            register_rest_route('convoca-enroll/v1', '/checkin/flush', [
                 'methods'             => 'POST',
                 'callback'            => [__CLASS__, 'rest_flush_queue'],
                 'permission_callback' => function () {

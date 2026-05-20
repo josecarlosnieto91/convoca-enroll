@@ -49,7 +49,7 @@ class TestRestAPI extends TestCase
         $reflection = new \ReflectionClass('Convoca\\Enroll\\Rest_API');
         $ns = $reflection->getConstant('NS');
 
-        $this->assertEquals('biodevas-enroll/v1', $ns);
+        $this->assertEquals('convoca-enroll/v1', $ns);
     }
 
     /**
@@ -83,7 +83,7 @@ class TestRestAPI extends TestCase
             $this->markTestSkipped('Rest_API class not available');
         }
 
-        $request = new \WP_REST_Request('GET', '/biodevas-enroll/v1/me/session-status');
+        $request = new \WP_REST_Request('GET', '/convoca-enroll/v1/me/session-status');
         $response = self::$rest_api->get_session_status($request);
 
         $this->assertInstanceOf(\WP_REST_Response::class, $response);
@@ -104,7 +104,7 @@ class TestRestAPI extends TestCase
             $this->markTestSkipped('Rest_API class not available');
         }
 
-        $request = new \WP_REST_Request('GET', '/biodevas-enroll/v1/actividades');
+        $request = new \WP_REST_Request('GET', '/convoca-enroll/v1/actividades');
         $request->set_param('per_page', 5);
         $request->set_param('page', 1);
 
@@ -127,7 +127,7 @@ class TestRestAPI extends TestCase
             $this->markTestSkipped('Rest_API class not available');
         }
 
-        $request = new \WP_REST_Request('GET', '/biodevas-enroll/v1/actividades/999999');
+        $request = new \WP_REST_Request('GET', '/convoca-enroll/v1/actividades/999999');
         $request['id'] = 999999;
 
         $response = self::$rest_api->get_activity($request);
@@ -147,7 +147,7 @@ class TestRestAPI extends TestCase
             $this->markTestSkipped('Rest_API class not available');
         }
 
-        $request = new \WP_REST_Request('POST', '/biodevas-enroll/v1/checkin');
+        $request = new \WP_REST_Request('POST', '/convoca-enroll/v1/checkin');
         $request['code'] = '';
         $request['token'] = '';
 
@@ -172,7 +172,7 @@ class TestRestAPI extends TestCase
             $this->markTestSkipped('Rest_API class not available');
         }
 
-        $request = new \WP_REST_Request('POST', '/biodevas-enroll/v1/checkin');
+        $request = new \WP_REST_Request('POST', '/convoca-enroll/v1/checkin');
         $request['token'] = 'invalid-token-12345';
 
         $response = self::$rest_api->handle_checkin($request);
@@ -196,7 +196,7 @@ class TestRestAPI extends TestCase
             $this->markTestSkipped('Rest_API class not available');
         }
 
-        $request = new \WP_REST_Request('GET', '/biodevas-enroll/v1/admin/users/search');
+        $request = new \WP_REST_Request('GET', '/convoca-enroll/v1/admin/users/search');
         $request['term'] = 'a';
 
         $response = self::$rest_api->admin_search_users($request);
@@ -217,7 +217,7 @@ class TestRestAPI extends TestCase
             $this->markTestSkipped('Rest_API class not available');
         }
 
-        $request = new \WP_REST_Request('GET', '/biodevas-enroll/v1/inscripciones');
+        $request = new \WP_REST_Request('GET', '/convoca-enroll/v1/inscripciones');
         $request->set_param('actividad_id', 999999);
 
         $response = self::$rest_api->list_inscriptions($request);
@@ -241,7 +241,7 @@ class TestRestAPI extends TestCase
             $this->markTestSkipped('Rest_API class not available');
         }
 
-        $request = new \WP_REST_Request('GET', '/biodevas-enroll/v1/stats/999999');
+        $request = new \WP_REST_Request('GET', '/convoca-enroll/v1/stats/999999');
         $request['actividad_id'] = 999999;
 
         $response = self::$rest_api->get_stats($request);

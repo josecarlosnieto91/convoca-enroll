@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 class Rest_API
 {
 
-    private const NS = 'biodevas-enroll/v1';
+    private const NS = 'convoca-enroll/v1';
     private const RATE_LIMIT_MAX = 5;
     private const RATE_LIMIT_WINDOW = 3600;
 
