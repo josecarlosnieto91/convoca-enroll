@@ -132,7 +132,8 @@ class Rest_API
         $cache_key = "actividades_p{$page}_pp{$per_page}";
         $items = \Convoca\Core\Utils::rest_cache_get($cache_key, 60, function () use ($per_page, $page) {
             $all = CPT_Actividad::get_upcoming(999);
-            return array_slice($all, ($page - 1) * $per_page, $per_page);
+            $slice = array_slice($all, ($page - 1) * $per_page, $per_page);
+            return array_map([$this, "fmt_activity"], $slice);
         });
 
         // Total count varies by page — compute total outside cache
