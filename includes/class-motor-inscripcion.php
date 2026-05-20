@@ -247,7 +247,7 @@ class Motor_Inscripcion
             $wpdb->query('COMMIT');
 
             // Fire hooks.
-            \Convoca\Core\Utils::do_action('biodevas_enroll_inscripcion_nueva', 'biodevas_inscripcion_nueva', $post_id, $actividad_id, $estado);
+            \Convoca\Core\Utils::do_action('convoca_enroll_inscripcion_nueva', 'biodevas_inscripcion_nueva', $post_id, $actividad_id, $estado);
 
             return $post_id;
         } catch (\Throwable $e) {
@@ -307,7 +307,7 @@ class Motor_Inscripcion
 
             $wpdb->query('COMMIT');
 
-            \Convoca\Core\Utils::do_action('biodevas_enroll_inscripcion_cancelada', 'biodevas_inscripcion_cancelada', $inscripcion_id, $actividad_id);
+            \Convoca\Core\Utils::do_action('convoca_enroll_inscripcion_cancelada', 'biodevas_inscripcion_cancelada', $inscripcion_id, $actividad_id);
 
             return true;
         } catch (\Throwable $e) {
@@ -364,7 +364,7 @@ class Motor_Inscripcion
 
             $wpdb->query('COMMIT');
 
-            \Convoca\Core\Utils::do_action('biodevas_enroll_inscripcion_confirmada', 'biodevas_inscripcion_confirmada', $inscripcion_id, $actividad_id);
+            \Convoca\Core\Utils::do_action('convoca_enroll_inscripcion_confirmada', 'biodevas_inscripcion_confirmada', $inscripcion_id, $actividad_id);
 
             return true;
         } catch (\Throwable $e) {
@@ -407,7 +407,7 @@ class Motor_Inscripcion
                 if ($affected > 0) {
                     // Success! This one is promoted.
                     CPT_Inscripcion::update_meta($promoted->ID, 'pagado', 0); // Reset payment just in case
-                    \Convoca\Core\Utils::do_action('biodevas_enroll_inscripcion_promovida', 'biodevas_inscripcion_promovida', $promoted->ID, $actividad_id);
+                    \Convoca\Core\Utils::do_action('convoca_enroll_inscripcion_promovida', 'biodevas_inscripcion_promovida', $promoted->ID, $actividad_id);
                     return true;
                 }
             }
@@ -553,7 +553,7 @@ class Motor_Inscripcion
             $inscripcion_id
         );
 
-        \Convoca\Core\Utils::do_action('biodevas_enroll_asistencia_cambiada', 'biodevas_asistencia_cambiada', $inscripcion_id, $asistencia);
+        \Convoca\Core\Utils::do_action('convoca_enroll_asistencia_cambiada', 'biodevas_asistencia_cambiada', $inscripcion_id, $asistencia);
 
         return true;
     }

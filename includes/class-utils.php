@@ -41,6 +41,6 @@ class Utils
                 break;
         }
 
-        return apply_filters('biodevas_enroll_aportacion_label', $label, $context);
+        return apply_filters('convoca_enroll_aportacion_label', $label, $context);
     }
 }

@@ -19,7 +19,7 @@ class Payment_Listener
     public function __construct()
     {
         // Only listen to the new unified hook to avoid duplication
-        add_action('biodevas_gateway_payment_completed', [$this, 'on_payment_completed'], 10, 5);
+        add_action('convoca_gateway_payment_completed', [$this, 'on_payment_completed'], 10, 5);
     }
 
     /**

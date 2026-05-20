@@ -18,14 +18,14 @@ class Webhook_Dispatcher
     public function __construct()
     {
         // Add action for processing the queue via Cron.
-        add_action('biodevas_enroll_process_webhook_queue', [$this, 'process_queue']);
+        add_action('convoca_enroll_process_webhook_queue', [$this, 'process_queue']);
 
         // Listeners for state changes.
-        add_action('biodevas_enroll_inscripcion_nueva', [$this, 'on_inscripcion_state_change'], 10, 3);
-        add_action('biodevas_enroll_inscripcion_cancelada', [$this, 'on_inscripcion_state_change'], 10, 2);
-        add_action('biodevas_enroll_inscripcion_confirmada', [$this, 'on_inscripcion_state_change'], 10, 2);
-        add_action('biodevas_enroll_inscripcion_promovida', [$this, 'on_inscripcion_state_change'], 10, 2);
-        add_action('biodevas_enroll_asistencia_cambiada', [$this, 'on_asistencia_cambiada'], 10, 2);
+        add_action('convoca_enroll_inscripcion_nueva', [$this, 'on_inscripcion_state_change'], 10, 3);
+        add_action('convoca_enroll_inscripcion_cancelada', [$this, 'on_inscripcion_state_change'], 10, 2);
+        add_action('convoca_enroll_inscripcion_confirmada', [$this, 'on_inscripcion_state_change'], 10, 2);
+        add_action('convoca_enroll_inscripcion_promovida', [$this, 'on_inscripcion_state_change'], 10, 2);
+        add_action('convoca_enroll_asistencia_cambiada', [$this, 'on_asistencia_cambiada'], 10, 2);
     }
 
     public static function get_table_name(): string

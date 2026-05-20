@@ -66,17 +66,17 @@ class Email_Automation
     public function __construct()
     {
         // Event-driven triggers.
-        add_action('biodevas_enroll_inscripcion_nueva', [$this, 'on_nueva'], 10, 3);
-        add_action('biodevas_inscripcion_confirmada', [$this, 'on_confirmada'], 10, 2);
-        add_action('biodevas_inscripcion_promovida', [$this, 'on_promovida'], 10, 2);
-        add_action('biodevas_inscripcion_cancelada', [$this, 'on_cancelada'], 10, 2);
+        add_action('convoca_enroll_inscripcion_nueva', [$this, 'on_nueva'], 10, 3);
+        add_action('convoca_inscripcion_confirmada', [$this, 'on_confirmada'], 10, 2);
+        add_action('convoca_inscripcion_promovida', [$this, 'on_promovida'], 10, 2);
+        add_action('convoca_inscripcion_cancelada', [$this, 'on_cancelada'], 10, 2);
 
         // Cron triggers.
-        add_action('biodevas_enroll_reminder_7dias', [$this, 'cron_reminder_7dias']);
-        add_action('biodevas_enroll_reminder_24h', [$this, 'cron_reminder_24h']);
-        add_action('biodevas_enroll_reminder_1hora', [$this, 'cron_reminder_1hora']);
-        add_action('biodevas_enroll_feedback', [$this, 'cron_feedback']);
-        add_action('biodevas_enroll_google_photos_share', [Google_Photos::class, 'cron_share_albums']);
+        add_action('convoca_enroll_reminder_7dias', [$this, 'cron_reminder_7dias']);
+        add_action('convoca_enroll_reminder_24h', [$this, 'cron_reminder_24h']);
+        add_action('convoca_enroll_reminder_1hora', [$this, 'cron_reminder_1hora']);
+        add_action('convoca_enroll_feedback', [$this, 'cron_feedback']);
+        add_action('convoca_enroll_google_photos_share', [Google_Photos::class, 'cron_share_albums']);
 
         // Cache cleanup
         add_action('updated_post_meta', [$this, 'clear_panel_cache'], 10, 3);

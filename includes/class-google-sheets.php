@@ -21,10 +21,10 @@ class Google_Sheets
             return;
         }
 
-        add_action('biodevas_enroll_inscripcion_nueva', [$this, 'on_inscription'], 20, 2);
-        add_action('biodevas_inscripcion_confirmada', [$this, 'on_state_change'], 20, 2);
-        add_action('biodevas_inscripcion_cancelada', [$this, 'on_state_change'], 20, 2);
-        add_action('biodevas_inscripcion_promovida', [$this, 'on_state_change'], 20, 2);
+        add_action('convoca_enroll_inscripcion_nueva', [$this, 'on_inscription'], 20, 2);
+        add_action('convoca_inscripcion_confirmada', [$this, 'on_state_change'], 20, 2);
+        add_action('convoca_inscripcion_cancelada', [$this, 'on_state_change'], 20, 2);
+        add_action('convoca_inscripcion_promovida', [$this, 'on_state_change'], 20, 2);
     }
 
     /**

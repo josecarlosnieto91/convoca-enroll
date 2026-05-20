@@ -17,7 +17,7 @@ class Email_Queue
 
     public function __construct()
     {
-        add_action('biodevas_enroll_process_email_queue', [$this, 'process_queue']);
+        add_action('convoca_enroll_process_email_queue', [$this, 'process_queue']);
     }
 
     public static function get_table_name(): string

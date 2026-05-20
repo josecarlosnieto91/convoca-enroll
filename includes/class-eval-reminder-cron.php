@@ -19,7 +19,7 @@ class Eval_Reminder_Cron
 
     public static function init(): void
     {
-        add_action('biodevas_enroll_eval_reminder', [self::class, 'run']);
+        add_action('convoca_enroll_eval_reminder', [self::class, 'run']);
     }
 
     public static function run(): void

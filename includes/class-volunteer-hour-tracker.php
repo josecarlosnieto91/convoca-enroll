@@ -18,7 +18,7 @@ class Volunteer_Hour_Tracker
      */
     public static function init(): void
     {
-        add_action('biodevas_enroll_asistencia_cambiada', [self::class, 'handle_asistencia'], 10, 2);
+        add_action('convoca_enroll_asistencia_cambiada', [self::class, 'handle_asistencia'], 10, 2);
     }
 
     /**
