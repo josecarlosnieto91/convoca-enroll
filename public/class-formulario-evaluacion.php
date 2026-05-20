@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Formulario_Evaluacion {
 
     public static function init() {
-        add_shortcode( 'formulario_evaluacion', [ __CLASS__, 'render_shortcode' ] );
+        add_shortcode( 'convoca_evaluacion', [ __CLASS__, 'render_shortcode' ] );
         add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_assets' ] );
         add_action( 'wp_ajax_bdv_submit_evaluacion', [ __CLASS__, 'handle_submission' ] );
         add_action( 'wp_ajax_nopriv_bdv_submit_evaluacion', [ __CLASS__, 'handle_submission' ] );
