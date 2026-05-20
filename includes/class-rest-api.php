@@ -397,7 +397,7 @@ class Rest_API
             'actividad_id' => (int) $m('actividad_id'),
             'actividad' => get_the_title((int) $m('actividad_id')),
             'fecha' => get_the_date('Y-m-d H:i', $p),
-            'checkin_token' => $m('checkin_token'),
+            // 'checkin_token' => $m('checkin_token'), // HIDDEN for security
         ];
     }
 
