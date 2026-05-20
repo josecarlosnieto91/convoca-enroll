@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Convoca Enroll
- * Plugin URI:        https://biodevas.org
+ * Plugin URI:        https://convoca.org
  * Description:       Centralized activity enrollment system.
  * Version: 2.5.1
  * Requires at least: 6.4
@@ -100,7 +100,7 @@ register_activation_hook(__FILE__, function (): void {
     if (!get_option('bde_panel_page_id')) {
         $page_id = wp_insert_post([
             'post_title'   => 'Panel de reservas',
-            'post_content' => '<!-- wp:shortcode -->[biodevas_panel_reservas]<!-- /wp:shortcode -->',
+            'post_content' => '<!-- wp:shortcode -->[convoca_panel_reservas]<!-- /wp:shortcode -->',
             'post_status'  => 'publish',
             'post_type'    => 'page',
             'post_name'    => 'panel-reservas',
@@ -125,29 +125,29 @@ register_activation_hook(__FILE__, function (): void {
     ]);
 
     // Schedule cron events with appropriate intervals.
-    if (!wp_next_scheduled('biodevas_enroll_reminder_7dias')) {
-        wp_schedule_event(time(), 'bdv_weekly', 'biodevas_enroll_reminder_7dias');
+    if (!wp_next_scheduled('convoca_enroll_reminder_7dias')) {
+        wp_schedule_event(time(), 'bdv_weekly', 'convoca_enroll_reminder_7dias');
     }
-    if (!wp_next_scheduled('biodevas_enroll_reminder_24h')) {
-        wp_schedule_event(time(), 'daily', 'biodevas_enroll_reminder_24h');
+    if (!wp_next_scheduled('convoca_enroll_reminder_24h')) {
+        wp_schedule_event(time(), 'daily', 'convoca_enroll_reminder_24h');
     }
-    if (!wp_next_scheduled('biodevas_enroll_reminder_1hora')) {
-        wp_schedule_event(time(), 'hourly', 'biodevas_enroll_reminder_1hora');
+    if (!wp_next_scheduled('convoca_enroll_reminder_1hora')) {
+        wp_schedule_event(time(), 'hourly', 'convoca_enroll_reminder_1hora');
     }
-    if (!wp_next_scheduled('biodevas_enroll_feedback')) {
-        wp_schedule_event(time(), 'daily', 'biodevas_enroll_feedback');
+    if (!wp_next_scheduled('convoca_enroll_feedback')) {
+        wp_schedule_event(time(), 'daily', 'convoca_enroll_feedback');
     }
-    if (!wp_next_scheduled('biodevas_enroll_google_photos_share')) {
-        wp_schedule_event(time(), 'daily', 'biodevas_enroll_google_photos_share');
+    if (!wp_next_scheduled('convoca_enroll_google_photos_share')) {
+        wp_schedule_event(time(), 'daily', 'convoca_enroll_google_photos_share');
     }
-    if (!wp_next_scheduled('biodevas_enroll_process_email_queue')) {
-        wp_schedule_event(time(), 'every_minute', 'biodevas_enroll_process_email_queue');
+    if (!wp_next_scheduled('convoca_enroll_process_email_queue')) {
+        wp_schedule_event(time(), 'every_minute', 'convoca_enroll_process_email_queue');
     }
-    if (!wp_next_scheduled('biodevas_enroll_process_webhook_queue')) {
-        wp_schedule_event(time(), 'every_minute', 'biodevas_enroll_process_webhook_queue');
+    if (!wp_next_scheduled('convoca_enroll_process_webhook_queue')) {
+        wp_schedule_event(time(), 'every_minute', 'convoca_enroll_process_webhook_queue');
     }
-    if (!wp_next_scheduled('biodevas_enroll_cleanup_orphan_codes')) {
-        wp_schedule_event(time(), 'daily', 'biodevas_enroll_cleanup_orphan_codes');
+    if (!wp_next_scheduled('convoca_enroll_cleanup_orphan_codes')) {
+        wp_schedule_event(time(), 'daily', 'convoca_enroll_cleanup_orphan_codes');
     }
 
     // Save initial DB version.
@@ -156,14 +156,14 @@ register_activation_hook(__FILE__, function (): void {
 
 /* ── Deactivation ─────────────────────────────────────────── */
 register_deactivation_hook(__FILE__, function (): void {
-    wp_clear_scheduled_hook('biodevas_enroll_reminder_7dias');
-    wp_clear_scheduled_hook('biodevas_enroll_reminder_24h');
-    wp_clear_scheduled_hook('biodevas_enroll_reminder_1hora');
-    wp_clear_scheduled_hook('biodevas_enroll_feedback');
-    wp_clear_scheduled_hook('biodevas_enroll_google_photos_share');
-    wp_clear_scheduled_hook('biodevas_enroll_process_email_queue');
-    wp_clear_scheduled_hook('biodevas_enroll_process_webhook_queue');
-    wp_clear_scheduled_hook('biodevas_enroll_eval_reminder');
+    wp_clear_scheduled_hook('convoca_enroll_reminder_7dias');
+    wp_clear_scheduled_hook('convoca_enroll_reminder_24h');
+    wp_clear_scheduled_hook('convoca_enroll_reminder_1hora');
+    wp_clear_scheduled_hook('convoca_enroll_feedback');
+    wp_clear_scheduled_hook('convoca_enroll_google_photos_share');
+    wp_clear_scheduled_hook('convoca_enroll_process_email_queue');
+    wp_clear_scheduled_hook('convoca_enroll_process_webhook_queue');
+    wp_clear_scheduled_hook('convoca_enroll_eval_reminder');
     wp_clear_scheduled_hook('bde_daily_maintenance');
     flush_rewrite_rules();
 });
@@ -220,9 +220,9 @@ add_action('plugins_loaded', function (): void {
                     'gestionar_miembros',
                     'gestionar_documentos_voluntariado',
                     'view_reports',
-                    'manage_biodevas_logs',
-                    'manage_biodevas_templates',
-                    'manage_biodevas_gateway',
+                    'manage_convoca_logs',
+                    'manage_convoca_templates',
+                    'manage_convoca_gateway',
                     'cst_manage_turnos',
                     'cst_view_stats',
                     'cst_audit_hours',
@@ -314,7 +314,7 @@ add_action('plugins_loaded', function (): void {
     Convoca\Enroll\Formulario_Evaluacion::init();
 
     // Clean up orphan reservation codes daily
-    add_action('biodevas_enroll_cleanup_orphan_codes', function () {
+    add_action('convoca_enroll_cleanup_orphan_codes', function () {
         \Convoca\Enroll\Motor_Inscripcion::cleanup_orphan_codes();
     });
 });

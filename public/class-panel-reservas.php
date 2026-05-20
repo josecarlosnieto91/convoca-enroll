@@ -18,7 +18,7 @@ class Panel_Reservas
 
     public function __construct()
     {
-        add_shortcode('biodevas_panel_reservas', [$this, 'shortcode']);
+        add_shortcode('convoca_panel_reservas', [$this, 'shortcode']);
         add_action('wp_ajax_bde_panel_login', [$this, 'ajax_login']);
         add_action('wp_ajax_nopriv_bde_panel_login', [$this, 'ajax_login']);
         add_action('wp_ajax_bde_panel_cancelar', [$this, 'ajax_cancelar']);

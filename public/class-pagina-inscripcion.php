@@ -15,7 +15,7 @@ class Pagina_Inscripcion
 {
     public function __construct()
     {
-        add_shortcode('biodevas_inscripcion_page', [$this, 'shortcode']);
+        add_shortcode('convoca_inscripcion_page', [$this, 'shortcode']);
     }
 
     public function shortcode($atts): string

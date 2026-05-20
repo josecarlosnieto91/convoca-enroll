@@ -16,7 +16,7 @@ class Form_Inscripcion
 
     public function __construct()
     {
-        add_shortcode('biodevas_inscripcion', [$this, 'shortcode']);
+        add_shortcode('convoca_form_inscripcion', [$this, 'shortcode']);
         add_action('wp_ajax_bde_inscribir', [$this, 'handle_ajax']);
         add_action('wp_ajax_nopriv_bde_inscribir', [$this, 'handle_ajax']);
     }
