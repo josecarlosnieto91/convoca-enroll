@@ -30,7 +30,7 @@ class Panel_Reservas
     public function shortcode($atts): string
     {
         wp_enqueue_style('bde-panel', BDE_URL . 'assets/css/biodevas-enroll-panel.css', [], BDE_VERSION);
-        wp_enqueue_script('bde-panel', BDE_URL . 'assets/js/biodevas-enroll-panel.js', ['biodevas-common-js'], BDE_VERSION, true);
+        wp_enqueue_script('bde-panel', BDE_URL . 'assets/js/biodevas-enroll-panel.js', ['convoca-common-js'], BDE_VERSION, true);
         wp_localize_script('bde-panel', 'bdePanel', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce'   => wp_create_nonce('bde_panel_nonce'),
