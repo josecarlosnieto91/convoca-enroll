@@ -7,51 +7,49 @@
 
 namespace Convoca\Enroll;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-class Pagina_Inscripcion
-{
-    public function __construct()
-    {
-        add_shortcode('convoca_inscripcion_page', [$this, 'shortcode']);
-    }
+class Pagina_Inscripcion {
 
-    public function shortcode($atts): string
-    {
-        $settings = get_option('bde_settings', []);
-        $intro = wp_kses_post($settings['texto_introduccion'] ?? '');
-        $url_panel = esc_url($settings['url_panel_reservas'] ?? home_url('/panel-de-reservas/'));
+	public function __construct() {
+		add_shortcode( 'convoca_inscripcion_page', array( $this, 'shortcode' ) );
+	}
 
-        // Query upcoming activities.
-        $actividades = CPT_Actividad::get_upcoming(100);
+	public function shortcode( $atts ): string {
+		$settings  = get_option( 'bde_settings', array() );
+		$intro     = wp_kses_post( $settings['texto_introduccion'] ?? '' );
+		$url_panel = esc_url( $settings['url_panel_reservas'] ?? home_url( '/panel-de-reservas/' ) );
 
-        wp_enqueue_style('bde-public', BDE_URL . 'assets/css/biodevas-enroll-public.css', [], BDE_VERSION);
+		// Query upcoming activities.
+		$actividades = CPT_Actividad::get_upcoming( 100 );
 
-        ob_start();
-        ?>
-        <div class="bde-pagina-inscripcion">
-            <?php if (!empty($intro)) : ?>
-                <div class="bde-intro" style="margin-bottom: 2rem;">
-                    <?php echo wpautop($intro); ?>
-                </div>
-            <?php endif; ?>
+		wp_enqueue_style( 'bde-public', BDE_URL . 'assets/css/biodevas-enroll-public.css', array(), BDE_VERSION );
 
-            <div class="bde-panel-link-wrapper" style="margin-bottom: 2rem;">
-                <a href="<?php echo $url_panel; ?>" class="bde-btn bde-btn--secondary">
-                    <?php esc_html_e('Ir a mi Panel de Reservas', 'convoca-enroll'); ?>
-                </a>
-            </div>
+		ob_start();
+		?>
+		<div class="bde-pagina-inscripcion">
+			<?php if ( ! empty( $intro ) ) : ?>
+				<div class="bde-intro" style="margin-bottom: 2rem;">
+					<?php echo wpautop( $intro ); ?>
+				</div>
+			<?php endif; ?>
 
-            <h2 class="bde-titulo-actividades"><?php esc_html_e('Actividades Disponibles', 'convoca-enroll'); ?></h2>
+			<div class="bde-panel-link-wrapper" style="margin-bottom: 2rem;">
+				<a href="<?php echo $url_panel; ?>" class="bde-btn bde-btn--secondary">
+					<?php esc_html_e( 'Ir a mi Panel de Reservas', 'convoca-enroll' ); ?>
+				</a>
+			</div>
 
-            <?php
-            // Use the theme's custom pattern for upcoming activities.
-            echo do_blocks('<!-- wp:pattern {"slug":"biodevas/proximas-actividades"} /-->');
-            ?>
-        </div>
-        <?php
-        return ob_get_clean();
-    }
+			<h2 class="bde-titulo-actividades"><?php esc_html_e( 'Actividades Disponibles', 'convoca-enroll' ); ?></h2>
+
+			<?php
+			// Use the theme's custom pattern for upcoming activities.
+			echo do_blocks( '<!-- wp:pattern {"slug":"biodevas/proximas-actividades"} /-->' );
+			?>
+		</div>
+		<?php
+		return ob_get_clean();
+	}
 }

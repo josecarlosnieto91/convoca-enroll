@@ -86,8 +86,8 @@ class Google_Calendar
         $client->setClientId($client_id);
         $client->setRedirectUri(admin_url('admin.php?page=bde-ajustes&tab=google_calendar'));
         $client->addScope([
-            'https://www.googleapis.com/auth/calendar',
-            'https://www.googleapis.com/auth/calendar.events'
+            'https://www.googleapis.com/auth/calendar',.
+            'https://www.googleapis.com/auth/calendar.events'.
         ]);
         $client->setAccessType('offline');
         $client->setPrompt('consent');
@@ -316,7 +316,7 @@ class Google_Calendar
         $filename = 'actividad-' . $actividad_id . '-' . wp_hash($actividad_id) . '.ics';
         $path = $temp_dir . $filename;
 
-        // Clean up old ICS files for this activity first
+        // Clean up old ICS files for this activity first.
         $this->cleanup_ics_files($actividad_id);
 
         if (file_put_contents($path, $content)) {

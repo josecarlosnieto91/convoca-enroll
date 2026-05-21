@@ -7,71 +7,70 @@
 
 namespace Convoca\Enroll;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-if (!class_exists('WP_CLI')) {
-    return;
+if ( ! class_exists( 'WP_CLI' ) ) {
+	return;
 }
 
-class CLI_Webhooks extends \WP_CLI_Command
-{
-    /**
-     * Re-sends failed webhook payloads.
-     *
-     * ## OPTIONS
-     *
-     * [--all]
-     * : Retry all failed payloads.
-     * 
-     * [--limit=<count>]
-     * : Limit of payloads to retry.
-     *
-     * ## EXAMPLES
-     *
-     *     wp bde webhooks retry_failed --all
-     *     wp bde webhooks retry_failed --limit=50
-     *
-     * @when after_wp_load
-     */
-    public function retry_failed($args, $assoc_args)
-    {
-        global $wpdb;
-        $table_name = Webhook_Dispatcher::get_table_name();
+class CLI_Webhooks extends \WP_CLI_Command {
 
-        $limit = isset($assoc_args['limit']) ? (int) $assoc_args['limit'] : 0;
-        $all = isset($assoc_args['all']) ? true : false;
+	/**
+	 * Re-sends failed webhook payloads.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--all]
+	 * : Retry all failed payloads.
+	 *
+	 * [--limit=<count>]
+	 * : Limit of payloads to retry.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp bde webhooks retry_failed --all
+	 *     wp bde webhooks retry_failed --limit=50
+	 *
+	 * @when after_wp_load
+	 */
+	public function retry_failed( $args, $assoc_args ) {
+		global $wpdb;
+		$table_name = Webhook_Dispatcher::get_table_name();
 
-        if (!$all && $limit <= 0) {
-            \WP_CLI::error("Por favor, especifica --all o un --limit válido.");
-            return;
-        }
+		$limit = isset( $assoc_args['limit'] ) ? (int) $assoc_args['limit'] : 0;
+		$all   = isset( $assoc_args['all'] ) ? true : false;
 
-        $query = "SELECT id FROM $table_name WHERE status = 'failed'";
-        if ($limit > 0) {
-            $query .= $wpdb->prepare(" LIMIT %d", $limit);
-        }
+		if ( ! $all && $limit <= 0 ) {
+			\WP_CLI::error( 'Por favor, especifica --all o un --limit válido.' );
+			return;
+		}
 
-        $failed_ids = $wpdb->get_col($query);
+		$query = "SELECT id FROM $table_name WHERE status = 'failed'";
+		if ( $limit > 0 ) {
+			$query .= $wpdb->prepare( ' LIMIT %d', $limit );
+		}
 
-        if (empty($failed_ids)) {
-            \WP_CLI::success("No hay webhooks fallidos para reintentar.");
-            return;
-        }
+		$failed_ids = $wpdb->get_col( $query );
 
-        $ids_placeholder = implode(',', array_map('intval', $failed_ids));
-        
-        $updated = $wpdb->query(
-            "UPDATE $table_name SET status = 'pending', retries = 0 WHERE id IN ($ids_placeholder)"
-        );
+		if ( empty( $failed_ids ) ) {
+			\WP_CLI::success( 'No hay webhooks fallidos para reintentar.' );
+			return;
+		}
 
-        if ($updated) {
-            \WP_CLI::success("Se han marcado $updated webhooks fallidos de nuevo a 'pending' para reintento.");
-        } else {
-            \WP_CLI::error("Error al actualizar los webhooks fallidos.");
-        }
-    }
+		$ids_placeholder = implode( ',', array_map( 'intval', $failed_ids ) );
+
+		$updated = $wpdb->query(
+			"UPDATE $table_name SET status = 'pending', retries = 0 WHERE id IN ($ids_placeholder)"
+		);
+
+		if ( $updated ) {
+			\WP_CLI::success( "Se han marcado $updated webhooks fallidos de nuevo a 'pending' para reintento." );
+		} else {
+			\WP_CLI::error( 'Error al actualizar los webhooks fallidos.' );
+		}
+	}
 }
 
-\WP_CLI::add_command('bde webhooks', __NAMESPACE__ . '\\CLI_Webhooks');
+\WP_CLI::add_command( 'bde webhooks', __NAMESPACE__ . '\\CLI_Webhooks' );

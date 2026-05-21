@@ -2,312 +2,348 @@
 namespace Convoca\Enroll;
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+	exit;
 }
 
 class Formulario_Evaluacion {
 
-    public static function init() {
-        add_shortcode( 'convoca_evaluacion', [ __CLASS__, 'render_shortcode' ] );
-        add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_assets' ] );
-        add_action( 'wp_ajax_bdv_submit_evaluacion', [ __CLASS__, 'handle_submission' ] );
-        add_action( 'wp_ajax_nopriv_bdv_submit_evaluacion', [ __CLASS__, 'handle_submission' ] );
+	public static function init() {
+		add_shortcode( 'convoca_evaluacion', array( __CLASS__, 'render_shortcode' ) );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
+		add_action( 'wp_ajax_bdv_submit_evaluacion', array( __CLASS__, 'handle_submission' ) );
+		add_action( 'wp_ajax_nopriv_bdv_submit_evaluacion', array( __CLASS__, 'handle_submission' ) );
 
-        add_action( 'wp_ajax_bdv_eval_get_nonce', [ __CLASS__, 'get_nonce' ] );
-        add_action( 'wp_ajax_nopriv_bdv_eval_get_nonce', [ __CLASS__, 'get_nonce' ] );
-    }
+		add_action( 'wp_ajax_bdv_eval_get_nonce', array( __CLASS__, 'get_nonce' ) );
+		add_action( 'wp_ajax_nopriv_bdv_eval_get_nonce', array( __CLASS__, 'get_nonce' ) );
+	}
 
-    public static function get_nonce() {
-        if (!\Convoca\Core\Utils::check_rate_limit('bdv_eval_get_nonce', 30, 3600)) {
-            wp_send_json_error(['message' => __('Demasiadas peticiones.', 'convoca-enroll')], 429);
-        }
-        wp_send_json_success( wp_create_nonce( 'bdv_evaluacion_nonce' ) );
-    }
+	public static function get_nonce() {
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'bdv_eval_get_nonce', 30, 3600 ) ) {
+			wp_send_json_error( array( 'message' => __( 'Demasiadas peticiones.', 'convoca-enroll' ) ), 429 );
+		}
+		wp_send_json_success( wp_create_nonce( 'bdv_evaluacion_nonce' ) );
+	}
 
-    public static function enqueue_assets() {
-        // Enqueued only when shortcode is present, but doing it globally is safer for blocks
-        wp_register_style( 'bdv-evaluacion-css', plugins_url( 'assets/css/evaluacion.css', dirname(__FILE__) ), [], '1.0.0' );
-        wp_register_script( 'bdv-evaluacion-js', plugins_url( 'assets/js/star-rating.js', dirname(__FILE__) ), ['jquery'], '1.0.0', true );
-        
-        wp_localize_script( 'bdv-evaluacion-js', 'bdv_eval_ajax', [
-            'url' => admin_url( 'admin-ajax.php' ),
-            'nonce' => wp_create_nonce( 'bdv_evaluacion_nonce' )
-        ]);
-    }
+	public static function enqueue_assets() {
+		// Enqueued only when shortcode is present, but doing it globally is safer for blocks.
+		wp_register_style( 'bdv-evaluacion-css', plugins_url( 'assets/css/evaluacion.css', __DIR__ ), array(), '1.0.0' );
+		wp_register_script( 'bdv-evaluacion-js', plugins_url( 'assets/js/star-rating.js', __DIR__ ), array( 'jquery' ), '1.0.0', true );
 
-    public static function render_shortcode( $atts ) {
-        wp_enqueue_style( 'bdv-evaluacion-css' );
-        wp_enqueue_script( 'bdv-evaluacion-js' );
+		wp_localize_script(
+			'bdv-evaluacion-js',
+			'bdv_eval_ajax',
+			array(
+				'url'   => admin_url( 'admin-ajax.php' ),
+				'nonce' => wp_create_nonce( 'bdv_evaluacion_nonce' ),
+			)
+		);
+	}
 
-        $atts = shortcode_atts( [
-            'actividad_id' => 0
-        ], $atts );
+	public static function render_shortcode( $atts ) {
+		wp_enqueue_style( 'bdv-evaluacion-css' );
+		wp_enqueue_script( 'bdv-evaluacion-js' );
 
-        $actividad_id = intval( $atts['actividad_id'] );
-        $actividad = get_post( $actividad_id );
-        if ( ! $actividad || $actividad->post_type !== 'actividad' || $actividad->post_status !== 'publish' ) {
-            return '<p>' . __( 'ID de actividad no válido o inexistente.', 'convoca-enroll' ) . '</p>';
-        }
+		$atts = shortcode_atts(
+			array(
+				'actividad_id' => 0,
+			),
+			$atts
+		);
 
-        $fecha_fin = get_post_meta( $actividad_id, '_bde_fecha_fin', true );
-        if ( ! $fecha_fin || strtotime( $fecha_fin ) > current_time( 'timestamp' ) ) {
-            return '<p>' . __( 'Esta actividad aún no ha finalizado y no puede ser evaluada.', 'convoca-enroll' ) . '</p>';
-        }
+		$actividad_id = intval( $atts['actividad_id'] );
+		$actividad    = get_post( $actividad_id );
+		if ( ! $actividad || $actividad->post_type !== 'actividad' || $actividad->post_status !== 'publish' ) {
+			return '<p>' . __( 'ID de actividad no válido o inexistente.', 'convoca-enroll' ) . '</p>';
+		}
 
-        if ( ! is_user_logged_in() ) {
-            return '<p>' . __( 'Debes iniciar sesión para evaluar esta actividad.', 'convoca-enroll' ) . '</p>';
-        }
+		$fecha_fin = get_post_meta( $actividad_id, '_bde_fecha_fin', true );
+		if ( ! $fecha_fin || strtotime( $fecha_fin ) > current_time( 'timestamp' ) ) {
+			return '<p>' . __( 'Esta actividad aún no ha finalizado y no puede ser evaluada.', 'convoca-enroll' ) . '</p>';
+		}
 
-        $user = wp_get_current_user();
-        
-        // 1. Check if user already evaluated
-        $existing = get_posts([
-            'post_type' => 'bdv_evaluacion',
-            'meta_query' => [
-                ['key' => '_bdv_eval_actividad_id', 'value' => $actividad_id],
-                ['key' => '_bdv_eval_usuario_id', 'value' => $user->ID]
-            ],
-            'posts_per_page' => 1
-        ]);
+		if ( ! is_user_logged_in() ) {
+			return '<p>' . __( 'Debes iniciar sesión para evaluar esta actividad.', 'convoca-enroll' ) . '</p>';
+		}
 
-        if ( ! empty( $existing ) ) {
-            return '<div class="bdv-eval-notice">' . __( 'Ya has enviado una evaluación para esta actividad. ¡Gracias!', 'convoca-enroll' ) . '</div>';
-        }
+		$user = wp_get_current_user();
 
-        // 2. Check permissions
-        $can_evaluate = false;
-        
-        if ( current_user_can( 'manage_options' ) || current_user_can( 'bde_manage_evaluations' ) ) {
-            $can_evaluate = true;
-        } else {
-            // Is monitor?
-            $is_monitor = in_array( 'monitor_actividad', (array) $user->roles );
-            $responsables_raw = get_post_meta( $actividad_id, '_bde_responsables', true );
-            $responsables = is_array( $responsables_raw ) ? $responsables_raw : explode( ',', (string) $responsables_raw );
-            if ( in_array( $user->ID, array_map( 'intval', $responsables ) ) ) {
-                $is_monitor = true;
-            }
+		// 1. Check if user already evaluated
+		$existing = get_posts(
+			array(
+				'post_type'      => 'bdv_evaluacion',
+				'meta_query'     => array(
+					array(
+						'key'   => '_bdv_eval_actividad_id',
+						'value' => $actividad_id,
+					),
+					array(
+						'key'   => '_bdv_eval_usuario_id',
+						'value' => $user->ID,
+					),
+				),
+				'posts_per_page' => 1,
+			)
+		);
 
-            if ( $is_monitor ) {
-                $can_evaluate = true;
-            } else {
-                // Is volunteer?
-                $is_volunteer = in_array( 'voluntario_aprobado', (array) $user->roles ) || current_user_can( 'gestionar_mis_turnos' );
-                if ( $is_volunteer ) {
-                    // Did attend?
-                    $inscriptions = get_posts([
-                        'post_type' => 'inscripcion',
-                        'posts_per_page' => 1,
-                        'meta_query' => [
-                            ['key' => '_bde_actividad_id', 'value' => $actividad_id],
-                            ['key' => '_bde_user_id', 'value' => $user->ID]
-                        ]
-                    ]);
-                    if ( ! empty( $inscriptions ) ) {
-                        $asistencia = get_post_meta( $inscriptions[0]->ID, '_bde_asistencia', true );
-                        if ( $asistencia === 'si' ) {
-                            $can_evaluate = true;
-                        }
-                    }
-                }
-            }
-        }
+		if ( ! empty( $existing ) ) {
+			return '<div class="bdv-eval-notice">' . __( 'Ya has enviado una evaluación para esta actividad. ¡Gracias!', 'convoca-enroll' ) . '</div>';
+		}
 
-        if ( ! $can_evaluate ) {
-            return '<p>' . __( 'No tienes permisos para evaluar esta actividad o no consta tu asistencia.', 'convoca-enroll' ) . '</p>';
-        }
+		// 2. Check permissions
+		$can_evaluate = false;
 
-        ob_start();
-        ?>
-        <div class="bdv-evaluacion-container">
-            <h3><?php printf( __( 'Evaluar Actividad: %s', 'convoca-enroll' ), get_the_title( $actividad_id ) ); ?></h3>
-            <form id="bdv-evaluacion-form" method="post">
-                <input type="hidden" name="actividad_id" value="<?php echo esc_attr( $actividad_id ); ?>">
-                <input type="hidden" name="action" value="bdv_submit_evaluacion">
-                <?php wp_nonce_field( 'bdv_evaluacion_nonce', 'security' ); ?>
+		if ( current_user_can( 'manage_options' ) || current_user_can( 'bde_manage_evaluations' ) ) {
+			$can_evaluate = true;
+		} else {
+			// Is monitor?
+			$is_monitor       = in_array( 'monitor_actividad', (array) $user->roles );
+			$responsables_raw = get_post_meta( $actividad_id, '_bde_responsables', true );
+			$responsables     = is_array( $responsables_raw ) ? $responsables_raw : explode( ',', (string) $responsables_raw );
+			if ( in_array( $user->ID, array_map( 'intval', $responsables ) ) ) {
+				$is_monitor = true;
+			}
 
-                <div class="bdv-eval-section">
-                    <h4><?php _e( '1. Valoraciones numéricas', 'convoca-enroll' ); ?></h4>
-                    <p class="description"><?php _e( 'Valora del 1 al 5 (1 = Muy insatisfecho, 5 = Muy satisfecho)', 'convoca-enroll' ); ?></p>
-                    
-                    <?php self::render_star_input( 'gestion', __( 'Gestión y coordinación', 'convoca-enroll' ) ); ?>
-                    <?php self::render_star_input( 'instalaciones', __( 'Instalaciones / Espacio', 'convoca-enroll' ) ); ?>
-                    <?php self::render_star_input( 'participantes', __( 'Grupo participante', 'convoca-enroll' ) ); ?>
-                    <?php self::render_star_input( 'comunicacion', __( 'Comunicación con el equipo', 'convoca-enroll' ) ); ?>
-                </div>
+			if ( $is_monitor ) {
+				$can_evaluate = true;
+			} else {
+				// Is volunteer?
+				$is_volunteer = in_array( 'voluntario_aprobado', (array) $user->roles ) || current_user_can( 'gestionar_mis_turnos' );
+				if ( $is_volunteer ) {
+					// Did attend?
+					$inscriptions = get_posts(
+						array(
+							'post_type'      => 'inscripcion',
+							'posts_per_page' => 1,
+							'meta_query'     => array(
+								array(
+									'key'   => '_bde_actividad_id',
+									'value' => $actividad_id,
+								),
+								array(
+									'key'   => '_bde_user_id',
+									'value' => $user->ID,
+								),
+							),
+						)
+					);
+					if ( ! empty( $inscriptions ) ) {
+						$asistencia = get_post_meta( $inscriptions[0]->ID, '_bde_asistencia', true );
+						if ( $asistencia === 'si' ) {
+							$can_evaluate = true;
+						}
+					}
+				}
+			}
+		}
 
-                <div class="bdv-eval-section">
-                    <h4><?php _e( '2. Comentarios y sugerencias', 'convoca-enroll' ); ?></h4>
-                    
-                    <div class="bdv-form-group">
-                        <label for="comentarios_gestion"><?php _e( 'Cuéntanos brevemente tu experiencia', 'convoca-enroll' ); ?></label>
-                        <textarea id="comentarios_gestion" name="comentarios_gestion" rows="3"></textarea>
-                    </div>
+		if ( ! $can_evaluate ) {
+			return '<p>' . __( 'No tienes permisos para evaluar esta actividad o no consta tu asistencia.', 'convoca-enroll' ) . '</p>';
+		}
 
-                    <div class="bdv-form-group">
-                        <label for="necesidades_no_cubiertas"><?php _e( '¿Has necesitado algo que no te hayan facilitado?', 'convoca-enroll' ); ?></label>
-                        <textarea id="necesidades_no_cubiertas" name="necesidades_no_cubiertas" rows="2"></textarea>
-                    </div>
+		ob_start();
+		?>
+		<div class="bdv-evaluacion-container">
+			<h3><?php printf( __( 'Evaluar Actividad: %s', 'convoca-enroll' ), get_the_title( $actividad_id ) ); ?></h3>
+			<form id="bdv-evaluacion-form" method="post">
+				<input type="hidden" name="actividad_id" value="<?php echo esc_attr( $actividad_id ); ?>">
+				<input type="hidden" name="action" value="bdv_submit_evaluacion">
+				<?php wp_nonce_field( 'bdv_evaluacion_nonce', 'security' ); ?>
 
-                    <div class="bdv-form-group">
-                        <label for="mejoras_gestion"><?php _e( '¿Qué mejorarías en la gestión?', 'convoca-enroll' ); ?></label>
-                        <textarea id="mejoras_gestion" name="mejoras_gestion" rows="2"></textarea>
-                    </div>
+				<div class="bdv-eval-section">
+					<h4><?php _e( '1. Valoraciones numéricas', 'convoca-enroll' ); ?></h4>
+					<p class="description"><?php _e( 'Valora del 1 al 5 (1 = Muy insatisfecho, 5 = Muy satisfecho)', 'convoca-enroll' ); ?></p>
+					
+					<?php self::render_star_input( 'gestion', __( 'Gestión y coordinación', 'convoca-enroll' ) ); ?>
+					<?php self::render_star_input( 'instalaciones', __( 'Instalaciones / Espacio', 'convoca-enroll' ) ); ?>
+					<?php self::render_star_input( 'participantes', __( 'Grupo participante', 'convoca-enroll' ) ); ?>
+					<?php self::render_star_input( 'comunicacion', __( 'Comunicación con el equipo', 'convoca-enroll' ) ); ?>
+				</div>
 
-                    <div class="bdv-form-group">
-                        <label for="mejoras_instalaciones"><?php _e( '¿Qué mejorarías del espacio/instalaciones?', 'convoca-enroll' ); ?></label>
-                        <textarea id="mejoras_instalaciones" name="mejoras_instalaciones" rows="2"></textarea>
-                    </div>
+				<div class="bdv-eval-section">
+					<h4><?php _e( '2. Comentarios y sugerencias', 'convoca-enroll' ); ?></h4>
+					
+					<div class="bdv-form-group">
+						<label for="comentarios_gestion"><?php _e( 'Cuéntanos brevemente tu experiencia', 'convoca-enroll' ); ?></label>
+						<textarea id="comentarios_gestion" name="comentarios_gestion" rows="3"></textarea>
+					</div>
 
-                    <div class="bdv-form-group">
-                        <label for="comentarios_participantes"><?php _e( 'Comentarios sobre el público o dinámica', 'convoca-enroll' ); ?></label>
-                        <textarea id="comentarios_participantes" name="comentarios_participantes" rows="2"></textarea>
-                    </div>
+					<div class="bdv-form-group">
+						<label for="necesidades_no_cubiertas"><?php _e( '¿Has necesitado algo que no te hayan facilitado?', 'convoca-enroll' ); ?></label>
+						<textarea id="necesidades_no_cubiertas" name="necesidades_no_cubiertas" rows="2"></textarea>
+					</div>
 
-                    <div class="bdv-form-group">
-                        <label for="aspectos_positivos"><?php _e( 'Aspectos positivos (lo mejor de la actividad)', 'convoca-enroll' ); ?></label>
-                        <textarea id="aspectos_positivos" name="aspectos_positivos" rows="2"></textarea>
-                    </div>
+					<div class="bdv-form-group">
+						<label for="mejoras_gestion"><?php _e( '¿Qué mejorarías en la gestión?', 'convoca-enroll' ); ?></label>
+						<textarea id="mejoras_gestion" name="mejoras_gestion" rows="2"></textarea>
+					</div>
 
-                    <div class="bdv-form-group">
-                        <label for="aspectos_mejorar"><?php _e( 'Aspectos a mejorar', 'convoca-enroll' ); ?></label>
-                        <textarea id="aspectos_mejorar" name="aspectos_mejorar" rows="2"></textarea>
-                    </div>
+					<div class="bdv-form-group">
+						<label for="mejoras_instalaciones"><?php _e( '¿Qué mejorarías del espacio/instalaciones?', 'convoca-enroll' ); ?></label>
+						<textarea id="mejoras_instalaciones" name="mejoras_instalaciones" rows="2"></textarea>
+					</div>
 
-                    <div class="bdv-form-group">
-                        <label for="otros_comentarios"><?php _e( 'Otros comentarios o sugerencias', 'convoca-enroll' ); ?></label>
-                        <textarea id="otros_comentarios" name="otros_comentarios" rows="2"></textarea>
-                    </div>
-                </div>
+					<div class="bdv-form-group">
+						<label for="comentarios_participantes"><?php _e( 'Comentarios sobre el público o dinámica', 'convoca-enroll' ); ?></label>
+						<textarea id="comentarios_participantes" name="comentarios_participantes" rows="2"></textarea>
+					</div>
 
-                <div class="bdv-eval-section bdv-privacy-section">
-                    <label>
-                        <input type="checkbox" name="privacy_consent" required>
-                        <?php _e( 'Acepto que mi evaluación sea tratada según la política de privacidad de Biodevas. Los datos se utilizarán internamente para mejorar las actividades.', 'convoca-enroll' ); ?>
-                    </label>
-                </div>
+					<div class="bdv-form-group">
+						<label for="aspectos_positivos"><?php _e( 'Aspectos positivos (lo mejor de la actividad)', 'convoca-enroll' ); ?></label>
+						<textarea id="aspectos_positivos" name="aspectos_positivos" rows="2"></textarea>
+					</div>
 
-                <div class="bdv-form-submit">
-                    <button type="submit" class="button button-primary wp-element-button"><?php _e( 'Enviar Evaluación', 'convoca-enroll' ); ?></button>
-                </div>
-                <div id="bdv-evaluacion-response"></div>
-            </form>
-        </div>
-        <?php
-        return ob_get_clean();
-    }
+					<div class="bdv-form-group">
+						<label for="aspectos_mejorar"><?php _e( 'Aspectos a mejorar', 'convoca-enroll' ); ?></label>
+						<textarea id="aspectos_mejorar" name="aspectos_mejorar" rows="2"></textarea>
+					</div>
 
-    private static function render_star_input( $field_id, $label ) {
-        ?>
-        <div class="bdv-star-rating-group">
-            <label><?php echo esc_html( $label ); ?></label>
-            <div class="star-rating" data-field="<?php echo esc_attr( $field_id ); ?>">
-                <?php for($i=1; $i<=5; $i++): ?>
-                    <span class="star" data-val="<?php echo $i; ?>" aria-label="<?php echo $i; ?> estrellas" role="button" tabindex="0">☆</span>
-                <?php endfor; ?>
-                <input type="hidden" name="<?php echo esc_attr( $field_id ); ?>" id="<?php echo esc_attr( $field_id ); ?>" value="0" required>
-            </div>
-        </div>
-        <?php
-    }
+					<div class="bdv-form-group">
+						<label for="otros_comentarios"><?php _e( 'Otros comentarios o sugerencias', 'convoca-enroll' ); ?></label>
+						<textarea id="otros_comentarios" name="otros_comentarios" rows="2"></textarea>
+					</div>
+				</div>
 
-    public static function handle_submission() {
-        check_ajax_referer( 'bdv_evaluacion_nonce', 'security' );
+				<div class="bdv-eval-section bdv-privacy-section">
+					<label>
+						<input type="checkbox" name="privacy_consent" required>
+						<?php _e( 'Acepto que mi evaluación sea tratada según la política de privacidad de Biodevas. Los datos se utilizarán internamente para mejorar las actividades.', 'convoca-enroll' ); ?>
+					</label>
+				</div>
 
-        if (!\Convoca\Core\Utils::check_rate_limit('bdv_submit_evaluacion', 10, 3600)) {
-            wp_send_json_error(__('Demasiados intentos. Inténtalo de nuevo más tarde.', 'convoca-enroll'), 429);
-        }
+				<div class="bdv-form-submit">
+					<button type="submit" class="button button-primary wp-element-button"><?php _e( 'Enviar Evaluación', 'convoca-enroll' ); ?></button>
+				</div>
+				<div id="bdv-evaluacion-response"></div>
+			</form>
+		</div>
+		<?php
+		return ob_get_clean();
+	}
 
-        if ( ! is_user_logged_in() ) {
-            wp_send_json_error( __( 'Debes iniciar sesión.', 'convoca-enroll' ) );
-        }
+	private static function render_star_input( $field_id, $label ) {
+		?>
+		<div class="bdv-star-rating-group">
+			<label><?php echo esc_html( $label ); ?></label>
+			<div class="star-rating" data-field="<?php echo esc_attr( $field_id ); ?>">
+				<?php for ( $i = 1; $i <= 5; $i++ ) : ?>
+					<span class="star" data-val="<?php echo $i; ?>" aria-label="<?php echo $i; ?> estrellas" role="button" tabindex="0">☆</span>
+				<?php endfor; ?>
+				<input type="hidden" name="<?php echo esc_attr( $field_id ); ?>" id="<?php echo esc_attr( $field_id ); ?>" value="0" required>
+			</div>
+		</div>
+		<?php
+	}
 
-        $user = wp_get_current_user();
-        $actividad_id = isset( $_POST['actividad_id'] ) ? intval( $_POST['actividad_id'] ) : 0;
+	public static function handle_submission() {
+		check_ajax_referer( 'bdv_evaluacion_nonce', 'security' );
 
-        if ( ! $actividad_id ) {
-            wp_send_json_error( __( 'Actividad no válida.', 'convoca-enroll' ) );
-        }
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'bdv_submit_evaluacion', 10, 3600 ) ) {
+			wp_send_json_error( __( 'Demasiados intentos. Inténtalo de nuevo más tarde.', 'convoca-enroll' ), 429 );
+		}
 
-        $actividad = get_post( $actividad_id );
-        if ( ! $actividad || $actividad->post_type !== 'actividad' || $actividad->post_status !== 'publish' ) {
-            wp_send_json_error( __( 'ID de actividad no válido o inexistente.', 'convoca-enroll' ) );
-        }
+		if ( ! is_user_logged_in() ) {
+			wp_send_json_error( __( 'Debes iniciar sesión.', 'convoca-enroll' ) );
+		}
 
-        $fecha_fin = get_post_meta( $actividad_id, '_bde_fecha_fin', true );
-        if ( ! $fecha_fin || strtotime( $fecha_fin ) > current_time( 'timestamp' ) ) {
-            wp_send_json_error( __( 'Esta actividad aún no ha finalizado y no puede ser evaluada.', 'convoca-enroll' ) );
-        }
+		$user         = wp_get_current_user();
+		$actividad_id = isset( $_POST['actividad_id'] ) ? intval( $_POST['actividad_id'] ) : 0;
 
-        // Check if already evaluated
-        $existing = get_posts([
-            'post_type' => 'bdv_evaluacion',
-            'meta_query' => [
-                ['key' => '_bdv_eval_actividad_id', 'value' => $actividad_id],
-                ['key' => '_bdv_eval_usuario_id', 'value' => $user->ID]
-            ],
-            'posts_per_page' => 1
-        ]);
+		if ( ! $actividad_id ) {
+			wp_send_json_error( __( 'Actividad no válida.', 'convoca-enroll' ) );
+		}
 
-        if ( ! empty( $existing ) ) {
-            wp_send_json_error( __( 'Ya has enviado una evaluación para esta actividad.', 'convoca-enroll' ) );
-        }
+		$actividad = get_post( $actividad_id );
+		if ( ! $actividad || $actividad->post_type !== 'actividad' || $actividad->post_status !== 'publish' ) {
+			wp_send_json_error( __( 'ID de actividad no válido o inexistente.', 'convoca-enroll' ) );
+		}
 
-        // Lock to prevent race conditions
-        $lock_key = 'bdv_eval_lock_' . $user->ID . '_' . $actividad_id;
-        if ( get_transient( $lock_key ) ) {
-            wp_send_json_error( __( 'Estamos procesando tu solicitud, por favor espera.', 'convoca-enroll' ) );
-        }
-        set_transient( $lock_key, true, 30 );
+		$fecha_fin = get_post_meta( $actividad_id, '_bde_fecha_fin', true );
+		if ( ! $fecha_fin || strtotime( $fecha_fin ) > current_time( 'timestamp' ) ) {
+			wp_send_json_error( __( 'Esta actividad aún no ha finalizado y no puede ser evaluada.', 'convoca-enroll' ) );
+		}
 
-        $numeric_fields = ['gestion', 'instalaciones', 'participantes', 'comunicacion'];
-        $ratings = [];
-        foreach ( $numeric_fields as $field ) {
-            $val = isset( $_POST[$field] ) ? intval( $_POST[$field] ) : 0;
-            if ( $val < 1 || $val > 5 ) {
-                delete_transient( $lock_key );
-                wp_send_json_error( __( 'Por favor, completa todas las valoraciones numéricas (de 1 a 5 estrellas).', 'convoca-enroll' ) );
-            }
-            $ratings[$field] = $val;
-        }
+		// Check if already evaluated.
+		$existing = get_posts(
+			array(
+				'post_type'      => 'bdv_evaluacion',
+				'meta_query'     => array(
+					array(
+						'key'   => '_bdv_eval_actividad_id',
+						'value' => $actividad_id,
+					),
+					array(
+						'key'   => '_bdv_eval_usuario_id',
+						'value' => $user->ID,
+					),
+				),
+				'posts_per_page' => 1,
+			)
+		);
 
-        $title = sprintf( 'Evaluación de %s por %s', get_the_title( $actividad_id ), $user->display_name );
+		if ( ! empty( $existing ) ) {
+			wp_send_json_error( __( 'Ya has enviado una evaluación para esta actividad.', 'convoca-enroll' ) );
+		}
 
-        $post_data = [
-            'post_title'  => wp_strip_all_tags( $title ),
-            'post_status' => 'publish',
-            'post_type'   => 'bdv_evaluacion'
-        ];
+		// Lock to prevent race conditions.
+		$lock_key = 'bdv_eval_lock_' . $user->ID . '_' . $actividad_id;
+		if ( get_transient( $lock_key ) ) {
+			wp_send_json_error( __( 'Estamos procesando tu solicitud, por favor espera.', 'convoca-enroll' ) );
+		}
+		set_transient( $lock_key, true, 30 );
 
-        $eval_id = wp_insert_post( $post_data );
+		$numeric_fields = array( 'gestion', 'instalaciones', 'participantes', 'comunicacion' );
+		$ratings        = array();
+		foreach ( $numeric_fields as $field ) {
+			$val = isset( $_POST[ $field ] ) ? intval( $_POST[ $field ] ) : 0;
+			if ( $val < 1 || $val > 5 ) {
+				delete_transient( $lock_key );
+				wp_send_json_error( __( 'Por favor, completa todas las valoraciones numéricas (de 1 a 5 estrellas).', 'convoca-enroll' ) );
+			}
+			$ratings[ $field ] = $val;
+		}
 
-        if ( is_wp_error( $eval_id ) ) {
-            delete_transient( $lock_key );
-            wp_send_json_error( __( 'Error al guardar la evaluación.', 'convoca-enroll' ) );
-        }
+		$title = sprintf( 'Evaluación de %s por %s', get_the_title( $actividad_id ), $user->display_name );
 
-        // Save metadata
-        update_post_meta( $eval_id, '_bdv_eval_actividad_id', $actividad_id );
-        update_post_meta( $eval_id, '_bdv_eval_usuario_id', $user->ID );
-        update_post_meta( $eval_id, '_bdv_eval_fecha', current_time( 'mysql' ) );
+		$post_data = array(
+			'post_title'  => wp_strip_all_tags( $title ),
+			'post_status' => 'publish',
+			'post_type'   => 'bdv_evaluacion',
+		);
 
-        foreach ( $ratings as $field => $val ) {
-            update_post_meta( $eval_id, '_bdv_eval_' . $field, $val );
-        }
+		$eval_id = wp_insert_post( $post_data );
 
-        $text_fields = [
-            'comentarios_gestion', 'necesidades_no_cubiertas', 'mejoras_gestion',
-            'mejoras_instalaciones', 'comentarios_participantes', 'aspectos_positivos',
-            'aspectos_mejorar', 'otros_comentarios'
-        ];
-        foreach ( $text_fields as $field ) {
-            $val = isset( $_POST[$field] ) ? sanitize_textarea_field( wp_unslash( $_POST[$field] ) ) : '';
-            update_post_meta( $eval_id, '_bdv_eval_' . $field, $val );
-        }
+		if ( is_wp_error( $eval_id ) ) {
+			delete_transient( $lock_key );
+			wp_send_json_error( __( 'Error al guardar la evaluación.', 'convoca-enroll' ) );
+		}
 
-        // Hook for integrations
-        do_action( 'bdv_evaluacion_completada', $eval_id, $actividad_id, $user->ID );
+		// Save metadata.
+		update_post_meta( $eval_id, '_bdv_eval_actividad_id', $actividad_id );
+		update_post_meta( $eval_id, '_bdv_eval_usuario_id', $user->ID );
+		update_post_meta( $eval_id, '_bdv_eval_fecha', current_time( 'mysql' ) );
 
-        wp_send_json_success( __( 'Evaluación enviada con éxito. ¡Gracias por tu colaboración!', 'convoca-enroll' ) );
-    }
+		foreach ( $ratings as $field => $val ) {
+			update_post_meta( $eval_id, '_bdv_eval_' . $field, $val );
+		}
+
+		$text_fields = array(
+			'comentarios_gestion',
+			'necesidades_no_cubiertas',
+			'mejoras_gestion',
+			'mejoras_instalaciones',
+			'comentarios_participantes',
+			'aspectos_positivos',
+			'aspectos_mejorar',
+			'otros_comentarios',
+		);
+		foreach ( $text_fields as $field ) {
+			$val = isset( $_POST[ $field ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ $field ] ) ) : '';
+			update_post_meta( $eval_id, '_bdv_eval_' . $field, $val );
+		}
+
+		// Hook for integrations.
+		do_action( 'bdv_evaluacion_completada', $eval_id, $actividad_id, $user->ID );
+
+		wp_send_json_success( __( 'Evaluación enviada con éxito. ¡Gracias por tu colaboración!', 'convoca-enroll' ) );
+	}
 }

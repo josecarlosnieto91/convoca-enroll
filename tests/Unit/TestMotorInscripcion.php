@@ -33,7 +33,7 @@ class TestMotorInscripcion extends TestCase
         $code = Motor_Inscripcion::generar_codigo();
 
         $this->assertEquals(8, strlen($code));
-        // Should only contain allowed chars (no I, O, 0, 1)
+        // Should only contain allowed chars (no I, O, 0, 1).
         $this->assertMatchesRegularExpression('/^[A-Z2-9]{8}$/', $code);
     }
 
@@ -71,7 +71,7 @@ class TestMotorInscripcion extends TestCase
      */
     public function test_validar_dni_valid(): void
     {
-        // Known valid test DNI: 12345678Z
+        // Known valid test DNI: 12345678Z.
         $result = Motor_Inscripcion::validar_dni('12345678Z');
         $this->assertTrue($result);
     }

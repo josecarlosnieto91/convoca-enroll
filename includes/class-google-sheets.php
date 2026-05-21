@@ -7,98 +7,100 @@
 
 namespace Convoca\Enroll;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-class Google_Sheets
-{
+class Google_Sheets {
 
-    public function __construct()
-    {
-        $settings = get_option('bde_settings', []);
-        if (empty($settings['sheets_enabled'])) {
-            return;
-        }
 
-        add_action('convoca_enroll_inscripcion_nueva', [$this, 'on_inscription'], 20, 2);
-        add_action('convoca_inscripcion_confirmada', [$this, 'on_state_change'], 20, 2);
-        add_action('convoca_inscripcion_cancelada', [$this, 'on_state_change'], 20, 2);
-        add_action('convoca_inscripcion_promovida', [$this, 'on_state_change'], 20, 2);
-    }
+	public function __construct() {
+		$settings = get_option( 'bde_settings', array() );
+		if ( empty( $settings['sheets_enabled'] ) ) {
+			return;
+		}
 
-    /**
-     * Append row on new inscription.
-     */
-    public function on_inscription(int $inscripcion_id, int $actividad_id): void
-    {
-        $sheet_id = get_post_meta($actividad_id, '_bde_sheets_id', true);
-        if (empty($sheet_id)) {
-            return;
-        }
+		add_action( 'convoca_enroll_inscripcion_nueva', array( $this, 'on_inscription' ), 20, 2 );
+		add_action( 'convoca_inscripcion_confirmada', array( $this, 'on_state_change' ), 20, 2 );
+		add_action( 'convoca_inscripcion_cancelada', array( $this, 'on_state_change' ), 20, 2 );
+		add_action( 'convoca_inscripcion_promovida', array( $this, 'on_state_change' ), 20, 2 );
+	}
 
-        $m = fn($k) => get_post_meta($inscripcion_id, '_bde_' . $k, true);
-        $row = [
-            $m('nombre'),
-            $m('email'),
-            $m('telefono'),
-            $m('es_socio') === '1' ? 'Sí' : 'No',
-            CPT_Inscripcion::LABELS[$m('estado')] ?? $m('estado'),
-            current_time('d/m/Y H:i'),
-        ];
+	/**
+	 * Append row on new inscription.
+	 */
+	public function on_inscription( int $inscripcion_id, int $actividad_id ): void {
+		$sheet_id = get_post_meta( $actividad_id, '_bde_sheets_id', true );
+		if ( empty( $sheet_id ) ) {
+			return;
+		}
 
-        $this->append_row($sheet_id, $row);
-    }
+		$m   = fn( $k ) => get_post_meta( $inscripcion_id, '_bde_' . $k, true );
+		$row = array(
+			$m( 'nombre' ),
+			$m( 'email' ),
+			$m( 'telefono' ),
+			$m( 'es_socio' ) === '1' ? 'Sí' : 'No',
+			CPT_Inscripcion::LABELS[ $m( 'estado' ) ] ?? $m( 'estado' ),
+			current_time( 'd/m/Y H:i' ),
+		);
 
-    /**
-     * Update sheet on state change (simplified: log new row).
-     */
-    public function on_state_change(int $inscripcion_id, int $actividad_id): void
-    {
-        $sheet_id = get_post_meta($actividad_id, '_bde_sheets_id', true);
-        if (empty($sheet_id)) {
-            return;
-        }
+		$this->append_row( $sheet_id, $row );
+	}
 
-        $m = fn($k) => get_post_meta($inscripcion_id, '_bde_' . $k, true);
-        $row = [
-            $m('nombre'),
-            $m('email'),
-            '',
-            '',
-            'CAMBIO → ' . (CPT_Inscripcion::LABELS[$m('estado')] ?? $m('estado')),
-            current_time('d/m/Y H:i'),
-        ];
+	/**
+	 * Update sheet on state change (simplified: log new row).
+	 */
+	public function on_state_change( int $inscripcion_id, int $actividad_id ): void {
+		$sheet_id = get_post_meta( $actividad_id, '_bde_sheets_id', true );
+		if ( empty( $sheet_id ) ) {
+			return;
+		}
 
-        $this->append_row($sheet_id, $row);
-    }
+		$m   = fn( $k ) => get_post_meta( $inscripcion_id, '_bde_' . $k, true );
+		$row = array(
+			$m( 'nombre' ),
+			$m( 'email' ),
+			'',
+			'',
+			'CAMBIO → ' . ( CPT_Inscripcion::LABELS[ $m( 'estado' ) ] ?? $m( 'estado' ) ),
+			current_time( 'd/m/Y H:i' ),
+		);
 
-    /**
-     * Append a row to Google Sheets via API v4.
-     */
-    private function append_row(string $sheet_id, array $row): void
-    {
-        $settings = get_option('bde_settings', []);
-        $api_key = defined('BDE_GOOGLE_SHEETS_API_KEY') ? BDE_GOOGLE_SHEETS_API_KEY : ($settings['sheets_api_key'] ?? '');
+		$this->append_row( $sheet_id, $row );
+	}
 
-        if (empty($api_key)) {
-            return;
-        }
+	/**
+	 * Append a row to Google Sheets via API v4.
+	 */
+	private function append_row( string $sheet_id, array $row ): void {
+		$settings = get_option( 'bde_settings', array() );
+		$api_key  = defined( 'BDE_GOOGLE_SHEETS_API_KEY' ) ? BDE_GOOGLE_SHEETS_API_KEY : ( $settings['sheets_api_key'] ?? '' );
 
-        $url = sprintf(
-            'https://sheets.googleapis.com/v4/spreadsheets/%s/values/A:F:append?valueInputOption=USER_ENTERED',
-            urlencode($sheet_id)
-        );
+		if ( empty( $api_key ) ) {
+			return;
+		}
 
-        wp_remote_post($url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'X-Goog-Api-Key' => $api_key,
-            ],
-            'body' => wp_json_encode([
-                'values' => [$row],
-            ]),
-            'timeout' => 10,
-        ]);
-    }
+		$url = sprintf(
+			'https://sheets.googleapis.com/v4/spreadsheets/%s/values/A:F:append?valueInputOption=USER_ENTERED',
+			.
+			urlencode( $sheet_id )
+		);
+
+		wp_remote_post(
+			$url,
+			array(
+				'headers' => array(
+					'Content-Type'   => 'application/json',
+					'X-Goog-Api-Key' => $api_key,
+				),
+				'body'    => wp_json_encode(
+					array(
+						'values' => array( $row ),
+					)
+				),
+				'timeout' => 10,
+			)
+		);
+	}
 }
