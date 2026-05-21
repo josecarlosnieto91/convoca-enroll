@@ -62,8 +62,8 @@ class Google_Photos
         $this->client->setClientId($client_id);
         $this->client->setRedirectUri(admin_url('admin.php?page=bde-ajustes&tab=google_photos'));
         $this->client->addScope([
-            'https://www.googleapis.com/auth/photoslibrary.appendonly',.
-            'https://www.googleapis.com/auth/photoslibrary.sharing',.
+            'https://www.googleapis.com/auth/photoslibrary.appendonly',
+            'https://www.googleapis.com/auth/photoslibrary.sharing',
         ]);
         $this->client->setAccessType('offline');
         $this->client->setPrompt('consent');

@@ -402,7 +402,7 @@ class Motor_Inscripcion {
 	}
 
 	/**
-	 * Promote the first waitlisted inscription to 'pendiente'.
+	 * Promote the first waitlisted inscription to 'pendiente '
 	 *
 	 * @return bool True if someone was promoted.
 	 */
@@ -599,7 +599,7 @@ class Motor_Inscripcion {
 	 * Set the attendance status for an inscription.
 	 *
 	 * @param int    $inscripcion_id Inscription ID.
-	 * @param string $asistencia     'si', 'no', or 'no_registrada'.
+	 * @param string $asistencia     'si', 'no', or 'no_registrada '
 	 * @return bool|\WP_Error
 	 */
 	public static function set_asistencia( int $inscripcion_id, string $asistencia ): bool|\WP_Error {

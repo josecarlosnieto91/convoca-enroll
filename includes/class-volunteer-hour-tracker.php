@@ -67,7 +67,7 @@ class Volunteer_Hour_Tracker {
 	}
 
 	/**
-	 * Subtract hours when attendance is changed from 'si' to 'no'.
+	 * Subtract hours when attendance is changed from 'si' to 'no '
 	 */
 	private static function subtract_hours( int $inscripcion_id, $user ): void {
 		$actividad_id = CPT_Inscripcion::get_meta( $inscripcion_id, 'actividad_id' );

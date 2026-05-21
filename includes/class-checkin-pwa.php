@@ -108,7 +108,7 @@ class Checkin_PWA {
 			readfile( $sw_path );
 		} else {
 			header( 'HTTP/1.1 404 Not Found' );
-			echo '// Service worker not found'; .
+			echo '// Service worker not found';
 		}
 		exit;
 	}

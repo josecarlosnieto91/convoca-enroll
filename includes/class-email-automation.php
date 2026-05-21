@@ -514,7 +514,7 @@ class Email_Automation {
 		}
 
 		// Dedup: atomic check-and-set to prevent race conditions under high concurrency.
-		// Uses INSERT ON DUPLICATE KEY UPDATE with a WHERE condition on the timestamp,.
+		// Uses INSERT ON DUPLICATE KEY UPDATE with a WHERE condition on the timestamp,
 		// so only the first process to check (within the 5-min window) gets through.
 		global $wpdb;
 		$dedup_key = '_bde_last_email_sent_' . $slug;
@@ -646,7 +646,7 @@ class Email_Automation {
 		$m         = fn( $key ) => get_post_meta( $inscripcion_id, '_bde_' . $key, true );
 		$am        = function ( $key ) use ( $actividad_id ) {
 			$value = get_post_meta( $actividad_id, '_bde_' . $key, true );
-			// Fallback: 'ubicacion' can also be stored as '_bde_lugar'.
+			// Fallback: 'ubicacion' can also be stored as '_bde_lugar '
 			if ( empty( $value ) && $key === 'ubicacion' ) {
 				$value = get_post_meta( $actividad_id, '_bde_lugar', true );
 			}
@@ -697,7 +697,7 @@ class Email_Automation {
 
 	private function generate_qr_url( int $inscripcion_id ): string {
 		$url = $this->get_checkin_url( $inscripcion_id );
-		return 'https://quickchart.io/qr?text=' . urlencode( $url ) . '&size=200'; .
+		return 'https://quickchart.io/qr?text=' . urlencode( $url ) . '&size=200';
 	}
 
 	private function get_checkin_url( int $inscripcion_id ): string {

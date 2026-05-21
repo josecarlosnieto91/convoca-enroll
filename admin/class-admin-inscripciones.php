@@ -484,6 +484,6 @@ class Inscriptions_List extends \WP_List_Table {
 		$nombre = CPT_Inscripcion::get_meta( $post_id, 'nombre' );
 		$msg    = str_replace( '{nombre}', $nombre, self::WA_MSG );
 
-		return 'https://wa.me/' . $clean . '?text=' . rawurlencode( $msg ); .
+		return 'https://wa.me/' . $clean . '?text=' . rawurlencode( $msg );
 	}
 }

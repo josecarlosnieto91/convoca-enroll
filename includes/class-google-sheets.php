@@ -83,7 +83,6 @@ class Google_Sheets {
 
 		$url = sprintf(
 			'https://sheets.googleapis.com/v4/spreadsheets/%s/values/A:F:append?valueInputOption=USER_ENTERED',
-			.
 			urlencode( $sheet_id )
 		);
 

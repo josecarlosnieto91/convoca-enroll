@@ -206,7 +206,7 @@ class Admin_Page {
 		}
 
 		if ( isset( $_GET['page'] ) && $_GET['page'] === 'bde-informes' ) {
-			wp_enqueue_script( 'chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '4.4.1', true ); .
+			wp_enqueue_script( 'chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '4.4.1', true );
 		}
 
 		if ( $hook === 'actividad_page_bde-monitor-crm' ) {
@@ -292,7 +292,7 @@ class Admin_Page {
 	/* ── List pages ────────────────────────────── */
 
 	public function render_evaluaciones(): void {
-		// Redirect to the standard WP evaluation list,.
+		// Redirect to the standard WP evaluation list,
 		// which already has custom columns and filters via Admin_Evaluaciones_List.
 		wp_safe_redirect( admin_url( 'edit.php?post_type=conv_evaluacion' ) );
 		exit;

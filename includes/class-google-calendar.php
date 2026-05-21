@@ -86,8 +86,8 @@ class Google_Calendar
         $client->setClientId($client_id);
         $client->setRedirectUri(admin_url('admin.php?page=bde-ajustes&tab=google_calendar'));
         $client->addScope([
-            'https://www.googleapis.com/auth/calendar',.
-            'https://www.googleapis.com/auth/calendar.events'.
+            'https://www.googleapis.com/auth/calendar',
+            'https://www.googleapis.com/auth/calendar.events '
         ]);
         $client->setAccessType('offline');
         $client->setPrompt('consent');

@@ -128,7 +128,7 @@ class Admin_Monitor_CRM {
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename=' . $filename );
 
-		$output = fopen( 'php://output', 'w' ); .
+		$output = fopen( 'php://output', 'w' );
 		// UTF-8 BOM for Excel.
 		fprintf( $output, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
 
