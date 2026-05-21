@@ -62,12 +62,12 @@ class CPT_Inscripcion {
 	);
 
 	public const BADGE_CLASSES = array(
-		'pendiente'      => 'biodevas-badge biodevas-badge--pending',
-		'pendiente_pago' => 'biodevas-badge biodevas-badge--warning',
-		'confirmada'     => 'biodevas-badge biodevas-badge--confirmed',
-		'pagada'         => 'biodevas-badge biodevas-badge--confirmed',
-		'lista_espera'   => 'biodevas-badge biodevas-badge--waitlist',
-		'cancelada'      => 'biodevas-badge biodevas-badge--cancelled',
+		'pendiente'      => 'convoca-badge convoca-badge--pending',
+		'pendiente_pago' => 'convoca-badge convoca-badge--warning',
+		'confirmada'     => 'convoca-badge convoca-badge--confirmed',
+		'pagada'         => 'convoca-badge convoca-badge--confirmed',
+		'lista_espera'   => 'convoca-badge convoca-badge--waitlist',
+		'cancelada'      => 'convoca-badge convoca-badge--cancelled',
 	);
 
 	public function __construct() {
@@ -89,7 +89,7 @@ class CPT_Inscripcion {
 		$members = get_posts(
 			array(
 				'post_type'      => 'miembro',
-				'meta_key'       => '_bdv_email',
+				'meta_key'       => '_conv_email',
 				'meta_value'     => $email,
 				'fields'         => 'ids',
 				'posts_per_page' => 1,
@@ -150,7 +150,7 @@ class CPT_Inscripcion {
 	 * Badge HTML for a state.
 	 */
 	public static function badge( string $state ): string {
-		$class = self::BADGE_CLASSES[ $state ] ?? 'biodevas-badge';
+		$class = self::BADGE_CLASSES[ $state ] ?? 'convoca-badge';
 		$label = self::LABELS[ $state ] ?? $state;
 		return '<span class="' . esc_attr( $class ) . '">' . esc_html( $label ) . '</span>';
 	}
@@ -199,7 +199,7 @@ class CPT_Inscripcion {
 
 		// Fallback for legacy data or migration issues.
 		if ( empty( $val ) ) {
-			$val = get_post_meta( $post_id, '_bdv_' . $key, $single );
+			$val = get_post_meta( $post_id, '_conv_' . $key, $single );
 		}
 		if ( empty( $val ) ) {
 			$val = get_post_meta( $post_id, $key, $single );

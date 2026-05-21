@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class PDF_Compromiso {
 
-	private const ERROR_TRANSIENT = 'bdv_enroll_pdf_error_';
+	private const ERROR_TRANSIENT = 'conv_enroll_pdf_error_';
 
 	public static $last_error = '';
 
@@ -56,9 +56,9 @@ class PDF_Compromiso {
 				"SELECT p.ID FROM {$wpdb->posts} p 
              INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id 
              INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id 
-             WHERE p.post_type = 'bdv_documento' 
-             AND pm1.meta_key = '_bdv_usuario_id' AND pm1.meta_value = %d 
-             AND pm2.meta_key = '_bdv_actividad_id' AND pm2.meta_value = %d 
+             WHERE p.post_type = 'conv_documento' 
+             AND pm1.meta_key = '_conv_usuario_id' AND pm1.meta_value = %d 
+             AND pm2.meta_key = '_conv_actividad_id' AND pm2.meta_value = %d 
              AND p.post_status = 'publish' LIMIT 1",
 				$user_id,
 				$actividad_id
@@ -78,7 +78,7 @@ class PDF_Compromiso {
 		$nombre_voluntario = $user->first_name ?: $user->display_name;
 		$temp_post_id      = wp_insert_post(
 			array(
-				'post_type'   => 'bdv_documento',
+				'post_type'   => 'conv_documento',
 				'post_title'  => 'Compromiso - ' . $actividad->post_title . ' - ' . $nombre_voluntario,
 				'post_status' => 'draft',
 				'post_author' => 1,
@@ -98,9 +98,9 @@ class PDF_Compromiso {
 					"SELECT p.ID FROM {$wpdb->posts} p 
                  INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id 
                  INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id 
-                 WHERE p.post_type = 'bdv_documento' 
-                 AND pm1.meta_key = '_bdv_usuario_id' AND pm1.meta_value = %d 
-                 AND pm2.meta_key = '_bdv_actividad_id' AND pm2.meta_value = %d 
+                 WHERE p.post_type = 'conv_documento' 
+                 AND pm1.meta_key = '_conv_usuario_id' AND pm1.meta_value = %d 
+                 AND pm2.meta_key = '_conv_actividad_id' AND pm2.meta_value = %d 
                  AND p.post_status = 'publish' 
                  FOR UPDATE",
 					$user_id,
@@ -114,22 +114,22 @@ class PDF_Compromiso {
 				return (int) $existing_id;
 			}
 
-			if ( ! class_exists( '\\Convoca\\Core\\BDV_Signature' ) ) {
+			if ( ! class_exists( '\\Convoca\\Core\\CONV_Signature' ) ) {
 				$wpdb->query( 'ROLLBACK' );
 				wp_delete_post( $temp_post_id, true );
 				$error            = __( 'La clase de firma digital no se encuentra disponible.', 'convoca-enroll' );
 				self::$last_error = $error;
-				error_log( 'Biodevas Enroll: BDV_Signature class not found.' );
+				error_log( 'Biodevas Enroll: CONV_Signature class not found.' );
 				if ( is_admin() ) {
 					set_transient( self::ERROR_TRANSIENT . get_current_user_id(), $error, 30 );
 				}
 				return null;
 			}
 
-			$signature = new \Convoca\Core\BDV_Signature();
+			$signature = new \Convoca\Core\CONV_Signature();
 
 			// Datos del Voluntario.
-			$dni = get_user_meta( $user_id, '_cst_dni', true ) ?: ( get_user_meta( $user_id, '_bdv_dni', true ) ?: 'N/A' );
+			$dni = get_user_meta( $user_id, '_cst_dni', true ) ?: ( get_user_meta( $user_id, '_conv_dni', true ) ?: 'N/A' );
 
 			$meta_act         = CPT_Actividad::get_meta( $actividad_id );
 			$titulo_actividad = $actividad->post_title;
@@ -143,13 +143,13 @@ class PDF_Compromiso {
 
 			$content_for_hash = $user_id . $actividad_id . $ip . $timestamp;
 
-			$templates     = get_option( 'bdv_pdf_templates', array() );
+			$templates     = get_option( 'conv_pdf_templates', array() );
 			$template_html = isset( $templates['anexo_voluntariado'] ) ? $templates['anexo_voluntariado']['content'] : '<h1>Anexo de Voluntariado</h1><p>Nombre: {{nombre}}</p><p>DNI: {{dni}}</p><p>Actividad: {{actividad}}</p>';
 
 			$stamp_html = $signature->get_acceptance_stamp_html( $nombre_voluntario, $ip, $timestamp, $content_for_hash );
 
-			if ( strpos( $template_html, '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE BDV_Signature -->' ) !== false ) {
-				$template_html = str_replace( '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE BDV_Signature -->', $stamp_html, $template_html );
+			if ( strpos( $template_html, '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE CONV_Signature -->' ) !== false ) {
+				$template_html = str_replace( '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE CONV_Signature -->', $stamp_html, $template_html );
 			} else {
 				$template_html .= $stamp_html;
 			}
@@ -166,7 +166,7 @@ class PDF_Compromiso {
 
 			// Create upload directory.
 			$upload_dir = wp_upload_dir();
-			$target_dir = $upload_dir['basedir'] . '/biodevas-documentos';
+			$target_dir = $upload_dir['basedir'] . '/convoca-documentos';
 			if ( ! file_exists( $target_dir ) ) {
 				wp_mkdir_p( $target_dir );
 			}
@@ -191,12 +191,12 @@ class PDF_Compromiso {
 			// ── 4. Publish and save meta INSIDE transaction ──
 			$wpdb->update( $wpdb->posts, array( 'post_status' => 'publish' ), array( 'ID' => $temp_post_id ) );
 
-			update_post_meta( $temp_post_id, '_bdv_usuario_id', $user_id );
-			update_post_meta( $temp_post_id, '_bdv_actividad_id', $actividad_id );
-			update_post_meta( $temp_post_id, '_bdv_tipo_documento', 'anexo_voluntariado' );
-			update_post_meta( $temp_post_id, '_bdv_hash', $hash );
-			update_post_meta( $temp_post_id, '_bdv_documento_url', rest_url( 'biodevas/v1/documentos/' . $temp_post_id ) );
-			update_post_meta( $temp_post_id, '_bdv_documento_path', $generated_path );
+			update_post_meta( $temp_post_id, '_conv_usuario_id', $user_id );
+			update_post_meta( $temp_post_id, '_conv_actividad_id', $actividad_id );
+			update_post_meta( $temp_post_id, '_conv_tipo_documento', 'anexo_voluntariado' );
+			update_post_meta( $temp_post_id, '_conv_hash', $hash );
+			update_post_meta( $temp_post_id, '_conv_documento_url', rest_url( 'convoca/v1/documentos/' . $temp_post_id ) );
+			update_post_meta( $temp_post_id, '_conv_documento_path', $generated_path );
 
 			$wpdb->query( 'COMMIT' );
 			return $temp_post_id;

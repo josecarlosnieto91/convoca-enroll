@@ -55,17 +55,17 @@ class Admin_Inscripcion_Form {
 		<div class="wrap" style="max-width: 900px; margin: 20px auto;">
 			<h1><?php esc_html_e( 'Añadir inscripción', 'convoca-enroll' ); ?></h1>
 
-			<div id="bde-admin-alert" class="biodevas-alert" style="display:none"></div>
+			<div id="bde-admin-alert" class="convoca-alert" style="display:none"></div>
 
-			<div class="biodevas-box" style="background: #fff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 40px; margin-top: 20px;">
+			<div class="convoca-box" style="background: #fff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 40px; margin-top: 20px;">
 				<div style="margin-bottom: 30px; border-bottom: 1px solid #f0f0f0; padding-bottom: 20px;">
 					<h2 style="margin: 0; color: #1d2327; font-size: 1.5em;"><?php esc_html_e( 'Nueva Inscripción Manual', 'convoca-enroll' ); ?></h2>
 				</div>
 
 				<form id="bde-admin-inscripcion-form">
-					<div class="biodevas-grid-2">
+					<div class="convoca-grid-2">
 						<!-- Activity Selection -->
-						<div class="biodevas-field" style="grid-column: 1 / -1;">
+						<div class="convoca-field" style="grid-column: 1 / -1;">
 							<label for="bde-admin-actividad">Actividad</label>
 							<select id="bde-admin-actividad" name="actividad_id" required>
 								<option value="">— Seleccionar actividad —</option>
@@ -84,25 +84,25 @@ class Admin_Inscripcion_Form {
 						<h3 style="grid-column: 1 / -1; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e0e0e0; color: #646970; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Datos del Participante</h3>
 
 						<!-- Name -->
-						<div class="biodevas-field">
+						<div class="convoca-field">
 							<label for="bde-admin-nombre">Nombre completo</label>
 							<input type="text" id="bde-admin-nombre" name="nombre" required>
 						</div>
 
 						<!-- Email -->
-						<div class="biodevas-field">
+						<div class="convoca-field">
 							<label for="bde-admin-email">Email</label>
 							<input type="email" id="bde-admin-email" name="email" required>
 						</div>
 
 						<!-- Phone -->
-						<div class="biodevas-field">
+						<div class="convoca-field">
 							<label for="bde-admin-telefono">Teléfono</label>
 							<input type="tel" id="bde-admin-telefono" name="telefono">
 						</div>
 
 						<!-- DNI -->
-						<div class="biodevas-field">
+						<div class="convoca-field">
 							<label for="bde-admin-dni">DNI/NIE</label>
 							<input type="text" id="bde-admin-dni" name="dni">
 						</div>
@@ -110,7 +110,7 @@ class Admin_Inscripcion_Form {
 						<h3 style="grid-column: 1 / -1; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e0e0e0; color: #646970; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Configuración de Inscripción</h3>
 
 						<!-- Type -->
-						<div class="biodevas-field">
+						<div class="convoca-field">
 							<label for="bde-admin-tipo">Tipo inscripción</label>
 							<select id="bde-admin-tipo" name="tipo_inscripcion">
 								<option value="socio">Socio/a</option>
@@ -120,7 +120,7 @@ class Admin_Inscripcion_Form {
 						</div>
 
 						<!-- Status -->
-						<div class="biodevas-field">
+						<div class="convoca-field">
 							<label for="bde-admin-estado">Estado</label>
 							<select id="bde-admin-estado" name="estado">
 								<?php foreach ( CPT_Inscripcion::LABELS as $key => $label ) : ?>
@@ -132,7 +132,7 @@ class Admin_Inscripcion_Form {
 						</div>
 
 						<!-- WhatsApp -->
-						<div class="biodevas-field">
+						<div class="convoca-field">
 							<label for="bde-admin-whatsapp">WhatsApp</label>
 							<select id="bde-admin-whatsapp" name="whatsapp">
 								<option value="si">Sí</option>
@@ -141,7 +141,7 @@ class Admin_Inscripcion_Form {
 						</div>
 
 						<!-- Payment -->
-						<div class="biodevas-field" style="display: flex; align-items: flex-end; padding-bottom: 10px;">
+						<div class="convoca-field" style="display: flex; align-items: flex-end; padding-bottom: 10px;">
 							<label style="font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
 								<input type="checkbox" id="bde-admin-pagado" name="pagado" value="1" style="margin: 0; transform: scale(1.2);">
 								Marcado como pagado
@@ -149,17 +149,17 @@ class Admin_Inscripcion_Form {
 						</div>
 
 						<!-- Notes -->
-						<div class="biodevas-field" style="grid-column: 1 / -1;">
+						<div class="convoca-field" style="grid-column: 1 / -1;">
 							<label for="bde-admin-notas">Notas</label>
 							<textarea id="bde-admin-notas" name="notas" rows="3" style="height: auto;"></textarea>
 						</div>
 					</div>
 
 					<div style="margin-top: 40px; display: flex; justify-content: flex-end; gap: 15px; align-items: center;">
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-core-enroll' ) ); ?>" class="biodevas-btn biodevas-btn-outline">
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-core-enroll' ) ); ?>" class="convoca-btn convoca-btn-outline">
 							&larr; Volver al listado
 						</a>
-						<button type="submit" class="biodevas-btn biodevas-btn-primary">
+						<button type="submit" class="convoca-btn convoca-btn-primary">
 							Crear inscripción
 						</button>
 					</div>
@@ -190,12 +190,12 @@ class Admin_Inscripcion_Form {
 						.then(r => r.json())
 						.then(res => {
 							if (res.success) {
-								alert.className = 'biodevas-alert biodevas-alert--success';
+								alert.className = 'convoca-alert convoca-alert--success';
 								alert.innerHTML = '<p>✅ Inscripción creada correctamente (ID: ' + res.data.inscripcion_id + '). <a href="' + res.data.detail_url + '">Ver detalle →</a></p>';
 								alert.style.display = 'block';
 								form.reset();
 							} else {
-								alert.className = 'biodevas-alert biodevas-alert--danger';
+								alert.className = 'convoca-alert convoca-alert--danger';
 								alert.innerHTML = '<p>❌ ' + (res.data?.errors?.join('<br>') || res.data || 'Error desconocido') + '</p>';
 								alert.style.display = 'block';
 							}
@@ -203,7 +203,7 @@ class Admin_Inscripcion_Form {
 							btn.textContent = 'Crear inscripción';
 						})
 						.catch(() => {
-							alert.className = 'biodevas-alert biodevas-alert--danger';
+							alert.className = 'convoca-alert convoca-alert--danger';
 							alert.innerHTML = '<p>❌ Error de conexión.</p>';
 							alert.style.display = 'block';
 							btn.disabled = false;

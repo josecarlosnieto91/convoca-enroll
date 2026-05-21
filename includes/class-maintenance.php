@@ -164,7 +164,7 @@ class Maintenance {
 		// 3. Clean old logs.
 		$settings   = get_option( 'bde_settings', array() );
 		$days       = (int) ( $settings['log_retention_days'] ?? 30 );
-		$table_name = $wpdb->prefix . 'biodevas_logs';
+		$table_name = $wpdb->prefix . 'convoca_logs';
 
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name ) {
 			$deleted               = $wpdb->query(

@@ -2,7 +2,7 @@
 /**
  * Public user panel: check and cancel reservations via email + code.
  *
- * Shortcode: [biodevas_panel_reservas]
+ * Shortcode: [convoca_panel_reservas]
  *
  * @package Convoca\Enroll
  */
@@ -27,8 +27,8 @@ class Panel_Reservas {
 	/* ── Shortcode ─────────────────────────────── */
 
 	public function shortcode( $atts ): string {
-		wp_enqueue_style( 'bde-panel', BDE_URL . 'assets/css/biodevas-enroll-panel.css', array(), BDE_VERSION );
-		wp_enqueue_script( 'bde-panel', BDE_URL . 'assets/js/biodevas-enroll-panel.js', array( 'convoca-common-js' ), BDE_VERSION, true );
+		wp_enqueue_style( 'bde-panel', BDE_URL . 'assets/css/convoca-enroll-panel.css', array(), BDE_VERSION );
+		wp_enqueue_script( 'bde-panel', BDE_URL . 'assets/js/convoca-enroll-panel.js', array( 'convoca-common-js' ), BDE_VERSION, true );
 		wp_localize_script(
 			'bde-panel',
 			'bdePanel',
@@ -167,7 +167,7 @@ class Panel_Reservas {
 				'ubicacion'         => $act ? ( CPT_Actividad::get_meta_value( $act_id, 'ubicacion' ) ?: '—' ) : '—',
 				'estado'            => $estado,
 				'estado_label'      => CPT_Inscripcion::LABELS[ $estado ] ?? $estado,
-				'estado_class'      => CPT_Inscripcion::BADGE_CLASSES[ $estado ] ?? 'biodevas-badge',
+				'estado_class'      => CPT_Inscripcion::BADGE_CLASSES[ $estado ] ?? 'convoca-badge',
 				'codigo'            => $m( 'codigo_reserva' ),
 				'es_menor'          => $es_menor,
 				'participante'      => $es_menor ? $m( 'nombre_participante' ) : $m( 'nombre' ),

@@ -81,7 +81,7 @@ class CSV_Exporter {
 
 		$posts = get_posts( $args );
 
-		$filename = 'inscripciones-biodevas-' . gmdate( 'Y-m-d' ) . '.csv';
+		$filename = 'inscripciones-convoca-' . gmdate( 'Y-m-d' ) . '.csv';
 
 		// Send headers directly (csv_headers opens/closes stream causing BOM loss).
 		header( 'Content-Type: text/csv; charset=utf-8' );

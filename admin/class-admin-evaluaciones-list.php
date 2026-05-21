@@ -9,8 +9,8 @@ class Admin_Evaluaciones_List {
 
 	public static function init() {
 		// add_action( 'admin_menu', [ __CLASS__, 'add_submenu_page' ] ); // Handled by CPT show_in_menu.
-		add_filter( 'manage_bdv_evaluacion_posts_columns', array( __CLASS__, 'set_custom_columns' ) );
-		add_action( 'manage_bdv_evaluacion_posts_custom_column', array( __CLASS__, 'custom_column_content' ), 10, 2 );
+		add_filter( 'manage_conv_evaluacion_posts_columns', array( __CLASS__, 'set_custom_columns' ) );
+		add_action( 'manage_conv_evaluacion_posts_custom_column', array( __CLASS__, 'custom_column_content' ), 10, 2 );
 		add_action( 'restrict_manage_posts', array( __CLASS__, 'add_custom_filters' ) );
 		add_action( 'pre_get_posts', array( __CLASS__, 'filter_evaluations_by_activity' ) );
 	}
@@ -29,7 +29,7 @@ class Admin_Evaluaciones_List {
 	public static function custom_column_content( $column, $post_id ) {
 		switch ( $column ) {
 			case 'actividad':
-				$actividad_id = get_post_meta( $post_id, '_bdv_eval_actividad_id', true );
+				$actividad_id = get_post_meta( $post_id, '_conv_eval_actividad_id', true );
 				if ( $actividad_id ) {
 					$edit_link = get_edit_post_link( $actividad_id );
 					$title     = get_the_title( $actividad_id );
@@ -40,7 +40,7 @@ class Admin_Evaluaciones_List {
 				break;
 
 			case 'evaluador':
-				$usuario_id = get_post_meta( $post_id, '_bdv_eval_usuario_id', true );
+				$usuario_id = get_post_meta( $post_id, '_conv_eval_usuario_id', true );
 				if ( $usuario_id ) {
 					$user = get_userdata( $usuario_id );
 					if ( $user ) {
@@ -55,10 +55,10 @@ class Admin_Evaluaciones_List {
 				break;
 
 			case 'puntuacion':
-				$g = (int) get_post_meta( $post_id, '_bdv_eval_gestion', true );
-				$i = (int) get_post_meta( $post_id, '_bdv_eval_instalaciones', true );
-				$p = (int) get_post_meta( $post_id, '_bdv_eval_participantes', true );
-				$c = (int) get_post_meta( $post_id, '_bdv_eval_comunicacion', true );
+				$g = (int) get_post_meta( $post_id, '_conv_eval_gestion', true );
+				$i = (int) get_post_meta( $post_id, '_conv_eval_instalaciones', true );
+				$p = (int) get_post_meta( $post_id, '_conv_eval_participantes', true );
+				$c = (int) get_post_meta( $post_id, '_conv_eval_comunicacion', true );
 
 				$count = 0;
 				$sum   = 0;
@@ -96,7 +96,7 @@ class Admin_Evaluaciones_List {
 
 	public static function add_custom_filters() {
 		global $typenow;
-		if ( $typenow == 'bdv_evaluacion' ) {
+		if ( $typenow == 'conv_evaluacion' ) {
 			$actividades = get_posts(
 				array(
 					'post_type'      => 'actividad',
@@ -128,8 +128,8 @@ class Admin_Evaluaciones_List {
 			$type = $_GET['post_type'];
 		}
 
-		if ( 'bdv_evaluacion' == $type && is_admin() && $pagenow == 'edit.php' && isset( $_GET['filter_actividad'] ) && $_GET['filter_actividad'] > 0 ) {
-			$query->query_vars['meta_key']   = '_bdv_eval_actividad_id';
+		if ( 'conv_evaluacion' == $type && is_admin() && $pagenow == 'edit.php' && isset( $_GET['filter_actividad'] ) && $_GET['filter_actividad'] > 0 ) {
+			$query->query_vars['meta_key']   = '_conv_eval_actividad_id';
 			$query->query_vars['meta_value'] = intval( $_GET['filter_actividad'] );
 		}
 	}

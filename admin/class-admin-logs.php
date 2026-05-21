@@ -18,7 +18,7 @@ class Admin_Logs {
 	 */
 	public static function render(): void {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'biodevas_logs';
+		$table_name = $wpdb->prefix . 'convoca_logs';
 
 		// Check if table exists.
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {

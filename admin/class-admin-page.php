@@ -34,7 +34,7 @@ class Admin_Page {
 	 */
 	public function fix_menu_highlight( $parent_file ) {
 		global $current_screen;
-		if ( $current_screen->post_type === 'bdv_evaluacion' ) {
+		if ( $current_screen->post_type === 'conv_evaluacion' ) {
 			return 'convoca-enroll';
 		}
 		return $parent_file;
@@ -45,7 +45,7 @@ class Admin_Page {
 	 */
 	public function fix_submenu_highlight( $submenu_file ) {
 		global $current_screen;
-		if ( $current_screen->post_type === 'bdv_evaluacion' ) {
+		if ( $current_screen->post_type === 'conv_evaluacion' ) {
 			return 'bde-evaluaciones';
 		}
 		return $submenu_file;
@@ -186,8 +186,8 @@ class Admin_Page {
 		if ( strpos( $hook, 'bde-' ) === false && strpos( $hook, 'page_bde' ) === false ) {
 			return;
 		}
-		wp_enqueue_style( 'bde-admin', BDE_URL . 'assets/css/biodevas-enroll-admin.css', array(), BDE_VERSION );
-		wp_enqueue_script( 'bde-admin', BDE_URL . 'assets/js/biodevas-enroll-admin.js', array( 'biodevas-common-admin-js' ), BDE_VERSION, true );
+		wp_enqueue_style( 'bde-admin', BDE_URL . 'assets/css/convoca-enroll-admin.css', array(), BDE_VERSION );
+		wp_enqueue_script( 'bde-admin', BDE_URL . 'assets/js/convoca-enroll-admin.js', array( 'convoca-common-admin-js' ), BDE_VERSION, true );
 		wp_localize_script(
 			'bde-admin',
 			'bdeAdmin',
@@ -202,7 +202,7 @@ class Admin_Page {
 		}
 
 		if ( isset( $_GET['page'] ) && $_GET['page'] === 'convoca-enroll' ) {
-			wp_enqueue_script( 'bde-admin-js', BDE_URL . 'assets/js/biodevas-enroll-admin.js', array( 'biodevas-common-admin-js' ), BDE_VERSION, true );
+			wp_enqueue_script( 'bde-admin-js', BDE_URL . 'assets/js/convoca-enroll-admin.js', array( 'convoca-common-admin-js' ), BDE_VERSION, true );
 		}
 
 		if ( isset( $_GET['page'] ) && $_GET['page'] === 'bde-informes' ) {
@@ -210,7 +210,7 @@ class Admin_Page {
 		}
 
 		if ( $hook === 'actividad_page_bde-monitor-crm' ) {
-			wp_enqueue_script( 'bde-crm', BDE_URL . 'assets/js/biodevas-enroll-crm.js', array( 'biodevas-common-admin-js' ), BDE_VERSION, true );
+			wp_enqueue_script( 'bde-crm', BDE_URL . 'assets/js/convoca-enroll-crm.js', array( 'convoca-common-admin-js' ), BDE_VERSION, true );
 			wp_localize_script(
 				'bde-crm',
 				'bdeCrm',
@@ -294,7 +294,7 @@ class Admin_Page {
 	public function render_evaluaciones(): void {
 		// Redirect to the standard WP evaluation list,.
 		// which already has custom columns and filters via Admin_Evaluaciones_List.
-		wp_safe_redirect( admin_url( 'edit.php?post_type=bdv_evaluacion' ) );
+		wp_safe_redirect( admin_url( 'edit.php?post_type=conv_evaluacion' ) );
 		exit;
 	}
 
@@ -316,8 +316,8 @@ class Admin_Page {
 		require_once BDE_DIR . 'admin/class-admin-inscripciones.php';
 		$table = new Inscriptions_List();
 		$table->prepare_items();
-		echo '<form method="get"><input type="hidden" name="page" value="biodevas-enroll">';
-		wp_nonce_field( 'bulk-inscripciones', '_bdv_nonce', true, false );
+		echo '<form method="get"><input type="hidden" name="page" value="convoca-enroll">';
+		wp_nonce_field( 'bulk-inscripciones', '_conv_nonce', true, false );
 		$table->search_box( __( 'Buscar', 'convoca-enroll' ), 'bde-search' );
 		$table->display();
 		echo '</form></div>';
@@ -599,7 +599,7 @@ class Admin_Page {
 				<h3>📝 <?php esc_html_e( 'Notas internas', 'convoca-enroll' ); ?></h3>
 				<textarea id="bde-internal-notes" rows="4" style="width:100%;"><?php echo esc_textarea( get_post_meta( $id, '_bde_notas', true ) ); ?></textarea>
 				<div style="margin-top:8px;display:flex;gap:10px;align-items:center;">
-					<button type="button" id="bde-save-notes" class="biodevas-btn biodevas-btn-outline" data-id="<?php echo $id; ?>"><?php esc_html_e( 'Guardar nota', 'convoca-enroll' ); ?></button>
+					<button type="button" id="bde-save-notes" class="convoca-btn convoca-btn-outline" data-id="<?php echo $id; ?>"><?php esc_html_e( 'Guardar nota', 'convoca-enroll' ); ?></button>
 					<span id="bde-notes-status" style="font-size:12px;color:#999;"></span>
 				</div>
 			</div>
@@ -768,7 +768,7 @@ class Admin_Page {
 			);
 		}
 
-		\biodevas_export_pdf( __( 'Listado de Inscripciones', 'convoca-enroll' ), $headers, $rows, 'inscripciones-biodevas' );
+		\convoca_export_pdf( __( 'Listado de Inscripciones', 'convoca-enroll' ), $headers, $rows, 'inscripciones-convoca' );
 	}
 
 	public function render_email_queue(): void {

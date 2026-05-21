@@ -35,7 +35,7 @@ class Volunteer_Hour_Tracker {
 		}
 
 		// Check if user is a volunteer.
-		if ( ! in_array( 'voluntario_aprobado', (array) $user->roles ) && ! $user->has_cap( 'gestionar_mis_turnos' ) && ! get_user_meta( $user->ID, '_bdv_es_voluntario', true ) ) {
+		if ( ! in_array( 'voluntario_aprobado', (array) $user->roles ) && ! $user->has_cap( 'gestionar_mis_turnos' ) && ! get_user_meta( $user->ID, '_conv_es_voluntario', true ) ) {
 			return;
 		}
 
@@ -86,7 +86,7 @@ class Volunteer_Hour_Tracker {
 		}
 
 		global $wpdb;
-		$meta_key_total = '_bdv_horas_voluntariado_total';
+		$meta_key_total = '_conv_horas_voluntariado_total';
 
 		$wpdb->query( 'START TRANSACTION' );
 
@@ -122,7 +122,7 @@ class Volunteer_Hour_Tracker {
 		$email = $user->user_email;
 
 		global $wpdb;
-		$meta_key_total   = '_bdv_horas_voluntariado_total';
+		$meta_key_total   = '_conv_horas_voluntariado_total';
 		$meta_key_counted = '_bde_horas_contadas';
 
 		$wpdb->query( 'START TRANSACTION' );
@@ -204,7 +204,7 @@ class Volunteer_Hour_Tracker {
 				$members = get_posts(
 					array(
 						'post_type'      => 'miembro',
-						'meta_key'       => '_bdv_email',
+						'meta_key'       => '_conv_email',
 						'meta_value'     => $email,
 						'posts_per_page' => 1,
 						'fields'         => 'ids',
@@ -212,19 +212,19 @@ class Volunteer_Hour_Tracker {
 				);
 
 				if ( ! empty( $members ) ) {
-					update_post_meta( $log_id, '_bdv_miembro_id', $members[0] );
+					update_post_meta( $log_id, ' _conv_miembro_id', $members[0] );
 				}
 
-				update_post_meta( $log_id, '_bdv_usuario_id', $user->ID );
-				update_post_meta( $log_id, '_bdv_fecha', wp_date( 'Y-m-d' ) );
-				update_post_meta( $log_id, '_bdv_horas', $hours );
-				update_post_meta( $log_id, '_bdv_actividad_id', $actividad_id );
-				update_post_meta( $log_id, '_bdv_estado', 'aprobada' );
-				update_post_meta( $log_id, '_bdv_tareas', 'Asistencia a actividad programada' );
+				update_post_meta( $log_id, '_conv_usuario_id', $user->ID );
+				update_post_meta( $log_id, '_conv_fecha', wp_date( 'Y-m-d' ) );
+				update_post_meta( $log_id, '_conv_horas', $hours );
+				update_post_meta( $log_id, '_conv_actividad_id', $actividad_id );
+				update_post_meta( $log_id, '_conv_estado', 'aprobada' );
+				update_post_meta( $log_id, '_conv_tareas', 'Asistencia a actividad programada' );
 			}
 		} else {
 			\Convoca\Core\Logger::warning(
-				"Horas de voluntariado no registradas: CPT 'registro_hora' no disponible. Activa biodevas-members.",
+				"Horas de voluntariado no registradas: CPT 'registro_hora' no disponible. Activa convoca-members.",
 				'Enroll/Volunteer',
 				$actividad_id
 			);
@@ -236,7 +236,7 @@ class Volunteer_Hour_Tracker {
 			$inscripcion_id
 		);
 
-		\Convoca\Core\Utils::do_action( 'bdv_after_horas_voluntario_actualizadas', 'bdv_horas_voluntario_actualizadas', $user->ID, $hours );
+		\Convoca\Core\Utils::do_action( 'conv_after_horas_voluntario_actualizadas', 'conv_horas_voluntario_actualizadas', $user->ID, $hours );
 	}
 
 	/**

@@ -77,7 +77,7 @@
 
     function renderList(reservas) {
         listContainer.innerHTML = reservas.map(r => `
-            <div class="bde-panel-card biodevas-card ${r.estado === 'cancelada' ? 'bde-panel-card--cancelled' : ''}" data-id="${r.id}">
+            <div class="bde-panel-card convoca-card ${r.estado === 'cancelada' ? 'bde-panel-card--cancelled' : ''}" data-id="${r.id}">
                 <div class="bde-panel-card-header">
                     <h4 class="bde-panel-card-title">${escHtml(r.actividad)}</h4>
                     <span class="${escHtml(r.estado_class)}">${escHtml(r.estado_label)}</span>
@@ -179,4 +179,4 @@
         return div.innerHTML;
     }
 
-})(window.biodevas || {});
+})(window.convoca || {});

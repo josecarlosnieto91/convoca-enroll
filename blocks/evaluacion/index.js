@@ -6,7 +6,7 @@
     var PanelBody = components.PanelBody;
     var TextControl = components.TextControl;
 
-    blocks.registerBlockType( 'biodevas-enroll/evaluacion', {
+    blocks.registerBlockType( 'convoca-enroll/evaluacion', {
         apiVersion: 3,
         edit: function( props ) {
             var attributes = props.attributes;
@@ -15,9 +15,9 @@
 
             return el( 'div', blockProps,
                 el( InspectorControls, {},
-                    el( PanelBody, { title: __( 'Ajustes de Evaluación', 'biodevas-enroll' ) },
+                    el( PanelBody, { title: __( 'Ajustes de Evaluación', 'convoca-enroll' ) },
                         el( TextControl, {
-                            label: __( 'ID de la Actividad', 'biodevas-enroll' ),
+                            label: __( 'ID de la Actividad', 'convoca-enroll' ),
                             value: attributes.actividadId || '',
                             onChange: function( val ) {
                                 setAttributes( { actividadId: parseInt( val, 10 ) || 0 } );
@@ -27,15 +27,15 @@
                     )
                 ),
                 el( 'div', { style: { padding: '20px', border: '1px dashed #ccc', background: '#f9f9f9' } },
-                    el( 'h3', {}, __( 'Formulario de Evaluación (Biodevas)', 'biodevas-enroll' ) ),
+                    el( 'h3', {}, __( 'Formulario de Evaluación (Biodevas)', 'convoca-enroll' ) ),
                     attributes.actividadId ? 
                         el( 'p', {}, 
-                            __( 'Mostrando evaluación para la actividad ID:', 'biodevas-enroll' ),
+                            __( 'Mostrando evaluación para la actividad ID:', 'convoca-enroll' ),
                             ' ',
                             el( 'strong', {}, attributes.actividadId )
                         ) :
-                        el( 'p', { style: { color: 'red' } }, __( 'Por favor, configura el ID de la actividad en el panel lateral.', 'biodevas-enroll' ) ),
-                    el( 'p', {}, el( 'em', {}, __( 'Este bloque se renderizará dinámicamente en el frontend según los permisos del usuario.', 'biodevas-enroll' ) ) )
+                        el( 'p', { style: { color: 'red' } }, __( 'Por favor, configura el ID de la actividad en el panel lateral.', 'convoca-enroll' ) ),
+                    el( 'p', {}, el( 'em', {}, __( 'Este bloque se renderizará dinámicamente en el frontend según los permisos del usuario.', 'convoca-enroll' ) ) )
                 )
             );
         },

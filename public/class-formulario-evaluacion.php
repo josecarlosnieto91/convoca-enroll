@@ -10,18 +10,18 @@ class Formulario_Evaluacion {
 	public static function init() {
 		add_shortcode( 'convoca_evaluacion', array( __CLASS__, 'render_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
-		add_action( 'wp_ajax_bdv_submit_evaluacion', array( __CLASS__, 'handle_submission' ) );
-		add_action( 'wp_ajax_nopriv_bdv_submit_evaluacion', array( __CLASS__, 'handle_submission' ) );
+		add_action( 'wp_ajax_conv_submit_evaluacion', array( __CLASS__, 'handle_submission' ) );
+		add_action( 'wp_ajax_nopriv_conv_submit_evaluacion', array( __CLASS__, 'handle_submission' ) );
 
-		add_action( 'wp_ajax_bdv_eval_get_nonce', array( __CLASS__, 'get_nonce' ) );
-		add_action( 'wp_ajax_nopriv_bdv_eval_get_nonce', array( __CLASS__, 'get_nonce' ) );
+		add_action( 'wp_ajax_conv_eval_get_nonce', array( __CLASS__, 'get_nonce' ) );
+		add_action( 'wp_ajax_nopriv_conv_eval_get_nonce', array( __CLASS__, 'get_nonce' ) );
 	}
 
 	public static function get_nonce() {
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'bdv_eval_get_nonce', 30, 3600 ) ) {
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'conv_eval_get_nonce', 30, 3600 ) ) {
 			wp_send_json_error( array( 'message' => __( 'Demasiadas peticiones.', 'convoca-enroll' ) ), 429 );
 		}
-		wp_send_json_success( wp_create_nonce( 'bdv_evaluacion_nonce' ) );
+		wp_send_json_success( wp_create_nonce( 'conv_evaluacion_nonce' ) );
 	}
 
 	public static function enqueue_assets() {
@@ -31,10 +31,10 @@ class Formulario_Evaluacion {
 
 		wp_localize_script(
 			'bdv-evaluacion-js',
-			'bdv_eval_ajax',
+			'conv_eval_ajax',
 			array(
 				'url'   => admin_url( 'admin-ajax.php' ),
-				'nonce' => wp_create_nonce( 'bdv_evaluacion_nonce' ),
+				'nonce' => wp_create_nonce( 'conv_evaluacion_nonce' ),
 			)
 		);
 	}
@@ -70,14 +70,14 @@ class Formulario_Evaluacion {
 		// 1. Check if user already evaluated
 		$existing = get_posts(
 			array(
-				'post_type'      => 'bdv_evaluacion',
+				'post_type'      => 'conv_evaluacion',
 				'meta_query'     => array(
 					array(
-						'key'   => '_bdv_eval_actividad_id',
+						'key'   => '_conv_eval_actividad_id',
 						'value' => $actividad_id,
 					),
 					array(
-						'key'   => '_bdv_eval_usuario_id',
+						'key'   => '_conv_eval_usuario_id',
 						'value' => $user->ID,
 					),
 				),
@@ -146,8 +146,8 @@ class Formulario_Evaluacion {
 			<h3><?php printf( __( 'Evaluar Actividad: %s', 'convoca-enroll' ), get_the_title( $actividad_id ) ); ?></h3>
 			<form id="bdv-evaluacion-form" method="post">
 				<input type="hidden" name="actividad_id" value="<?php echo esc_attr( $actividad_id ); ?>">
-				<input type="hidden" name="action" value="bdv_submit_evaluacion">
-				<?php wp_nonce_field( 'bdv_evaluacion_nonce', 'security' ); ?>
+				<input type="hidden" name="action" value="conv_submit_evaluacion">
+				<?php wp_nonce_field( 'conv_evaluacion_nonce', 'security' ); ?>
 
 				<div class="bdv-eval-section">
 					<h4><?php _e( '1. Valoraciones numéricas', 'convoca-enroll' ); ?></h4>
@@ -235,9 +235,9 @@ class Formulario_Evaluacion {
 	}
 
 	public static function handle_submission() {
-		check_ajax_referer( 'bdv_evaluacion_nonce', 'security' );
+		check_ajax_referer( 'conv_evaluacion_nonce', 'security' );
 
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'bdv_submit_evaluacion', 10, 3600 ) ) {
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'conv_submit_evaluacion', 10, 3600 ) ) {
 			wp_send_json_error( __( 'Demasiados intentos. Inténtalo de nuevo más tarde.', 'convoca-enroll' ), 429 );
 		}
 
@@ -265,14 +265,14 @@ class Formulario_Evaluacion {
 		// Check if already evaluated.
 		$existing = get_posts(
 			array(
-				'post_type'      => 'bdv_evaluacion',
+				'post_type'      => 'conv_evaluacion',
 				'meta_query'     => array(
 					array(
-						'key'   => '_bdv_eval_actividad_id',
+						'key'   => '_conv_eval_actividad_id',
 						'value' => $actividad_id,
 					),
 					array(
-						'key'   => '_bdv_eval_usuario_id',
+						'key'   => '_conv_eval_usuario_id',
 						'value' => $user->ID,
 					),
 				),
@@ -285,7 +285,7 @@ class Formulario_Evaluacion {
 		}
 
 		// Lock to prevent race conditions.
-		$lock_key = 'bdv_eval_lock_' . $user->ID . '_' . $actividad_id;
+		$lock_key = 'conv_eval_lock_' . $user->ID . '_' . $actividad_id;
 		if ( get_transient( $lock_key ) ) {
 			wp_send_json_error( __( 'Estamos procesando tu solicitud, por favor espera.', 'convoca-enroll' ) );
 		}
@@ -307,7 +307,7 @@ class Formulario_Evaluacion {
 		$post_data = array(
 			'post_title'  => wp_strip_all_tags( $title ),
 			'post_status' => 'publish',
-			'post_type'   => 'bdv_evaluacion',
+			'post_type'   => 'conv_evaluacion',
 		);
 
 		$eval_id = wp_insert_post( $post_data );
@@ -318,12 +318,12 @@ class Formulario_Evaluacion {
 		}
 
 		// Save metadata.
-		update_post_meta( $eval_id, '_bdv_eval_actividad_id', $actividad_id );
-		update_post_meta( $eval_id, '_bdv_eval_usuario_id', $user->ID );
-		update_post_meta( $eval_id, '_bdv_eval_fecha', current_time( 'mysql' ) );
+		update_post_meta( $eval_id, '_conv_eval_actividad_id', $actividad_id );
+		update_post_meta( $eval_id, '_conv_eval_usuario_id', $user->ID );
+		update_post_meta( $eval_id, '_conv_eval_fecha', current_time( 'mysql' ) );
 
 		foreach ( $ratings as $field => $val ) {
-			update_post_meta( $eval_id, '_bdv_eval_' . $field, $val );
+			update_post_meta( $eval_id, '_conv_eval_' . $field, $val );
 		}
 
 		$text_fields = array(
@@ -338,11 +338,11 @@ class Formulario_Evaluacion {
 		);
 		foreach ( $text_fields as $field ) {
 			$val = isset( $_POST[ $field ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ $field ] ) ) : '';
-			update_post_meta( $eval_id, '_bdv_eval_' . $field, $val );
+			update_post_meta( $eval_id, '_conv_eval_' . $field, $val );
 		}
 
 		// Hook for integrations.
-		do_action( 'bdv_evaluacion_completada', $eval_id, $actividad_id, $user->ID );
+		do_action( 'conv_evaluacion_completada', $eval_id, $actividad_id, $user->ID );
 
 		wp_send_json_success( __( 'Evaluación enviada con éxito. ¡Gracias por tu colaboración!', 'convoca-enroll' ) );
 	}

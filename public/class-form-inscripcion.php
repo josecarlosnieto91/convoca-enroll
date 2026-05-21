@@ -1,6 +1,6 @@
 <?php
 /**
- * Public form: shortcode [biodevas_inscripcion] + render_callback for block.
+ * Public form: shortcode [convoca_inscripcion] + render_callback for block.
  *
  * @package Convoca\Enroll
  */
@@ -31,7 +31,7 @@ class Form_Inscripcion {
 				'mostrar_precios' => true,
 			),
 			$atts,
-			'biodevas_inscripcion'
+			'convoca_inscripcion'
 		);
 
 		return $this->render_form( (int) $atts['id'], $atts );
@@ -47,13 +47,13 @@ class Form_Inscripcion {
 
 		$actividad = get_post( $actividad_id );
 		if ( ! $actividad || $actividad->post_type !== 'actividad' ) {
-			return '<p class="biodevas-alert biodevas-alert--danger">Actividad no encontrada.</p>';
+			return '<p class="convoca-alert convoca-alert--danger">Actividad no encontrada.</p>';
 		}
 
 		$meta = CPT_Actividad::get_meta( $actividad_id );
 
-		wp_enqueue_style( 'bde-public', BDE_URL . 'assets/css/biodevas-enroll-public.css', array(), BDE_VERSION );
-		wp_enqueue_script( 'bde-public', BDE_URL . 'assets/js/biodevas-enroll-public.js', array( 'biodevas-common-js' ), BDE_VERSION, true );
+		wp_enqueue_style( 'bde-public', BDE_URL . 'assets/css/convoca-enroll-public.css', array(), BDE_VERSION );
+		wp_enqueue_script( 'bde-public', BDE_URL . 'assets/js/convoca-enroll-public.js', array( 'convoca-common-js' ), BDE_VERSION, true );
 		wp_localize_script(
 			'bde-public',
 			'bdeEnroll',

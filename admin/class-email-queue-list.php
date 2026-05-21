@@ -48,10 +48,10 @@ class Email_Queue_List extends \WP_List_Table {
 
 	protected function column_status( $item ): string {
 		$badges = array(
-			'pending' => 'biodevas-badge--warning',
-			'sent'    => 'biodevas-badge--success',
-			'failed'  => 'biodevas-badge--error',
-			'sending' => 'biodevas-badge--info',
+			'pending' => 'convoca-badge--warning',
+			'sent'    => 'convoca-badge--success',
+			'failed'  => 'convoca-badge--error',
+			'sending' => 'convoca-badge--info',
 		);
 		$labels = array(
 			'pending' => '⏳ Pendiente',
@@ -59,7 +59,7 @@ class Email_Queue_List extends \WP_List_Table {
 			'failed'  => '❌ Fallido',
 			'sending' => '📤 Enviando',
 		);
-		return '<span class="biodevas-badge ' . ( $badges[ $item->status ] ?? '' ) . '">' . ( $labels[ $item->status ] ?? $item->status ) . '</span>';
+		return '<span class="convoca-badge ' . ( $badges[ $item->status ] ?? '' ) . '">' . ( $labels[ $item->status ] ?? $item->status ) . '</span>';
 	}
 
 	protected function column_retries( $item ): string {
@@ -72,7 +72,7 @@ class Email_Queue_List extends \WP_List_Table {
 
 	protected function column_actions( $item ): string {
 		if ( $item->status === 'failed' || $item->status === 'pending' ) {
-			return '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bde_retry_email&id=' . $item->id ), 'bde_retry_' . $item->id ) ) . '" class="biodevas-btn biodevas-btn-outline" style="padding:2px 8px;font-size:11px;">↻ Reenviar</a>';
+			return '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bde_retry_email&id=' . $item->id ), 'bde_retry_' . $item->id ) ) . '" class="convoca-btn convoca-btn-outline" style="padding:2px 8px;font-size:11px;">↻ Reenviar</a>';
 		}
 		return '—';
 	}
@@ -165,7 +165,7 @@ class Email_Queue_List extends \WP_List_Table {
 			echo '<option value="' . $s . '" ' . selected( $filter_status, $s, false ) . '>' . $l . '</option>';
 		}
 		echo '</select>';
-		submit_button( __( 'Filtrar', 'convoca-enroll' ), 'biodevas-btn biodevas-btn-outline', 'filter_action', false );
+		submit_button( __( 'Filtrar', 'convoca-enroll' ), 'convoca-btn convoca-btn-outline', 'filter_action', false );
 		echo '</div>';
 	}
 }

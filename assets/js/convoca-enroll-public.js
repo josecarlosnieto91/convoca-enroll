@@ -1,6 +1,6 @@
 /**
  * Biodevas Enroll — Public JS
- * Form validation, socio toggle, AJAX submission using biodevas namespaces.
+ * Form validation, socio toggle, AJAX submission using convoca namespaces.
  */
 (function (bdv) {
     'use strict';
@@ -17,7 +17,7 @@
 
         /* RGPD-compliant Auth Load */
         const apiRoot = window.bdeEnroll?.apiRoot || '/wp-json/';
-        fetch(apiRoot + 'biodevas-enroll/v1/me/session-status')
+        fetch(apiRoot + 'convoca-enroll/v1/me/session-status')
             .then(r => r.json())
             .then(data => {
                 if (!data.authenticated) {
@@ -37,7 +37,7 @@
                 }
 
                 // If authenticated, fetch profile data from Members API (Task 3: Security)
-                fetch(apiRoot + 'biodevas/v1/me')
+                fetch(apiRoot + 'convoca/v1/me')
                     .then(r => r.json())
                     .then(member => {
                         if (member.code === 'rest_forbidden' || !member.name) return;
@@ -176,4 +176,4 @@
         });
     });
 
-})(window.biodevas || {});
+})(window.convoca || {});

@@ -164,8 +164,8 @@ class Eval_Reminder_Cron {
 		global $wpdb;
 		$eval_id = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'bdv_evaluacion' AND post_author = %d AND ID IN (
-                SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_bdv_eval_actividad_id' AND meta_value = %d
+				"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'conv_evaluacion' AND post_author = %d AND ID IN (
+                SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_conv_eval_actividad_id' AND meta_value = %d
             )",
 				$user_id,
 				$activity_id

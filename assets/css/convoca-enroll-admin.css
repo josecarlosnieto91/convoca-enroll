@@ -69,7 +69,7 @@
 }
 
 /* ── Badges ───────────────────────────────────── */
-.biodevas-badge {
+.convoca-badge {
     display: inline-block;
     padding: 0.15rem 0.6rem;
     border-radius: 50px;
@@ -77,25 +77,25 @@
     font-weight: 600;
 }
 
-.biodevas-badge--confirmed {
+.convoca-badge--confirmed {
     background: rgba(45, 90, 39, .15);
     color: #1a4a1a;
     font-weight: 700;
 }
 
-.biodevas-badge--pending {
+.convoca-badge--pending {
     background: rgba(255, 135, 0, .15);
     color: #b35900;
     font-weight: 700;
 }
 
-.biodevas-badge--waitlist {
+.convoca-badge--waitlist {
     background: rgba(255, 171, 0, .15);
     color: #805500;
     font-weight: 700;
 }
 
-.biodevas-badge--cancelled {
+.convoca-badge--cancelled {
     background: rgba(125, 0, 50, .1);
     color: #5c0026;
     font-weight: 700;

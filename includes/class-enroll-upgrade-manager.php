@@ -5,7 +5,7 @@
  * Handles database structure upgrades for the enroll plugin.
  *
  * To add a new upgrade:
- * 1. Increment BDE_DB_VERSION in biodevas-enroll.php
+ * 1. Increment BDE_DB_VERSION in convoca-enroll.php
  * 2. Add a callback: '1.1.0' => [$this, 'upgrade_to_1_1_0']
  * 3. Implement the private method with idempotent logic.
  *
@@ -26,7 +26,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 		// Ensure reservation_codes table exists (handles fresh installs where.
 		// activation hook might not have run, or plugin was activated before this fix).
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'biodevas_reservation_codes';
+		$table_name = $wpdb->prefix . 'convoca_reservation_codes';
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) !== $table_name ) {
 			\Convoca\Enroll\Motor_Inscripcion::create_reservation_codes_table();
 		}
@@ -58,7 +58,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 	 */
 	protected function upgrade_to_1_3_0(): void {
 		global $wpdb;
-		$table_name      = $wpdb->prefix . 'biodevas_reservation_codes';
+		$table_name      = $wpdb->prefix . 'convoca_reservation_codes';
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE $table_name (

@@ -1,6 +1,6 @@
 <?php
 /**
- * Listens for biodevas_payment_completed to confirm enroll inscriptions.
+ * Listens for convoca_payment_completed to confirm enroll inscriptions.
  *
  * @package Convoca\Enroll
  */

@@ -9,28 +9,28 @@ class Admin_Evaluacion_Fields {
 
 	public static function init() {
 		add_action( 'add_meta_boxes', array( __CLASS__, 'add_meta_boxes' ) );
-		add_action( 'save_post_bdv_evaluacion', array( __CLASS__, 'save_meta_box' ) );
+		add_action( 'save_post_conv_evaluacion', array( __CLASS__, 'save_meta_box' ) );
 	}
 
 	public static function add_meta_boxes() {
 		add_meta_box(
-			'bdv_evaluacion_details',
+			'conv_evaluacion_details',
 			__( 'Detalles de la Evaluación', 'convoca-enroll' ),
 			array( __CLASS__, 'render_meta_box' ),
-			'bdv_evaluacion',
+			'conv_evaluacion',
 			'normal',
 			'high'
 		);
 	}
 
 	public static function render_meta_box( $post ) {
-		wp_nonce_field( 'bdv_evaluacion_fields', 'bdv_evaluacion_fields_nonce' );
+		wp_nonce_field( 'conv_evaluacion_fields', 'conv_evaluacion_fields_nonce' );
 
-		$actividad_id  = get_post_meta( $post->ID, '_bdv_eval_actividad_id', true );
-		$gestion       = get_post_meta( $post->ID, '_bdv_eval_gestion', true );
-		$instalaciones = get_post_meta( $post->ID, '_bdv_eval_instalaciones', true );
-		$participantes = get_post_meta( $post->ID, '_bdv_eval_participantes', true );
-		$comunicacion  = get_post_meta( $post->ID, '_bdv_eval_comunicacion', true );
+		$actividad_id  = get_post_meta( $post->ID, '_conv_eval_actividad_id', true );
+		$gestion       = get_post_meta( $post->ID, '_conv_eval_gestion', true );
+		$instalaciones = get_post_meta( $post->ID, '_conv_eval_instalaciones', true );
+		$participantes = get_post_meta( $post->ID, '_conv_eval_participantes', true );
+		$comunicacion  = get_post_meta( $post->ID, '_conv_eval_comunicacion', true );
 
 		$actividades = get_posts(
 			array(
@@ -41,9 +41,9 @@ class Admin_Evaluacion_Fields {
 		);
 
 		?>
-		<div class="biodevas-field">
-			<label for="bdv_eval_actividad_id"><?php _e( 'Actividad evaluada', 'convoca-enroll' ); ?></label>
-			<select name="bdv_eval_actividad_id" id="bdv_eval_actividad_id" required>
+		<div class="convoca-field">
+			<label for="conv_eval_actividad_id"><?php _e( 'Actividad evaluada', 'convoca-enroll' ); ?></label>
+			<select name="conv_eval_actividad_id" id="conv_eval_actividad_id" required>
 				<option value=""><?php _e( '— Seleccionar actividad —', 'convoca-enroll' ); ?></option>
 				<?php foreach ( $actividades as $act ) : ?>
 					<option value="<?php echo $act->ID; ?>" <?php selected( $actividad_id, $act->ID ); ?>>
@@ -62,15 +62,15 @@ class Admin_Evaluacion_Fields {
 		);
 
 		foreach ( $ratings as $key => $label ) :
-			$current_val = get_post_meta( $post->ID, '_bdv_eval_' . $key, true );
+			$current_val = get_post_meta( $post->ID, '_conv_eval_' . $key, true );
 			?>
-			<div class="biodevas-field">
+			<div class="convoca-field">
 				<label><?php echo esc_html( $label ); ?></label>
-				<div class="biodevas-rating-stars">
+				<div class="convoca-rating-stars">
 					<?php for ( $i = 1; $i <= 5; $i++ ) : ?>
-						<label class="biodevas-rating-star" title="<?php echo $i; ?>">
-							<input type="radio" name="bdv_eval_<?php echo $key; ?>" value="<?php echo $i; ?>" <?php checked( $current_val, $i ); ?>>
-							<span class="biodevas-star">★</span>
+						<label class="convoca-rating-star" title="<?php echo $i; ?>">
+							<input type="radio" name="conv_eval_<?php echo $key; ?>" value="<?php echo $i; ?>" <?php checked( $current_val, $i ); ?>>
+							<span class="convoca-star">★</span>
 						</label>
 					<?php endfor; ?>
 				</div>
@@ -80,11 +80,11 @@ class Admin_Evaluacion_Fields {
 	}
 
 	public static function save_meta_box( $post_id ) {
-		if ( ! isset( $_POST['bdv_evaluacion_fields_nonce'] ) ) {
+		if ( ! isset( $_POST['conv_evaluacion_fields_nonce'] ) ) {
 			return;
 		}
 
-		if ( ! wp_verify_nonce( $_POST['bdv_evaluacion_fields_nonce'], 'bdv_evaluacion_fields' ) ) {
+		if ( ! wp_verify_nonce( $_POST['conv_evaluacion_fields_nonce'], 'conv_evaluacion_fields' ) ) {
 			return;
 		}
 
@@ -105,20 +105,20 @@ class Admin_Evaluacion_Fields {
 		);
 
 		foreach ( $fields as $field ) {
-			$key = 'bdv_eval_' . $field;
+			$key = 'conv_eval_' . $field;
 			if ( isset( $_POST[ $key ] ) ) {
 				update_post_meta( $post_id, '_' . $key, sanitize_text_field( $_POST[ $key ] ) );
 			}
 		}
 
 		// Auto-save user ID if creating new and is admin/monitor.
-		if ( ! get_post_meta( $post_id, '_bdv_eval_usuario_id', true ) ) {
-			update_post_meta( $post_id, '_bdv_eval_usuario_id', get_current_user_id() );
+		if ( ! get_post_meta( $post_id, '_conv_eval_usuario_id', true ) ) {
+			update_post_meta( $post_id, '_conv_eval_usuario_id', get_current_user_id() );
 		}
 
 		// Auto-save date if not present.
-		if ( ! get_post_meta( $post_id, '_bdv_eval_fecha', true ) ) {
-			update_post_meta( $post_id, '_bdv_eval_fecha', wp_date( 'Y-m-d H:i:s' ) );
+		if ( ! get_post_meta( $post_id, '_conv_eval_fecha', true ) ) {
+			update_post_meta( $post_id, '_conv_eval_fecha', wp_date( 'Y-m-d H:i:s' ) );
 		}
 	}
 }

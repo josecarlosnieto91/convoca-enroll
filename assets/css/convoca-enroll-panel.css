@@ -190,7 +190,7 @@
 
 /* ── Alert success override ───────────────── */
 
-.biodevas-alert--success {
+.convoca-alert--success {
     background: rgba(40, 167, 69, .08);
     border: 1px solid rgba(40, 167, 69, .25);
     color: #155724;

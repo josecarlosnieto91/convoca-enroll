@@ -15,9 +15,9 @@
     const ServerSideRender = wp.serverSideRender || null;
 
     // 1. Formulario de Inscripción
-    registerBlockType('biodevas/formulario-inscripcion', {
+    registerBlockType('convoca/formulario-inscripcion', {
         apiVersion: 3,
-        category: 'biodevas-enroll',
+        category: 'convoca-enroll',
         edit: function (props) {
             const { attributes, setAttributes } = props;
             const { actividadId, mostrarPlazas, mostrarPrecios } = attributes;
@@ -28,7 +28,7 @@
             const [selected, setSelected] = useState(null);
 
             useEffect(function () {
-                wp.apiFetch({ path: '/biodevas-enroll/v1/actividades' })
+                wp.apiFetch({ path: '/convoca-enroll/v1/actividades' })
                     .then(function (data) {
                         setActivities(data);
                         setLoading(false);
@@ -102,9 +102,9 @@
     });
 
     // 2. Panel de Reservas
-    registerBlockType('biodevas-enroll/panel-reservas', {
+    registerBlockType('convoca-enroll/panel-reservas', {
         apiVersion: 3,
-        category: 'biodevas-enroll',
+        category: 'convoca-enroll',
         edit: function () {
             const blockProps = useBlockProps();
             return el('div', { ...blockProps, className: blockProps.className + ' bde-block-preview', style: { ...blockProps.style, padding: '20px', background: '#f0fdf4', border: '2px dashed #059669', borderRadius: '8px', textAlign: 'center' } },
@@ -117,9 +117,9 @@
     });
 
     // 3. Página de Inscripciones
-    registerBlockType('biodevas-enroll/pagina-inscripcion', {
+    registerBlockType('convoca-enroll/pagina-inscripcion', {
         apiVersion: 3,
-        category: 'biodevas-enroll',
+        category: 'convoca-enroll',
         edit: function (props) {
             const blockProps = useBlockProps();
             if (!ServerSideRender) {
@@ -127,7 +127,7 @@
             }
             return el('div', blockProps, 
                 el(ServerSideRender, {
-                    block: 'biodevas-enroll/pagina-inscripcion',
+                    block: 'convoca-enroll/pagina-inscripcion',
                     attributes: props.attributes
                 })
             );
@@ -136,9 +136,9 @@
     });
 
     // 4. Formulario de Evaluación
-    registerBlockType('biodevas-enroll/evaluacion', {
+    registerBlockType('convoca-enroll/evaluacion', {
         apiVersion: 3,
-        category: 'biodevas-enroll',
+        category: 'convoca-enroll',
         edit: function (props) {
             const { attributes, setAttributes } = props;
             const blockProps = useBlockProps();
@@ -172,9 +172,9 @@
     });
 
     // 5. Lista de Espera
-    registerBlockType('biodevas-enroll/lista-espera', {
+    registerBlockType('convoca-enroll/lista-espera', {
         apiVersion: 3,
-        category: 'biodevas-enroll',
+        category: 'convoca-enroll',
         title: 'Lista de espera de actividad',
         icon: 'groups',
         attributes: {
@@ -187,7 +187,7 @@
             const [loading, setLoading] = useState(true);
 
             useEffect(function () {
-                wp.apiFetch({ path: '/biodevas-enroll/v1/actividades' })
+                wp.apiFetch({ path: '/convoca-enroll/v1/actividades' })
                     .then(function (data) { setActivities(data); setLoading(false); })
                     .catch(function () { setLoading(false); });
             }, []);

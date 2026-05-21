@@ -55,7 +55,7 @@
     z-index: 1;
 }
 
-.biodevas-badge--lugg {
+.convoca-badge--lugg {
     background: var(--wp--preset--color--verde, #2d5a27);
     color: var(--wp--preset--color--blanco, #fff);
     padding: 0.15rem 0.6rem;
@@ -114,7 +114,7 @@
     opacity: 1;
 }
 
-/* Common styles removed in favor of biodevas-common.css */
+/* Common styles removed in favor of convoca-common.css */
 
 /* ── Waitlist form ────────────────────────────── */
 .bde-form--waitlist .bde-submit-btn {
@@ -140,7 +140,7 @@
     font-size: 0.95rem;
 }
 
-/* Badges, small styles, etc moved to biodevas-common.css */
+/* Badges, small styles, etc moved to convoca-common.css */
 
 /* ── Print ────────────────────────────────────── */
 @media print {

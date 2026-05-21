@@ -142,7 +142,7 @@ register_activation_hook(
 
 		// Schedule cron events with appropriate intervals.
 		if ( ! wp_next_scheduled( 'convoca_enroll_reminder_7dias' ) ) {
-			wp_schedule_event( time(), 'bdv_weekly', 'convoca_enroll_reminder_7dias' );
+			wp_schedule_event( time(), 'conv_weekly', 'convoca_enroll_reminder_7dias' );
 		}
 		if ( ! wp_next_scheduled( 'convoca_enroll_reminder_24h' ) ) {
 			wp_schedule_event( time(), 'daily', 'convoca_enroll_reminder_24h' );
@@ -255,9 +255,9 @@ add_action(
 						'bde_manage_checkin',
 						'bde_manage_evaluations',
 						'bde_view_reports',
-						'bdv_manage_hours',
-						'bdv_export_members',
-						'bdv_manage_webhooks',
+						'conv_manage_hours',
+						'conv_export_members',
+						'conv_manage_webhooks',
 						'bdg_view_payments',
 						'bdg_manage_payments',
 						'common_view_logs',
@@ -274,7 +274,7 @@ add_action(
 						'bde_manage_checkin',
 						'bde_manage_evaluations',
 						'bde_view_reports',
-						'bdv_manage_hours',
+						'conv_manage_hours',
 					),
 				);
 
@@ -368,8 +368,8 @@ add_filter(
 				'display'  => __( 'Cada minuto', 'convoca-enroll' ),
 			);
 		}
-		if ( ! isset( $schedules['bdv_weekly'] ) ) {
-			$schedules['bdv_weekly'] = array(
+		if ( ! isset( $schedules['conv_weekly'] ) ) {
+			$schedules['conv_weekly'] = array(
 				'interval' => 7 * DAY_IN_SECONDS,
 				'display'  => __( 'Cada 7 días', 'convoca-enroll' ),
 			);

@@ -29,5 +29,5 @@ foreach ( $posts as $id ) {
 // Note: we do NOT delete actividad posts — they are user content.
 
 // Clear cron.
-wp_clear_scheduled_hook( 'biodevas_enroll_reminders' );
-wp_clear_scheduled_hook( 'biodevas_enroll_feedback' );
+wp_clear_scheduled_hook( 'convoca_enroll_reminders' );
+wp_clear_scheduled_hook( 'convoca_enroll_feedback' );

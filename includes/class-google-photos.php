@@ -268,7 +268,7 @@ class Google_Photos
     public function notify_participants(int $actividad_id): int
     {
         // 1. Concurrency lock to avoid spam if cron runs multiple times or manually
-        $lock_key = "bdv_gp_notify_lock_{$actividad_id}";
+        $lock_key = "conv_gp_notify_lock_{$actividad_id}";
         if (get_transient($lock_key)) {
             return 0;
         }

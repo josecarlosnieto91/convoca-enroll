@@ -1,6 +1,6 @@
 /**
  * Biodevas Enroll — Admin JS
- * State change, check-in toggles, and email resends using biodevasAdmin.
+ * State change, check-in toggles, and email resends using convocaAdmin.
  */
 (function (bdvAdmin) {
     'use strict';
@@ -110,4 +110,4 @@
         );
     });
 
-})(window.biodevasAdmin);
+})(window.convocaAdmin);

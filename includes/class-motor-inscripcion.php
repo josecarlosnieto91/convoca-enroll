@@ -30,7 +30,7 @@ class Motor_Inscripcion {
 	public static function inscribir( int $actividad_id, array $datos ): int|\WP_Error {
 		// Rate limiting: max 5 enrollment attempts per IP per hour.
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'enroll_inscribir', 5, 3600 ) ) {
-			return new \WP_Error( 'rate_limit', __( 'Demasiados intentos. Inténtalo de nuevo más tarde.', 'biodevas-enroll' ) );
+			return new \WP_Error( 'rate_limit', __( 'Demasiados intentos. Inténtalo de nuevo más tarde.', 'convoca-enroll' ) );
 		}
 
 		$actividad = get_post( $actividad_id );
@@ -272,7 +272,7 @@ class Motor_Inscripcion {
 			$wpdb->query( 'COMMIT' );
 
 			// Fire hooks.
-			\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_nueva', 'biodevas_inscripcion_nueva', $post_id, $actividad_id, $estado );
+			\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_nueva', 'convoca_inscripcion_nueva', $post_id, $actividad_id, $estado );
 
 			return $post_id;
 		} catch ( \Throwable $e ) {
@@ -333,7 +333,7 @@ class Motor_Inscripcion {
 
 			$wpdb->query( 'COMMIT' );
 
-			\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_cancelada', 'biodevas_inscripcion_cancelada', $inscripcion_id, $actividad_id );
+			\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_cancelada', 'convoca_inscripcion_cancelada', $inscripcion_id, $actividad_id );
 
 			return true;
 		} catch ( \Throwable $e ) {
@@ -391,7 +391,7 @@ class Motor_Inscripcion {
 
 			$wpdb->query( 'COMMIT' );
 
-			\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_confirmada', 'biodevas_inscripcion_confirmada', $inscripcion_id, $actividad_id );
+			\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_confirmada', 'convoca_inscripcion_confirmada', $inscripcion_id, $actividad_id );
 
 			return true;
 		} catch ( \Throwable $e ) {
@@ -443,7 +443,7 @@ class Motor_Inscripcion {
 				if ( $affected > 0 ) {
 					// Success! This one is promoted.
 					CPT_Inscripcion::update_meta( $promoted->ID, 'pagado', 0 ); // Reset payment just in case.
-					\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_promovida', 'biodevas_inscripcion_promovida', $promoted->ID, $actividad_id );
+					\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_promovida', 'convoca_inscripcion_promovida', $promoted->ID, $actividad_id );
 					return true;
 				}
 			}
@@ -623,7 +623,7 @@ class Motor_Inscripcion {
 			$inscripcion_id
 		);
 
-		\Convoca\Core\Utils::do_action( 'convoca_enroll_asistencia_cambiada', 'biodevas_asistencia_cambiada', $inscripcion_id, $asistencia );
+		\Convoca\Core\Utils::do_action( 'convoca_enroll_asistencia_cambiada', 'convoca_asistencia_cambiada', $inscripcion_id, $asistencia );
 
 		return true;
 	}
@@ -646,12 +646,12 @@ class Motor_Inscripcion {
 	}
 
 	/**
-	 * Create the biodevas_reservation_codes table for atomic unique code storage.
+	 * Create the convoca_reservation_codes table for atomic unique code storage.
 	 * Called during plugin activation and upgrade.
 	 */
 	public static function create_reservation_codes_table(): void {
 		global $wpdb;
-		$table_name      = $wpdb->prefix . 'biodevas_reservation_codes';
+		$table_name      = $wpdb->prefix . 'convoca_reservation_codes';
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (

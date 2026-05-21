@@ -133,54 +133,54 @@ class CPT_Actividad {
 		wp_nonce_field( 'bde_actividad_meta', 'bde_actividad_nonce' );
 		$m = fn( string $key ) => get_post_meta( $post->ID, '_bde_' . $key, true );
 		?>
-		<div class="biodevas-grid-2">
-			<div class="biodevas-field">
+		<div class="convoca-grid-2">
+			<div class="convoca-field">
 				<label for="bde_fecha_inicio">
 					<?php esc_html_e( 'Fecha y Hora Inicio *', 'convoca-enroll' ); ?>
 				</label>
 				<input type="datetime-local" id="bde_fecha_inicio" name="bde_fecha_inicio"
 					value="<?php echo esc_attr( $m( 'fecha_inicio' ) ); ?>" required>
 			</div>
-			<div class="biodevas-field">
+			<div class="convoca-field">
 				<label for="bde_fecha_fin">
 					<?php esc_html_e( 'Fecha y Hora Fin', 'convoca-enroll' ); ?>
 				</label>
 				<input type="datetime-local" id="bde_fecha_fin" name="bde_fecha_fin"
 					value="<?php echo esc_attr( $m( 'fecha_fin' ) ); ?>">
 			</div>
-			<div class="biodevas-field" style="grid-column: 1 / -1;">
+			<div class="convoca-field" style="grid-column: 1 / -1;">
 				<label for="bde_ubicacion">
 					<?php esc_html_e( 'Ubicación / Punto de encuentro', 'convoca-enroll' ); ?>
 				</label>
 				<input type="text" id="bde_ubicacion" name="bde_ubicacion" value="<?php echo esc_attr( $m( 'ubicacion' ) ); ?>" style="width:100%;">
 			</div>
-			<div class="biodevas-field">
+			<div class="convoca-field">
 				<label for="bde_plazas_totales">
 					<?php esc_html_e( 'Plazas Totales', 'convoca-enroll' ); ?>
 				</label>
 				<input type="number" id="bde_plazas_totales" name="bde_plazas_totales" min="0"
 					value="<?php echo esc_attr( $m( 'plazas_totales' ) ); ?>">
 			</div>
-			<div class="biodevas-field">
+			<div class="convoca-field">
 				<label for="bde_precio_socio">
 					<?php echo esc_html( Utils::get_aportacion_label( 'sugerida_socio' ) ); ?> (€)
 				</label>
 				<input type="number" id="bde_precio_socio" name="bde_precio_socio" min="0" step="0.01"
 					value="<?php echo esc_attr( $m( 'precio_socio' ) ); ?>" placeholder="0">
 			</div>
-			<div class="biodevas-field">
-				<div class="biodevas-check-group" style="margin-top:1.8rem;">
+			<div class="convoca-field">
+				<div class="convoca-check-group" style="margin-top:1.8rem;">
 					<input type="checkbox" id="bde_requiere_pago" name="bde_requiere_pago" value="1" <?php checked( $m( 'requiere_pago' ), '1' ); ?>>
 					<label for="bde_requiere_pago"><?php esc_html_e( 'Requiere pago previo', 'convoca-enroll' ); ?></label>
 				</div>
 			</div>
-			<div class="biodevas-field">
-				<div class="biodevas-check-group" style="margin-top:1.8rem;">
+			<div class="convoca-field">
+				<div class="convoca-check-group" style="margin-top:1.8rem;">
 					<input type="checkbox" id="bde_actividad_lugg" name="bde_actividad_lugg" value="1" <?php checked( $m( 'actividad_lugg' ), '1' ); ?>>
 					<label for="bde_actividad_lugg"><?php esc_html_e( 'Es una actividad en el centro social', 'convoca-enroll' ); ?></label>
 				</div>
 			</div>
-			<div class="biodevas-field" style="grid-column: 1 / -1; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--bde-border, #ddd);">
+			<div class="convoca-field" style="grid-column: 1 / -1; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--bde-border, #ddd);">
 				<label for="bde_responsables" style="font-weight:600;">
 					<?php esc_html_e( 'Monitores / Responsables', 'convoca-enroll' ); ?>
 				</label>

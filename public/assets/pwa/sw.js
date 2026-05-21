@@ -1,6 +1,6 @@
 const CACHE_NAME = 'bdv-checkin-v1';
 const ASSETS = [
-  '/wp-content/plugins/biodevas-enroll/public/assets/css/checkin.css',
+  '/wp-content/plugins/convoca-enroll/public/assets/css/checkin.css',
 ];
 const API_CACHE = 'bdv-api-v1';
 

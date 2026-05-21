@@ -26,11 +26,11 @@ class Admin_Settings {
 
 	public static function render(): void {
 		// Security Guard: Check if critical dependencies are missing.
-		if ( ! post_type_exists( 'actividad' ) && ! \Convoca\Core\Utils::is_plugin_active_safe( 'biodevas-enroll/biodevas-enroll.php' ) ) {
+		if ( ! post_type_exists( 'actividad' ) && ! \Convoca\Core\Utils::is_plugin_active_safe( 'convoca-enroll/convoca-enroll.php' ) ) {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Error crítico: El motor de inscripciones no parece estar registrado correctamente.', 'convoca-enroll' ) . '</p></div>';
 		}
 
-		if ( ! \Convoca\Core\Utils::is_plugin_active_safe( 'biodevas-common/biodevas-common.php' ) ) {
+		if ( ! \Convoca\Core\Utils::is_plugin_active_safe( 'convoca-common/convoca-common.php' ) ) {
 			echo '<div class="notice notice-warning"><p>⚠️ ' . esc_html__( 'Biodevas Common no está activo. Algunas funciones podrían no estar disponibles.', 'convoca-enroll' ) . '</p></div>';
 		}
 
@@ -86,7 +86,7 @@ class Admin_Settings {
 
 		?>
 				<div style="margin-top:30px;">
-					<button type="submit" class="biodevas-btn biodevas-btn-primary"><?php esc_html_e( 'Guardar ajustes', 'convoca-enroll' ); ?></button>
+					<button type="submit" class="convoca-btn convoca-btn-primary"><?php esc_html_e( 'Guardar ajustes', 'convoca-enroll' ); ?></button>
 				</div>
 			</form>
 		</div>
@@ -99,72 +99,72 @@ class Admin_Settings {
 		?>
 		<h2><?php esc_html_e( 'Configuración General', 'convoca-enroll' ); ?></h2>
 
-		<div class="biodevas-field">
+		<div class="convoca-field">
 			<label for="admin_email"><?php esc_html_e( 'Email del administrador', 'convoca-enroll' ); ?></label>
 			<input type="email" id="admin_email" name="bde[admin_email]"
 				value="<?php echo esc_attr( $s['admin_email'] ?? '' ); ?>">
 		</div>
 
-		<div class="biodevas-field">
+		<div class="convoca-field">
 			<label for="rgpd_version"><?php esc_html_e( 'Versión RGPD', 'convoca-enroll' ); ?></label>
 			<input type="text" id="rgpd_version" name="bde[rgpd_version]"
 				value="<?php echo esc_attr( $s['rgpd_version'] ?? '1.0' ); ?>">
 		</div>
 
-		<div class="biodevas-field">
-			<div class="biodevas-check-group">
+		<div class="convoca-field">
+			<div class="convoca-check-group">
 				<input type="checkbox" id="limite_una_reserva" name="bde[limite_una_reserva]" value="1" <?php checked( ! empty( $s['limite_una_reserva'] ) ); ?>>
 				<label for="limite_una_reserva"><?php esc_html_e( 'Cada persona adulta solo puede hacer una reserva de taller', 'convoca-enroll' ); ?></label>
 			</div>
 		</div>
 
-		<div class="biodevas-field">
-			<div class="biodevas-check-group">
+		<div class="convoca-field">
+			<div class="convoca-check-group">
 				<input type="checkbox" id="permitir_menores" name="bde[permitir_menores]" value="1" <?php checked( $s['permitir_menores'] ?? true ); ?>>
 				<label for="permitir_menores"><?php esc_html_e( 'Permitir que un adulto inscriba a menores o personas a su cargo', 'convoca-enroll' ); ?></label>
 			</div>
 		</div>
 
-		<div class="biodevas-field">
-			<div class="biodevas-check-group">
+		<div class="convoca-field">
+			<div class="convoca-check-group">
 				<input type="checkbox" id="bloquear_dni_duplicado" name="bde[bloquear_dni_duplicado]" value="1" <?php checked( ( $s['bloquear_dni_duplicado'] ?? '1' ) === '1' ); ?>>
 				<label for="bloquear_dni_duplicado"><?php esc_html_e( 'Evitar que se inscriba el mismo DNI más de una vez en la misma actividad', 'convoca-enroll' ); ?></label>
 			</div>
 		</div>
 
-		<div class="biodevas-field">
+		<div class="convoca-field">
 			<label for="plazas_por_defecto"><?php esc_html_e( 'Plazas por defecto', 'convoca-enroll' ); ?></label>
 			<input type="number" id="plazas_por_defecto" name="bde[plazas_por_defecto]" min="0"
 				value="<?php echo esc_attr( $s['plazas_por_defecto'] ?? '20' ); ?>">
-			<small class="biodevas-small"><?php esc_html_e( 'Plazas que se asignarán por defecto al crear una nueva actividad.', 'convoca-enroll' ); ?></small>
+			<small class="convoca-small"><?php esc_html_e( 'Plazas que se asignarán por defecto al crear una nueva actividad.', 'convoca-enroll' ); ?></small>
 		</div>
 
-		<div class="biodevas-field">
+		<div class="convoca-field">
 			<label for="url_panel_reservas"><?php esc_html_e( 'URL Panel de Reservas', 'convoca-enroll' ); ?></label>
 			<input type="url" id="url_panel_reservas" name="bde[url_panel_reservas]"
 				value="<?php echo esc_attr( $s['url_panel_reservas'] ?? home_url( '/panel-de-reservas/' ) ); ?>">
-			<small class="biodevas-small"><?php esc_html_e( 'Enlace a la página donde está incrustado el shortcode [biodevas_panel_reservas].', 'convoca-enroll' ); ?></small>
+			<small class="convoca-small"><?php esc_html_e( 'Enlace a la página donde está incrustado el shortcode [convoca_panel_reservas].', 'convoca-enroll' ); ?></small>
 		</div>
 
 		<h2><?php esc_html_e( 'Webhooks', 'convoca-enroll' ); ?></h2>
 
-		<div class="biodevas-field">
+		<div class="convoca-field">
 			<label for="webhook_url"><?php esc_html_e( 'URL del Webhook', 'convoca-enroll' ); ?></label>
 			<input type="url" id="webhook_url" name="bde[webhook_url]"
 				value="<?php echo esc_attr( $s['webhook_url'] ?? '' ); ?>">
-			<small class="biodevas-small"><?php esc_html_e( 'URL a la que se enviarán peticiones POST (make.com, zapier, etc.) al cambiar el estado de las inscripciones.', 'convoca-enroll' ); ?></small>
+			<small class="convoca-small"><?php esc_html_e( 'URL a la que se enviarán peticiones POST (make.com, zapier, etc.) al cambiar el estado de las inscripciones.', 'convoca-enroll' ); ?></small>
 		</div>
 
-		<div class="biodevas-field">
+		<div class="convoca-field">
 			<label for="webhook_secret"><?php esc_html_e( 'Secreto del Webhook', 'convoca-enroll' ); ?></label>
 			<input type="text" id="webhook_secret" name="bde[webhook_secret]"
 				value="<?php echo esc_attr( $s['webhook_secret'] ?? '' ); ?>">
-			<small class="biodevas-small"><?php esc_html_e( 'Firma opcional que se enviará en la cabecera X-Assoc-Signature con el hash SHA-256 del payload crudo.', 'convoca-enroll' ); ?></small>
+			<small class="convoca-small"><?php esc_html_e( 'Firma opcional que se enviará en la cabecera X-Assoc-Signature con el hash SHA-256 del payload crudo.', 'convoca-enroll' ); ?></small>
 		</div>
 
 		<h2><?php esc_html_e( 'Google Sheets', 'convoca-enroll' ); ?></h2>
 
-		<div class="biodevas-field">
+		<div class="convoca-field">
 			<label for="sheets_enabled"><?php esc_html_e( 'Activar sincronización', 'convoca-enroll' ); ?></label>
 			<select id="sheets_enabled" name="bde[sheets_enabled]">
 				<option value="0" <?php selected( $s['sheets_enabled'] ?? '', '0' ); ?>><?php esc_html_e( 'Desactivado', 'convoca-enroll' ); ?></option>
@@ -172,7 +172,7 @@ class Admin_Settings {
 			</select>
 		</div>
 
-		<div class="biodevas-field">
+		<div class="convoca-field">
 			<label for="sheets_api_key"><?php esc_html_e( 'API Key de Google Sheets', 'convoca-enroll' ); ?></label>
 			<?php
 			$has_constant = defined( 'BDE_GOOGLE_SHEETS_API_KEY' );
@@ -181,27 +181,27 @@ class Admin_Settings {
 			<input type="text" id="sheets_api_key" name="bde[sheets_api_key]"
 				value="<?php echo esc_attr( $display_val ); ?>" <?php echo $has_constant ? 'disabled' : ''; ?>>
 			<?php if ( $has_constant ) : ?>
-				<small class="biodevas-small" style="color:green;">✓ <?php esc_html_e( 'Definida vía constante en wp-config.php.', 'convoca-enroll' ); ?></small>
+				<small class="convoca-small" style="color:green;">✓ <?php esc_html_e( 'Definida vía constante en wp-config.php.', 'convoca-enroll' ); ?></small>
 			<?php else : ?>
-				<small class="biodevas-small">⚠️ <?php esc_html_e( 'Los datos personales se enviarán a Google. Asegúrate de cumplir la RGPD.', 'convoca-enroll' ); ?></small>
-				<small class="biodevas-small"><em><?php esc_html_e( 'Recomendación: define BDE_GOOGLE_SHEETS_API_KEY en tu wp-config.php.', 'convoca-enroll' ); ?></em></small>
+				<small class="convoca-small">⚠️ <?php esc_html_e( 'Los datos personales se enviarán a Google. Asegúrate de cumplir la RGPD.', 'convoca-enroll' ); ?></small>
+				<small class="convoca-small"><em><?php esc_html_e( 'Recomendación: define BDE_GOOGLE_SHEETS_API_KEY en tu wp-config.php.', 'convoca-enroll' ); ?></em></small>
 			<?php endif; ?>
 		</div>
 
 		<h2><?php esc_html_e( 'Mantenimiento y Logs', 'convoca-enroll' ); ?></h2>
 
-		<div class="biodevas-field">
+		<div class="convoca-field">
 			<label for="log_retention_days"><?php esc_html_e( 'Retención de logs (días)', 'convoca-enroll' ); ?></label>
 			<input type="number" id="log_retention_days" name="bde[log_retention_days]" min="1" max="365"
 				value="<?php echo esc_attr( $s['log_retention_days'] ?? '30' ); ?>">
-			<small class="biodevas-small"><?php esc_html_e( 'Días que se conservarán los logs antes de ser eliminados automáticamente.', 'convoca-enroll' ); ?></small>
+			<small class="convoca-small"><?php esc_html_e( 'Días que se conservarán los logs antes de ser eliminados automáticamente.', 'convoca-enroll' ); ?></small>
 		</div>
 
-		<div class="biodevas-field">
+		<div class="convoca-field">
 			<label><?php esc_html_e( 'Integridad de datos', 'convoca-enroll' ); ?></label>
 			<div style="display:flex;gap:10px;">
-				<button type="submit" name="bde_run_maintenance" value="validate" class="biodevas-btn biodevas-btn-outline"><?php esc_html_e( 'Validar integridad', 'convoca-enroll' ); ?></button>
-				<button type="submit" name="bde_run_maintenance" value="repair" class="biodevas-btn biodevas-btn--danger"
+				<button type="submit" name="bde_run_maintenance" value="validate" class="convoca-btn convoca-btn-outline"><?php esc_html_e( 'Validar integridad', 'convoca-enroll' ); ?></button>
+				<button type="submit" name="bde_run_maintenance" value="repair" class="convoca-btn convoca-btn--danger"
 					onclick="return confirm('<?php esc_attr_e( 'Esto borrará inscripciones huérfanas y recontará plazas. ¿Continuar?', 'convoca-enroll' ); ?>');">
 					<?php esc_html_e( 'Reparar integridad', 'convoca-enroll' ); ?>
 				</button>
@@ -211,7 +211,7 @@ class Admin_Settings {
 			if ( isset( $_GET['maint_res'] ) ) :
 				$res = Maintenance::validar_integridad();
 				?>
-				<div class="biodevas-alert biodevas-alert--warning" style="margin-top:10px;">
+				<div class="convoca-alert convoca-alert--warning" style="margin-top:10px;">
 					<p><strong><?php esc_html_e( 'Resultados de validación:', 'convoca-enroll' ); ?></strong></p>
 					<ul>
 						<li><?php printf( esc_html__( 'Huérfanos: %s', 'convoca-enroll' ), esc_html( $res['orphans'] ) ); ?></li>
@@ -262,25 +262,25 @@ class Admin_Settings {
 
 	private static function render_tab_rgpd( array $s ): void {
 		?>
-		<div class="biodevas-field">
+		<div class="convoca-field">
 			<label for="url_privacidad"><?php esc_html_e( 'URL Política de Privacidad', 'convoca-enroll' ); ?></label>
 			<input type="url" id="url_privacidad" name="bde[url_privacidad]"
 				value="<?php echo esc_attr( $s['url_privacidad'] ?? home_url( '/politica-de-privacidad/' ) ); ?>">
-			<small class="biodevas-small"><?php esc_html_e( 'Enlace a la página de política de privacidad.', 'convoca-enroll' ); ?></small>
+			<small class="convoca-small"><?php esc_html_e( 'Enlace a la página de política de privacidad.', 'convoca-enroll' ); ?></small>
 		</div>
 
-		<div class="biodevas-field">
+		<div class="convoca-field">
 			<label for="url_imagenes"><?php esc_html_e( 'URL Uso de Imágenes', 'convoca-enroll' ); ?></label>
 			<input type="url" id="url_imagenes" name="bde[url_imagenes]"
 				value="<?php echo esc_attr( $s['url_imagenes'] ?? '' ); ?>">
-			<small class="biodevas-small"><?php esc_html_e( 'Enlace a la información de uso de imágenes/contenido gráfico.', 'convoca-enroll' ); ?></small>
+			<small class="convoca-small"><?php esc_html_e( 'Enlace a la información de uso de imágenes/contenido gráfico.', 'convoca-enroll' ); ?></small>
 		</div>
 
-		<div class="biodevas-field">
+		<div class="convoca-field">
 			<label for="url_proteccion_datos"><?php esc_html_e( 'Enlace «aquí» (protección de datos)', 'convoca-enroll' ); ?></label>
 			<input type="url" id="url_proteccion_datos" name="bde[url_proteccion_datos]"
 				value="<?php echo esc_attr( $s['url_proteccion_datos'] ?? '' ); ?>">
-			<small class="biodevas-small"><?php esc_html_e( 'URL a la que apunta «aquí» en la frase «Puedes consultar la información completa sobre protección de datos y uso de imágenes aquí.»', 'convoca-enroll' ); ?></small>
+			<small class="convoca-small"><?php esc_html_e( 'URL a la que apunta «aquí» en la frase «Puedes consultar la información completa sobre protección de datos y uso de imágenes aquí.»', 'convoca-enroll' ); ?></small>
 		</div>
 		<?php
 	}
@@ -335,9 +335,9 @@ class Admin_Settings {
 					<label><strong>Adjunto</strong></label><br>
 					<div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
 						<input type="hidden" name="tpl[<?php echo $slug; ?>][attachment_id]" value="<?php echo esc_attr( $attachment_id ); ?>" class="bde_attachment_id">
-						<button type="button" class="biodevas-btn biodevas-btn-outline bde-upload-attachment"><?php echo esc_html__( 'Seleccionar archivo', 'convoca-enroll' ); ?></button>
-						<button type="button" class="biodevas-btn biodevas-btn-outline biodevas-btn--danger bde-remove-attachment" <?php echo ! $attachment_id ? 'style="display:none"' : ''; ?>><?php echo esc_html__( 'Quitar', 'convoca-enroll' ); ?></button>
-						<span class="biodevas-badge biodevas-badge--info bde_attachment_name"><?php echo $attachment_url ? esc_html( basename( $attachment_url ) ) : esc_html__( 'Ninguno', 'convoca-enroll' ); ?></span>
+						<button type="button" class="convoca-btn convoca-btn-outline bde-upload-attachment"><?php echo esc_html__( 'Seleccionar archivo', 'convoca-enroll' ); ?></button>
+						<button type="button" class="convoca-btn convoca-btn-outline convoca-btn--danger bde-remove-attachment" <?php echo ! $attachment_id ? 'style="display:none"' : ''; ?>><?php echo esc_html__( 'Quitar', 'convoca-enroll' ); ?></button>
+						<span class="convoca-badge convoca-badge--info bde_attachment_name"><?php echo $attachment_url ? esc_html( basename( $attachment_url ) ) : esc_html__( 'Ninguno', 'convoca-enroll' ); ?></span>
 					</div>
 				</div>
 			</div>
@@ -422,7 +422,7 @@ class Admin_Settings {
 		$cc             = $eval_reminders['cc'] ?? '';
 		$link_base      = $eval_reminders['link_base'] ?? '';
 
-		$next_run      = wp_next_scheduled( 'biodevas_enroll_eval_reminder' );
+		$next_run      = wp_next_scheduled( 'convoca_enroll_eval_reminder' );
 		$next_run_text = $next_run ? wp_date( 'd/m/Y H:i:s', $next_run ) : 'No programado';
 		?>
 		<p class="description">
@@ -751,11 +751,11 @@ class Admin_Settings {
 
 			// Manage Cron.
 			if ( ! empty( $eval['active'] ) ) {
-				if ( ! wp_next_scheduled( 'biodevas_enroll_eval_reminder' ) ) {
-					wp_schedule_event( time(), 'daily', 'biodevas_enroll_eval_reminder' );
+				if ( ! wp_next_scheduled( 'convoca_enroll_eval_reminder' ) ) {
+					wp_schedule_event( time(), 'daily', 'convoca_enroll_eval_reminder' );
 				}
 			} else {
-				wp_clear_scheduled_hook( 'biodevas_enroll_eval_reminder' );
+				wp_clear_scheduled_hook( 'convoca_enroll_eval_reminder' );
 			}
 		}
 
@@ -876,25 +876,25 @@ class Admin_Settings {
 
 		// 2. Pages
 		$required_pages = array(
-			'bdv_calendario'        => array(
+			'conv_calendario'        => array(
 				'title'     => __( 'Página: Calendario de Actividades', 'convoca-enroll' ),
-				'shortcode' => '[bdv_calendario]',
-				'fix'       => __( 'Crea una página con el shortcode [bdv_calendario] para mostrar el listado de actividades.', 'convoca-enroll' ),
+				'shortcode' => '[conv_calendario]',
+				'fix'       => __( 'Crea una página con el shortcode [conv_calendario] para mostrar el listado de actividades.', 'convoca-enroll' ),
 			),
-			'bdv_mis_inscripciones' => array(
+			'conv_mis_inscripciones' => array(
 				'title'     => __( 'Página: Mis Inscripciones', 'convoca-enroll' ),
-				'shortcode' => '[bdv_mis_inscripciones]',
-				'fix'       => __( 'Crea una página con el shortcode [bdv_mis_inscripciones] para que los usuarios vean sus reservas.', 'convoca-enroll' ),
+				'shortcode' => '[conv_mis_inscripciones]',
+				'fix'       => __( 'Crea una página con el shortcode [conv_mis_inscripciones] para que los usuarios vean sus reservas.', 'convoca-enroll' ),
 			),
-			'bdv_checkin'           => array(
+			'conv_checkin'           => array(
 				'title'     => __( 'Página: Control de Asistencia (Check-in)', 'convoca-enroll' ),
-				'shortcode' => '[bdv_checkin]',
-				'fix'       => __( 'Crea una página con el shortcode [bdv_checkin] para que los monitores registren la asistencia.', 'convoca-enroll' ),
+				'shortcode' => '[conv_checkin]',
+				'fix'       => __( 'Crea una página con el shortcode [conv_checkin] para que los monitores registren la asistencia.', 'convoca-enroll' ),
 			),
-			'bdv_pago_actividad'    => array(
+			'conv_pago_actividad'    => array(
 				'title'     => __( 'Página: Pago de Actividad', 'convoca-enroll' ),
-				'shortcode' => '[bdv_pago_actividad]',
-				'fix'       => __( 'Crea una página con el shortcode [bdv_pago_actividad] para procesar los pagos de inscripción.', 'convoca-enroll' ),
+				'shortcode' => '[conv_pago_actividad]',
+				'fix'       => __( 'Crea una página con el shortcode [conv_pago_actividad] para procesar los pagos de inscripción.', 'convoca-enroll' ),
 			),
 			'formulario_evaluacion' => array(
 				'title'     => __( 'Página: Formulario de Evaluación', 'convoca-enroll' ),

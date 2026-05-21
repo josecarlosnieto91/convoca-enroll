@@ -13,7 +13,7 @@
     const { useState, useEffect } = wp.element;
     const { apiFetch } = wp;
 
-    registerBlockType('biodevas-enroll/formulario-inscripcion', {
+    registerBlockType('convoca-enroll/formulario-inscripcion', {
         apiVersion: 3,
         edit: function (props) {
             const { attributes, setAttributes } = props;
@@ -26,7 +26,7 @@
 
             // Fetch activities.
             useEffect(function () {
-                wp.apiFetch({ path: '/biodevas-enroll/v1/actividades' })
+                wp.apiFetch({ path: '/convoca-enroll/v1/actividades' })
                     .then(function (data) {
                         setActivities(data);
                         setLoading(false);

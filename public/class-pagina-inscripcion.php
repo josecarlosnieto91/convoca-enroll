@@ -1,6 +1,6 @@
 <?php
 /**
- * Public page: shortcode [biodevas_inscripcion_page].
+ * Public page: shortcode [convoca_inscripcion_page].
  *
  * @package Convoca\Enroll
  */
@@ -25,7 +25,7 @@ class Pagina_Inscripcion {
 		// Query upcoming activities.
 		$actividades = CPT_Actividad::get_upcoming( 100 );
 
-		wp_enqueue_style( 'bde-public', BDE_URL . 'assets/css/biodevas-enroll-public.css', array(), BDE_VERSION );
+		wp_enqueue_style( 'bde-public', BDE_URL . 'assets/css/convoca-enroll-public.css', array(), BDE_VERSION );
 
 		ob_start();
 		?>
@@ -46,7 +46,7 @@ class Pagina_Inscripcion {
 
 			<?php
 			// Use the theme's custom pattern for upcoming activities.
-			echo do_blocks( '<!-- wp:pattern {"slug":"biodevas/proximas-actividades"} /-->' );
+			echo do_blocks( '<!-- wp:pattern {"slug":"convoca/proximas-actividades"} /-->' );
 			?>
 		</div>
 		<?php

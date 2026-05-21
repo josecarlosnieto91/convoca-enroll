@@ -663,7 +663,7 @@ endif;
 
 	private function get_monitor_audit_data(): array {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'biodevas_logs';
+		$table_name = $wpdb->prefix . 'convoca_logs';
 
 		// Check if table exists.
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) !== $table_name ) {
@@ -930,7 +930,7 @@ endif;
 					foreach ( $activities as $act ) :
 						?>
 					<tr>
-						<td><strong><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=bdv_evaluacion&filter_actividad=' . $act['id'] ) ); ?>"><?php echo esc_html( $act['title'] ); ?></a></strong></td>
+						<td><strong><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=conv_evaluacion&filter_actividad=' . $act['id'] ) ); ?>"><?php echo esc_html( $act['title'] ); ?></a></strong></td>
 						<td><?php echo (int) $act['count']; ?></td>
 						<td><?php echo number_format( $act['media_global'], 1 ); ?>/5</td>
 						<td><?php echo number_format( $act['gestion'], 1 ); ?>/5</td>
@@ -967,12 +967,12 @@ endif;
                 AVG(CAST(pm_participantes.meta_value AS DECIMAL(3,2))) AS participantes,
                 AVG(CAST(pm_comunicacion.meta_value AS DECIMAL(3,2))) AS comunicacion
             FROM {$wpdb->posts} p
-            JOIN {$wpdb->postmeta} pm_act ON p.ID = pm_act.post_id AND pm_act.meta_key = '_bdv_eval_actividad_id'
-            LEFT JOIN {$wpdb->postmeta} pm_gestion ON p.ID = pm_gestion.post_id AND pm_gestion.meta_key = '_bdv_eval_gestion'
-            LEFT JOIN {$wpdb->postmeta} pm_instalaciones ON p.ID = pm_instalaciones.post_id AND pm_instalaciones.meta_key = '_bdv_eval_instalaciones'
-            LEFT JOIN {$wpdb->postmeta} pm_participantes ON p.ID = pm_participantes.post_id AND pm_participantes.meta_key = '_bdv_eval_participantes'
-            LEFT JOIN {$wpdb->postmeta} pm_comunicacion ON p.ID = pm_comunicacion.post_id AND pm_comunicacion.meta_key = '_bdv_eval_comunicacion'
-            WHERE p.post_type = 'bdv_evaluacion' AND p.post_status = 'publish' $where_extra
+            JOIN {$wpdb->postmeta} pm_act ON p.ID = pm_act.post_id AND pm_act.meta_key = '_conv_eval_actividad_id'
+            LEFT JOIN {$wpdb->postmeta} pm_gestion ON p.ID = pm_gestion.post_id AND pm_gestion.meta_key = '_conv_eval_gestion'
+            LEFT JOIN {$wpdb->postmeta} pm_instalaciones ON p.ID = pm_instalaciones.post_id AND pm_instalaciones.meta_key = '_conv_eval_instalaciones'
+            LEFT JOIN {$wpdb->postmeta} pm_participantes ON p.ID = pm_participantes.post_id AND pm_participantes.meta_key = '_conv_eval_participantes'
+            LEFT JOIN {$wpdb->postmeta} pm_comunicacion ON p.ID = pm_comunicacion.post_id AND pm_comunicacion.meta_key = '_conv_eval_comunicacion'
+            WHERE p.post_type = 'conv_evaluacion' AND p.post_status = 'publish' $where_extra
             GROUP BY pm_act.meta_value, p.post_title
             ORDER BY count DESC
             LIMIT 100",
@@ -1030,7 +1030,7 @@ endif;
 		}
 
 		$type     = sanitize_text_field( $_GET['export'] );
-		$filename = 'reporte-biodevas-' . $type . '-' . wp_date( 'Y-m-d' ) . '.csv';
+		$filename = 'reporte-convoca-' . $type . '-' . wp_date( 'Y-m-d' ) . '.csv';
 
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
@@ -1076,7 +1076,7 @@ endif;
 				$batch     = 0;
 				$per_batch = 200;
 				do {
-					$meta_where = "pm_act.meta_key = '_bdv_eval_actividad_id'";
+					$meta_where = "pm_act.meta_key = '_conv_eval_actividad_id'";
 					$meta_args  = array();
 					if ( $filter_act > 0 ) {
 						$meta_where .= ' AND pm_act.meta_value = %d';
@@ -1086,7 +1086,7 @@ endif;
 						$wpdb->prepare(
 							"SELECT p.ID FROM {$wpdb->posts} p
                          JOIN {$wpdb->postmeta} pm_act ON p.ID = pm_act.post_id AND $meta_where
-                         WHERE p.post_type = 'bdv_evaluacion' AND p.post_status = 'publish'
+                         WHERE p.post_type = 'conv_evaluacion' AND p.post_status = 'publish'
                          ORDER BY p.ID ASC LIMIT %d OFFSET %d",
 							array_merge( $meta_args, array( $per_batch, $batch * $per_batch ) )
 						)
@@ -1096,26 +1096,26 @@ endif;
 					}
 					update_meta_cache( 'post', $eval_ids );
 					foreach ( $eval_ids as $eid ) {
-						$u = get_userdata( get_post_meta( $eid, '_bdv_eval_usuario_id', true ) );
+						$u = get_userdata( get_post_meta( $eid, '_conv_eval_usuario_id', true ) );
 						fputcsv(
 							$out,
 							array(
 								$eid,
-								get_the_title( get_post_meta( $eid, '_bdv_eval_actividad_id', true ) ),
+								get_the_title( get_post_meta( $eid, '_conv_eval_actividad_id', true ) ),
 								$u ? $u->user_login : 'Desconocido',
-								get_post_meta( $eid, '_bdv_eval_fecha', true ),
-								get_post_meta( $eid, '_bdv_eval_gestion', true ),
-								get_post_meta( $eid, '_bdv_eval_instalaciones', true ),
-								get_post_meta( $eid, '_bdv_eval_participantes', true ),
-								get_post_meta( $eid, '_bdv_eval_comunicacion', true ),
-								get_post_meta( $eid, '_bdv_eval_comentarios_gestion', true ),
-								get_post_meta( $eid, '_bdv_eval_necesidades_no_cubiertas', true ),
-								get_post_meta( $eid, '_bdv_eval_mejoras_gestion', true ),
-								get_post_meta( $eid, '_bdv_eval_mejoras_instalaciones', true ),
-								get_post_meta( $eid, '_bdv_eval_comentarios_participantes', true ),
-								get_post_meta( $eid, '_bdv_eval_aspectos_positivos', true ),
-								get_post_meta( $eid, '_bdv_eval_aspectos_mejorar', true ),
-								get_post_meta( $eid, '_bdv_eval_otros_comentarios', true ),
+								get_post_meta( $eid, '_conv_eval_fecha', true ),
+								get_post_meta( $eid, '_conv_eval_gestion', true ),
+								get_post_meta( $eid, '_conv_eval_instalaciones', true ),
+								get_post_meta( $eid, '_conv_eval_participantes', true ),
+								get_post_meta( $eid, '_conv_eval_comunicacion', true ),
+								get_post_meta( $eid, '_conv_eval_comentarios_gestion', true ),
+								get_post_meta( $eid, '_conv_eval_necesidades_no_cubiertas', true ),
+								get_post_meta( $eid, '_conv_eval_mejoras_gestion', true ),
+								get_post_meta( $eid, '_conv_eval_mejoras_instalaciones', true ),
+								get_post_meta( $eid, '_conv_eval_comentarios_participantes', true ),
+								get_post_meta( $eid, '_conv_eval_aspectos_positivos', true ),
+								get_post_meta( $eid, '_conv_eval_aspectos_mejorar', true ),
+								get_post_meta( $eid, '_conv_eval_otros_comentarios', true ),
 							),
 							';'
 						);

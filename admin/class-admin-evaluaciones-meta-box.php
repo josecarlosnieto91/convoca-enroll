@@ -13,7 +13,7 @@ class Admin_Evaluaciones_Meta_Box {
 
 	public static function add_meta_box() {
 		add_meta_box(
-			'bdv_evaluaciones_summary',
+			'conv_evaluaciones_summary',
 			__( 'Evaluaciones de la Actividad', 'convoca-enroll' ),
 			array( __CLASS__, 'render_meta_box' ),
 			'actividad',
@@ -25,9 +25,9 @@ class Admin_Evaluaciones_Meta_Box {
 	public static function render_meta_box( $post ) {
 		$evaluaciones = get_posts(
 			array(
-				'post_type'      => 'bdv_evaluacion',
+				'post_type'      => 'conv_evaluacion',
 				'posts_per_page' => -1,
-				'meta_key'       => '_bdv_eval_actividad_id',
+				'meta_key'       => '_conv_eval_actividad_id',
 				'meta_value'     => $post->ID,
 				'post_status'    => 'publish',
 			)
@@ -46,10 +46,10 @@ class Admin_Evaluaciones_Meta_Box {
 		$sum_comunicacion  = 0;
 
 		foreach ( $evaluaciones as $eval ) {
-			$sum_gestion       += (int) get_post_meta( $eval->ID, '_bdv_eval_gestion', true );
-			$sum_instalaciones += (int) get_post_meta( $eval->ID, '_bdv_eval_instalaciones', true );
-			$sum_participantes += (int) get_post_meta( $eval->ID, '_bdv_eval_participantes', true );
-			$sum_comunicacion  += (int) get_post_meta( $eval->ID, '_bdv_eval_comunicacion', true );
+			$sum_gestion       += (int) get_post_meta( $eval->ID, '_conv_eval_gestion', true );
+			$sum_instalaciones += (int) get_post_meta( $eval->ID, '_conv_eval_instalaciones', true );
+			$sum_participantes += (int) get_post_meta( $eval->ID, '_conv_eval_participantes', true );
+			$sum_comunicacion  += (int) get_post_meta( $eval->ID, '_conv_eval_comunicacion', true );
 		}
 
 		$avg_gestion       = round( $sum_gestion / $total_evals, 1 );
@@ -88,7 +88,7 @@ class Admin_Evaluaciones_Meta_Box {
 			</table>
 			
 			<p style="margin-top: 15px;">
-				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=bdv_evaluacion&filter_actividad=' . $post->ID ) ); ?>" class="button button-primary">
+				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=conv_evaluacion&filter_actividad=' . $post->ID ) ); ?>" class="button button-primary">
 					<?php _e( 'Ver todas las evaluaciones', 'convoca-enroll' ); ?>
 				</a>
 			</p>

@@ -23,14 +23,14 @@ class Block_Inscripcion {
 	 * Enqueue block editor assets.
 	 */
 	public function enqueue_editor_assets(): void {
-		wp_enqueue_script( 'biodevas-enroll-blocks' );
+		wp_enqueue_script( 'convoca-enroll-blocks' );
 	}
 
 	public function register_blocks(): void {
 		// Register assets first so they are available for register_block_type.
 		wp_register_script(
-			'biodevas-enroll-blocks',
-			BDE_URL . 'assets/js/biodevas-enroll-blocks.js',
+			'convoca-enroll-blocks',
+			BDE_URL . 'assets/js/convoca-enroll-blocks.js',
 			array( 'wp-blocks', 'wp-element', 'wp-server-side-render', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-api-fetch' ),
 			BDE_VERSION,
 			true
@@ -80,7 +80,7 @@ class Block_Inscripcion {
 
 		// 5. Lista de Espera
 		register_block_type(
-			'biodevas-enroll/lista-espera',
+			'convoca-enroll/lista-espera',
 			array(
 				'apiVersion'      => 3,
 				'render_callback' => array( $this, 'render_lista_espera' ),
@@ -100,7 +100,7 @@ class Block_Inscripcion {
 	public function render_inscripcion( array $attrs ): string {
 		$id = (int) ( $attrs['actividadId'] ?? 0 );
 		if ( ! $id ) {
-			return '<p class="biodevas-alert biodevas-alert--info">' .
+			return '<p class="convoca-alert convoca-alert--info">' .
 				esc_html__( 'Selecciona una actividad en el editor.', 'convoca-enroll' ) . '</p>';
 		}
 
@@ -141,7 +141,7 @@ class Block_Inscripcion {
 		$espera = (int) ( $stats['lista_espera'] ?? 0 );
 
 		if ( $espera === 0 ) {
-			return '<div class="biodevas-alert biodevas-alert--success" style="display:block;text-align:center;"><p>✅ ' . esc_html__( 'Sin lista de espera', 'convoca-enroll' ) . '</p></div>';
+			return '<div class="convoca-alert convoca-alert--success" style="display:block;text-align:center;"><p>✅ ' . esc_html__( 'Sin lista de espera', 'convoca-enroll' ) . '</p></div>';
 		}
 
 		return '<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:20px;text-align:center;">

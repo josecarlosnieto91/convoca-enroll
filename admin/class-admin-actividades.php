@@ -84,7 +84,7 @@ class Admin_Actividades {
 	 */
 	public function enqueue_assets( $hook ) {
 		if ( strpos( $hook, 'bde-actividad-editor' ) !== false ) {
-			wp_enqueue_style( 'convoca-core', BDV_COMMON_URL . 'assets/css/biodevas-common.css', array(), BDV_COMMON_VERSION );
+			wp_enqueue_style( 'convoca-core', CONV_COMMON_URL . 'assets/css/convoca-common.css', array(), CONV_COMMON_VERSION );
 		}
 	}
 
@@ -146,7 +146,7 @@ class Admin_Actividades {
 		$users = get_users( array( 'role__in' => array( 'administrator', 'shop_manager', 'monitor' ) ) );
 
 		?>
-		<div class="wrap biodevas-admin">
+		<div class="wrap convoca-admin">
 			<h1><?php echo esc_html( $title ); ?></h1>
 
 			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="bdv-form-custom">
@@ -160,17 +160,17 @@ class Admin_Actividades {
 							<h2><?php _e( 'Información Principal', 'convoca-enroll' ); ?></h2>
 						</div>
 						<div class="bdv-card-body">
-							<div class="biodevas-field">
+							<div class="convoca-field">
 								<label for="title"><?php _e( 'Título de la Actividad', 'convoca-enroll' ); ?> *</label>
 								<input type="text" name="post_title" id="title" value="<?php echo $actividad ? esc_attr( $actividad->post_title ) : ''; ?>" required>
 							</div>
 
-							<div class="biodevas-field">
+							<div class="convoca-field">
 								<label for="description"><?php _e( 'Descripción Completa', 'convoca-enroll' ); ?></label>
 								<textarea name="post_content" id="description" rows="15"><?php echo $actividad ? esc_textarea( $actividad->post_content ) : ''; ?></textarea>
 							</div>
 
-							<div class="biodevas-field">
+							<div class="convoca-field">
 								<label for="excerpt"><?php _e( 'Resumen Corto (para listados)', 'convoca-enroll' ); ?></label>
 								<textarea name="post_excerpt" id="excerpt" rows="3"><?php echo $actividad ? esc_textarea( $actividad->post_excerpt ) : ''; ?></textarea>
 							</div>
@@ -244,9 +244,9 @@ class Admin_Actividades {
 				<div class="bdv-form-actions">
 					<?php submit_button( __( 'Guardar Actividad', 'convoca-enroll' ), 'primary', 'submit', false ); ?>
 					<?php if ( $post_id ) : ?>
-						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bde_duplicate_actividad&id=' . $post_id ), 'bde_duplicate_' . $post_id ) ); ?>" class="biodevas-btn biodevas-btn-outline" style="margin-left:5px;">📋 <?php _e( 'Duplicar', 'convoca-enroll' ); ?></a>
+						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bde_duplicate_actividad&id=' . $post_id ), 'bde_duplicate_' . $post_id ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📋 <?php _e( 'Duplicar', 'convoca-enroll' ); ?></a>
 					<?php endif; ?>
-					<a href="<?php echo admin_url( 'admin.php?page=convoca-core-enroll' ); ?>" class="biodevas-btn biodevas-btn-outline"><?php _e( 'Cancelar', 'convoca-enroll' ); ?></a>
+					<a href="<?php echo admin_url( 'admin.php?page=convoca-core-enroll' ); ?>" class="convoca-btn convoca-btn-outline"><?php _e( 'Cancelar', 'convoca-enroll' ); ?></a>
 				</div>
 			</form>
 		</div>
@@ -449,7 +449,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 	protected function column_titulo( $item ): string {
 		$edit  = admin_url( 'admin.php?page=bde-actividad-editor&id=' . $item->ID );
 		$lugg  = get_post_meta( $item->ID, '_bde_actividad_lugg', true );
-		$badge = $lugg === '1' ? ' <span class="biodevas-badge biodevas-badge--lugg" style="background:#2d5a27;color:#fff;">Centro Social</span>' : '';
+		$badge = $lugg === '1' ? ' <span class="convoca-badge convoca-badge--lugg" style="background:#2d5a27;color:#fff;">Centro Social</span>' : '';
 
 		$status_badge = '';
 		if ( $item->post_status === 'draft' ) {

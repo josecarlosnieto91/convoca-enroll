@@ -76,4 +76,4 @@
         });
     });
 
-})(window.biodevasAdmin || window.biodevas || null);
+})(window.convocaAdmin || window.convoca || null);

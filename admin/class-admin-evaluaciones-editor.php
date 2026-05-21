@@ -41,7 +41,7 @@ class Admin_Evaluaciones_Editor {
 			$post_type = get_post_type( $_GET['post'] );
 		}
 
-		if ( ( $screen && $screen->id === 'bdv_evaluacion' ) || $post_type === 'bdv_evaluacion' ) {
+		if ( ( $screen && $screen->id === 'conv_evaluacion' ) || $post_type === 'conv_evaluacion' ) {
 			if ( isset( $screen->action ) && $screen->action === 'add' || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
 				wp_redirect( admin_url( 'admin.php?page=bde-evaluacion-editor' ) );
 				exit;
@@ -63,12 +63,12 @@ class Admin_Evaluaciones_Editor {
 		$eval    = $post_id ? get_post( $post_id ) : null;
 
 		$meta = array(
-			'actividad_id'  => $post_id ? get_post_meta( $post_id, '_bdv_eval_actividad_id', true ) : ( $_GET['actividad_id'] ?? '' ),
-			'gestion'       => $post_id ? get_post_meta( $post_id, '_bdv_eval_gestion', true ) : '',
-			'instalaciones' => $post_id ? get_post_meta( $post_id, '_bdv_eval_instalaciones', true ) : '',
-			'participantes' => $post_id ? get_post_meta( $post_id, '_bdv_eval_participantes', true ) : '',
-			'comunicacion'  => $post_id ? get_post_meta( $post_id, '_bdv_eval_comunicacion', true ) : '',
-			'usuario_id'    => $post_id ? get_post_meta( $post_id, '_bdv_eval_usuario_id', true ) : get_current_user_id(),
+			'actividad_id'  => $post_id ? get_post_meta( $post_id, '_conv_eval_actividad_id', true ) : ( $_GET['actividad_id'] ?? '' ),
+			'gestion'       => $post_id ? get_post_meta( $post_id, '_conv_eval_gestion', true ) : '',
+			'instalaciones' => $post_id ? get_post_meta( $post_id, '_conv_eval_instalaciones', true ) : '',
+			'participantes' => $post_id ? get_post_meta( $post_id, '_conv_eval_participantes', true ) : '',
+			'comunicacion'  => $post_id ? get_post_meta( $post_id, '_conv_eval_comunicacion', true ) : '',
+			'usuario_id'    => $post_id ? get_post_meta( $post_id, '_conv_eval_usuario_id', true ) : get_current_user_id(),
 		);
 
 		$actividades = get_posts(
@@ -85,7 +85,7 @@ class Admin_Evaluaciones_Editor {
 		$title = $eval ? __( 'Editar Evaluación', 'convoca-enroll' ) : __( 'Nueva Evaluación', 'convoca-enroll' );
 
 		?>
-		<div class="wrap biodevas-admin">
+		<div class="wrap convoca-admin">
 			<h1><?php echo esc_html( $title ); ?></h1>
 
 			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="bdv-form-custom">
@@ -135,7 +135,7 @@ class Admin_Evaluaciones_Editor {
 								?>
 								<div class="bdv-field">
 									<label><?php echo esc_html( $label ); ?></label>
-									<div class="biodevas-rating-stars" style="display: flex; gap: 10px; font-size: 24px; cursor: pointer;">
+									<div class="convoca-rating-stars" style="display: flex; gap: 10px; font-size: 24px; cursor: pointer;">
 										<?php for ( $i = 1; $i <= 5; $i++ ) : ?>
 											<label style="cursor: pointer;">
 												<input type="radio" name="<?php echo $key; ?>" value="<?php echo $i; ?>" <?php checked( $meta[ $key ], $i ); ?> required style="display: none;">
@@ -147,7 +147,7 @@ class Admin_Evaluaciones_Editor {
 							<?php endforeach; ?>
 							
 							<script>
-								document.querySelectorAll('.biodevas-rating-stars').forEach(group => {
+								document.querySelectorAll('.convoca-rating-stars').forEach(group => {
 									const stars = group.querySelectorAll('.bdv-star');
 									const inputs = group.querySelectorAll('input');
 									
@@ -166,13 +166,13 @@ class Admin_Evaluaciones_Editor {
 
 				<div class="bdv-form-actions">
 					<?php submit_button( __( 'Guardar Evaluación', 'convoca-enroll' ), 'primary', 'submit', false ); ?>
-					<a href="<?php echo admin_url( 'edit.php?post_type=bdv_evaluacion' ); ?>" class="button"><?php _e( 'Cancelar', 'convoca-enroll' ); ?></a>
+					<a href="<?php echo admin_url( 'edit.php?post_type=conv_evaluacion' ); ?>" class="button"><?php _e( 'Cancelar', 'convoca-enroll' ); ?></a>
 				</div>
 			</form>
 		</div>
 		<style>
-			.biodevas-rating-stars label:hover .bdv-star,
-			.biodevas-rating-stars label:hover ~ label .bdv-star {
+			.convoca-rating-stars label:hover .bdv-star,
+			.convoca-rating-stars label:hover ~ label .bdv-star {
 				color: #fbbf24 !important;
 			}
 		</style>
@@ -195,7 +195,7 @@ class Admin_Evaluaciones_Editor {
 		$actividad_title = get_the_title( $actividad_id );
 
 		$post_data = array(
-			'post_type'    => 'bdv_evaluacion',
+			'post_type'    => 'conv_evaluacion',
 			'post_title'   => 'Evaluación: ' . $actividad_title,
 			'post_content' => $content,
 			'post_status'  => 'publish',
@@ -214,21 +214,21 @@ class Admin_Evaluaciones_Editor {
 		}
 
 		// Save Meta.
-		update_post_meta( $post_id, '_bdv_eval_actividad_id', $actividad_id );
-		update_post_meta( $post_id, '_bdv_eval_gestion', (int) $_POST['gestion'] );
-		update_post_meta( $post_id, '_bdv_eval_instalaciones', (int) $_POST['instalaciones'] );
-		update_post_meta( $post_id, '_bdv_eval_participantes', (int) $_POST['participantes'] );
-		update_post_meta( $post_id, '_bdv_eval_comunicacion', (int) $_POST['comunicacion'] );
+		update_post_meta( $post_id, '_conv_eval_actividad_id', $actividad_id );
+		update_post_meta( $post_id, '_conv_eval_gestion', (int) $_POST['gestion'] );
+		update_post_meta( $post_id, '_conv_eval_instalaciones', (int) $_POST['instalaciones'] );
+		update_post_meta( $post_id, '_conv_eval_participantes', (int) $_POST['participantes'] );
+		update_post_meta( $post_id, '_conv_eval_comunicacion', (int) $_POST['comunicacion'] );
 
-		if ( ! get_post_meta( $post_id, '_bdv_eval_usuario_id', true ) ) {
-			update_post_meta( $post_id, '_bdv_eval_usuario_id', get_current_user_id() );
+		if ( ! get_post_meta( $post_id, '_conv_eval_usuario_id', true ) ) {
+			update_post_meta( $post_id, '_conv_eval_usuario_id', get_current_user_id() );
 		}
 
-		if ( ! get_post_meta( $post_id, '_bdv_eval_fecha', true ) ) {
-			update_post_meta( $post_id, '_bdv_eval_fecha', current_time( 'mysql' ) );
+		if ( ! get_post_meta( $post_id, '_conv_eval_fecha', true ) ) {
+			update_post_meta( $post_id, '_conv_eval_fecha', current_time( 'mysql' ) );
 		}
 
-		wp_redirect( admin_url( 'edit.php?post_type=bdv_evaluacion&message=saved' ) );
+		wp_redirect( admin_url( 'edit.php?post_type=conv_evaluacion&message=saved' ) );
 		exit;
 	}
 }
