@@ -329,7 +329,6 @@ class Poster_Engine {
 			$shadow = new \ImagickDraw();
 			$shadow->setFont( $draw->getFont() );
 			$shadow->setFontSize( $font_size );
-			$shadow->setFontWeight( $draw->getFontWeight() );
 			$shadow->setTextAlignment( $draw->getTextAlignment() );
 			$shadow->setFillColor( new \ImagickPixel( 'rgba(0,0,0,0.35)' ) );
 		}
@@ -512,7 +511,6 @@ class Poster_Engine {
 		$font_file = self::resolve_font( $font_cfg['family'], $font_cfg['weight'] );
 		if ( $font_file ) {
 			$draw->setFont( $font_file );
-			$draw->setFontWeight( $font_cfg['weight'] );
 		}
 		$draw->setFontSize( $font_cfg['size'] );
 		$draw->setFillColor( new \ImagickPixel( '#1a1a1a' ) );
