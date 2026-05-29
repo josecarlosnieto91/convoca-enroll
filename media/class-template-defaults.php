@@ -356,6 +356,10 @@ class Template_Defaults {
 				'formats'      => array( 'square' => array( 'width' => 1080, 'height' => 1080 ) ),
 				'layers'       => array(
 					array( 'id' => 'bg', 'type' => 'background', 'gradient' => $bg, 'angle' => 135 ),
+					array( 'id' => 'photo', 'type' => 'image', 'fit' => 'cover', 'opacity' => 0.3,
+						'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 600 ),
+					array( 'id' => 'overlay', 'type' => 'overlay',
+						'gradient' => array( 'rgba(0,0,0,0)', 'rgba(0,0,0,0.6)' ), 'y' => 400, 'h' => 200 ),
 					array( 'id' => 'badge', 'type' => 'badge', 'x' => 50, 'y' => 50, 'size' => 34 ),
 					array( 'id' => 'title', 'type' => 'text', 'ref' => 'title', 'font' => 'title', 'max_lines' => 3,
 						'x' => 50, 'y' => 460, 'w' => 980, 'h' => 200, 'align' => 'left', 'auto_shrink' => true ),
