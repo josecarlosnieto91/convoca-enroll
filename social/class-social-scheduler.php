@@ -79,7 +79,16 @@ class Social_Scheduler {
 		$errors        = array();
 
 		foreach ( $accounts as $account_id ) {
-			$result = Social_Publisher::publish( (int) $account_id, $message, $image_url );
+			$network = self::get_network_for_account( (int) $account_id );
+			if ( in_array( $network, array( 'facebook', 'instagram' ), true ) ) {
+				$provider = new \Convoca\Enroll\Social\Meta_Provider( (int) $account_id );
+				$result = $provider->publish( $message, $image_url );
+			} elseif ( $network === 'google' ) {
+				$provider = new \Convoca\Enroll\Social\GBP_Provider( (int) $account_id );
+				$result = $provider->publish( $message, $image_url );
+			} else {
+				$result = Social_Publisher::publish( (int) $account_id, $message, $image_url );
+			}
 			if ( $result['success'] ) {
 				$success_count++;
 			} else {
@@ -117,5 +126,14 @@ class Social_Scheduler {
 				as_schedule_single_action( time() + $retry_delay, 'convoca_social_publish', array( 'queue_id' => $queue_id ), 'convoca-social' );
 			}
 		}
+	}
+
+	private static function get_network_for_account( int $account_id ): string {
+		global $wpdb;
+		$network = $wpdb->get_var( $wpdb->prepare(
+			"SELECT network FROM {$wpdb->prefix}conv_social_accounts WHERE id = %d",
+			$account_id
+		) );
+		return $network ?: 'unknown';
 	}
 }
