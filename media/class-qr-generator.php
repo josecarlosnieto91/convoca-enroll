@@ -7,11 +7,8 @@
 
 namespace Convoca\Enroll\Media;
 
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\QrCode;
 use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\RoundBlockSizeMode;
-use Endroid\QrCode\Writer\PngWriter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -49,7 +46,6 @@ class QR_Generator {
 		}
 
 		$size       = $options['size'] ?? 300;
-		$color_hex  = $options['color'] ?? '#000000';
 		$margin     = $options['margin'] ?? 10;
 		$upload_dir = wp_upload_dir();
 		$qr_dir     = $upload_dir['basedir'] . '/convoca-qr/';
@@ -58,24 +54,25 @@ class QR_Generator {
 			wp_mkdir_p( $qr_dir );
 		}
 
-		// Parse color hex to RGB.
-		$color_rgb = self::hex_to_rgb( $color_hex );
-
-		$result = Builder::create()
-			->writer( new PngWriter() )
-			->data( $url )
-			->encoding( new Encoding( 'UTF-8' ) )
-			->errorCorrectionLevel( ErrorCorrectionLevel::Medium )
-			->size( $size )
-			->margin( $margin )
-			->roundBlockSizeMode( RoundBlockSizeMode::Margin )
-			->foregroundColor( $color_rgb )
-			->build();
-
 		$filename = 'qr-actividad-' . $actividad_id . '.png';
 		$filepath = $qr_dir . $filename;
 
-		$result->saveToFile( $filepath );
+		try {
+			$qrCode = new QrCode( $url );
+			$qrCode->setSize( $size );
+			$qrCode->setMargin( $margin );
+			$qrCode->setErrorCorrectionLevel( ErrorCorrectionLevel::MEDIUM );
+			$qrCode->setEncoding( 'UTF-8' );
+
+			if ( ! empty( $options['color'] ) ) {
+				$rgb = self::hex_to_rgb( $options['color'] );
+				$qrCode->setForegroundColor( array( 'r' => $rgb['r'], 'g' => $rgb['g'], 'b' => $rgb['b'] ) );
+			}
+
+			$qrCode->writeFile( $filepath );
+		} catch ( \Exception $e ) {
+			return null;
+		}
 
 		// Cache.
 		wp_cache_set( $cache_key, $filepath, self::CACHE_GROUP, HOUR_IN_SECONDS );
@@ -141,7 +138,7 @@ class QR_Generator {
 	}
 
 	/**
-	 * Convert hex color to RGB array for endroid library.
+	 * Convert hex color to RGB array.
 	 *
 	 * @param string $hex Hex color (e.g., #ff8700).
 	 * @return array { r, g, b }
