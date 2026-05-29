@@ -2,13 +2,15 @@
 /**
  * QR Code Generator for activity posters.
  *
+ * Uses chillerlan/php-qrcode (v6+) — modern, PHP 8.x compatible.
+ *
  * @package Convoca\Enroll\Media
  */
 
 namespace Convoca\Enroll\Media;
 
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\ErrorCorrectionLevel;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -45,8 +47,8 @@ class QR_Generator {
 			return $cached;
 		}
 
-		$size       = $options['size'] ?? 300;
-		$margin     = $options['margin'] ?? 10;
+		$size       = min( max( $options['size'] ?? 300, 100 ), 1000 );
+		$margin     = $options['margin'] ?? 4;
 		$upload_dir = wp_upload_dir();
 		$qr_dir     = $upload_dir['basedir'] . '/convoca-qr/';
 
@@ -58,23 +60,28 @@ class QR_Generator {
 		$filepath = $qr_dir . $filename;
 
 		try {
-			$qrCode = new QrCode( $url );
-			$qrCode->setSize( $size );
-			$qrCode->setMargin( $margin );
-			$qrCode->setErrorCorrectionLevel( ErrorCorrectionLevel::MEDIUM );
-			$qrCode->setEncoding( 'UTF-8' );
+			// Scale: QR modules are 10px each at scale=10, 
+			// so scale = size / 33 (QR v4 has 33x33 modules for URLs)
+			$scale = max( 3, (int) round( $size / 33 ) );
 
-			if ( ! empty( $options['color'] ) ) {
-				$rgb = self::hex_to_rgb( $options['color'] );
-				$qrCode->setForegroundColor( array( 'r' => $rgb['r'], 'g' => $rgb['g'], 'b' => $rgb['b'] ) );
-			}
+			$qrOptions = new QROptions( array(
+				'outputType'    => QRCode::OUTPUT_IMAGE_PNG,
+				'eccLevel'      => QRCode::ECC_M,
+				'scale'         => $scale,
+				'imageBase64'   => false,
+				'moduleValues'  => null,
+				'addQuietzone'  => true,
+				'quietzoneSize' => $margin,
+			) );
 
-			$qrCode->writeFile( $filepath );
-		} catch ( \Exception $e ) {
+			$qrcode   = new QRCode( $qrOptions );
+			$pngData  = $qrcode->render( $url );
+
+			file_put_contents( $filepath, $pngData );
+		} catch ( \Throwable $e ) {
 			return null;
 		}
 
-		// Cache.
 		wp_cache_set( $cache_key, $filepath, self::CACHE_GROUP, HOUR_IN_SECONDS );
 
 		return $filepath;
@@ -135,23 +142,5 @@ class QR_Generator {
 		if ( file_exists( $qr_file ) ) {
 			@unlink( $qr_file );
 		}
-	}
-
-	/**
-	 * Convert hex color to RGB array.
-	 *
-	 * @param string $hex Hex color (e.g., #ff8700).
-	 * @return array { r, g, b }
-	 */
-	private static function hex_to_rgb( string $hex ): array {
-		$hex = ltrim( $hex, '#' );
-		if ( strlen( $hex ) === 3 ) {
-			$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
-		}
-		return array(
-			'r' => hexdec( substr( $hex, 0, 2 ) ),
-			'g' => hexdec( substr( $hex, 2, 2 ) ),
-			'b' => hexdec( substr( $hex, 4, 2 ) ),
-		);
 	}
 }
