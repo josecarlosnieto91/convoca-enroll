@@ -59,7 +59,6 @@ class Poster_Engine {
 
 		$formats = $overrides['formats'] ?? array_keys( $template['formats'] ?? array( 'square' ) );
 		$quality = $overrides['quality'] ?? 85;
-		$export_type = $overrides['export_type'] ?? 'png'; // png, webp supported; jpg may crash on some IM versions
 
 		$files   = array();
 		$base_name = 'poster-' . $actividad_id . '-' . sanitize_title( $template_slug_or_id );
@@ -81,7 +80,7 @@ class Poster_Engine {
 				$target_w = $template['width'] ?? 1080;
 				$target_h = $template['height'] ?? 1080;
 			}
-			$cache_key   = $base_name . '-' . $format_key . '.' . $export_type;
+			$cache_key   = $base_name . '-' . $format_key . '.png';
 			$output_path = $cache_dir . $cache_key;
 
 			// Cache check.
@@ -94,62 +93,14 @@ class Poster_Engine {
 			try {
 				$canvas = new \Imagick();
 				$canvas->newImage( $target_w, $target_h, new \ImagickPixel( 'transparent' ) );
-				// PASS 1 — Pure calculation. NO drawing.
-				$margin  = $template['design_tokens']['spacing']['margin'] ?? 60;
-				$gap     = $template['design_tokens']['spacing']['gap'] ?? 14;
-				$nextY   = $margin;
-								$render_queue = array();
-
-				foreach ( $template['layers'] as $layer_def ) {
-					$def = $layer_def;
-
-					// Resolve responsive overrides for this format.
-					if ( ! empty( $def['responsive'][ $format_key ] ) ) {
-						foreach ( $def['responsive'][ $format_key ] as $rk => $rv ) {
-							$def[ $rk ] = $rv;
-						}
-					}
-					// Remove responsive key to prevent any re-resolution in render_layer.
-					unset( $def['responsive'] );
-
-					// Stack: assign dynamic top-to-bottom Y.
-					if ( ! empty( $def['stack'] ) ) {
-						$def['y'] = $nextY;
-					}
-
-					// (anchor_bottom removed — logo/QR use fixed responsive Y)
-
-					$render_queue[] = $def;
-				}
-
-				// PASS 2 — Pure render. Strict ImagickDraw lifecycle.
-				foreach ( $render_queue as $def ) {
-					$type = $def['type'] ?? '';
-
-					self::render_layer( $canvas, $def, $data, $image_id, $template, $format_key );
-
-					// After stack layers: measure and advance nextY.
-					if ( ! empty( $def['stack'] ) ) {
-						$rendered_h = $def['h'] ?? 40;
-						if ( $type === 'text' && ! empty( $def['ref'] ) && ! empty( $data[ $def['ref'] ] ) ) {
-							$ref      = $def['ref'];
-							$text_len = strlen( $data[ $ref ] ?? '' );
-							$font_cfg = $template['design_tokens']['typography'][ $def['font'] ?? 'body' ]
-								?? $template['fonts'][ $def['font'] ?? 'meta' ]
-								?? array( 'size' => 26 );
-							$fs      = $def['font_size'] ?? $font_cfg['size'] ?? 26;
-							$max_w   = $def['w'] ?? ( $target_w - 2 * $margin );
-							$max_lines = $def['max_lines'] ?? 10;
-							$cpl = max( 1, $max_w / ( $fs * 0.55 ) );
-							$lines = min( $max_lines, max( 1, ceil( $text_len / $cpl ) ) );
-							$rendered_h = (int) ( $lines * $fs * 1.35 );
-						}
-						$nextY = $def['y'] + $rendered_h + $gap;
-					}
-				}
-
-				$canvas->setImageFormat( $export_type );
+				$canvas->setImageFormat( 'png' );
 				$canvas->setImageCompressionQuality( $quality );
+
+				// Render each layer.
+				foreach ( $template['layers'] as $layer_def ) {
+					self::render_layer( $canvas, $layer_def, $data, $image_id, $template, $format_key );
+				}
+
 				$canvas->writeImage( $output_path );
 				$canvas->clear();
 				$files[ $format_key ] = $output_path;
@@ -175,8 +126,13 @@ class Poster_Engine {
 	 * @param array    $template Full template config.
 	 */
 	private static function render_layer( \Imagick $canvas, array $def, array $data, ?int $image_id, array $template, string $format_key = 'square' ): void {
-		// Responsive overrides ALREADY resolved in Pass 1 (render())
-		// Do NOT re-resolve here or it overrides dynamic Y stacking positions.
+		// Resolve responsive overrides for this format.
+		if ( ! empty( $def['responsive'][ $format_key ] ) ) {
+			foreach ( $def['responsive'][ $format_key ] as $rk => $rv ) {
+				$def[ $rk ] = $rv;
+			}
+		}
+
 		$x = $def['x'] ?? 0;
 		$y = $def['y'] ?? 0;
 		$w = $def['w'] ?? 100;
@@ -537,59 +493,36 @@ class Poster_Engine {
 		$cta_text = $data['cta'] ?? __( 'Inscríbete aquí', 'convoca-enroll' );
 		$x        = $def['x'] ?? 0;
 		$y        = $def['y'] ?? 0;
+		$w        = $def['w'] ?? 360;
+		$h        = $def['h'] ?? 60;
+		$align    = $def['align'] ?? 'left';
 		$font_cfg = $data['_font_cta']
 			?? $template['design_tokens']['typography']['cta']
 			?? $template['fonts']['cta']
 			?? array( 'family' => 'Outfit', 'weight' => 600, 'size' => 30, 'color' => '#ffffff' );
 
-		// Measure text with queryFontMetrics.
-		$font_file = self::resolve_font( 'Outfit', 600 );
-		$m_draw = new \ImagickDraw();
-		$m_draw->setFontSize( $font_cfg['size'] );
-		if ( $font_file ) {
-			$m_draw->setFont( $font_file );
-		}
-		$m_tmp = new \Imagick();
-		$metrics = $m_tmp->queryFontMetrics( $m_draw, $cta_text );
-		$m_tmp->clear(); $m_tmp->destroy();
-		$m_draw->clear(); $m_draw->destroy();
-
-		$padding = 28;
-		$pw = (int) $metrics['textWidth'] + $padding * 2;
-		$ph = (int) $metrics['textHeight'] + 16;
-
-		// Sub-canvas for the CTA button.
-		$sub = new \Imagick();
-		$sub->newImage( $pw, $ph, new \ImagickPixel( 'transparent' ), 'png' );
-
-		// White pill background.
+		// Background pill.
 		$draw = new \ImagickDraw();
 		$draw->setFillColor( new \ImagickPixel( '#ffffff' ) );
-		$draw->roundRectangle( 0, 0, $pw, $ph, $ph / 2, $ph / 2 );
-		$sub->drawImage( $draw );
-		$draw->clear(); $draw->destroy();
+		$draw->roundRectangle( $x, $y, $x + $w, $y + $h, $h / 2, $h / 2 );
+		$canvas->drawImage( $draw );
 
-		// Dark text.
+		// Text.
 		$draw = new \ImagickDraw();
+		$font_file = self::resolve_font( $font_cfg['family'], $font_cfg['weight'] );
 		if ( $font_file ) {
 			$draw->setFont( $font_file );
 		}
 		$draw->setFontSize( $font_cfg['size'] );
 		$draw->setFillColor( new \ImagickPixel( '#1a1a1a' ) );
-		$draw->setTextAlignment( \Imagick::ALIGN_CENTER );
-		$draw->annotation( $pw / 2, $ph - 10, $cta_text );
-		$sub->drawImage( $draw );
-		$draw->clear(); $draw->destroy();
+		$draw->setTextAlignment(
+			$align === 'center' ? \Imagick::ALIGN_CENTER : ( $align === 'right' ? \Imagick::ALIGN_RIGHT : \Imagick::ALIGN_LEFT )
+		);
 
-		// Align sub-canvas on main canvas.
-		$cx = $x;
-		if ( $def['align'] ?? 'left' === 'center' ) {
-			$cx = $x - $pw / 2;
-		} elseif ( $def['align'] ?? 'left' === 'right' ) {
-			$cx = $x - $pw;
-		}
-		$canvas->compositeImage( $sub, \Imagick::COMPOSITE_OVER, (int) $cx, $y );
-		$sub->clear(); $sub->destroy();
+		$tx = $align === 'center' ? $x + $w / 2 : ( $align === 'right' ? $x + $w - 12 : $x + 24 );
+		$ty = $y + ( $h + $font_cfg['size'] * 0.35 ) / 2;
+		$draw->annotation( $tx, (int) $ty, $cta_text );
+		$canvas->drawImage( $draw );
 	}
 	/**
 	 * Render a price badge (free pill or price tag).
@@ -599,6 +532,8 @@ class Poster_Engine {
 		$free  = ! empty( $data['free'] );
 		$x     = $def['x'] ?? 0;
 		$y     = $def['y'] ?? 0;
+		$w     = $def['w'] ?? 200;
+		$h     = $def['h'] ?? 36;
 
 		if ( $free ) {
 			$label = 'Gratuito';
@@ -610,40 +545,18 @@ class Poster_Engine {
 			return;
 		}
 
-		// Measure text with queryFontMetrics.
-		$m_draw = new \ImagickDraw();
-		$m_draw->setFont( '/usr/share/fonts/TTF/Outfit-variable.ttf' );
-		$m_draw->setFontSize( 20 );
-		$m_tmp = new \Imagick();
-		$metrics = $m_tmp->queryFontMetrics( $m_draw, $label );
-		$m_tmp->clear(); $m_tmp->destroy();
-		$m_draw->clear(); $m_draw->destroy();
-
-		$padding = 14;
-		$pw = (int) $metrics['textWidth'] + $padding * 2;
-		$ph = (int) $metrics['textHeight'] + 10;
-
-		// Sub-canvas for pill.
-		$sub = new \Imagick();
-		$sub->newImage( $pw, $ph, new \ImagickPixel( 'transparent' ), 'png' );
-
 		$draw = new \ImagickDraw();
 		$draw->setFillColor( new \ImagickPixel( $color ) );
-		$draw->roundRectangle( 0, 0, $pw, $ph, $ph / 2, $ph / 2 );
-		$sub->drawImage( $draw );
-		$draw->clear(); $draw->destroy();
+		$draw->roundRectangle( $x, $y, $x + $w, $y + $h, $h / 2, $h / 2 );
+		$canvas->drawImage( $draw );
 
 		$draw = new \ImagickDraw();
 		$draw->setFillColor( new \ImagickPixel( '#ffffff' ) );
 		$draw->setFont( '/usr/share/fonts/TTF/Outfit-variable.ttf' );
-		$draw->setFontSize( 20 );
+		$draw->setFontSize( 18 );
 		$draw->setTextAlignment( \Imagick::ALIGN_CENTER );
-		$draw->annotation( $pw / 2, $ph - 8, $label );
-		$sub->drawImage( $draw );
-		$draw->clear(); $draw->destroy();
-
-		$canvas->compositeImage( $sub, \Imagick::COMPOSITE_OVER, $x, $y );
-		$sub->clear(); $sub->destroy();
+		$draw->annotation( $x + $w / 2, $y + $h - 8, $label );
+		$canvas->drawImage( $draw );
 	}
 
 		private static function gather_data( int $actividad_id ): array {

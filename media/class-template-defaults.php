@@ -80,7 +80,7 @@ class Template_Defaults {
 						'cta'    => array( 'family' => 'Outfit', 'weight' => 600, 'size' => 32, 'color' => '#1b5e20' ),
 						'disclaimer' => array( 'family' => 'Lato', 'weight' => 300, 'size' => 14, 'color' => '#666666' ),
 					),
-					'spacing' => array( 'margin' => 70, 'padding' => 28, 'gap' => 16, 'corner' => 20 ),
+					'spacing' => array( 'margin' => 60, 'padding' => 24, 'gap' => 12, 'corner' => 16 ),
 					'shadows' => array( 'text' => '0,2,4,rgba(0,0,0,0.3)', 'box' => '0,4,12,rgba(0,0,0,0.15)' ),
 				),
 				'formats' => array(
@@ -109,7 +109,7 @@ class Template_Defaults {
 						'fit' => 'cover',
 						'opacity' => 0.4,
 						'responsive' => array(
-							'square'   => array( 'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 700 ),
+							'square'   => array( 'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 600 ),
 							'story'    => array( 'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 1200 ),
 							'facebook' => array( 'x' => 0, 'y' => 0, 'w' => 1200, 'h' => 400 ),
 							'portrait' => array( 'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 700 ),
@@ -119,20 +119,19 @@ class Template_Defaults {
 					array(
 						'id' => 'photo_overlay',
 						'type' => 'overlay',
-						'gradient' => array( 'rgba(0,0,0,0.35)', 'rgba(0,0,0,0.75)' ),
+						'gradient' => array( 'rgba(0,0,0,0)', 'rgba(0,0,0,0.65)' ),
 						'responsive' => array(
-							'square'   => array( 'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 700 ),
-							'story'    => array( 'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 1200 ),
-							'facebook' => array( 'x' => 0, 'y' => 0, 'w' => 1200, 'h' => 400 ),
-							'portrait' => array( 'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 700 ),
+							'square'   => array( 'y' => 400, 'h' => 200 ),
+							'story'    => array( 'y' => 800, 'h' => 400 ),
+							'facebook' => array( 'y' => 250, 'h' => 150 ),
+							'portrait' => array( 'y' => 500, 'h' => 250 ),
 						),
 					),
 					array(
 						'id' => 'badge',
 						'type' => 'badge',
-						'stack' => true,
 						'responsive' => array(
-							'square'   => array( 'x' => 60, 'y' => 60, 'size' => 44 ),
+							'square'   => array( 'x' => 60, 'y' => 60, 'size' => 36 ),
 							'story'    => array( 'x' => 60, 'y' => 80, 'size' => 40 ),
 							'facebook' => array( 'x' => 40, 'y' => 40, 'size' => 28 ),
 							'portrait' => array( 'x' => 60, 'y' => 60, 'size' => 36 ),
@@ -143,12 +142,11 @@ class Template_Defaults {
 						'type' => 'text',
 						'ref' => 'title',
 						'font' => 'title',
-						'stack' => true,
 						'max_lines' => 3,
 						'auto_shrink' => true,
 						'auto_shrink_min' => 32,
 						'responsive' => array(
-							'square'   => array( 'x' => 60, 'y' => 120, 'w' => 900, 'h' => 200, 'align' => 'left', 'font_size' => 68 ),
+							'square'   => array( 'x' => 60, 'y' => 480, 'w' => 960, 'h' => 220, 'align' => 'left', 'font_size' => 72 ),
 							'story'    => array( 'x' => 60, 'y' => 900, 'w' => 960, 'h' => 400, 'align' => 'center', 'font_size' => 96 ),
 							'facebook' => array( 'x' => 40, 'y' => 300, 'w' => 1120, 'h' => 180, 'align' => 'left', 'font_size' => 52 ),
 							'portrait' => array( 'x' => 60, 'y' => 580, 'w' => 960, 'h' => 280, 'align' => 'left', 'font_size' => 64 ),
@@ -159,11 +157,10 @@ class Template_Defaults {
 						'type' => 'text',
 						'ref' => 'subtitle',
 						'font' => 'body',
-						'stack' => true,
 						'max_lines' => 2,
 						'auto_shrink' => true,
 						'responsive' => array(
-							'square'   => array( 'x' => 60, 'y' => 400, 'w' => 900, 'h' => 50, 'align' => 'left' ),
+							'square'   => array( 'x' => 60, 'y' => 680, 'w' => 960, 'h' => 60, 'align' => 'left' ),
 						),
 					),
 					array(
@@ -172,7 +169,7 @@ class Template_Defaults {
 						'ref' => 'meta_block',
 						'font' => 'meta',
 						'responsive' => array(
-							'square'   => array( 'x' => 60, 'y' => 745, 'w' => 700, 'h' => 80, 'align' => 'left' ),
+							'square'   => array( 'x' => 60, 'y' => 700, 'w' => 700, 'h' => 100, 'align' => 'left' ),
 							'story'    => array( 'x' => 60, 'y' => 1320, 'w' => 960, 'h' => 120, 'align' => 'center' ),
 							'facebook' => array( 'x' => 40, 'y' => 490, 'w' => 800, 'h' => 60, 'align' => 'left' ),
 							'portrait' => array( 'x' => 60, 'y' => 860, 'w' => 800, 'h' => 100, 'align' => 'left' ),
@@ -182,14 +179,14 @@ class Template_Defaults {
 						'id' => 'price',
 						'type' => 'price_badge',
 						'responsive' => array(
-							'square'   => array( 'x' => 60, 'y' => 805, 'w' => 220, 'h' => 40 ),
+							'square'   => array( 'x' => 60, 'y' => 810, 'w' => 200, 'h' => 36 ),
 						),
 					),
 					array(
 						'id' => 'cta',
 						'type' => 'cta',
 						'responsive' => array(
-							'square'   => array( 'x' => 60, 'y' => 855, 'w' => 400, 'h' => 64, 'align' => 'left' ),
+							'square'   => array( 'x' => 60, 'y' => 870, 'w' => 360, 'h' => 56, 'align' => 'left' ),
 							'story'    => array( 'x' => 240, 'y' => 1500, 'w' => 600, 'h' => 70, 'align' => 'center' ),
 							'facebook' => array( 'x' => 40, 'y' => 560, 'w' => 300, 'h' => 50, 'align' => 'left' ),
 							'portrait' => array( 'x' => 60, 'y' => 1000, 'w' => 400, 'h' => 60, 'align' => 'left' ),
@@ -209,7 +206,7 @@ class Template_Defaults {
 						'id' => 'qr',
 						'type' => 'qr',
 						'responsive' => array(
-							'square'   => array( 'x' => 860, 'y' => 920, 'size' => 160 ),
+							'square'   => array( 'x' => 880, 'y' => 930, 'size' => 140 ),
 							'story'    => array( 'x' => 780, 'y' => 1620, 'size' => 200 ),
 							'facebook' => array( 'x' => 1020, 'y' => 530, 'size' => 80 ),
 							'portrait' => array( 'x' => 880, 'y' => 1120, 'size' => 140 ),
@@ -380,8 +377,8 @@ class Template_Defaults {
 					array( 'id' => 'photo', 'type' => 'image', 'fit' => 'cover', 'opacity' => 0.3,
 						'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 600 ),
 					array( 'id' => 'overlay', 'type' => 'overlay',
-						'gradient' => array( 'rgba(0,0,0,0.35)', 'rgba(0,0,0,0.75)' ), 'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 600 ),
-					array( 'id' => 'badge', 'type' => 'badge', 'x' => 50, 'y' => 50, 'size' => 40 ),
+						'gradient' => array( 'rgba(0,0,0,0)', 'rgba(0,0,0,0.6)' ), 'y' => 400, 'h' => 200 ),
+					array( 'id' => 'badge', 'type' => 'badge', 'x' => 50, 'y' => 50, 'size' => 34 ),
 					array( 'id' => 'title', 'type' => 'text', 'ref' => 'title', 'font' => 'title', 'max_lines' => 3,
 						'x' => 50, 'y' => 460, 'w' => 980, 'h' => 200, 'align' => 'left', 'auto_shrink' => true ),
 					array( 'id' => 'meta', 'type' => 'text', 'ref' => 'meta_block', 'font' => 'meta',
