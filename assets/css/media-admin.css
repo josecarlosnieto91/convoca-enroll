@@ -1,0 +1,6 @@
+.convoca-media-metabox img { max-width: 100%; height: auto; border-radius: 8px; }
+.convoca-media-metabox p { margin: 8px 0; }
+.convoca-media-metabox .convoca-media-message { font-size: 12px; padding: 4px 8px; border-radius: 4px; }
+.convoca-media-metabox .convoca-media-message.success { background: #d4edda; color: #155724; }
+.convoca-media-metabox .convoca-media-message.error { background: #f8d7da; color: #721c24; }
+.convoca-media-metabox .convoca-media-message.loading { background: #fff3cd; color: #856404; }
