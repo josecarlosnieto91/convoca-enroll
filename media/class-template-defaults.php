@@ -119,12 +119,12 @@ class Template_Defaults {
 					array(
 						'id' => 'photo_overlay',
 						'type' => 'overlay',
-						'gradient' => array( 'rgba(0,0,0,0)', 'rgba(0,0,0,0.65)' ),
+						'gradient' => array( 'rgba(0,0,0,0.35)', 'rgba(0,0,0,0.75)' ),
 						'responsive' => array(
-							'square'   => array( 'y' => 500, 'h' => 250 ),
-							'story'    => array( 'y' => 800, 'h' => 400 ),
-							'facebook' => array( 'y' => 250, 'h' => 150 ),
-							'portrait' => array( 'y' => 500, 'h' => 250 ),
+							'square'   => array( 'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 700 ),
+							'story'    => array( 'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 1200 ),
+							'facebook' => array( 'x' => 0, 'y' => 0, 'w' => 1200, 'h' => 400 ),
+							'portrait' => array( 'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 700 ),
 						),
 					),
 					array(
@@ -377,7 +377,7 @@ class Template_Defaults {
 					array( 'id' => 'photo', 'type' => 'image', 'fit' => 'cover', 'opacity' => 0.3,
 						'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 600 ),
 					array( 'id' => 'overlay', 'type' => 'overlay',
-						'gradient' => array( 'rgba(0,0,0,0)', 'rgba(0,0,0,0.6)' ), 'y' => 400, 'h' => 200 ),
+						'gradient' => array( 'rgba(0,0,0,0.35)', 'rgba(0,0,0,0.75)' ), 'x' => 0, 'y' => 0, 'w' => 1080, 'h' => 600 ),
 					array( 'id' => 'badge', 'type' => 'badge', 'x' => 50, 'y' => 50, 'size' => 40 ),
 					array( 'id' => 'title', 'type' => 'text', 'ref' => 'title', 'font' => 'title', 'max_lines' => 3,
 						'x' => 50, 'y' => 460, 'w' => 980, 'h' => 200, 'align' => 'left', 'auto_shrink' => true ),
