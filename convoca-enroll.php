@@ -62,7 +62,7 @@ spl_autoload_register(
 		$relative = str_replace( $prefix, '', $class );
 		$relative = strtolower( str_replace( '_', '-', $relative ) );
 
-		foreach ( array( 'includes/', 'admin/', 'public/' ) as $dir ) {
+		foreach ( array( 'includes/', 'admin/', 'public/', 'media/' ) as $dir ) {
 			// Standard WP convention: class-name.php.
 			$wp_file = CONV_ENROLL_DIR . $dir . 'class-' . $relative . '.php';
 			if ( file_exists( $wp_file ) ) {
@@ -94,6 +94,9 @@ register_activation_hook(
 		Convoca\Enroll\Webhook_Dispatcher::create_table();
 		Convoca\Enroll\Motor_Inscripcion::create_reservation_codes_table();
 
+		// Media & Social Suite tables.
+		Convoca\Enroll\Media\Media_Installer::install();
+		Convoca\Enroll\Media\Media_Capabilities::ensure();
 		if ( false === get_option( 'conv_enroll_settings' ) ) {
 			update_option(
 				'conv_enroll_settings',
@@ -217,6 +220,10 @@ add_action(
 
 		// Upgrade Manager (checks for DB version upgrades on admin_init).
 		new Convoca\Enroll\Enroll_Upgrade_Manager();
+
+		// Media & Social Suite.
+		new Convoca\Enroll\Media\Media_Upgrade_Manager();
+		new Convoca\Enroll\Media\Media_Rest_API();
 
 		if ( ! function_exists( 'conv_ensure_enroll_capabilities' ) ) {
 			/**
