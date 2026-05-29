@@ -130,6 +130,7 @@ class Template_Defaults {
 					array(
 						'id' => 'badge',
 						'type' => 'badge',
+						'stack' => true,
 						'responsive' => array(
 							'square'   => array( 'x' => 60, 'y' => 60, 'size' => 44 ),
 							'story'    => array( 'x' => 60, 'y' => 80, 'size' => 40 ),
@@ -142,11 +143,12 @@ class Template_Defaults {
 						'type' => 'text',
 						'ref' => 'title',
 						'font' => 'title',
+						'stack' => true,
 						'max_lines' => 3,
 						'auto_shrink' => true,
 						'auto_shrink_min' => 32,
 						'responsive' => array(
-							'square'   => array( 'x' => 60, 'y' => 520, 'w' => 960, 'h' => 200, 'align' => 'left', 'font_size' => 68 ),
+							'square'   => array( 'x' => 60, 'y' => 120, 'w' => 900, 'h' => 200, 'align' => 'left', 'font_size' => 68 ),
 							'story'    => array( 'x' => 60, 'y' => 900, 'w' => 960, 'h' => 400, 'align' => 'center', 'font_size' => 96 ),
 							'facebook' => array( 'x' => 40, 'y' => 300, 'w' => 1120, 'h' => 180, 'align' => 'left', 'font_size' => 52 ),
 							'portrait' => array( 'x' => 60, 'y' => 580, 'w' => 960, 'h' => 280, 'align' => 'left', 'font_size' => 64 ),
@@ -157,10 +159,11 @@ class Template_Defaults {
 						'type' => 'text',
 						'ref' => 'subtitle',
 						'font' => 'body',
+						'stack' => true,
 						'max_lines' => 2,
 						'auto_shrink' => true,
 						'responsive' => array(
-							'square'   => array( 'x' => 60, 'y' => 710, 'w' => 960, 'h' => 50, 'align' => 'left' ),
+							'square'   => array( 'x' => 60, 'y' => 400, 'w' => 900, 'h' => 50, 'align' => 'left' ),
 						),
 					),
 					array(

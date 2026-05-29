@@ -94,9 +94,68 @@ class Poster_Engine {
 			try {
 				$canvas = new \Imagick();
 				$canvas->newImage( $target_w, $target_h, new \ImagickPixel( 'transparent' ) );
-				// Render each layer.
+				// Dynamic Y stacking: track vertical position for stacked elements.
+				$margin  = $template['design_tokens']['spacing']['margin'] ?? 60;
+				$gap     = $template['design_tokens']['spacing']['gap'] ?? 16;
+				$nextY   = $margin;
+				$bottomY = $target_h - $margin;
+
+				// Pre-compute safe positions for bottom-anchored layers.
+				$qr_pos    = null;
+				$logo_pos  = null;
+
+				// Pass 1: Identify bottom-anchored layers and static backgrounds.
+				$render_queue = array();
 				foreach ( $template['layers'] as $layer_def ) {
-					self::render_layer( $canvas, $layer_def, $data, $image_id, $template, $format_key );
+					$def = $layer_def;
+					// Resolve responsive overrides.
+					if ( ! empty( $def['responsive'][ $format_key ] ) ) {
+						foreach ( $def['responsive'][ $format_key ] as $rk => $rv ) {
+							$def[ $rk ] = $rv;
+						}
+					}
+
+					// Stacked elements: assign dynamic Y position.
+					if ( ! empty( $def['stack'] ) ) {
+						$def['y'] = $nextY;
+					}
+
+					// Bottom-anchored elements: reserve space at bottom.
+					if ( ! empty( $def['anchor_bottom'] ) ) {
+						$bh = $def['h'] ?? 120;
+						$def['y'] = $bottomY - $bh;
+						$bottomY = $def['y'] - $gap; // push up for next bottom element
+					}
+
+					$render_queue[] = $def;
+				}
+
+				// Pass 2: Render all layers.
+				foreach ( $render_queue as $def ) {
+					$type = $def['type'] ?? '';
+					$prev_nextY = $nextY;
+
+					self::render_layer( $canvas, $def, $data, $image_id, $template, $format_key );
+
+					// Update nextY after text/stacked layers.
+					if ( ! empty( $def['stack'] ) && in_array( $type, array( 'text', 'badge', 'price_badge', 'cta' ), true ) ) {
+						$rendered_h = $def['h'] ?? 60;
+						// For text with auto-sizing, estimate actual height based on content.
+						if ( $type === 'text' && ! empty( $def['ref'] ) && ! empty( $data[ $def['ref'] ] ) ) {
+							$ref      = $def['ref'];
+							$text_len = strlen( $data[ $ref ] ?? '' );
+							$font_cfg = $template['design_tokens']['typography'][ $def['font'] ?? 'body' ]
+								?? $template['fonts'][ $def['font'] ?? 'meta' ]
+								?? array( 'size' => 28 );
+							$fs      = $def['font_size'] ?? $font_cfg['size'] ?? 28;
+							$max_w   = $def['w'] ?? ( $target_w - 2 * $margin );
+							$max_lines = $def['max_lines'] ?? 10;
+							$chars_per_line = max( 1, $max_w / ( $fs * 0.5 ) );
+							$lines = min( $max_lines, max( 1, ceil( $text_len / $chars_per_line ) ) );
+							$rendered_h = (int) ( $lines * $fs * 1.4 );
+						}
+						$nextY = $def['y'] + $rendered_h + $gap;
+					}
 				}
 
 				$canvas->setImageFormat( $export_type );
