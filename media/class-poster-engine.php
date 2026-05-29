@@ -291,7 +291,12 @@ class Poster_Engine {
 
 		// Resolve font config.
 		$font_key   = $def['font'] ?? ( $ref === 'title' ? 'title' : ( in_array( $ref, array( 'cta', 'date', 'location' ), true ) ? $ref : 'meta' ) );
-		$font_cfg   = $template['fonts'][ $font_key ] ?? $template['fonts']['meta'] ?? array( 'family' => 'Lato', 'size' => 28, 'color' => '#000000' );
+		// v2 schema: design_tokens.typography. v1 fallback: fonts.
+		$font_cfg   = $template['design_tokens']['typography'][ $font_key ]
+			?? $template['fonts'][ $font_key ]
+			?? $template['design_tokens']['typography']['body']
+			?? $template['fonts']['meta']
+			?? array( 'family' => 'Lato', 'size' => 28, 'color' => '#ffffff' );
 		$font_size  = $def['font_size'] ?? $font_cfg['size'] ?? 28;
 
 		$draw = new \ImagickDraw();
@@ -324,7 +329,7 @@ class Poster_Engine {
 		$draw->setFillColor( new \ImagickPixel( $text_color ) );
 
 		// Text shadow for readability (when template has auto_text_shadow).
-		$do_shadow = ! empty( $template['smart']['auto_text_shadow'] );
+		$do_shadow = ! empty( $template['smart']['auto_text_shadow'] ) || ! empty( $template['design_tokens']['smart']['auto_text_shadow'] );
 		if ( $do_shadow && in_array( $ref, array( 'title', 'meta_block', 'date', 'cta' ), true ) ) {
 			$shadow = new \ImagickDraw();
 			$shadow->setFont( $draw->getFont() );
@@ -498,7 +503,10 @@ class Poster_Engine {
 		$w        = $def['w'] ?? 360;
 		$h        = $def['h'] ?? 60;
 		$align    = $def['align'] ?? 'left';
-		$font_cfg = $data['_font_cta'] ?? array( 'family' => 'Outfit', 'weight' => 600, 'size' => 30, 'color' => '#ffffff' );
+		$font_cfg = $data['_font_cta']
+			?? $template['design_tokens']['typography']['cta']
+			?? $template['fonts']['cta']
+			?? array( 'family' => 'Outfit', 'weight' => 600, 'size' => 30, 'color' => '#ffffff' );
 
 		// Background pill.
 		$draw = new \ImagickDraw();
