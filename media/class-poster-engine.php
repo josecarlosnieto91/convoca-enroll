@@ -360,20 +360,20 @@ class Poster_Engine {
 	 * Render QR code layer.
 	 */
 	private static function render_qr( \Imagick $canvas, array $def, int $actividad_id ): void {
-		$qr_path = QR_Generator::generate( $actividad_id, array(
-			'size' => $def['size'] ?? 300,
-		) );
-
-		if ( ! $qr_path || ! file_exists( $qr_path ) ) {
-			return;
-		}
-
 		try {
+			$qr_path = QR_Generator::generate( $actividad_id, array(
+				'size' => $def['size'] ?? 300,
+			) );
+
+			if ( ! $qr_path || ! file_exists( $qr_path ) ) {
+				return;
+			}
+
 			$qr = new \Imagick( $qr_path );
 			$canvas->compositeImage( $qr, \Imagick::COMPOSITE_OVER, $def['x'] ?? 0, $def['y'] ?? 0 );
 			$qr->clear();
-		} catch ( \Exception $e ) {
-			// Ignore.
+		} catch ( \Throwable $e ) {
+			// QR generation is optional — skip silently.
 		}
 	}
 
