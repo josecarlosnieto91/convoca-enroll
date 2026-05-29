@@ -513,10 +513,10 @@ class Poster_Engine {
 		$fonts = array(
 			'Outfit'  => array(
 				400 => '/usr/share/fonts/TTF/Outfit-Regular.ttf',
-				500 => '/usr/share/fonts/TTF/Outfit-Medium.ttf',
-				600 => '/usr/share/fonts/TTF/Outfit-SemiBold.ttf',
-				700 => '/usr/share/fonts/TTF/Outfit-Bold.ttf',
-				800 => '/usr/share/fonts/TTF/Outfit-ExtraBold.ttf',
+				500 => '/usr/share/fonts/TTF/Outfit-medium.ttf',
+				600 => '/usr/share/fonts/TTF/Outfit-semibold.ttf',
+				700 => '/usr/share/fonts/TTF/Outfit-bold.ttf',
+				800 => '/usr/share/fonts/TTF/Outfit-extrabold.ttf',
 			),
 			'Lato'    => array(
 				300 => '/usr/share/fonts/TTF/Lato-Light.ttf',
