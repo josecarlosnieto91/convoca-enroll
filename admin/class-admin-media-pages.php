@@ -51,20 +51,55 @@ class Admin_Media_Subpages {
 
 	public function render_accounts(): void {
 		$accounts = \Convoca\Enroll\Social\Social_OAuth::get_accounts();
+		$error    = sanitize_text_field( $_GET['convoca_error'] ?? '' );
+		$success  = sanitize_text_field( $_GET['convoca_success'] ?? '' );
+
+		$error_msgs = array(
+			'oauth_denied' => 'Autorización cancelada por el usuario.',
+			'csrf'         => 'Error de seguridad: state inválido. Intenta de nuevo.',
+			'token_failed' => 'Error al obtener el token de acceso.',
+			'meta_no_app'  => 'Meta App ID no configurado. Define CONVOCA_META_APP_ID y CONVOCA_META_APP_SECRET en wp-config.php.',
+			'google_no_app' => 'Google Client ID no configurado. Define CONVOCA_GOOGLE_CLIENT_ID y CONVOCA_GOOGLE_CLIENT_SECRET en wp-config.php.',
+			'no_pages'     => 'Conectado pero no se encontraron páginas de Facebook. Crea una página primero.',
+		);
+		$success_msgs = array(
+			'connected' => '✅ Cuenta(s) conectada(s) correctamente.',
+		);
 		?>
 		<div class="wrap">
-			<h1>🔗 <?php esc_html_e( 'Redes sociales conectadas', 'convoca-enroll' ); ?></h1>
+			<h1>🔗 <?php esc_html_e( 'Redes sociales', 'convoca-enroll' ); ?></h1>
+
+			<?php if ( $error && isset( $error_msgs[ $error ] ) ) : ?>
+				<div class="notice notice-error"><p><?php echo esc_html( $error_msgs[ $error ] ); ?></p></div>
+			<?php endif; ?>
+			<?php if ( $success && isset( $success_msgs[ $success ] ) ) : ?>
+				<div class="notice notice-success"><p><?php echo esc_html( $success_msgs[ $success ] ); ?></p></div>
+			<?php endif; ?>
+
+			<div style="display:flex;gap:12px;margin:20px 0;flex-wrap:wrap;">
+				<a href="<?php echo esc_url( rest_url( 'convoca/v1/social/auth/meta' ) ); ?>" class="button button-primary" style="background:#1877F2;border-color:#1877F2;">
+					📘 Conectar Meta (Facebook/Instagram)
+				</a>
+				<a href="<?php echo esc_url( rest_url( 'convoca/v1/social/auth/google' ) ); ?>" class="button button-primary" style="background:#4285F4;border-color:#4285F4;">
+					📍 Conectar Google Business Profile
+				</a>
+			</div>
+
+			<h2><?php esc_html_e( 'Cuentas conectadas', 'convoca-enroll' ); ?></h2>
 			<table class="wp-list-table widefat fixed striped">
-				<thead><tr><th>Red</th><th>Cuenta</th><th>Estado</th><th>Última sincronización</th></tr></thead>
+				<thead><tr><th>Red</th><th>Cuenta</th><th>Token expira</th><th>Estado</th><th>Acción</th></tr></thead>
 				<tbody>
 					<?php foreach ( $accounts as $a ) : ?>
 						<tr>
 							<td><strong><?php echo esc_html( $a['network'] ); ?></strong></td>
 							<td><?php echo esc_html( $a['account_name'] ?: $a['account_id'] ); ?></td>
+							<td><?php echo esc_html( $a['token_expires_at'] ? date( 'd/m/Y', strtotime( $a['token_expires_at'] ) ) : '—' ); ?></td>
 							<td><?php echo $a['is_active'] ? '✅ Activa' : '❌ Inactiva'; ?></td>
-							<td><?php echo esc_html( $a['last_sync_at'] ?: '—' ); ?></td>
+							<td><a href="<?php echo esc_url( rest_url( 'convoca/v1/social/accounts/' . $a['id'] ) ); ?>" class="button button-small" onclick="return confirm('¿Desconectar esta cuenta?')">Desconectar</a></td>
 						</tr>
-					<?php endforeach; if ( empty( $accounts ) ) : ?><tr><td colspan="4"><?php esc_html_e( 'No hay cuentas conectadas. Usa la API REST para conectar.', 'convoca-enroll' ); ?></td></tr><?php endif; ?>
+					<?php endforeach; if ( empty( $accounts ) ) : ?>
+						<tr><td colspan="5">No hay cuentas conectadas. Usa los botones de arriba para conectar.</td></tr>
+					<?php endif; ?>
 				</tbody>
 			</table>
 		</div>

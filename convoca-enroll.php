@@ -226,7 +226,8 @@ add_action(
 		// Media & Social Suite.
 		new Convoca\Enroll\Media\Media_Upgrade_Manager();
 		new Convoca\Enroll\Media\Media_Rest_API();
-		Convoca\Enroll\Social\Social_OAuth::class; // Ensure autoload
+		Convoca\Enroll\Social\Social_OAuth::class;
+		new Convoca\Enroll\Social\Social_Rest_API();
 
 		if ( ! function_exists( 'conv_ensure_enroll_capabilities' ) ) {
 			/**
