@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd"
+         bootstrap="../bootstrap.php"
+         colors="true">
+    <testsuites>
+        <testsuite name="convoca-enroll-media">
+            <file>TestPosterEngine.php</file>
+            <file>TestQRGenerator.php</file>
+            <file>TestTemplateManager.php</file>
+            <file>TestBlogPostManager.php</file>
+            <file>TestMediaLogger.php</file>
+            <file>TestSocialScheduler.php</file>
+        </testsuite>
+    </testsuites>
+</phpunit>
