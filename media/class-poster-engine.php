@@ -445,33 +445,48 @@ class Poster_Engine {
 	/**
 	 * Gather all activity data needed for rendering.
 	 */
-	private static function gather_data( int $actividad_id ): array {
-		$meta_prefix = 'conv_'; // was _bde_ before rename
-		$fecha_inicio = get_post_meta( $actividad_id, $meta_prefix . 'fecha_inicio', true );
-		$fecha_fin    = get_post_meta( $actividad_id, $meta_prefix . 'fecha_fin', true );
-		$ubicacion    = get_post_meta( $actividad_id, $meta_prefix . 'ubicacion', true );
+		private static function gather_data( int $actividad_id ): array {
+		// Try new meta keys first, then legacy _bde_ keys as fallback.
+		$fecha_inicio = get_post_meta( $actividad_id, 'conv_fecha_inicio', true );
+		if ( empty( $fecha_inicio ) ) {
+			$fecha_inicio = get_post_meta( $actividad_id, '_bde_fecha_inicio', true );
+		}
 
-		$tipo      = get_post_meta( $actividad_id, $meta_prefix . 'tipo_actividad', true );
-		$badge     = self::get_badge( $tipo );
+		$fecha_fin = get_post_meta( $actividad_id, 'conv_fecha_fin', true );
+		if ( empty( $fecha_fin ) ) {
+			$fecha_fin = get_post_meta( $actividad_id, '_bde_fecha_fin', true );
+		}
 
-		$title     = get_the_title( $actividad_id );
-		$extracto  = get_the_excerpt( $actividad_id ) ?: wp_trim_words( get_the_content( $actividad_id ), 20 );
-		$permalink = get_permalink( $actividad_id );
+		$ubicacion = get_post_meta( $actividad_id, 'conv_ubicacion', true );
+		if ( empty( $ubicacion ) ) {
+			$ubicacion = get_post_meta( $actividad_id, '_bde_ubicacion', true );
+		}
+
+		$tipo  = get_post_meta( $actividad_id, 'conv_tipo_actividad', true );
+		$badge = self::get_badge( $tipo );
+
+		$title    = get_the_title( $actividad_id );
+		$extracto = get_the_excerpt( $actividad_id ) ?: wp_trim_words( strip_tags( get_post_field( 'post_content', $actividad_id ) ), 30 );
+		$time_str = '';
+
+		if ( $fecha_inicio ) {
+			$timestamp = strtotime( $fecha_inicio );
+			$time_str  = date( 'H:i', $timestamp );
+		}
 
 		return array(
 			'actividad_id' => $actividad_id,
-			'title'        => $title,
-			'subtitle'     => $extracto,
+			'title'        => $title ?: 'Actividad',
+			'subtitle'     => $extracto ?: 'Te esperamos!',
 			'date'         => $fecha_inicio ? \Convoca\Core\Utils::format_date( $fecha_inicio, 'j F Y' ) : '',
-			'time'         => $fecha_inicio ? date( 'H:i', strtotime( $fecha_inicio ) ) : '',
+			'time'         => $time_str,
 			'location'     => $ubicacion ?: '',
 			'cta'          => __( 'Inscríbete aquí', 'convoca-enroll' ),
 			'badge_text'   => $badge['label'] ?? '',
 			'badge_color'  => $badge['color'] ?? '#ff8700',
-			'permalink'    => $permalink,
+			'permalink'    => get_permalink( $actividad_id ),
 		);
 	}
-
 	/**
 	 * Resolve badge data based on activity type taxonomy.
 	 */
