@@ -323,7 +323,7 @@ class Template_Defaults {
 	}
 
 	private static function minimal_corporate(): array {
-		return self::mini_template( 'Minimal Corporate', 'minimal-corporate', 'Blanco y gris, máxima legibilidad. Ideal para comunicados formales.', array( '#ffffff', '#f5f5f5' ), '#1a1a1a' );
+		return self::mini_template( 'Minimal Corporate', 'minimal-corporate', 'Blanco y gris, máxima legibilidad. Ideal para comunicados formales.', array( '#ffffff', '#f5f5f5' ), '#1a1a1a', '#1a1a1a' );
 	}
 
 	private static function full_photo_hero(): array {
@@ -337,7 +337,7 @@ class Template_Defaults {
 	/**
 	 * Generate a minimal but complete template from common defaults.
 	 */
-	private static function mini_template( string $name, string $slug, string $desc, array $bg, string $accent_text ): array {
+	private static function mini_template( string $name, string $slug, string $desc, array $bg, string $accent_text, string $title_color = '#ffffff' ): array {
 		return array(
 			'name'        => $name,
 			'slug'        => $slug,
@@ -347,7 +347,7 @@ class Template_Defaults {
 				'design_tokens' => array(
 					'palette'    => array( 'primary' => $bg[0], 'secondary' => $bg[1], 'accent' => '#ff8700', 'text_light' => $accent_text ),
 					'typography' => array(
-						'title' => array( 'family' => 'Outfit', 'weight' => 700, 'size' => 60, 'color' => '#ffffff' ),
+						'title' => array( 'family' => 'Outfit', 'weight' => 700, 'size' => 60, 'color' => $title_color ),
 						'meta'  => array( 'family' => 'Lato', 'weight' => 400, 'size' => 24, 'color' => $accent_text ),
 						'cta'   => array( 'family' => 'Outfit', 'weight' => 600, 'size' => 30, 'color' => '#ffffff' ),
 					),

@@ -324,6 +324,17 @@ class Poster_Engine {
 		$text_color = $def['color'] ?? $font_cfg['color'] ?? '#000000';
 		$draw->setFillColor( new \ImagickPixel( $text_color ) );
 
+		// Text shadow for readability (when template has auto_text_shadow).
+		$do_shadow = ! empty( $template['smart']['auto_text_shadow'] );
+		if ( $do_shadow && in_array( $ref, array( 'title', 'meta_block', 'date', 'cta' ), true ) ) {
+			$shadow = new \ImagickDraw();
+			$shadow->setFont( $draw->getFont() );
+			$shadow->setFontSize( $font_size );
+			$shadow->setFontWeight( $draw->getFontWeight() );
+			$shadow->setTextAlignment( $draw->getTextAlignment() );
+			$shadow->setFillColor( new \ImagickPixel( 'rgba(0,0,0,0.35)' ) );
+		}
+
 		// Alignment.
 		$align = $def['align'] ?? 'left';
 		$draw->setTextAlignment(
