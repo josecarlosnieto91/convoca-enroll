@@ -142,36 +142,39 @@ class Poster_Engine {
 		switch ( $type ) {
 			case 'background':
 				self::render_background( $canvas, $def );
+				break;
 
 			case 'image':
 				self::render_image_layer( $canvas, $def, $image_id );
+				break;
 
 			case 'overlay':
 				self::render_overlay( $canvas, $def );
+				break;
 
 			case 'text':
 				self::render_text_layer( $canvas, $def, $data, $template );
+				break;
 
 			case 'logo':
 				self::render_logo( $canvas, $def );
+				break;
 
 			case 'qr':
 				self::render_qr( $canvas, $def, $data['actividad_id'] );
+				break;
 
 			case 'badge':
 				self::render_badge( $canvas, $def, $data );
+				break;
 
 			case 'rect':
 				self::render_rect( $canvas, $def );
+				break;
 
 			case 'cta':
 				self::render_cta( $canvas, $def, $data );
-
-			case 'price_badge':
-				self::render_price_badge( $canvas, $def, $data );
-
-
-
+				break;
 		}
 	}
 
@@ -352,6 +355,7 @@ class Poster_Engine {
 
 		foreach ( $lines as $line ) {
 			if ( $ly > $y + ( $def['h'] ?? 9999 ) ) {
+				break;
 			}
 			$draw->annotation( $x, $ly, $line );
 			$ly += $line_h;
@@ -382,6 +386,9 @@ class Poster_Engine {
 			$max_h = $def['h'] ?? 120;
 			$logo->resizeImage( $max_w, $max_h, \Imagick::FILTER_LANCZOS, 1, true );
 
+			if ( isset( $def['opacity'] ) ) {
+				$logo->setImageOpacity( $def['opacity'] );
+			}
 
 			$x = $def['x'] ?? 0;
 			$y = $def['y'] ?? 0;
@@ -524,41 +531,6 @@ class Poster_Engine {
 		$draw->annotation( $tx, (int) $ty, $cta_text );
 		$canvas->drawImage( $draw );
 	}
-	/**
-	 * Render a price badge (free pill or price tag).
-	 */
-	private static function render_price_badge( \Imagick $canvas, array $def, array $data ): void {
-		$price = $data['price'] ?? '';
-		$free  = ! empty( $data['free'] );
-		$x     = $def['x'] ?? 0;
-		$y     = $def['y'] ?? 0;
-		$w     = $def['w'] ?? 200;
-		$h     = $def['h'] ?? 36;
-
-		if ( $free ) {
-			$label = 'Gratuito';
-			$color = '#4caf50';
-		} elseif ( $price ) {
-			$label = $price;
-			$color = '#ff8700';
-		} else {
-			return;
-		}
-
-		$draw = new \ImagickDraw();
-		$draw->setFillColor( new \ImagickPixel( $color ) );
-		$draw->roundRectangle( $x, $y, $x + $w, $y + $h, $h / 2, $h / 2 );
-		$canvas->drawImage( $draw );
-
-		$draw = new \ImagickDraw();
-		$draw->setFillColor( new \ImagickPixel( '#ffffff' ) );
-		$draw->setFont( '/usr/share/fonts/TTF/Outfit-variable.ttf' );
-		$draw->setFontSize( 18 );
-		$draw->setTextAlignment( \Imagick::ALIGN_CENTER );
-		$draw->annotation( $x + $w / 2, $y + $h - 8, $label );
-		$canvas->drawImage( $draw );
-	}
-
 		private static function gather_data( int $actividad_id ): array {
 		// Try new meta keys first, then legacy _bde_ keys as fallback.
 		$fecha_inicio = get_post_meta( $actividad_id, 'conv_fecha_inicio', true );
@@ -606,20 +578,6 @@ class Poster_Engine {
 			$meta_block .= '  ·  ' . $plazas . ' plazas';
 		}
 
-		// Gather additional fields for richer posters.
-		$precio_socio  = get_post_meta( $actividad_id, 'conv_precio_socio', true );
-		if ( empty( $precio_socio ) ) {
-			$precio_socio = get_post_meta( $actividad_id, '_bde_precio_socio', true );
-		}
-		$precio_general = get_post_meta( $actividad_id, 'conv_precio_general', true );
-		if ( empty( $precio_general ) ) {
-			$precio_general = get_post_meta( $actividad_id, '_bde_precio_general', true );
-		}
-		$tags = wp_get_post_tags( $actividad_id, array( 'fields' => 'names' ) );
-		$hashtags = $tags ? '#' . implode( ' #', $tags ) : '';
-		$organizadores = get_post_meta( $actividad_id, 'conv_organizadores', true );
-		$duracion = get_post_meta( $actividad_id, 'conv_duracion', true );
-
 		return array(
 			'actividad_id'  => $actividad_id,
 			'title'         => $title ?: 'Actividad',
@@ -628,11 +586,6 @@ class Poster_Engine {
 			'time'          => $time_str,
 			'location'      => $ubicacion ?: '',
 			'meta_block'    => $meta_block,
-			'price'         => ( $precio_socio !== '' && $precio_socio !== false ) ? $precio_socio . '€' : ( $precio_general ? $precio_general . '€' : '' ),
-			'free'          => ( $precio_socio === '' || $precio_socio === false || $precio_socio === '0' ) && ( $precio_general === '' || $precio_general === false || $precio_general === '0' ),
-			'hashtags'      => $hashtags,
-			'organizadores' => $organizadores ?: '',
-			'duracion'      => $duracion ?: '',
 			'cta'           => __( 'Inscríbete aquí', 'convoca-enroll' ),
 			'badge_text'    => $badge['label'] ?? '',
 			'badge_color'   => $badge['color'] ?? '#ff8700',
