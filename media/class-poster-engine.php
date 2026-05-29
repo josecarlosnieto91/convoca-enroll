@@ -382,9 +382,6 @@ class Poster_Engine {
 			$max_h = $def['h'] ?? 120;
 			$logo->resizeImage( $max_w, $max_h, \Imagick::FILTER_LANCZOS, 1, true );
 
-			if ( isset( $def['opacity'] ) ) {
-				$logo->setImageOpacity( $def['opacity'] );
-			}
 
 			$x = $def['x'] ?? 0;
 			$y = $def['y'] ?? 0;
