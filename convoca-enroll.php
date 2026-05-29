@@ -232,7 +232,7 @@ add_action(
 			 * Ensure all necessary roles and capabilities are present.
 			 * Called on init to prevent race conditions or missing caps after updates.
 			 */
-			function conv_enroll_ensure_capabilities() {
+			function conv_ensure_enroll_capabilities() {
 				// 1. Ensure Roles exist
 				if ( ! get_role( 'monitor_actividad' ) ) {
 					add_role(
@@ -267,8 +267,8 @@ add_action(
 						'conv_manage_hours',
 						'conv_export_members',
 						'conv_manage_webhooks',
-						'bdg_view_payments',
-						'bdg_manage_payments',
+						'conv_view_payments',
+						'conv_manage_payments',
 						'common_view_logs',
 						'common_manage_backup',
 					),
