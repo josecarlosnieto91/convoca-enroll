@@ -64,7 +64,7 @@ spl_autoload_register(
 		$relative = str_replace( '\\', '/', $relative ); // Convert sub-namespace separators.
 		$class_name = basename( $relative ); // Use only the last segment for WP convention.
 
-		foreach ( array( 'includes/', 'admin/', 'public/', 'media/' ) as $dir ) {
+		foreach ( array( 'includes/', 'admin/', 'public/', 'media/', 'social/' ) as $dir ) {
 			// Standard WP convention: class-name.php.
 			$wp_file = CONV_ENROLL_DIR . $dir . 'class-' . $class_name . '.php';
 			if ( file_exists( $wp_file ) ) {
@@ -226,6 +226,7 @@ add_action(
 		// Media & Social Suite.
 		new Convoca\Enroll\Media\Media_Upgrade_Manager();
 		new Convoca\Enroll\Media\Media_Rest_API();
+		Convoca\Enroll\Social\Social_OAuth::class; // Ensure autoload
 
 		if ( ! function_exists( 'conv_ensure_enroll_capabilities' ) ) {
 			/**
@@ -366,6 +367,11 @@ add_action(
 		);
 	}
 );
+
+// Register Action Scheduler hook for social publishing.
+add_action( 'convoca_social_publish', function( $queue_id ) {
+	Convoca\Enroll\Social\Social_Scheduler::process( $queue_id );
+} );
 
 // Register every_minute cron schedule at top level (must be available during activation).
 add_filter(

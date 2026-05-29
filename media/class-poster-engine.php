@@ -80,7 +80,7 @@ class Poster_Engine {
 				$target_w = $template['width'] ?? 1080;
 				$target_h = $template['height'] ?? 1080;
 			}
-			$cache_key   = $base_name . '-' . $format_key . '.png';
+			$cache_key   = $base_name . '-' . $format_key . '.' . $export_type;
 			$output_path = $cache_dir . $cache_key;
 
 			// Cache check.
@@ -93,7 +93,10 @@ class Poster_Engine {
 			try {
 				$canvas = new \Imagick();
 				$canvas->newImage( $target_w, $target_h, new \ImagickPixel( 'transparent' ) );
-				$canvas->setImageFormat( 'png' );
+				$canvas->setImageFormat( $export_type );
+				if ( $export_type === 'jpg' ) {
+					$canvas->setImageCompression( \Imagick::COMPRESSION_JPEG );
+				}
 				$canvas->setImageCompressionQuality( $quality );
 
 				// Render each layer.
