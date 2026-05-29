@@ -286,6 +286,9 @@ class Poster_Engine {
 		$font_file   = self::resolve_font( $font_family, $font_cfg['weight'] ?? 400 );
 		if ( $font_file ) {
 			$draw->setFont( $font_file );
+			if ( ! empty( $font_cfg['weight'] ) ) {
+				$draw->setFontWeight( (int) $font_cfg['weight'] );
+			}
 		}
 
 		// Color.
@@ -410,6 +413,9 @@ class Poster_Engine {
 		$font_file = self::resolve_font( 'Outfit', 600 );
 		if ( $font_file ) {
 			$draw->setFont( $font_file );
+			if ( ! empty( $font_cfg['weight'] ) ) {
+				$draw->setFontWeight( (int) $font_cfg['weight'] );
+			}
 		}
 		$draw->annotation( $x + $pill_w / 2, $y + $pill_h - 8, $badge_text );
 	}
@@ -512,11 +518,12 @@ class Poster_Engine {
 	private static function resolve_font( string $family, int $weight = 400 ): ?string {
 		$fonts = array(
 			'Outfit'  => array(
-				400 => '/usr/share/fonts/TTF/Outfit-Regular.ttf',
-				500 => '/usr/share/fonts/TTF/Outfit-medium.ttf',
-				600 => '/usr/share/fonts/TTF/Outfit-semibold.ttf',
-				700 => '/usr/share/fonts/TTF/Outfit-bold.ttf',
-				800 => '/usr/share/fonts/TTF/Outfit-extrabold.ttf',
+				'var' => '/usr/share/fonts/TTF/Outfit-variable.ttf',
+				400 => '/usr/share/fonts/TTF/Outfit-variable.ttf',
+				500 => '/usr/share/fonts/TTF/Outfit-variable.ttf',
+				600 => '/usr/share/fonts/TTF/Outfit-variable.ttf',
+				700 => '/usr/share/fonts/TTF/Outfit-variable.ttf',
+				800 => '/usr/share/fonts/TTF/Outfit-variable.ttf',
 			),
 			'Lato'    => array(
 				300 => '/usr/share/fonts/TTF/Lato-Light.ttf',
@@ -534,6 +541,7 @@ class Poster_Engine {
 			"/usr/share/fonts/truetype/{$family}-{$weight}.ttf",
 			"/usr/share/fonts/{$family}-{$weight}.ttf",
 			"/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+			"/usr/share/fonts/TTF/DejaVuSans.ttf",
 		);
 
 		foreach ( $fallbacks as $fb ) {
@@ -578,6 +586,9 @@ class Poster_Engine {
 		$draw->setFontSize( $size );
 		if ( $font_file ) {
 			$draw->setFont( $font_file );
+			if ( ! empty( $font_cfg['weight'] ) ) {
+				$draw->setFontWeight( (int) $font_cfg['weight'] );
+			}
 		}
 		$metrics = ( new \Imagick() )->queryFontMetrics( $draw, $text );
 		return (int) ( $metrics['textWidth'] ?? strlen( $text ) * $size * 0.5 );
