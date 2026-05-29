@@ -153,6 +153,17 @@ class Template_Defaults {
 						),
 					),
 					array(
+						'id' => 'subtitle',
+						'type' => 'text',
+						'ref' => 'subtitle',
+						'font' => 'body',
+						'max_lines' => 2,
+						'auto_shrink' => true,
+						'responsive' => array(
+							'square'   => array( 'x' => 60, 'y' => 680, 'w' => 960, 'h' => 60, 'align' => 'left' ),
+						),
+					),
+					array(
 						'id' => 'meta_block',
 						'type' => 'text',
 						'ref' => 'meta_block',
@@ -165,10 +176,17 @@ class Template_Defaults {
 						),
 					),
 					array(
+						'id' => 'price',
+						'type' => 'price_badge',
+						'responsive' => array(
+							'square'   => array( 'x' => 60, 'y' => 810, 'w' => 200, 'h' => 36 ),
+						),
+					),
+					array(
 						'id' => 'cta',
 						'type' => 'cta',
 						'responsive' => array(
-							'square'   => array( 'x' => 60, 'y' => 830, 'w' => 360, 'h' => 60, 'align' => 'left' ),
+							'square'   => array( 'x' => 60, 'y' => 870, 'w' => 360, 'h' => 56, 'align' => 'left' ),
 							'story'    => array( 'x' => 240, 'y' => 1500, 'w' => 600, 'h' => 70, 'align' => 'center' ),
 							'facebook' => array( 'x' => 40, 'y' => 560, 'w' => 300, 'h' => 50, 'align' => 'left' ),
 							'portrait' => array( 'x' => 60, 'y' => 1000, 'w' => 400, 'h' => 60, 'align' => 'left' ),

@@ -175,6 +175,10 @@ class Poster_Engine {
 			case 'cta':
 				self::render_cta( $canvas, $def, $data );
 				break;
+
+			case 'price_badge':
+				self::render_price_badge( $canvas, $def, $data );
+				break;
 		}
 	}
 
@@ -578,6 +582,20 @@ class Poster_Engine {
 			$meta_block .= '  ·  ' . $plazas . ' plazas';
 		}
 
+		// Gather additional fields for richer posters.
+		$precio_socio  = get_post_meta( $actividad_id, 'conv_precio_socio', true );
+		if ( empty( $precio_socio ) ) {
+			$precio_socio = get_post_meta( $actividad_id, '_bde_precio_socio', true );
+		}
+		$precio_general = get_post_meta( $actividad_id, 'conv_precio_general', true );
+		if ( empty( $precio_general ) ) {
+			$precio_general = get_post_meta( $actividad_id, '_bde_precio_general', true );
+		}
+		$tags = wp_get_post_tags( $actividad_id, array( 'fields' => 'names' ) );
+		$hashtags = $tags ? '#' . implode( ' #', $tags ) : '';
+		$organizadores = get_post_meta( $actividad_id, 'conv_organizadores', true );
+		$duracion = get_post_meta( $actividad_id, 'conv_duracion', true );
+
 		return array(
 			'actividad_id'  => $actividad_id,
 			'title'         => $title ?: 'Actividad',
@@ -586,6 +604,11 @@ class Poster_Engine {
 			'time'          => $time_str,
 			'location'      => $ubicacion ?: '',
 			'meta_block'    => $meta_block,
+			'price'         => ( $precio_socio !== '' && $precio_socio !== false ) ? $precio_socio . '€' : ( $precio_general ? $precio_general . '€' : '' ),
+			'free'          => ( $precio_socio === '' || $precio_socio === false || $precio_socio === '0' ) && ( $precio_general === '' || $precio_general === false || $precio_general === '0' ),
+			'hashtags'      => $hashtags,
+			'organizadores' => $organizadores ?: '',
+			'duracion'      => $duracion ?: '',
 			'cta'           => __( 'Inscríbete aquí', 'convoca-enroll' ),
 			'badge_text'    => $badge['label'] ?? '',
 			'badge_color'   => $badge['color'] ?? '#ff8700',
