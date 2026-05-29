@@ -316,7 +316,7 @@ class Poster_Engine {
 		if ( $font_file ) {
 			$draw->setFont( $font_file );
 			if ( ! empty( $font_cfg['weight'] ) ) {
-				$draw->setFontWeight( (int) $font_cfg['weight'] );
+				// Weight set via variable font selection
 			}
 		}
 
@@ -455,7 +455,7 @@ class Poster_Engine {
 		if ( $font_file ) {
 			$draw->setFont( $font_file );
 			if ( ! empty( $font_cfg['weight'] ) ) {
-				$draw->setFontWeight( (int) $font_cfg['weight'] );
+				// Weight set via variable font selection
 			}
 		}
 		$draw->annotation( $x + $pill_w / 2, $y + $pill_h - 8, $badge_text );
@@ -670,7 +670,7 @@ class Poster_Engine {
 		if ( $font_file ) {
 			$draw->setFont( $font_file );
 			if ( ! empty( $font_cfg['weight'] ) ) {
-				$draw->setFontWeight( (int) $font_cfg['weight'] );
+				// Weight set via variable font selection
 			}
 		}
 		$metrics = ( new \Imagick() )->queryFontMetrics( $draw, $text );
