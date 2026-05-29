@@ -537,36 +537,59 @@ class Poster_Engine {
 		$cta_text = $data['cta'] ?? __( 'Inscríbete aquí', 'convoca-enroll' );
 		$x        = $def['x'] ?? 0;
 		$y        = $def['y'] ?? 0;
-		$w        = min( (int) ( $def['w'] ?? 360 ), $canvas->getImageWidth() - 40 );
-		$h        = min( (int) ( $def['h'] ?? 60 ), 100 );
-		$align    = $def['align'] ?? 'left';
 		$font_cfg = $data['_font_cta']
 			?? $template['design_tokens']['typography']['cta']
 			?? $template['fonts']['cta']
 			?? array( 'family' => 'Outfit', 'weight' => 600, 'size' => 30, 'color' => '#ffffff' );
 
-		// Background pill.
+		// Measure text with queryFontMetrics.
+		$font_file = self::resolve_font( 'Outfit', 600 );
+		$m_draw = new \ImagickDraw();
+		$m_draw->setFontSize( $font_cfg['size'] );
+		if ( $font_file ) {
+			$m_draw->setFont( $font_file );
+		}
+		$m_tmp = new \Imagick();
+		$metrics = $m_tmp->queryFontMetrics( $m_draw, $cta_text );
+		$m_tmp->clear(); $m_tmp->destroy();
+		$m_draw->clear(); $m_draw->destroy();
+
+		$padding = 28;
+		$pw = (int) $metrics['textWidth'] + $padding * 2;
+		$ph = (int) $metrics['textHeight'] + 16;
+
+		// Sub-canvas for the CTA button.
+		$sub = new \Imagick();
+		$sub->newImage( $pw, $ph, new \ImagickPixel( 'transparent' ), 'png' );
+
+		// White pill background.
 		$draw = new \ImagickDraw();
 		$draw->setFillColor( new \ImagickPixel( '#ffffff' ) );
-		$draw->roundRectangle( $x, $y, $x + $w, $y + $h, $h / 2, $h / 2 );
-		$canvas->drawImage( $draw );
+		$draw->roundRectangle( 0, 0, $pw, $ph, $ph / 2, $ph / 2 );
+		$sub->drawImage( $draw );
+		$draw->clear(); $draw->destroy();
 
-		// Text.
+		// Dark text.
 		$draw = new \ImagickDraw();
-		$font_file = self::resolve_font( $font_cfg['family'], $font_cfg['weight'] );
 		if ( $font_file ) {
 			$draw->setFont( $font_file );
 		}
 		$draw->setFontSize( $font_cfg['size'] );
 		$draw->setFillColor( new \ImagickPixel( '#1a1a1a' ) );
-		$draw->setTextAlignment(
-			$align === 'center' ? \Imagick::ALIGN_CENTER : ( $align === 'right' ? \Imagick::ALIGN_RIGHT : \Imagick::ALIGN_LEFT )
-		);
+		$draw->setTextAlignment( \Imagick::ALIGN_CENTER );
+		$draw->annotation( $pw / 2, $ph - 10, $cta_text );
+		$sub->drawImage( $draw );
+		$draw->clear(); $draw->destroy();
 
-		$tx = $align === 'center' ? $x + $w / 2 : ( $align === 'right' ? $x + $w - 12 : $x + 24 );
-		$ty = $y + ( $h + $font_cfg['size'] * 0.35 ) / 2;
-		$draw->annotation( $tx, (int) $ty, $cta_text );
-		$canvas->drawImage( $draw );
+		// Align sub-canvas on main canvas.
+		$cx = $x;
+		if ( $def['align'] ?? 'left' === 'center' ) {
+			$cx = $x - $pw / 2;
+		} elseif ( $def['align'] ?? 'left' === 'right' ) {
+			$cx = $x - $pw;
+		}
+		$canvas->compositeImage( $sub, \Imagick::COMPOSITE_OVER, (int) $cx, $y );
+		$sub->clear(); $sub->destroy();
 	}
 	/**
 	 * Render a price badge (free pill or price tag).
@@ -576,9 +599,6 @@ class Poster_Engine {
 		$free  = ! empty( $data['free'] );
 		$x     = $def['x'] ?? 0;
 		$y     = $def['y'] ?? 0;
-		// Clamp badge dimensions to prevent full-canvas rects.
-		$w     = min( (int) ( $def['w'] ?? 200 ), $canvas->getImageWidth() / 3 );
-		$h     = min( (int) ( $def['h'] ?? 36 ), 80 );
 
 		if ( $free ) {
 			$label = 'Gratuito';
@@ -590,18 +610,40 @@ class Poster_Engine {
 			return;
 		}
 
+		// Measure text with queryFontMetrics.
+		$m_draw = new \ImagickDraw();
+		$m_draw->setFont( '/usr/share/fonts/TTF/Outfit-variable.ttf' );
+		$m_draw->setFontSize( 20 );
+		$m_tmp = new \Imagick();
+		$metrics = $m_tmp->queryFontMetrics( $m_draw, $label );
+		$m_tmp->clear(); $m_tmp->destroy();
+		$m_draw->clear(); $m_draw->destroy();
+
+		$padding = 14;
+		$pw = (int) $metrics['textWidth'] + $padding * 2;
+		$ph = (int) $metrics['textHeight'] + 10;
+
+		// Sub-canvas for pill.
+		$sub = new \Imagick();
+		$sub->newImage( $pw, $ph, new \ImagickPixel( 'transparent' ), 'png' );
+
 		$draw = new \ImagickDraw();
 		$draw->setFillColor( new \ImagickPixel( $color ) );
-		$draw->roundRectangle( $x, $y, $x + $w, $y + $h, $h / 2, $h / 2 );
-		$canvas->drawImage( $draw );
+		$draw->roundRectangle( 0, 0, $pw, $ph, $ph / 2, $ph / 2 );
+		$sub->drawImage( $draw );
+		$draw->clear(); $draw->destroy();
 
 		$draw = new \ImagickDraw();
 		$draw->setFillColor( new \ImagickPixel( '#ffffff' ) );
 		$draw->setFont( '/usr/share/fonts/TTF/Outfit-variable.ttf' );
-		$draw->setFontSize( 18 );
+		$draw->setFontSize( 20 );
 		$draw->setTextAlignment( \Imagick::ALIGN_CENTER );
-		$draw->annotation( $x + $w / 2, $y + $h - 8, $label );
-		$canvas->drawImage( $draw );
+		$draw->annotation( $pw / 2, $ph - 8, $label );
+		$sub->drawImage( $draw );
+		$draw->clear(); $draw->destroy();
+
+		$canvas->compositeImage( $sub, \Imagick::COMPOSITE_OVER, $x, $y );
+		$sub->clear(); $sub->destroy();
 	}
 
 		private static function gather_data( int $actividad_id ): array {
