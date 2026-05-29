@@ -161,7 +161,7 @@ class Admin_Reports {
 				</div>
 				<div class="bde-filter-actions">
 					<button type="submit" class="button button-primary">Filtrar</button>
-					<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'ocupacion' ), 'bde_export_csv' ) ); ?>" class="button">Exportar CSV</a>
+					<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'ocupacion' ), 'conv_enroll_export_csv' ) ); ?>" class="button">Exportar CSV</a>
 				</div>
 			</form>
 		</div>
@@ -218,7 +218,7 @@ endif;
 			'meta_query'     => array(
 				'relation' => 'AND',
 				array(
-					'key'     => '_bde_fecha_inicio',
+					'key'     => '_conv_fecha_inicio',
 					'value'   => array( $start . ' 00:00:00', $end . ' 23:59:59' ),
 					'compare' => 'BETWEEN',
 					'type'    => 'DATETIME',
@@ -228,14 +228,14 @@ endif;
 
 		if ( $status === 'futuras' ) {
 			$args['meta_query'][] = array(
-				'key'     => '_bde_fecha_inicio',
+				'key'     => '_conv_fecha_inicio',
 				'value'   => current_time( 'mysql' ),
 				'compare' => '>=',
 				'type'    => 'DATETIME',
 			);
 		} elseif ( $status === 'pasadas' ) {
 			$args['meta_query'][] = array(
-				'key'     => '_bde_fecha_inicio',
+				'key'     => '_conv_fecha_inicio',
 				'value'   => current_time( 'mysql' ),
 				'compare' => '<',
 				'type'    => 'DATETIME',
@@ -254,8 +254,8 @@ endif;
 				$wpdb->prepare(
 					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm 
                  JOIN {$wpdb->posts} p ON p.ID = pm.post_id 
-                 WHERE pm.meta_key = '_bde_actividad_id' AND pm.meta_value = %d 
-                 AND p.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_bde_asistencia' AND meta_value = 'si')",
+                 WHERE pm.meta_key = '_conv_actividad_id' AND pm.meta_value = %d 
+                 AND p.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_conv_asistencia' AND meta_value = 'si')",
 					$post->ID
 				)
 			);
@@ -263,9 +263,9 @@ endif;
 			$data[] = array(
 				'id'                 => $post->ID,
 				'title'              => $post->post_title,
-				'fecha'              => get_post_meta( $post->ID, '_bde_fecha_inicio', true ),
-				'plazas_totales'     => get_post_meta( $post->ID, '_bde_plazas_totales', true ),
-				'plazas_disponibles' => get_post_meta( $post->ID, '_bde_plazas_disponibles', true ),
+				'fecha'              => get_post_meta( $post->ID, '_conv_fecha_inicio', true ),
+				'plazas_totales'     => get_post_meta( $post->ID, '_conv_plazas_totales', true ),
+				'plazas_disponibles' => get_post_meta( $post->ID, '_conv_plazas_disponibles', true ),
 				'confirmadas'        => $counts['confirmada'],
 				'asistentes'         => $asistentes,
 			);
@@ -383,7 +383,7 @@ endif;
 		$results = $wpdb->get_results(
 			"SELECT meta_value AS estado, COUNT(*) AS total 
              FROM {$wpdb->postmeta} 
-             WHERE meta_key = '_bde_estado' 
+             WHERE meta_key = '_conv_estado' 
              GROUP BY meta_value"
 		);
 
@@ -402,8 +402,8 @@ endif;
 			"SELECT pm.meta_value as activity_id, COUNT(*) as total 
              FROM {$wpdb->postmeta} pm
              JOIN {$wpdb->postmeta} pm_status ON pm.post_id = pm_status.post_id
-             WHERE pm.meta_key = '_bde_actividad_id' 
-               AND pm_status.meta_key = '_bde_estado' AND pm_status.meta_value = 'confirmada'
+             WHERE pm.meta_key = '_conv_actividad_id' 
+               AND pm_status.meta_key = '_conv_estado' AND pm_status.meta_value = 'confirmada'
              GROUP BY pm.meta_value 
              ORDER BY total DESC 
              LIMIT 10"
@@ -429,7 +429,7 @@ endif;
 		$activities = $this->get_waitlist_data();
 		?>
 		<div class="bde-mb-4">
-			<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'espera' ), 'bde_export_csv' ) ); ?>" class="button">Exportar CSV</a>
+			<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'espera' ), 'conv_enroll_export_csv' ) ); ?>" class="button">Exportar CSV</a>
 		</div>
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
@@ -469,7 +469,7 @@ endif;
 
 		// Get activities with inscriptions that have been in waitlist.
 		$activity_ids = $wpdb->get_col(
-			"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_bde_actividad_id'"
+			"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_conv_actividad_id'"
 		);
 
 		foreach ( $activity_ids as $act_id ) {
@@ -482,8 +482,8 @@ endif;
 				$wpdb->prepare(
 					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm
                  JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-                 WHERE pm.meta_key = '_bde_actividad_id' AND pm.meta_value = %d
-                 AND p.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_bde_promovido_espera' AND meta_value = '1')",
+                 WHERE pm.meta_key = '_conv_actividad_id' AND pm.meta_value = %d
+                 AND p.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_conv_promovido_espera' AND meta_value = '1')",
 					$act_id
 				)
 			);
@@ -509,7 +509,7 @@ endif;
 		$financials = $this->get_financial_data();
 		?>
 		<div class="bde-mb-4">
-			<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'financiero' ), 'bde_export_csv' ) ); ?>" class="button">Exportar CSV</a>
+			<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'financiero' ), 'conv_enroll_export_csv' ) ); ?>" class="button">Exportar CSV</a>
 		</div>
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
@@ -552,12 +552,12 @@ endif;
 		global $wpdb;
 		$data = array();
 
-		// NOTE: _bde_importe_pagado is ALWAYS stored in cents (integer).
+		// NOTE: _conv_importe_pagado is ALWAYS stored in cents (integer).
 		// If a row has values < 100, it might be in euros by mistake.
 		// The normalization below tries to detect this.
 
 		$activity_ids = $wpdb->get_col(
-			"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_bde_actividad_id'"
+			"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_conv_actividad_id'"
 		);
 
 		foreach ( $activity_ids as $act_id ) {
@@ -568,10 +568,10 @@ endif;
                  JOIN {$wpdb->postmeta} pm_status ON pm_act.post_id = pm_status.post_id
                  JOIN {$wpdb->postmeta} pm_method ON pm_act.post_id = pm_method.post_id
                  JOIN {$wpdb->postmeta} pm_amount ON pm_act.post_id = pm_amount.post_id
-                 WHERE pm_act.meta_key = '_bde_actividad_id' AND pm_act.meta_value = %d
-                   AND pm_status.meta_key = '_bde_pagado' AND pm_status.meta_value = '1'
-                   AND pm_method.meta_key = '_bde_metodo_pago'
-                   AND pm_amount.meta_key = '_bde_importe_pagado'
+                 WHERE pm_act.meta_key = '_conv_actividad_id' AND pm_act.meta_value = %d
+                   AND pm_status.meta_key = '_conv_pagado' AND pm_status.meta_value = '1'
+                   AND pm_method.meta_key = '_conv_metodo_pago'
+                   AND pm_amount.meta_key = '_conv_importe_pagado'
                  GROUP BY pm_method.meta_value",
 					$act_id
 				)
@@ -589,7 +589,7 @@ endif;
 				'bizum'   => 0,
 			);
 			foreach ( $ingresos as $row ) {
-				// _bde_importe_pagado is ALWAYS stored in cents (integer).
+				// _conv_importe_pagado is ALWAYS stored in cents (integer).
 				// If raw values are suspiciously small (< 100 per row), they may be stored in euros.
 				$raw           = (float) $row->total;
 				$v             = $raw / 100;
@@ -609,9 +609,9 @@ endif;
                  FROM {$wpdb->postmeta} pm_act
                  JOIN {$wpdb->postmeta} pm_status ON pm_act.post_id = pm_status.post_id
                  JOIN {$wpdb->postmeta} pm_amount ON pm_act.post_id = pm_amount.post_id
-                 WHERE pm_act.meta_key = '_bde_actividad_id' AND pm_act.meta_value = %d
-                   AND pm_status.meta_key = '_bde_pagado' AND pm_status.meta_value = '0'
-                   AND pm_amount.meta_key = '_bde_importe_pagado'",
+                 WHERE pm_act.meta_key = '_conv_actividad_id' AND pm_act.meta_value = %d
+                   AND pm_status.meta_key = '_conv_pagado' AND pm_status.meta_value = '0'
+                   AND pm_amount.meta_key = '_conv_importe_pagado'",
 					$act_id
 				)
 			) / 100;
@@ -752,7 +752,7 @@ endif;
 								),
 								admin_url( 'admin.php?page=bde-informes&tab=memoria' )
 							),
-							'bde_export_csv'
+							'conv_enroll_export_csv'
 						)
 					);
 					?>
@@ -803,14 +803,14 @@ endif;
 			'post_status'    => 'publish',
 			'meta_query'     => array(
 				array(
-					'key'     => '_bde_fecha_inicio',
+					'key'     => '_conv_fecha_inicio',
 					'value'   => array( $year . '-01-01 00:00:00', $year . '-12-31 23:59:59' ),
 					'compare' => 'BETWEEN',
 					'type'    => 'DATETIME',
 				),
 			),
 			'orderby'        => 'meta_value',
-			'meta_key'       => '_bde_fecha_inicio',
+			'meta_key'       => '_conv_fecha_inicio',
 			'order'          => 'ASC',
 		);
 
@@ -830,10 +830,10 @@ endif;
                     SUM(CASE WHEN pm_socio.meta_value = '1' OR pm_tipo.meta_value = 'socio' THEN 1 ELSE 0 END) as socios
                  FROM {$wpdb->postmeta} pm_act
                  JOIN {$wpdb->postmeta} pm_status ON pm_act.post_id = pm_status.post_id
-                 LEFT JOIN {$wpdb->postmeta} pm_socio ON pm_act.post_id = pm_socio.post_id AND pm_socio.meta_key = '_bde_es_socio'
-                 LEFT JOIN {$wpdb->postmeta} pm_tipo ON pm_act.post_id = pm_tipo.post_id AND pm_tipo.meta_key = '_bde_tipo_inscripcion'
-                 WHERE pm_act.meta_key = '_bde_actividad_id' AND pm_act.meta_value = %d
-                   AND pm_status.meta_key = '_bde_estado' AND pm_status.meta_value = 'confirmada'",
+                 LEFT JOIN {$wpdb->postmeta} pm_socio ON pm_act.post_id = pm_socio.post_id AND pm_socio.meta_key = '_conv_es_socio'
+                 LEFT JOIN {$wpdb->postmeta} pm_tipo ON pm_act.post_id = pm_tipo.post_id AND pm_tipo.meta_key = '_conv_tipo_inscripcion'
+                 WHERE pm_act.meta_key = '_conv_actividad_id' AND pm_act.meta_value = %d
+                   AND pm_status.meta_key = '_conv_estado' AND pm_status.meta_value = 'confirmada'",
 					$id
 				)
 			);
@@ -904,7 +904,7 @@ endif;
 							'filter_actividad' => $filter_actividad ?: '',
 						)
 					),
-					'bde_export_csv'
+					'conv_enroll_export_csv'
 				)
 			);
 			?>
@@ -1020,12 +1020,12 @@ endif;
 	public function handle_export(): void {
 		global $wpdb;
 
-		if ( empty( $_GET['export'] ) || ! current_user_can( 'bde_view_reports' ) ) {
+		if ( empty( $_GET['export'] ) || ! current_user_can( 'conv_view_reports' ) ) {
 			return;
 		}
 
 		// CSRF Protection.
-		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'bde_export_csv' ) ) {
+		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'conv_enroll_export_csv' ) ) {
 			wp_die( __( 'Enlace de exportación inválido o caducado.', 'convoca-enroll' ) );
 		}
 

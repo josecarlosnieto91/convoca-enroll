@@ -36,20 +36,20 @@ if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
 }
 
 /* ── Constants ────────────────────────────────────────────── */
-if ( ! defined( 'BDE_VERSION' ) ) {
-	define( 'BDE_VERSION', '2.5.1' );
+if ( ! defined( 'CONV_ENROLL_VERSION' ) ) {
+	define( 'CONV_ENROLL_VERSION', '2.5.1' );
 }
-if ( ! defined( 'BDE_DB_VERSION' ) ) {
-	define( 'BDE_DB_VERSION', '1.3.0' );
+if ( ! defined( 'CONV_ENROLL_DB_VERSION' ) ) {
+	define( 'CONV_ENROLL_DB_VERSION', '1.3.0' );
 }
-if ( ! defined( 'BDE_FILE' ) ) {
-	define( 'BDE_FILE', __FILE__ );
+if ( ! defined( 'CONV_ENROLL_FILE' ) ) {
+	define( 'CONV_ENROLL_FILE', __FILE__ );
 }
-if ( ! defined( 'BDE_DIR' ) ) {
-	define( 'BDE_DIR', plugin_dir_path( __FILE__ ) );
+if ( ! defined( 'CONV_ENROLL_DIR' ) ) {
+	define( 'CONV_ENROLL_DIR', plugin_dir_path( __FILE__ ) );
 }
-if ( ! defined( 'BDE_URL' ) ) {
-	define( 'BDE_URL', plugin_dir_url( __FILE__ ) );
+if ( ! defined( 'CONV_ENROLL_URL' ) ) {
+	define( 'CONV_ENROLL_URL', plugin_dir_url( __FILE__ ) );
 }
 
 /* ── Autoloader ───────────────────────────────────────────── */
@@ -64,14 +64,14 @@ spl_autoload_register(
 
 		foreach ( array( 'includes/', 'admin/', 'public/' ) as $dir ) {
 			// Standard WP convention: class-name.php.
-			$wp_file = BDE_DIR . $dir . 'class-' . $relative . '.php';
+			$wp_file = CONV_ENROLL_DIR . $dir . 'class-' . $relative . '.php';
 			if ( file_exists( $wp_file ) ) {
 				require_once $wp_file;
 				return;
 			}
 
 			// PSR-4 style: ClassName.php.
-			$psr_file = BDE_DIR . $dir . str_replace( $prefix, '', $class ) . '.php';
+			$psr_file = CONV_ENROLL_DIR . $dir . str_replace( $prefix, '', $class ) . '.php';
 			$psr_file = str_replace( '\\', '/', $psr_file ); // Handle sub-namespaces if any.
 			if ( file_exists( $psr_file ) ) {
 				require_once $psr_file;
@@ -94,9 +94,9 @@ register_activation_hook(
 		Convoca\Enroll\Webhook_Dispatcher::create_table();
 		Convoca\Enroll\Motor_Inscripcion::create_reservation_codes_table();
 
-		if ( false === get_option( 'bde_settings' ) ) {
+		if ( false === get_option( 'conv_enroll_settings' ) ) {
 			update_option(
-				'bde_settings',
+				'conv_enroll_settings',
 				array(
 					'admin_email'    => get_option( 'admin_email' ),
 					'rgpd_version'   => '1.0',
@@ -107,7 +107,7 @@ register_activation_hook(
 		}
 
 		// Auto-create "Panel de reservas" page if it doesn't exist.
-		if ( ! get_option( 'bde_panel_page_id' ) ) {
+		if ( ! get_option( 'conv_enroll_panel_page_id' ) ) {
 			$page_id = wp_insert_post(
 				array(
 					'post_title'   => 'Panel de reservas',
@@ -118,8 +118,8 @@ register_activation_hook(
 				)
 			);
 			if ( $page_id && ! is_wp_error( $page_id ) ) {
-				update_option( 'bde_panel_page_id', $page_id );
-				update_post_meta( $page_id, '_bde_panel_page', '1' );
+				update_option( 'conv_enroll_panel_page_id', $page_id );
+				update_post_meta( $page_id, '_conv_panel_page', '1' );
 			}
 		}
 
@@ -167,7 +167,7 @@ register_activation_hook(
 		}
 
 		// Save initial DB version.
-		add_option( 'bde_db_version', BDE_DB_VERSION, '', false );
+		add_option( 'conv_enroll_db_version', CONV_ENROLL_DB_VERSION, '', false );
 	}
 );
 
@@ -183,7 +183,7 @@ register_deactivation_hook(
 		wp_clear_scheduled_hook( 'convoca_enroll_process_email_queue' );
 		wp_clear_scheduled_hook( 'convoca_enroll_process_webhook_queue' );
 		wp_clear_scheduled_hook( 'convoca_enroll_eval_reminder' );
-		wp_clear_scheduled_hook( 'bde_daily_maintenance' );
+		wp_clear_scheduled_hook( 'conv_enroll_daily_maintenance' );
 		flush_rewrite_rules();
 	}
 );
@@ -194,8 +194,8 @@ add_action(
 	function (): void {
 
 		// External dependencies.
-		if ( file_exists( BDE_DIR . 'vendor/autoload.php' ) ) {
-			require_once BDE_DIR . 'vendor/autoload.php';
+		if ( file_exists( CONV_ENROLL_DIR . 'vendor/autoload.php' ) ) {
+			require_once CONV_ENROLL_DIR . 'vendor/autoload.php';
 		}
 
 		// Core.
@@ -218,12 +218,12 @@ add_action(
 		// Upgrade Manager (checks for DB version upgrades on admin_init).
 		new Convoca\Enroll\Enroll_Upgrade_Manager();
 
-		if ( ! function_exists( 'bde_ensure_capabilities' ) ) {
+		if ( ! function_exists( 'conv_ensure_enroll_capabilities' ) ) {
 			/**
 			 * Ensure all necessary roles and capabilities are present.
 			 * Called on init to prevent race conditions or missing caps after updates.
 			 */
-			function bde_ensure_capabilities() {
+			function conv_enroll_ensure_capabilities() {
 				// 1. Ensure Roles exist
 				if ( ! get_role( 'monitor_actividad' ) ) {
 					add_role(
@@ -252,9 +252,9 @@ add_action(
 						'cst_manage_turnos',
 						'cst_view_stats',
 						'cst_audit_hours',
-						'bde_manage_checkin',
-						'bde_manage_evaluations',
-						'bde_view_reports',
+						'conv_manage_checkin',
+						'conv_manage_evaluations',
+						'conv_view_reports',
 						'conv_manage_hours',
 						'conv_export_members',
 						'conv_manage_webhooks',
@@ -271,9 +271,9 @@ add_action(
 						'cst_manage_turnos',
 						'cst_view_stats',
 						'cst_audit_hours',
-						'bde_manage_checkin',
-						'bde_manage_evaluations',
-						'bde_view_reports',
+						'conv_manage_checkin',
+						'conv_manage_evaluations',
+						'conv_view_reports',
 						'conv_manage_hours',
 					),
 				);
@@ -292,7 +292,7 @@ add_action(
 				}
 			}
 		}
-		add_action( 'init', 'bde_ensure_capabilities', 1 );
+		add_action( 'init', 'conv_ensure_enroll_capabilities', 1 );
 
 		/**
 		 * Only run ensure_capabilities if the version hash has changed
@@ -301,12 +301,12 @@ add_action(
 		add_action(
 			'init',
 			function () {
-				$version_hash = md5( BDE_VERSION . '_caps_v2' );
-				if ( get_option( 'bde_caps_hash' ) !== $version_hash ) {
-					if ( function_exists( 'bde_ensure_capabilities' ) ) {
-						bde_ensure_capabilities();
+				$version_hash = md5( CONV_ENROLL_VERSION . '_caps_v2' );
+				if ( get_option( 'conv_enroll_caps_hash' ) !== $version_hash ) {
+					if ( function_exists( 'conv_ensure_enroll_capabilities' ) ) {
+						conv_ensure_enroll_capabilities();
 					}
-					update_option( 'bde_caps_hash', $version_hash, false );
+					update_option( 'conv_enroll_caps_hash', $version_hash, false );
 				}
 			},
 			0

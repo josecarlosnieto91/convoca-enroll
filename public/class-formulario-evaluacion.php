@@ -56,7 +56,7 @@ class Formulario_Evaluacion {
 			return '<p>' . __( 'ID de actividad no válido o inexistente.', 'convoca-enroll' ) . '</p>';
 		}
 
-		$fecha_fin = get_post_meta( $actividad_id, '_bde_fecha_fin', true );
+		$fecha_fin = get_post_meta( $actividad_id, '_conv_fecha_fin', true );
 		if ( ! $fecha_fin || strtotime( $fecha_fin ) > current_time( 'timestamp' ) ) {
 			return '<p>' . __( 'Esta actividad aún no ha finalizado y no puede ser evaluada.', 'convoca-enroll' ) . '</p>';
 		}
@@ -92,12 +92,12 @@ class Formulario_Evaluacion {
 		// 2. Check permissions
 		$can_evaluate = false;
 
-		if ( current_user_can( 'manage_options' ) || current_user_can( 'bde_manage_evaluations' ) ) {
+		if ( current_user_can( 'manage_options' ) || current_user_can( 'conv_manage_evaluations' ) ) {
 			$can_evaluate = true;
 		} else {
 			// Is monitor?
 			$is_monitor       = in_array( 'monitor_actividad', (array) $user->roles );
-			$responsables_raw = get_post_meta( $actividad_id, '_bde_responsables', true );
+			$responsables_raw = get_post_meta( $actividad_id, '_conv_responsables', true );
 			$responsables     = is_array( $responsables_raw ) ? $responsables_raw : explode( ',', (string) $responsables_raw );
 			if ( in_array( $user->ID, array_map( 'intval', $responsables ) ) ) {
 				$is_monitor = true;
@@ -116,18 +116,18 @@ class Formulario_Evaluacion {
 							'posts_per_page' => 1,
 							'meta_query'     => array(
 								array(
-									'key'   => '_bde_actividad_id',
+									'key'   => '_conv_actividad_id',
 									'value' => $actividad_id,
 								),
 								array(
-									'key'   => '_bde_user_id',
+									'key'   => '_conv_user_id',
 									'value' => $user->ID,
 								),
 							),
 						)
 					);
 					if ( ! empty( $inscriptions ) ) {
-						$asistencia = get_post_meta( $inscriptions[0]->ID, '_bde_asistencia', true );
+						$asistencia = get_post_meta( $inscriptions[0]->ID, '_conv_asistencia', true );
 						if ( $asistencia === 'si' ) {
 							$can_evaluate = true;
 						}
@@ -257,7 +257,7 @@ class Formulario_Evaluacion {
 			wp_send_json_error( __( 'ID de actividad no válido o inexistente.', 'convoca-enroll' ) );
 		}
 
-		$fecha_fin = get_post_meta( $actividad_id, '_bde_fecha_fin', true );
+		$fecha_fin = get_post_meta( $actividad_id, '_conv_fecha_fin', true );
 		if ( ! $fecha_fin || strtotime( $fecha_fin ) > current_time( 'timestamp' ) ) {
 			wp_send_json_error( __( 'Esta actividad aún no ha finalizado y no puede ser evaluada.', 'convoca-enroll' ) );
 		}

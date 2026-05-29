@@ -32,7 +32,7 @@ class TestCPTActividad extends TestCase
      */
     public function test_meta_prefix(): void
     {
-        $this->assertEquals('_bde_', CPT_Actividad::META_PREFIX);
+        $this->assertEquals('_conv_', CPT_Actividad::META_PREFIX);
     }
 
     /**

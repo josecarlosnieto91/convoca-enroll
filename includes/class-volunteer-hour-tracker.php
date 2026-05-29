@@ -60,7 +60,7 @@ class Volunteer_Hour_Tracker {
 		}
 
 		// Case 2: Attendance changed from 'si' to something else - subtract hours.
-		$was_counted = get_post_meta( $inscripcion_id, '_bde_horas_contadas', true );
+		$was_counted = get_post_meta( $inscripcion_id, '_conv_horas_contadas', true );
 		if ( $was_counted === '1' ) {
 			self::subtract_hours( $inscripcion_id, $user );
 		}
@@ -102,7 +102,7 @@ class Volunteer_Hour_Tracker {
 				)
 			);
 
-			delete_post_meta( $inscripcion_id, '_bde_horas_contadas' );
+			delete_post_meta( $inscripcion_id, '_conv_horas_contadas' );
 
 			$wpdb->query( 'COMMIT' );
 		} catch ( \Throwable $e ) {
@@ -123,7 +123,7 @@ class Volunteer_Hour_Tracker {
 
 		global $wpdb;
 		$meta_key_total   = '_conv_horas_voluntariado_total';
-		$meta_key_counted = '_bde_horas_contadas';
+		$meta_key_counted = '_conv_horas_contadas';
 
 		$wpdb->query( 'START TRANSACTION' );
 

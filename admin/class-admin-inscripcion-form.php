@@ -15,7 +15,7 @@ class Admin_Inscripcion_Form {
 
 
 	public function __construct() {
-		add_action( 'wp_ajax_bde_admin_inscribir', array( $this, 'handle_submit' ) );
+		add_action( 'wp_ajax_conv_admin_inscribir', array( $this, 'handle_submit' ) );
 	}
 
 	/**
@@ -71,7 +71,7 @@ class Admin_Inscripcion_Form {
 								<option value="">— Seleccionar actividad —</option>
 								<?php foreach ( $actividades as $act ) : ?>
 									<?php
-									$fecha       = get_post_meta( $act->ID, '_bde_fecha_inicio', true );
+									$fecha       = get_post_meta( $act->ID, '_conv_fecha_inicio', true );
 									$fecha_label = $fecha ? date_i18n( 'd/m/Y', strtotime( $fecha ) ) : 'Sin fecha';
 									?>
 									<option value="<?php echo (int) $act->ID; ?>">
@@ -176,7 +176,7 @@ class Admin_Inscripcion_Form {
 				form.addEventListener('submit', function (e) {
 					e.preventDefault();
 					const fd = new FormData(form);
-					fd.append('action', 'bde_admin_inscribir');
+					fd.append('action', 'conv_enroll_admin_inscribir');
 					fd.append('nonce', window.bdeAdmin?.nonce || '');
 
 					const btn = form.querySelector('[type="submit"]');
@@ -219,7 +219,7 @@ class Admin_Inscripcion_Form {
 	 * AJAX handler for admin inscription creation.
 	 */
 	public function handle_submit(): void {
-		check_ajax_referer( 'bde_admin_nonce', 'nonce' );
+		check_ajax_referer( 'conv_enroll_admin_nonce', 'nonce' );
 
 		$data         = wp_unslash( $_POST );
 		$actividad_id = (int) ( $data['actividad_id'] ?? 0 );

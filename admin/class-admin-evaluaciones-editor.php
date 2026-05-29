@@ -15,7 +15,7 @@ class Admin_Evaluaciones_Editor {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
-		add_action( 'admin_post_bde_save_evaluacion_admin', array( $this, 'handle_save_admin' ) );
+		add_action( 'admin_post_conv_save_evaluacion_admin', array( $this, 'handle_save_admin' ) );
 		add_action( 'load-post-new.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'load-post.php', array( $this, 'redirect_to_custom_editor' ) );
 	}
@@ -76,7 +76,7 @@ class Admin_Evaluaciones_Editor {
 				'post_type'      => 'actividad',
 				'posts_per_page' => 50,
 				'post_status'    => 'any',
-				'meta_key'       => '_bde_fecha_inicio',
+				'meta_key'       => '_conv_fecha_inicio',
 				'orderby'        => 'meta_value',
 				'order'          => 'DESC',
 			)
@@ -89,9 +89,9 @@ class Admin_Evaluaciones_Editor {
 			<h1><?php echo esc_html( $title ); ?></h1>
 
 			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="bdv-form-custom">
-				<input type="hidden" name="action" value="bde_save_evaluacion_admin">
+				<input type="hidden" name="action" value="conv_enroll_save_evaluacion_admin">
 				<input type="hidden" name="id" value="<?php echo $post_id; ?>">
-				<?php wp_nonce_field( 'bde_save_evaluacion_nonce' ); ?>
+				<?php wp_nonce_field( 'conv_enroll_save_evaluacion_nonce' ); ?>
 
 				<div class="bdv-grid bdv-grid--2">
 					<div class="bdv-card">
@@ -105,7 +105,7 @@ class Admin_Evaluaciones_Editor {
 									<option value=""><?php _e( '— Seleccionar actividad —', 'convoca-enroll' ); ?></option>
 									<?php foreach ( $actividades as $act ) : ?>
 										<option value="<?php echo $act->ID; ?>" <?php selected( $meta['actividad_id'], $act->ID ); ?>>
-											<?php echo esc_html( $act->post_title ); ?> (<?php echo substr( get_post_meta( $act->ID, '_bde_fecha_inicio', true ), 0, 10 ); ?>)
+											<?php echo esc_html( $act->post_title ); ?> (<?php echo substr( get_post_meta( $act->ID, '_conv_fecha_inicio', true ), 0, 10 ); ?>)
 										</option>
 									<?php endforeach; ?>
 								</select>
@@ -183,7 +183,7 @@ class Admin_Evaluaciones_Editor {
 	 * Handle save from admin form.
 	 */
 	public function handle_save_admin() {
-		check_admin_referer( 'bde_save_evaluacion_nonce' );
+		check_admin_referer( 'conv_enroll_save_evaluacion_nonce' );
 
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_die( __( 'No tienes permisos para realizar esta acción.', 'convoca-enroll' ) );

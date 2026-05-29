@@ -44,7 +44,7 @@
 
         const nonce = window.bdePanel?.nonce || '';
 
-        bdv.ajaxPost('bde_panel_login', fd, nonce,
+        bdv.ajaxPost('conv_enroll_panel_login', fd, nonce,
             (res) => {
                 sessionEmail = email;
                 sessionCodigo = codigo;
@@ -148,7 +148,7 @@
 
         const nonce = window.bdePanel?.nonce || '';
 
-        bdv.ajaxPost('bde_panel_cancelar', fd, nonce,
+        bdv.ajaxPost('conv_enroll_panel_cancelar', fd, nonce,
             (res) => {
                 modal.style.display = 'none';
                 bdv.setLoading(confirmBtn, false, 'Sí, cancelar reserva');

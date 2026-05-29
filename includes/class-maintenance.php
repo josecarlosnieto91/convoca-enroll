@@ -14,11 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Maintenance {
 
 	public function __construct() {
-		add_action( 'bde_daily_maintenance', array( __CLASS__, 'validar_integridad' ) );
-		add_action( 'bde_daily_maintenance', array( __CLASS__, 'reparar_integridad' ) );
+		add_action( 'conv_enroll_daily_maintenance', array( __CLASS__, 'validar_integridad' ) );
+		add_action( 'conv_enroll_daily_maintenance', array( __CLASS__, 'reparar_integridad' ) );
 
-		if ( ! wp_next_scheduled( 'bde_daily_maintenance' ) ) {
-			wp_schedule_event( time(), 'daily', 'bde_daily_maintenance' );
+		if ( ! wp_next_scheduled( 'conv_enroll_daily_maintenance' ) ) {
+			wp_schedule_event( time(), 'daily', 'conv_enroll_daily_maintenance' );
 		}
 	}
 
@@ -162,7 +162,7 @@ class Maintenance {
 		}
 
 		// 3. Clean old logs.
-		$settings   = get_option( 'bde_settings', array() );
+		$settings   = get_option( 'conv_enroll_settings', array() );
 		$days       = (int) ( $settings['log_retention_days'] ?? 30 );
 		$table_name = $wpdb->prefix . 'convoca_logs';
 

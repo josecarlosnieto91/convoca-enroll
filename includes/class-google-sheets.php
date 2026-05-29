@@ -15,7 +15,7 @@ class Google_Sheets {
 
 
 	public function __construct() {
-		$settings = get_option( 'bde_settings', array() );
+		$settings = get_option( 'conv_enroll_settings', array() );
 		if ( empty( $settings['sheets_enabled'] ) ) {
 			return;
 		}
@@ -30,12 +30,12 @@ class Google_Sheets {
 	 * Append row on new inscription.
 	 */
 	public function on_inscription( int $inscripcion_id, int $actividad_id ): void {
-		$sheet_id = get_post_meta( $actividad_id, '_bde_sheets_id', true );
+		$sheet_id = get_post_meta( $actividad_id, '_conv_sheets_id', true );
 		if ( empty( $sheet_id ) ) {
 			return;
 		}
 
-		$m   = fn( $k ) => get_post_meta( $inscripcion_id, '_bde_' . $k, true );
+		$m   = fn( $k ) => get_post_meta( $inscripcion_id, '_conv_' . $k, true );
 		$row = array(
 			$m( 'nombre' ),
 			$m( 'email' ),
@@ -52,12 +52,12 @@ class Google_Sheets {
 	 * Update sheet on state change (simplified: log new row).
 	 */
 	public function on_state_change( int $inscripcion_id, int $actividad_id ): void {
-		$sheet_id = get_post_meta( $actividad_id, '_bde_sheets_id', true );
+		$sheet_id = get_post_meta( $actividad_id, '_conv_sheets_id', true );
 		if ( empty( $sheet_id ) ) {
 			return;
 		}
 
-		$m   = fn( $k ) => get_post_meta( $inscripcion_id, '_bde_' . $k, true );
+		$m   = fn( $k ) => get_post_meta( $inscripcion_id, '_conv_' . $k, true );
 		$row = array(
 			$m( 'nombre' ),
 			$m( 'email' ),
@@ -74,8 +74,8 @@ class Google_Sheets {
 	 * Append a row to Google Sheets via API v4.
 	 */
 	private function append_row( string $sheet_id, array $row ): void {
-		$settings = get_option( 'bde_settings', array() );
-		$api_key  = defined( 'BDE_GOOGLE_SHEETS_API_KEY' ) ? BDE_GOOGLE_SHEETS_API_KEY : ( $settings['sheets_api_key'] ?? '' );
+		$settings = get_option( 'conv_enroll_settings', array() );
+		$api_key  = defined( 'CONV_ENROLL_GOOGLE_SHEETS_API_KEY' ) ? CONV_ENROLL_GOOGLE_SHEETS_API_KEY : ( $settings['sheets_api_key'] ?? '' );
 
 		if ( empty( $api_key ) ) {
 			return;

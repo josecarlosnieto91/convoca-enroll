@@ -25,7 +25,7 @@ if (!defined('ABSPATH')) {
 
 class Google_Calendar
 {
-    private const OPTION = 'bde_settings';
+    private const OPTION = 'conv_enroll_settings';
 
     private $client = null;
     private $service = null;
@@ -93,7 +93,7 @@ class Google_Calendar
         $client->setPrompt('consent');
 
         $state = wp_generate_password(32, false);
-        set_transient('bde_oauth_state_' . get_current_user_id(), $state, HOUR_IN_SECONDS);
+        set_transient('conv_enroll_oauth_state_' . get_current_user_id(), $state, HOUR_IN_SECONDS);
         $client->setState($state);
 
         return $client->createAuthUrl();
@@ -109,8 +109,8 @@ class Google_Calendar
             return false;
         }
 
-        $expected_state = get_transient('bde_oauth_state_' . get_current_user_id());
-        delete_transient('bde_oauth_state_' . get_current_user_id());
+        $expected_state = get_transient('conv_enroll_oauth_state_' . get_current_user_id());
+        delete_transient('conv_enroll_oauth_state_' . get_current_user_id());
 
         if (empty($expected_state) || !hash_equals($expected_state, $received_state)) {
             error_log('[Google Calendar] OAuth State mismatch or expired.');
@@ -145,7 +145,7 @@ class Google_Calendar
         if (!current_user_can('edit_post', $post_id)) return;
         if ($post->post_status !== 'publish') return;
 
-        $sync_enabled = get_post_meta($post_id, '_bde_google_calendar_sync', true);
+        $sync_enabled = get_post_meta($post_id, '_conv_google_calendar_sync', true);
         if ($sync_enabled === '0') return;
 
         // Verify global setting.
@@ -164,7 +164,7 @@ class Google_Calendar
         if ($post->post_type !== 'actividad') return;
         if (!$this->is_configured()) return;
 
-        $event_id = get_post_meta($post_id, '_bde_google_event_id', true);
+        $event_id = get_post_meta($post_id, '_conv_google_event_id', true);
         if (empty($event_id)) return;
 
         $settings = get_option(self::OPTION, []);
@@ -183,12 +183,12 @@ class Google_Calendar
 
         $settings = get_option(self::OPTION, []);
         $calendar_id = $settings['google_calendar_id'] ?? 'primary';
-        $event_id = get_post_meta($actividad_id, '_bde_google_event_id', true);
+        $event_id = get_post_meta($actividad_id, '_conv_google_event_id', true);
 
         $actividad = get_post($actividad_id);
-        $fecha_inicio = get_post_meta($actividad_id, '_bde_fecha_inicio', true);
-        $fecha_fin = get_post_meta($actividad_id, '_bde_fecha_fin', true);
-        $ubicacion = get_post_meta($actividad_id, '_bde_ubicacion', true);
+        $fecha_inicio = get_post_meta($actividad_id, '_conv_fecha_inicio', true);
+        $fecha_fin = get_post_meta($actividad_id, '_conv_fecha_fin', true);
+        $ubicacion = get_post_meta($actividad_id, '_conv_ubicacion', true);
 
         if (!$fecha_inicio) return null;
 
@@ -216,7 +216,7 @@ class Google_Calendar
         ];
 
         $event = new GoogleEvent($event_data);
-        $sync_type = get_post_meta($actividad_id, '_bde_google_calendar_sync', true);
+        $sync_type = get_post_meta($actividad_id, '_conv_google_calendar_sync', true);
 
         try {
             if ($event_id) {
@@ -225,8 +225,8 @@ class Google_Calendar
                 $updated_event = $this->service->events->insert($this->calendar_id, $event);
             }
 
-            update_post_meta($actividad_id, '_bde_google_event_id', $updated_event->getId());
-            update_post_meta($actividad_id, '_bde_google_event_link', $updated_event->getHtmlLink());
+            update_post_meta($actividad_id, '_conv_google_event_id', $updated_event->getId());
+            update_post_meta($actividad_id, '_conv_google_event_link', $updated_event->getHtmlLink());
 
             return true;
         } catch (\Exception $e) {
@@ -242,9 +242,9 @@ class Google_Calendar
         $actividad = get_post($actividad_id);
         if (!$actividad || $actividad->post_type !== 'actividad') return null;
 
-        $act_start = get_post_meta($actividad_id, '_bde_fecha_inicio', true);
-        $act_end = get_post_meta($actividad_id, '_bde_fecha_fin', true);
-        $act_location = get_post_meta($actividad_id, '_bde_ubicacion', true);
+        $act_start = get_post_meta($actividad_id, '_conv_fecha_inicio', true);
+        $act_end = get_post_meta($actividad_id, '_conv_fecha_fin', true);
+        $act_location = get_post_meta($actividad_id, '_conv_ubicacion', true);
         $act_title = $actividad->post_title;
         $act_desc = $actividad->post_content;
 
@@ -287,7 +287,7 @@ class Google_Calendar
     {
         $actividad_id = $id;
         if ($is_inscription) {
-            $actividad_id = get_post_meta($id, '_bde_actividad_id', true);
+            $actividad_id = get_post_meta($id, '_conv_actividad_id', true);
         }
 
         $ics_content = $this->generate_ics((int)$actividad_id);

@@ -15,11 +15,11 @@ class CSV_Exporter {
 
 
 	public function __construct() {
-		add_action( 'wp_ajax_bde_export_csv', array( $this, 'export' ) );
+		add_action( 'wp_ajax_conv_export_csv', array( $this, 'export' ) );
 	}
 
 	public function export(): void {
-		check_ajax_referer( 'bde_export_csv', 'nonce' );
+		check_ajax_referer( 'conv_enroll_export_csv', 'nonce' );
 
 		if ( ! current_user_can( 'manage_inscripciones' ) ) {
 			wp_die(
@@ -57,12 +57,12 @@ class CSV_Exporter {
 
 		if ( ! empty( $_GET['estado'] ) ) {
 			$meta_query[] = array(
-				'key'   => '_bde_estado',
+				'key'   => '_conv_estado',
 				'value' => sanitize_text_field( $_GET['estado'] ),
 			);
 		} else {
 			$meta_query[] = array(
-				'key'     => '_bde_estado',
+				'key'     => '_conv_estado',
 				'value'   => array( 'confirmada', 'pendiente' ),
 				'compare' => 'IN',
 			);
@@ -70,7 +70,7 @@ class CSV_Exporter {
 
 		if ( $actividad_id ) {
 			$meta_query[] = array(
-				'key'   => '_bde_actividad_id',
+				'key'   => '_conv_actividad_id',
 				'value' => $actividad_id,
 			);
 		}
@@ -113,7 +113,7 @@ class CSV_Exporter {
 		);
 
 		foreach ( $posts as $post ) {
-			$m      = fn( $k ) => get_post_meta( $post->ID, '_bde_' . $k, true );
+			$m      = fn( $k ) => get_post_meta( $post->ID, '_conv_' . $k, true );
 			$act_id = (int) $m( 'actividad_id' );
 
 			fputcsv(

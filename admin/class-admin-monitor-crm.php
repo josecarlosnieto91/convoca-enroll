@@ -12,7 +12,7 @@ class Admin_Monitor_CRM {
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_init', array( $this, 'handle_actions' ) );
 		add_action( 'admin_init', array( $this, 'handle_exports' ) );
-		add_action( 'wp_ajax_bde_mark_attendance', array( $this, 'ajax_mark_attendance' ) );
+		add_action( 'wp_ajax_conv_mark_attendance', array( $this, 'ajax_mark_attendance' ) );
 	}
 
 	/**
@@ -46,7 +46,7 @@ class Admin_Monitor_CRM {
 		$actividad_id = isset( $_GET['actividad_id'] ) ? (int) $_GET['actividad_id'] : 0;
 
 		// Verify nonce.
-		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'bde_crm_' . $action . '_' . $id ) ) {
+		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'conv_enroll_crm_' . $action . '_' . $id ) ) {
 			wp_die( __( 'Nonce inválido.', 'convoca-enroll' ) );
 		}
 
@@ -105,7 +105,7 @@ class Admin_Monitor_CRM {
 			wp_die( __( 'No tienes permisos.', 'convoca-enroll' ) );
 		}
 
-		check_admin_referer( 'bde_export_csv' );
+		check_admin_referer( 'conv_enroll_export_csv' );
 
 		$actividad_id = (int) $_GET['actividad_id'];
 		$type         = sanitize_text_field( $_GET['export'] );
@@ -173,7 +173,7 @@ class Admin_Monitor_CRM {
 		}
 
 		$inscripciones = get_posts( $args );
-		$fecha_act     = get_post_meta( $actividad_id, '_bde_fecha', true );
+		$fecha_act     = get_post_meta( $actividad_id, '_conv_fecha', true );
 
 		foreach ( $inscripciones as $ins ) {
 			fputcsv(
@@ -186,7 +186,7 @@ class Admin_Monitor_CRM {
 					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::get_meta( $ins->ID, 'telefono' ) ),
 					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::get_meta( $ins->ID, 'estado' ) ),
 					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::get_meta( $ins->ID, 'asistencia' ) ),
-					\Convoca\Core\Utils::escape_csv_field( get_post_meta( $ins->ID, '_bde_checkin_token', true ) ),
+					\Convoca\Core\Utils::escape_csv_field( get_post_meta( $ins->ID, '_conv_checkin_token', true ) ),
 				)
 			);
 		}
@@ -199,7 +199,7 @@ class Admin_Monitor_CRM {
 	 * AJAX mark attendance.
 	 */
 	public function ajax_mark_attendance(): void {
-		check_ajax_referer( 'bde_attendance_nonce', 'nonce' );
+		check_ajax_referer( 'conv_enroll_attendance_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_inscripciones' ) ) {
 			wp_send_json_error( 'Permission denied' );
@@ -283,9 +283,9 @@ class Admin_Monitor_CRM {
 
 		echo '<div class="bde-activity-grid">';
 		foreach ( $activities as $act ) {
-			$fecha       = get_post_meta( $act->ID, '_bde_fecha', true );
-			$total       = (int) get_post_meta( $act->ID, '_bde_plazas_totales', true );
-			$disponibles = (int) get_post_meta( $act->ID, '_bde_plazas_disponibles', true );
+			$fecha       = get_post_meta( $act->ID, '_conv_fecha', true );
+			$total       = (int) get_post_meta( $act->ID, '_conv_plazas_totales', true );
+			$disponibles = (int) get_post_meta( $act->ID, '_conv_plazas_disponibles', true );
 			$ocupadas    = $total - $disponibles;
 
 			// Waitlist count.
@@ -308,7 +308,7 @@ class Admin_Monitor_CRM {
 			$percent      = $total > 0 ? floor( ( $ocupadas / $total ) * 100 ) : 0;
 			$status_class = $percent >= 100 ? 'status-full' : ( $percent >= 80 ? 'status-warning' : 'status-ok' );
 
-			echo '<div class="bde-activity-card ' . $status_class . '">';
+			echo '<div class="convoca-activity-card ' . $status_class . '">';
 			echo '<div class="card-header">';
 			echo '<h3>' . esc_html( $act->post_title ) . '</h3>';
 			echo '<span class="badge">' . esc_html( $fecha ) . '</span>';
@@ -348,8 +348,8 @@ class Admin_Monitor_CRM {
 			return;
 		}
 
-		$fecha = get_post_meta( $actividad_id, '_bde_fecha', true );
-		$total = (int) get_post_meta( $actividad_id, '_bde_plazas_totales', true );
+		$fecha = get_post_meta( $actividad_id, '_conv_fecha', true );
+		$total = (int) get_post_meta( $actividad_id, '_conv_plazas_totales', true );
 
 		$checkin_mode = isset( $_GET['checkin'] ) && $_GET['checkin'] == 1;
 
@@ -378,7 +378,7 @@ class Admin_Monitor_CRM {
 					'actividad_id' => $actividad_id,
 				)
 			),
-			'bde_export_csv'
+			'conv_enroll_export_csv'
 		);
 		$export_asist = wp_nonce_url(
 			add_query_arg(
@@ -387,7 +387,7 @@ class Admin_Monitor_CRM {
 					'actividad_id' => $actividad_id,
 				)
 			),
-			'bde_export_csv'
+			'conv_enroll_export_csv'
 		);
 		echo '<a href="' . esc_url( $export_asist ) . '" class="bde-btn-premium" style="background: #f1f5f9; color: #475569;">' . esc_html__( 'Exportar Asistentes', 'convoca-enroll' ) . '</a> ';
 		echo '<a href="' . esc_url( $export_all ) . '" class="bde-btn-premium" style="background: #f1f5f9; color: #475569;">' . esc_html__( 'Exportar Todas', 'convoca-enroll' ) . '</a>';
@@ -566,7 +566,7 @@ class Admin_Monitor_CRM {
 							'actividad_id' => $actividad_id,
 						)
 					),
-					'bde_crm_' . $confirm_action . '_' . $item->ID
+					'conv_enroll_crm_' . $confirm_action . '_' . $item->ID
 				);
 				echo '<a href="' . esc_url( $confirm_url ) . '" class="bde-btn-premium" style="background:var(--bde-success); color:white; padding:5px 10px; font-size:12px;">' . ( $is_waitlist ? esc_html__( 'Promover', 'convoca-enroll' ) : esc_html__( 'Validar', 'convoca-enroll' ) ) . '</a>';
 			}
@@ -713,7 +713,7 @@ class Admin_Monitor_CRM {
 				gap: 25px;
 			}
 
-			.bde-activity-card {
+			.convoca-activity-card {
 				background: white;
 				border-radius: 16px;
 				overflow: hidden;
@@ -724,7 +724,7 @@ class Admin_Monitor_CRM {
 				transition: transform 0.2s;
 			}
 
-			.bde-activity-card:hover {
+			.convoca-activity-card:hover {
 				transform: translateY(-5px);
 			}
 

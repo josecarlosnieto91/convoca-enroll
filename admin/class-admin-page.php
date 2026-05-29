@@ -18,15 +18,15 @@ class Admin_Page {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 		add_action( 'wp_dashboard_setup', array( $this, 'dashboard_widget' ) );
-		add_action( 'wp_ajax_bde_change_state', array( $this, 'ajax_change_state' ) );
-		add_action( 'wp_ajax_bde_toggle_checkin', array( $this, 'ajax_toggle_checkin' ) );
-		add_action( 'wp_ajax_bde_resend_email', array( $this, 'ajax_resend_email' ) );
+		add_action( 'wp_ajax_conv_change_state', array( $this, 'ajax_change_state' ) );
+		add_action( 'wp_ajax_conv_toggle_checkin', array( $this, 'ajax_toggle_checkin' ) );
+		add_action( 'wp_ajax_conv_resend_email', array( $this, 'ajax_resend_email' ) );
 		add_action( 'admin_notices', array( $this, 'notices' ) );
 		add_filter( 'parent_file', array( $this, 'fix_menu_highlight' ) );
 		add_filter( 'submenu_file', array( $this, 'fix_submenu_highlight' ) );
-		add_action( 'admin_post_bde_export_inscripciones_pdf', array( $this, 'handle_export_inscripciones_pdf' ) );
-		add_action( 'admin_post_bde_retry_email', array( $this, 'handle_retry_email' ) );
-		add_action( 'wp_ajax_bde_save_nota', array( $this, 'ajax_save_nota' ) );
+		add_action( 'admin_post_conv_export_inscripciones_pdf', array( $this, 'handle_export_inscripciones_pdf' ) );
+		add_action( 'admin_post_conv_retry_email', array( $this, 'handle_retry_email' ) );
+		add_action( 'wp_ajax_conv_save_nota', array( $this, 'ajax_save_nota' ) );
 	}
 
 	/**
@@ -58,19 +58,19 @@ class Admin_Page {
 		}
 
 		$messages = array(
-			'bde_date_error'            => array(
+			'conv_enroll_date_error'            => array(
 				'message' => __( 'Error: La fecha de fin no puede ser anterior a la de inicio. Se ha ajustado automáticamente.', 'convoca-enroll' ),
 				'type'    => 'danger',
 			),
-			'bde_google_photos_error'   => array(
+			'conv_enroll_google_photos_error'   => array(
 				'message' => __( 'Google Photos: La integración no está configurada o activada. Se ha desactivado la creación del álbum.', 'convoca-enroll' ),
 				'type'    => 'warning',
 			),
-			'bde_google_calendar_error' => array(
+			'conv_enroll_google_calendar_error' => array(
 				'message' => __( 'Google Calendar: La integración no está configurada o activada. Se ha desactivado la sincronización.', 'convoca-enroll' ),
 				'type'    => 'warning',
 			),
-			'bde_plazas_adjusted'       => array(
+			'conv_enroll_plazas_adjusted'       => array(
 				'message' => __( 'Aviso: Las plazas disponibles no pueden superar las totales. Se han ajustado automáticamente.', 'convoca-enroll' ),
 				'type'    => 'warning',
 			),
@@ -147,7 +147,7 @@ class Admin_Page {
 			'convoca-enroll',
 			__( 'Informes', 'convoca-enroll' ),
 			__( 'Informes', 'convoca-enroll' ),
-			'bde_view_reports',
+			'conv_view_reports',
 			'bde-informes',
 			array( Admin_Reports::class, 'render' )
 		);
@@ -166,7 +166,7 @@ class Admin_Page {
 			__( 'Logs', 'convoca-enroll' ),
 			__( 'Logs', 'convoca-enroll' ),
 			'common_view_logs',
-			'bde-logs',
+			'conv_enroll-logs',
 			array( Admin_Logs::class, 'render' )
 		);
 
@@ -186,14 +186,14 @@ class Admin_Page {
 		if ( strpos( $hook, 'bde-' ) === false && strpos( $hook, 'page_bde' ) === false ) {
 			return;
 		}
-		wp_enqueue_style( 'bde-admin', BDE_URL . 'assets/css/convoca-enroll-admin.css', array(), BDE_VERSION );
-		wp_enqueue_script( 'bde-admin', BDE_URL . 'assets/js/convoca-enroll-admin.js', array( 'convoca-common-admin-js' ), BDE_VERSION, true );
+		wp_enqueue_style( 'bde-admin', CONV_ENROLL_URL . 'assets/css/convoca-enroll-admin.css', array(), CONV_ENROLL_VERSION );
+		wp_enqueue_script( 'bde-admin', CONV_ENROLL_URL . 'assets/js/convoca-enroll-admin.js', array( 'convoca-common-admin-js' ), CONV_ENROLL_VERSION, true );
 		wp_localize_script(
 			'bde-admin',
 			'bdeAdmin',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'bde_admin_nonce' ),
+				'nonce'   => wp_create_nonce( 'conv_enroll_admin_nonce' ),
 			)
 		);
 
@@ -202,7 +202,7 @@ class Admin_Page {
 		}
 
 		if ( isset( $_GET['page'] ) && $_GET['page'] === 'convoca-enroll' ) {
-			wp_enqueue_script( 'bde-admin-js', BDE_URL . 'assets/js/convoca-enroll-admin.js', array( 'convoca-common-admin-js' ), BDE_VERSION, true );
+			wp_enqueue_script( 'bde-admin-js', CONV_ENROLL_URL . 'assets/js/convoca-enroll-admin.js', array( 'convoca-common-admin-js' ), CONV_ENROLL_VERSION, true );
 		}
 
 		if ( isset( $_GET['page'] ) && $_GET['page'] === 'bde-informes' ) {
@@ -210,13 +210,13 @@ class Admin_Page {
 		}
 
 		if ( $hook === 'actividad_page_bde-monitor-crm' ) {
-			wp_enqueue_script( 'bde-crm', BDE_URL . 'assets/js/convoca-enroll-crm.js', array( 'convoca-common-admin-js' ), BDE_VERSION, true );
+			wp_enqueue_script( 'bde-crm', CONV_ENROLL_URL . 'assets/js/convoca-enroll-crm.js', array( 'convoca-common-admin-js' ), CONV_ENROLL_VERSION, true );
 			wp_localize_script(
 				'bde-crm',
 				'bdeCrm',
 				array(
 					'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-					'nonce'   => wp_create_nonce( 'bde_crm_attendance' ),
+					'nonce'   => wp_create_nonce( 'conv_enroll_crm_attendance' ),
 				)
 			);
 		}
@@ -225,7 +225,7 @@ class Admin_Page {
 	/* ── Dashboard widget ──────────────────────── */
 
 	public function dashboard_widget(): void {
-		wp_add_dashboard_widget( 'bde_stats', __( 'Inscripciones Biodevas', 'convoca-enroll' ), array( $this, 'render_widget' ) );
+		wp_add_dashboard_widget( 'conv_enroll_stats', __( 'Inscripciones Biodevas', 'convoca-enroll' ), array( $this, 'render_widget' ) );
 	}
 
 	public function render_widget(): void {
@@ -310,10 +310,10 @@ class Admin_Page {
 
 		echo '<div class="wrap"><h1>' . esc_html__( 'Inscripciones', 'convoca-enroll' ) . '</h1>';
 		echo '<a href="' . esc_url( admin_url( 'admin.php?page=bde-nueva-inscripcion' ) ) . '" class="page-title-action">' . esc_html__( '+ Nueva inscripción', 'convoca-enroll' ) . '</a>';
-		echo '<a href="' . esc_url( admin_url( 'admin-ajax.php?action=bde_export_csv&nonce=' . wp_create_nonce( 'bde_export_csv' ) ) ) . '" class="page-title-action">' . esc_html__( 'Exportar CSV', 'convoca-enroll' ) . '</a>';
-		echo '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bde_export_inscripciones_pdf' ), 'bde_export_inscripciones_pdf' ) ) . '" class="page-title-action">' . esc_html__( 'Exportar PDF', 'convoca-enroll' ) . '</a>';
+		echo '<a href="' . esc_url( admin_url( 'admin-ajax.php?action=conv_enroll_export_csv&nonce=' . wp_create_nonce( 'conv_enroll_export_csv' ) ) ) . '" class="page-title-action">' . esc_html__( 'Exportar CSV', 'convoca-enroll' ) . '</a>';
+		echo '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_export_inscripciones_pdf' ), 'conv_enroll_export_inscripciones_pdf' ) ) . '" class="page-title-action">' . esc_html__( 'Exportar PDF', 'convoca-enroll' ) . '</a>';
 
-		require_once BDE_DIR . 'admin/class-admin-inscripciones.php';
+		require_once CONV_ENROLL_DIR . 'admin/class-admin-inscripciones.php';
 		$table = new Inscriptions_List();
 		$table->prepare_items();
 		echo '<form method="get"><input type="hidden" name="page" value="convoca-enroll">';
@@ -336,11 +336,11 @@ class Admin_Page {
 		echo '<tbody>';
 		foreach ( $upcoming as $post ) {
 			$id          = $post->ID;
-			$fecha       = get_post_meta( $id, '_bde_fecha_inicio', true );
-			$total       = (int) get_post_meta( $id, '_bde_plazas_totales', true );
-			$disponibles = (int) get_post_meta( $id, '_bde_plazas_disponibles', true );
+			$fecha       = get_post_meta( $id, '_conv_fecha_inicio', true );
+			$total       = (int) get_post_meta( $id, '_conv_plazas_totales', true );
+			$disponibles = (int) get_post_meta( $id, '_conv_plazas_disponibles', true );
 			$ocupadas    = $total - $disponibles;
-			$ubicacion   = get_post_meta( $id, '_bde_ubicacion', true );
+			$ubicacion   = get_post_meta( $id, '_conv_ubicacion', true );
 
 			echo '<tr>';
 			echo '<td><strong>' . esc_html( $post->post_title ) . '</strong></td>';
@@ -354,24 +354,24 @@ class Admin_Page {
 	}
 
 	public function render_delegados(): void {
-		if ( ! current_user_can( 'bde_view_reports' ) ) {
+		if ( ! current_user_can( 'conv_view_reports' ) ) {
 			wp_die( __( 'No tienes permisos para acceder a esta página.' ) );
 		}
 
 		// Handle save.
-		if ( isset( $_POST['bde_save_delegados'] ) && check_admin_referer( 'bde_save_delegados' ) ) {
+		if ( isset( $_POST['conv_enroll_save_delegados'] ) && check_admin_referer( 'conv_enroll_save_delegados' ) ) {
 			$assignments = (array) ( $_POST['delegados'] ?? array() );
-			update_option( 'bde_delegados_actividades', $assignments );
+			update_option( 'conv_enroll_delegados_actividades', $assignments );
 			echo '<div class="updated"><p>Asignaciones guardadas.</p></div>';
 		}
 
 		$delegados           = get_users( array( 'role__in' => array( 'administrator', 'editor', 'author' ) ) );
 		$actividades         = CPT_Actividad::get_upcoming( 50 );
-		$current_assignments = (array) get_option( 'bde_delegados_actividades', array() );
+		$current_assignments = (array) get_option( 'conv_enroll_delegados_actividades', array() );
 
 		echo '<div class="wrap"><h1>' . esc_html__( 'Configuración de Delegados', 'convoca-enroll' ) . '</h1>';
 		echo '<form method="post">';
-		wp_nonce_field( 'bde_save_delegados' );
+		wp_nonce_field( 'conv_enroll_save_delegados' );
 
 		echo '<table class="widefat fixed striped">';
 		echo '<thead><tr><th>Delegado</th><th>Actividades Asignadas</th></tr></thead>';
@@ -387,7 +387,7 @@ class Admin_Page {
 			echo '<select name="delegados[' . $user_id . '][]" multiple style="width:100%; height:120px;">';
 			foreach ( $actividades as $act ) {
 				$sel = in_array( (string) $act->ID, array_map( 'strval', $assigned ), true ) ? 'selected' : '';
-				echo '<option value="' . $act->ID . '" ' . $sel . '>' . esc_html( $act->post_title ) . ' (' . get_post_meta( $act->ID, '_bde_fecha_inicio', true ) . ')</option>';
+				echo '<option value="' . $act->ID . '" ' . $sel . '>' . esc_html( $act->post_title ) . ' (' . get_post_meta( $act->ID, '_conv_fecha_inicio', true ) . ')</option>';
 			}
 			echo '</select>';
 			echo '</td>';
@@ -395,7 +395,7 @@ class Admin_Page {
 		}
 
 		echo '</tbody></table>';
-		submit_button( __( 'Guardar Asignaciones', 'convoca-enroll' ), 'primary', 'bde_save_delegados' );
+		submit_button( __( 'Guardar Asignaciones', 'convoca-enroll' ), 'primary', 'conv_enroll_save_delegados' );
 		echo '</form></div>';
 	}
 
@@ -426,8 +426,8 @@ class Admin_Page {
 			}
 
 			$actividad_id = (int) CPT_Inscripcion::get_meta( $id, 'actividad_id' );
-			$aforo_actual = (int) get_post_meta( $actividad_id, '_bde_plazas_ocupadas', true );
-			$aforo_max    = (int) get_post_meta( $actividad_id, '_bde_aforo', true );
+			$aforo_actual = (int) get_post_meta( $actividad_id, '_conv_plazas_ocupadas', true );
+			$aforo_max    = (int) get_post_meta( $actividad_id, '_conv_aforo', true );
 
 			if ( $aforo_actual >= $aforo_max ) {
 				++$skipped_capacity;
@@ -533,13 +533,13 @@ class Admin_Page {
 						<tr>
 							<th>Fecha</th>
 							<td>
-								<?php echo esc_html( get_post_meta( $act_id, '_bde_fecha_inicio', true ) ); ?>
+								<?php echo esc_html( get_post_meta( $act_id, '_conv_fecha_inicio', true ) ); ?>
 							</td>
 						</tr>
 						<tr>
 							<th>Ubicación</th>
 							<td>
-								<?php echo esc_html( get_post_meta( $act_id, '_bde_ubicacion', true ) ); ?>
+								<?php echo esc_html( get_post_meta( $act_id, '_conv_ubicacion', true ) ); ?>
 							</td>
 						</tr>
 						<tr>
@@ -597,7 +597,7 @@ class Admin_Page {
 			<!-- Internal notes -->
 			<div class="bde-detail-card" style="margin-top:1.5rem">
 				<h3>📝 <?php esc_html_e( 'Notas internas', 'convoca-enroll' ); ?></h3>
-				<textarea id="bde-internal-notes" rows="4" style="width:100%;"><?php echo esc_textarea( get_post_meta( $id, '_bde_notas', true ) ); ?></textarea>
+				<textarea id="bde-internal-notes" rows="4" style="width:100%;"><?php echo esc_textarea( get_post_meta( $id, '_conv_notas', true ) ); ?></textarea>
 				<div style="margin-top:8px;display:flex;gap:10px;align-items:center;">
 					<button type="button" id="bde-save-notes" class="convoca-btn convoca-btn-outline" data-id="<?php echo $id; ?>"><?php esc_html_e( 'Guardar nota', 'convoca-enroll' ); ?></button>
 					<span id="bde-notes-status" style="font-size:12px;color:#999;"></span>
@@ -611,10 +611,10 @@ class Admin_Page {
 				if (!btn || !ta) return;
 				function save() {
 					var fd = new FormData();
-					fd.append('action', 'bde_save_nota');
+					fd.append('action', 'conv_enroll_save_nota');
 					fd.append('id', btn.dataset.id);
 					fd.append('notas', ta.value);
-					fd.append('nonce', '<?php echo wp_create_nonce( 'bde_admin_nonce' ); ?>');
+					fd.append('nonce', '<?php echo wp_create_nonce( 'conv_enroll_admin_nonce' ); ?>');
 					st.textContent = '<?php echo esc_js( __( 'Guardando...', 'convoca-enroll' ) ); ?>';
 					fetch(ajaxurl, { method: 'POST', body: fd })
 						.then(r => r.json())
@@ -634,12 +634,12 @@ class Admin_Page {
 	/* ── AJAX: state change ────────────────────── */
 
 	public function ajax_change_state(): void {
-		check_ajax_referer( 'bde_admin_nonce', 'nonce' );
+		check_ajax_referer( 'conv_enroll_admin_nonce', 'nonce' );
 
 		$id = (int) ( $_POST['inscripcion_id'] ?? 0 );
 
 		// Check permissions.
-		if ( ! current_user_can( 'bde_manage_checkin' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'conv_manage_checkin' ) && ! current_user_can( 'manage_options' ) ) {
 			$allowed_ids        = CPT_Actividad::get_allowed_activities_ids();
 			$inscripcion_act_id = (int) CPT_Inscripcion::get_meta( $id, 'actividad_id' );
 
@@ -680,7 +680,7 @@ class Admin_Page {
 	 * AJAX handler to toggle check-in status.
 	 */
 	public function ajax_toggle_checkin(): void {
-		check_ajax_referer( 'bde_admin_nonce', 'nonce' );
+		check_ajax_referer( 'conv_enroll_admin_nonce', 'nonce' );
 
 		$id = (int) ( $_POST['inscripcion_id'] ?? 0 );
 		if ( ! $id ) {
@@ -688,7 +688,7 @@ class Admin_Page {
 		}
 
 		// Permissions check.
-		if ( ! current_user_can( 'bde_manage_checkin' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'conv_manage_checkin' ) && ! current_user_can( 'manage_options' ) ) {
 			$allowed_ids = CPT_Actividad::get_allowed_activities_ids();
 			$act_id      = (int) CPT_Inscripcion::get_meta( $id, 'actividad_id' );
 			if ( null === $allowed_ids || ! in_array( $act_id, $allowed_ids, true ) ) {
@@ -713,7 +713,7 @@ class Admin_Page {
 	 * AJAX handler to resend the confirmation email.
 	 */
 	public function ajax_resend_email(): void {
-		check_ajax_referer( 'bde_admin_nonce', 'nonce' );
+		check_ajax_referer( 'conv_enroll_admin_nonce', 'nonce' );
 
 		$id = (int) ( $_POST['inscripcion_id'] ?? 0 );
 		if ( ! $id ) {
@@ -721,7 +721,7 @@ class Admin_Page {
 		}
 
 		// Permissions check.
-		if ( ! current_user_can( 'bde_manage_checkin' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'conv_manage_checkin' ) && ! current_user_can( 'manage_options' ) ) {
 			$allowed_ids = CPT_Actividad::get_allowed_activities_ids();
 			$act_id      = (int) CPT_Inscripcion::get_meta( $id, 'actividad_id' );
 			if ( null === $allowed_ids || ! in_array( $act_id, $allowed_ids, true ) ) {
@@ -740,7 +740,7 @@ class Admin_Page {
 	}
 
 	public function handle_export_inscripciones_pdf(): void {
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'bde_export_inscripciones_pdf' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'conv_enroll_export_inscripciones_pdf' ) ) {
 			wp_die( __( 'Nonce inválido.', 'convoca-enroll' ) );
 		}
 		if ( ! current_user_can( 'manage_inscripciones' ) ) {
@@ -789,7 +789,7 @@ class Admin_Page {
 
 	public function handle_retry_email(): void {
 		$id = (int) ( $_GET['id'] ?? 0 );
-		if ( ! $id || ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'bde_retry_' . $id ) ) {
+		if ( ! $id || ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'conv_enroll_retry_' . $id ) ) {
 			wp_die( __( 'Nonce inválido.', 'convoca-enroll' ) );
 		}
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -813,13 +813,13 @@ class Admin_Page {
 	}
 
 	public function ajax_save_nota(): void {
-		check_ajax_referer( 'bde_admin_nonce', 'nonce' );
+		check_ajax_referer( 'conv_enroll_admin_nonce', 'nonce' );
 		$id = (int) ( $_POST['id'] ?? 0 );
 		if ( ! $id || ! current_user_can( 'edit_post', $id ) ) {
 			wp_send_json_error( __( 'No tienes permisos.', 'convoca-enroll' ) );
 		}
 		$notas = sanitize_textarea_field( wp_unslash( $_POST['notas'] ?? '' ) );
-		update_post_meta( $id, '_bde_notas', $notas );
+		update_post_meta( $id, '_conv_notas', $notas );
 		\Convoca\Core\Logger::info( "Nota actualizada en inscripción #$id", 'Enroll/Admin', $id );
 		wp_send_json_success( __( 'Nota guardada.', 'convoca-enroll' ) );
 	}

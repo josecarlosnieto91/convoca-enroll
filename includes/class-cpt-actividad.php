@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class CPT_Actividad {
 
-	public const META_PREFIX = '_bde_';
+	public const META_PREFIX = '_conv_';
 
 	public const META_KEYS = array(
 		'fecha_inicio',
@@ -52,10 +52,10 @@ class CPT_Actividad {
 		add_action( 'save_post_actividad', array( $this, 'save_metabox' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_google_photos_metabox' ) );
 		add_action( 'save_post_actividad', array( $this, 'maybe_create_google_album' ) );
-		add_action( 'wp_ajax_bde_google_photos_share', array( $this, 'ajax_share_google_album' ) );
-		add_action( 'wp_ajax_bde_google_calendar_sync', array( $this, 'ajax_sync_google_calendar' ) );
-		add_action( 'wp_ajax_bde_google_calendar_delete', array( $this, 'ajax_delete_google_calendar' ) );
-		add_action( 'wp_ajax_bde_google_photos_create', array( $this, 'ajax_create_google_album' ) );
+		add_action( 'wp_ajax_conv_google_photos_share', array( $this, 'ajax_share_google_album' ) );
+		add_action( 'wp_ajax_conv_google_calendar_sync', array( $this, 'ajax_sync_google_calendar' ) );
+		add_action( 'wp_ajax_conv_google_calendar_delete', array( $this, 'ajax_delete_google_calendar' ) );
+		add_action( 'wp_ajax_conv_google_photos_create', array( $this, 'ajax_create_google_album' ) );
 		add_filter( 'map_meta_cap', array( $this, 'map_monitor_caps' ), 10, 4 );
 		add_filter( 'manage_actividad_posts_columns', array( $this, 'list_columns' ) );
 		add_action( 'manage_actividad_posts_custom_column', array( $this, 'list_custom_column' ), 10, 2 );
@@ -95,7 +95,7 @@ class CPT_Actividad {
 		foreach ( self::META_KEYS as $key ) {
 			register_post_meta(
 				'actividad',
-				'_bde_' . $key,
+				'_conv_' . $key,
 				array(
 					'show_in_rest' => true,
 					'single'       => true,
@@ -107,7 +107,7 @@ class CPT_Actividad {
 		// Ensure price is registered as number if possible, or just string.
 		register_post_meta(
 			'actividad',
-			'_bde_precio_general',
+			'_conv_precio_general',
 			array(
 				'show_in_rest' => true,
 				'single'       => true,
@@ -120,7 +120,7 @@ class CPT_Actividad {
 
 	public function add_metabox(): void {
 		add_meta_box(
-			'bde_actividad_datos',
+			'conv_enroll_actividad_datos',
 			__( 'Datos de la actividad', 'convoca-enroll' ),
 			array( $this, 'render_metabox' ),
 			'actividad',
@@ -130,58 +130,58 @@ class CPT_Actividad {
 	}
 
 	public function render_metabox( \WP_Post $post ): void {
-		wp_nonce_field( 'bde_actividad_meta', 'bde_actividad_nonce' );
-		$m = fn( string $key ) => get_post_meta( $post->ID, '_bde_' . $key, true );
+		wp_nonce_field( 'conv_enroll_actividad_meta', 'conv_enroll_actividad_nonce' );
+		$m = fn( string $key ) => get_post_meta( $post->ID, '_conv_' . $key, true );
 		?>
 		<div class="convoca-grid-2">
 			<div class="convoca-field">
-				<label for="bde_fecha_inicio">
+				<label for="conv_enroll_fecha_inicio">
 					<?php esc_html_e( 'Fecha y Hora Inicio *', 'convoca-enroll' ); ?>
 				</label>
-				<input type="datetime-local" id="bde_fecha_inicio" name="bde_fecha_inicio"
+				<input type="datetime-local" id="conv_enroll_fecha_inicio" name="conv_enroll_fecha_inicio"
 					value="<?php echo esc_attr( $m( 'fecha_inicio' ) ); ?>" required>
 			</div>
 			<div class="convoca-field">
-				<label for="bde_fecha_fin">
+				<label for="conv_enroll_fecha_fin">
 					<?php esc_html_e( 'Fecha y Hora Fin', 'convoca-enroll' ); ?>
 				</label>
-				<input type="datetime-local" id="bde_fecha_fin" name="bde_fecha_fin"
+				<input type="datetime-local" id="conv_enroll_fecha_fin" name="conv_enroll_fecha_fin"
 					value="<?php echo esc_attr( $m( 'fecha_fin' ) ); ?>">
 			</div>
 			<div class="convoca-field" style="grid-column: 1 / -1;">
-				<label for="bde_ubicacion">
+				<label for="conv_enroll_ubicacion">
 					<?php esc_html_e( 'Ubicación / Punto de encuentro', 'convoca-enroll' ); ?>
 				</label>
-				<input type="text" id="bde_ubicacion" name="bde_ubicacion" value="<?php echo esc_attr( $m( 'ubicacion' ) ); ?>" style="width:100%;">
+				<input type="text" id="conv_enroll_ubicacion" name="conv_enroll_ubicacion" value="<?php echo esc_attr( $m( 'ubicacion' ) ); ?>" style="width:100%;">
 			</div>
 			<div class="convoca-field">
-				<label for="bde_plazas_totales">
+				<label for="conv_enroll_plazas_totales">
 					<?php esc_html_e( 'Plazas Totales', 'convoca-enroll' ); ?>
 				</label>
-				<input type="number" id="bde_plazas_totales" name="bde_plazas_totales" min="0"
+				<input type="number" id="conv_enroll_plazas_totales" name="conv_enroll_plazas_totales" min="0"
 					value="<?php echo esc_attr( $m( 'plazas_totales' ) ); ?>">
 			</div>
 			<div class="convoca-field">
-				<label for="bde_precio_socio">
+				<label for="conv_enroll_precio_socio">
 					<?php echo esc_html( Utils::get_aportacion_label( 'sugerida_socio' ) ); ?> (€)
 				</label>
-				<input type="number" id="bde_precio_socio" name="bde_precio_socio" min="0" step="0.01"
+				<input type="number" id="conv_enroll_precio_socio" name="conv_enroll_precio_socio" min="0" step="0.01"
 					value="<?php echo esc_attr( $m( 'precio_socio' ) ); ?>" placeholder="0">
 			</div>
 			<div class="convoca-field">
 				<div class="convoca-check-group" style="margin-top:1.8rem;">
-					<input type="checkbox" id="bde_requiere_pago" name="bde_requiere_pago" value="1" <?php checked( $m( 'requiere_pago' ), '1' ); ?>>
-					<label for="bde_requiere_pago"><?php esc_html_e( 'Requiere pago previo', 'convoca-enroll' ); ?></label>
+					<input type="checkbox" id="conv_enroll_requiere_pago" name="conv_enroll_requiere_pago" value="1" <?php checked( $m( 'requiere_pago' ), '1' ); ?>>
+					<label for="conv_enroll_requiere_pago"><?php esc_html_e( 'Requiere pago previo', 'convoca-enroll' ); ?></label>
 				</div>
 			</div>
 			<div class="convoca-field">
 				<div class="convoca-check-group" style="margin-top:1.8rem;">
-					<input type="checkbox" id="bde_actividad_lugg" name="bde_actividad_lugg" value="1" <?php checked( $m( 'actividad_lugg' ), '1' ); ?>>
-					<label for="bde_actividad_lugg"><?php esc_html_e( 'Es una actividad en el centro social', 'convoca-enroll' ); ?></label>
+					<input type="checkbox" id="conv_enroll_actividad_lugg" name="conv_enroll_actividad_lugg" value="1" <?php checked( $m( 'actividad_lugg' ), '1' ); ?>>
+					<label for="conv_enroll_actividad_lugg"><?php esc_html_e( 'Es una actividad en el centro social', 'convoca-enroll' ); ?></label>
 				</div>
 			</div>
 			<div class="convoca-field" style="grid-column: 1 / -1; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--bde-border, #ddd);">
-				<label for="bde_responsables" style="font-weight:600;">
+				<label for="conv_enroll_responsables" style="font-weight:600;">
 					<?php esc_html_e( 'Monitores / Responsables', 'convoca-enroll' ); ?>
 				</label>
 				<?php
@@ -194,7 +194,7 @@ class CPT_Actividad {
 					)
 				);
 				?>
-				<select id="bde_responsables" name="bde_responsables[]" multiple style="width:100%;height:120px;margin-top:5px;">
+				<select id="conv_enroll_responsables" name="conv_enroll_responsables[]" multiple style="width:100%;height:120px;margin-top:5px;">
 					<?php foreach ( $users as $user ) : ?>
 						<option value="<?php echo (int) $user->ID; ?>" <?php echo in_array( (string) $user->ID, $current_responsables, true ) ? 'selected' : ''; ?>>
 							<?php echo esc_html( $user->display_name ); ?> (<?php echo esc_html( $user->user_email ); ?>)
@@ -215,8 +215,8 @@ class CPT_Actividad {
 		$is_running = true;
 
 		if (
-			! isset( $_POST['bde_actividad_nonce'] ) ||
-			! wp_verify_nonce( $_POST['bde_actividad_nonce'], 'bde_actividad_meta' )
+			! isset( $_POST['conv_enroll_actividad_nonce'] ) ||
+			! wp_verify_nonce( $_POST['conv_enroll_actividad_nonce'], 'conv_enroll_actividad_meta' )
 		) {
 			$is_running = false;
 			return;
@@ -256,70 +256,70 @@ class CPT_Actividad {
 		);
 
 		foreach ( $fields as $key => $sanitizer ) {
-			$raw = $_POST[ 'bde_' . $key ] ?? '';
+			$raw = $_POST[ 'conv_enroll_' . $key ] ?? '';
 			$val = is_callable( $sanitizer ) ? $sanitizer( $raw ) : $raw;
-			update_post_meta( $post_id, '_bde_' . $key, $val );
+			update_post_meta( $post_id, '_conv_' . $key, $val );
 		}
 
 		// Validate dates: end cannot be before start.
-		$inicio = get_post_meta( $post_id, '_bde_fecha_inicio', true );
-		$fin    = get_post_meta( $post_id, '_bde_fecha_fin', true );
+		$inicio = get_post_meta( $post_id, '_conv_fecha_inicio', true );
+		$fin    = get_post_meta( $post_id, '_conv_fecha_fin', true );
 		if ( $inicio && $fin && strtotime( $fin ) < strtotime( $inicio ) ) {
-			update_post_meta( $post_id, '_bde_fecha_fin', $inicio );
+			update_post_meta( $post_id, '_conv_fecha_fin', $inicio );
 			add_filter(
 				'redirect_post_location',
 				function ( $location ) {
-					return add_query_arg( 'message', 'bde_date_error', $location );
+					return add_query_arg( 'message', 'conv_enroll_date_error', $location );
 				}
 			);
 		}
 
 		// Validate Google Photos configuration if enabled.
-		if ( get_post_meta( $post_id, '_bde_google_create_album', true ) === '1' ) {
-			$settings      = get_option( 'bde_settings', array() );
+		if ( get_post_meta( $post_id, '_conv_google_create_album', true ) === '1' ) {
+			$settings      = get_option( 'conv_enroll_settings', array() );
 			$google_photos = new Google_Photos();
 			if ( empty( $settings['google_photos_enabled'] ) || ! $google_photos->is_configured() ) {
-				update_post_meta( $post_id, '_bde_google_create_album', '0' );
+				update_post_meta( $post_id, '_conv_google_create_album', '0' );
 				add_filter(
 					'redirect_post_location',
 					function ( $location ) {
-						return add_query_arg( 'message', 'bde_google_photos_error', $location );
+						return add_query_arg( 'message', 'conv_enroll_google_photos_error', $location );
 					}
 				);
 			}
 		}
 
 		// Validate Google Calendar configuration if enabled.
-		if ( get_post_meta( $post_id, '_bde_google_calendar_sync', true ) === '1' ) {
-			$settings = get_option( 'bde_settings', array() );
+		if ( get_post_meta( $post_id, '_conv_google_calendar_sync', true ) === '1' ) {
+			$settings = get_option( 'conv_enroll_settings', array() );
 			$calendar = new Google_Calendar();
 			if ( empty( $settings['google_calendar_enabled'] ) || ! $calendar->is_configured() ) {
-				update_post_meta( $post_id, '_bde_google_calendar_sync', '0' );
+				update_post_meta( $post_id, '_conv_google_calendar_sync', '0' );
 				add_filter(
 					'redirect_post_location',
 					function ( $location ) {
-						return add_query_arg( 'message', 'bde_google_calendar_error', $location );
+						return add_query_arg( 'message', 'conv_enroll_google_calendar_error', $location );
 					}
 				);
 			}
 		}
 
 		// Auto-set plazas_disponibles if empty and plazas_totales is set.
-		$disponibles = get_post_meta( $post_id, '_bde_plazas_disponibles', true );
-		$totales     = get_post_meta( $post_id, '_bde_plazas_totales', true );
+		$disponibles = get_post_meta( $post_id, '_conv_plazas_disponibles', true );
+		$totales     = get_post_meta( $post_id, '_conv_plazas_totales', true );
 		if ( empty( $disponibles ) && ! empty( $totales ) ) {
-			update_post_meta( $post_id, '_bde_plazas_disponibles', $totales );
+			update_post_meta( $post_id, '_conv_plazas_disponibles', $totales );
 		}
 
 		// Validate: plazas_disponibles cannot exceed plazas_totales.
-		$disponibles = get_post_meta( $post_id, '_bde_plazas_disponibles', true );
-		$totales     = get_post_meta( $post_id, '_bde_plazas_totales', true );
+		$disponibles = get_post_meta( $post_id, '_conv_plazas_disponibles', true );
+		$totales     = get_post_meta( $post_id, '_conv_plazas_totales', true );
 		if ( ! empty( $disponibles ) && ! empty( $totales ) && (int) $disponibles > (int) $totales ) {
-			update_post_meta( $post_id, '_bde_plazas_disponibles', $totales );
+			update_post_meta( $post_id, '_conv_plazas_disponibles', $totales );
 			add_filter(
 				'redirect_post_location',
 				function ( $location ) {
-					return add_query_arg( 'message', 'bde_plazas_adjusted', $location );
+					return add_query_arg( 'message', 'conv_enroll_plazas_adjusted', $location );
 				}
 			);
 		}
@@ -336,7 +336,7 @@ class CPT_Actividad {
 		}
 
 		// Check if user is in the explicit responsables list.
-		$responsables = get_post_meta( $actividad_id, '_bde_responsables', true );
+		$responsables = get_post_meta( $actividad_id, '_conv_responsables', true );
 		if ( $responsables ) {
 			$ids = array_map( 'trim', explode( ',', $responsables ) );
 			if ( in_array( (string) $user_id, $ids, true ) ) {
@@ -354,15 +354,15 @@ class CPT_Actividad {
 					'meta_query'     => array(
 						'relation' => 'AND',
 						array(
-							'key'   => '_bde_actividad_id',
+							'key'   => '_conv_actividad_id',
 							'value' => $actividad_id,
 						),
 						array(
-							'key'   => '_bde_email',
+							'key'   => '_conv_email',
 							'value' => $user->user_email,
 						),
 						array(
-							'key'   => '_bde_estado',
+							'key'   => '_conv_estado',
 							'value' => 'confirmada',
 						),
 					),
@@ -406,12 +406,12 @@ class CPT_Actividad {
 				'post_type'      => 'actividad',
 				'posts_per_page' => $limit,
 				'post_status'    => 'publish',
-				'meta_key'       => '_bde_fecha_inicio',
+				'meta_key'       => '_conv_fecha_inicio',
 				'orderby'        => 'meta_value',
 				'order'          => 'ASC',
 				'meta_query'     => array(
 					array(
-						'key'     => '_bde_fecha_inicio',
+						'key'     => '_conv_fecha_inicio',
 						'value'   => current_time( 'Y-m-d H:i' ),
 						'compare' => '>=',
 						'type'    => 'DATETIME',
@@ -432,7 +432,7 @@ class CPT_Actividad {
 		}
 
 		$user_id     = (string) get_current_user_id();
-		$assignments = (array) get_option( 'bde_delegados_actividades', array() );
+		$assignments = (array) get_option( 'conv_enroll_delegados_actividades', array() );
 		$ids         = (array) ( $assignments[ $user_id ] ?? array() );
 
 		// Also check for activity meta just in case it was set manually.
@@ -443,7 +443,7 @@ class CPT_Actividad {
 			'post_status'    => array( 'publish', 'draft', 'private', 'future' ),
 			'meta_query'     => array(
 				array(
-					'key'     => '_bde_responsables',
+					'key'     => '_conv_responsables',
 					'value'   => '(^|,)' . $user_id . '(,|$)',
 					'compare' => 'REGEXP',
 				),
@@ -464,11 +464,11 @@ class CPT_Actividad {
 				'meta_query'     => array(
 					'relation' => 'AND',
 					array(
-						'key'   => '_bde_email',
+						'key'   => '_conv_email',
 						'value' => $user->user_email,
 					),
 					array(
-						'key'   => '_bde_estado',
+						'key'   => '_conv_estado',
 						'value' => 'confirmada',
 					),
 				),
@@ -477,7 +477,7 @@ class CPT_Actividad {
 			if ( ! empty( $v_query->posts ) ) {
 				$act_ids = array();
 				foreach ( $v_query->posts as $ins_id ) {
-					$act_id = (int) get_post_meta( $ins_id, '_bde_actividad_id', true );
+					$act_id = (int) get_post_meta( $ins_id, '_conv_actividad_id', true );
 					if ( $act_id ) {
 						$act_ids[] = $act_id;
 					}
@@ -511,7 +511,7 @@ class CPT_Actividad {
 		}
 
 		// If it's a monitor, check if they are assigned.
-		$responsables = get_post_meta( $post_id, '_bde_responsables', true );
+		$responsables = get_post_meta( $post_id, '_conv_responsables', true );
 		$is_assigned  = false;
 
 		if ( $responsables ) {
@@ -553,8 +553,8 @@ class CPT_Actividad {
 	public function list_custom_column( string $column, int $post_id ): void {
 		switch ( $column ) {
 			case 'fecha':
-				$inicio = get_post_meta( $post_id, '_bde_fecha_inicio', true );
-				$fin    = get_post_meta( $post_id, '_bde_fecha_fin', true );
+				$inicio = get_post_meta( $post_id, '_conv_fecha_inicio', true );
+				$fin    = get_post_meta( $post_id, '_conv_fecha_fin', true );
 				if ( $inicio ) {
 					echo '<strong>' . esc_html( \Convoca\Core\Utils::format_date( $inicio, 'd/m/Y H:i' ) ) . '</strong>';
 					if ( $fin ) {
@@ -566,7 +566,7 @@ class CPT_Actividad {
 				break;
 
 			case 'responsables':
-				$ids = get_post_meta( $post_id, '_bde_responsables', true );
+				$ids = get_post_meta( $post_id, '_conv_responsables', true );
 				if ( ! $ids ) {
 					echo '—';
 					break;
@@ -583,12 +583,12 @@ class CPT_Actividad {
 				break;
 
 			case 'ubicacion':
-				echo esc_html( get_post_meta( $post_id, '_bde_ubicacion', true ) ?: '—' );
+				echo esc_html( get_post_meta( $post_id, '_conv_ubicacion', true ) ?: '—' );
 				break;
 
 			case 'plazas':
-				$total = (int) get_post_meta( $post_id, '_bde_plazas_totales', true );
-				$disp  = (int) get_post_meta( $post_id, '_bde_plazas_disponibles', true );
+				$total = (int) get_post_meta( $post_id, '_conv_plazas_totales', true );
+				$disp  = (int) get_post_meta( $post_id, '_conv_plazas_disponibles', true );
 				if ( $total > 0 ) {
 					$ocupadas = $total - $disp;
 					$pct      = round( ( $ocupadas / $total ) * 100 );
@@ -613,7 +613,7 @@ class CPT_Actividad {
 		}
 
 		add_meta_box(
-			'bde_google_photos_status',
+			'conv_enroll_google_photos_status',
 			__( 'Google Photos', 'convoca-enroll' ),
 			array( $this, 'render_google_photos_metabox' ),
 			'actividad',
@@ -623,7 +623,7 @@ class CPT_Actividad {
 	}
 
 	public function render_google_photos_metabox( \WP_Post $post ): void {
-		$settings = get_option( 'bde_settings', array() );
+		$settings = get_option( 'conv_enroll_settings', array() );
 		if ( empty( $settings['google_photos_enabled'] ) ) {
 			echo '<p>La integración con Google Photos está desactivada.</p>';
 			return;
@@ -635,10 +635,10 @@ class CPT_Actividad {
 			return;
 		}
 
-		$album_id     = get_post_meta( $post->ID, '_bde_google_album_id', true );
-		$album_url    = get_post_meta( $post->ID, '_bde_google_album_url', true );
-		$album_shared = get_post_meta( $post->ID, '_bde_google_album_shared', true );
-		$create_album = get_post_meta( $post->ID, '_bde_google_create_album', true );
+		$album_id     = get_post_meta( $post->ID, '_conv_google_album_id', true );
+		$album_url    = get_post_meta( $post->ID, '_conv_google_album_url', true );
+		$album_shared = get_post_meta( $post->ID, '_conv_google_album_shared', true );
+		$create_album = get_post_meta( $post->ID, '_conv_google_create_album', true );
 
 		if ( ! $album_id && $create_album !== '0' ) {
 			echo '<p><button type="button" class="button button-primary" onclick="bdeCreateAlbum(' . esc_attr( $post->ID ) . ')">Crear álbum</button></p>';
@@ -657,9 +657,9 @@ class CPT_Actividad {
 		<script>
 		function bdeCreateAlbum(activityId) {
 			const fd = new FormData();
-			fd.append('action', 'bde_google_photos_create');
+			fd.append('action', 'conv_enroll_google_photos_create');
 			fd.append('activity_id', activityId);
-			fd.append('nonce', '<?php echo esc_attr( wp_create_nonce( 'bde_google_photos_nonce' ) ); ?>');
+			fd.append('nonce', '<?php echo esc_attr( wp_create_nonce( 'conv_enroll_google_photos_nonce' ) ); ?>');
 
 			fetch(ajaxurl, { method: 'POST', body: fd })
 			.then(res => res.json())
@@ -677,9 +677,9 @@ class CPT_Actividad {
 			if (!confirm('¿Compartir el álbum con todos los participantes confirmados?')) return;
 			
 			const fd = new FormData();
-			fd.append('action', 'bde_google_photos_share');
+			fd.append('action', 'conv_enroll_google_photos_share');
 			fd.append('activity_id', activityId);
-			fd.append('nonce', '<?php echo esc_attr( wp_create_nonce( 'bde_google_photos_nonce' ) ); ?>');
+			fd.append('nonce', '<?php echo esc_attr( wp_create_nonce( 'conv_enroll_google_photos_nonce' ) ); ?>');
 
 			fetch(ajaxurl, { method: 'POST', body: fd })
 			.then(res => res.json())
@@ -708,21 +708,21 @@ class CPT_Actividad {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
-		if ( ! isset( $_POST['bde_actividad_metabox_nonce'] ) || ! wp_verify_nonce( $_POST['bde_actividad_metabox_nonce'], 'bde_actividad_metabox' ) ) {
+		if ( ! isset( $_POST['conv_enroll_actividad_metabox_nonce'] ) || ! wp_verify_nonce( $_POST['conv_enroll_actividad_metabox_nonce'], 'conv_enroll_actividad_metabox' ) ) {
 			return;
 		}
 
-		$create_album = get_post_meta( $post_id, '_bde_google_create_album', true );
+		$create_album = get_post_meta( $post_id, '_conv_google_create_album', true );
 		if ( $create_album !== '1' ) {
 			return;
 		}
 
-		$album_id = get_post_meta( $post_id, '_bde_google_album_id', true );
+		$album_id = get_post_meta( $post_id, '_conv_google_album_id', true );
 		if ( ! empty( $album_id ) ) {
 			return;
 		}
 
-		$settings = get_option( 'bde_settings', array() );
+		$settings = get_option( 'conv_enroll_settings', array() );
 		if ( empty( $settings['google_photos_enabled'] ) ) {
 			return;
 		}
@@ -736,7 +736,7 @@ class CPT_Actividad {
 	}
 
 	public function ajax_share_google_album(): void {
-		check_ajax_referer( 'bde_google_photos_nonce', 'nonce' );
+		check_ajax_referer( 'conv_enroll_google_photos_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'edit_post', $_POST['activity_id'] ) ) {
 			wp_send_json_error( 'Sin permisos' );
@@ -761,7 +761,7 @@ class CPT_Actividad {
 	}
 
 	public function ajax_create_google_album(): void {
-		check_ajax_referer( 'bde_google_photos_nonce', 'nonce' );
+		check_ajax_referer( 'conv_enroll_google_photos_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'edit_post', $_POST['activity_id'] ) ) {
 			wp_send_json_error( 'Sin permisos' );
@@ -789,7 +789,7 @@ class CPT_Actividad {
 	 * AJAX: Sync activity with Google Calendar.
 	 */
 	public function ajax_sync_google_calendar(): void {
-		check_ajax_referer( 'bde_calendar_nonce', 'nonce' );
+		check_ajax_referer( 'conv_enroll_calendar_nonce', 'nonce' );
 
 		$activity_id = absint( $_POST['activity_id'] ?? 0 );
 		if ( ! current_user_can( 'edit_post', $activity_id ) ) {
@@ -814,7 +814,7 @@ class CPT_Actividad {
 	 * AJAX: Delete event from Google Calendar.
 	 */
 	public function ajax_delete_google_calendar(): void {
-		check_ajax_referer( 'bde_calendar_nonce', 'nonce' );
+		check_ajax_referer( 'conv_enroll_calendar_nonce', 'nonce' );
 
 		$activity_id = absint( $_POST['activity_id'] ?? 0 );
 		if ( ! current_user_can( 'edit_post', $activity_id ) ) {
@@ -826,18 +826,18 @@ class CPT_Actividad {
 			wp_send_json_error( 'La integración con Google Calendar no está configurada.' );
 		}
 
-		$event_id = get_post_meta( $activity_id, '_bde_google_event_id', true );
+		$event_id = get_post_meta( $activity_id, '_conv_google_event_id', true );
 		if ( ! $event_id ) {
 			wp_send_json_error( 'No hay un evento asociado a esta actividad.' );
 		}
 
-		$settings    = get_option( 'bde_settings', array() );
+		$settings    = get_option( 'conv_enroll_settings', array() );
 		$calendar_id = $settings['google_calendar_id'] ?? 'primary';
 
 		try {
 			$calendar->sync_on_delete( $activity_id, get_post( $activity_id ) );
-			delete_post_meta( $activity_id, '_bde_google_event_id' );
-			delete_post_meta( $activity_id, '_bde_google_event_link' );
+			delete_post_meta( $activity_id, '_conv_google_event_id' );
+			delete_post_meta( $activity_id, '_conv_google_event_link' );
 			wp_send_json_success();
 		} catch ( \Exception $e ) {
 			wp_send_json_error( 'Error al eliminar el evento: ' . $e->getMessage() );

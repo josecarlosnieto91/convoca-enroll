@@ -104,7 +104,7 @@ class Motor_Inscripcion {
 		}
 
 		// Check global one-reservation-per-person rule.
-		$settings      = get_option( 'bde_settings', array() );
+		$settings      = get_option( 'conv_enroll_settings', array() );
 		$limite_activo = ! empty( $settings['limite_una_reserva'] );
 
 		if ( $limite_activo && ! $es_menor ) {
@@ -670,7 +670,7 @@ class Motor_Inscripcion {
 				"INSERT IGNORE INTO $table_name (code, post_id)
              SELECT meta_value, post_id FROM {$wpdb->postmeta}
              WHERE meta_key = %s AND meta_value != ''",
-				'_bde_codigo_reserva'
+				'_conv_codigo_reserva'
 			)
 		);
 	}

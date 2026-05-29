@@ -18,14 +18,14 @@ class Pagina_Inscripcion {
 	}
 
 	public function shortcode( $atts ): string {
-		$settings  = get_option( 'bde_settings', array() );
+		$settings  = get_option( 'conv_enroll_settings', array() );
 		$intro     = wp_kses_post( $settings['texto_introduccion'] ?? '' );
 		$url_panel = esc_url( $settings['url_panel_reservas'] ?? home_url( '/panel-de-reservas/' ) );
 
 		// Query upcoming activities.
 		$actividades = CPT_Actividad::get_upcoming( 100 );
 
-		wp_enqueue_style( 'bde-public', BDE_URL . 'assets/css/convoca-enroll-public.css', array(), BDE_VERSION );
+		wp_enqueue_style( 'bde-public', CONV_ENROLL_URL . 'assets/css/convoca-enroll-public.css', array(), CONV_ENROLL_VERSION );
 
 		ob_start();
 		?>

@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Payment_Listener {
 
 
-	private const TRANSIENT_KEY = 'bde_payment_processed_';
+	private const TRANSIENT_KEY = 'conv_enroll_payment_processed_';
 
 	public function __construct() {
 		// Only listen to the new unified hook to avoid duplication.
@@ -49,8 +49,8 @@ class Payment_Listener {
 			return;
 		}
 
-		$current_estado = get_post_meta( $origin_id, '_bde_estado', true );
-		$last_pago_id   = (int) get_post_meta( $origin_id, '_bde_pago_id', true );
+		$current_estado = get_post_meta( $origin_id, '_conv_estado', true );
+		$last_pago_id   = (int) get_post_meta( $origin_id, '_conv_pago_id', true );
 
 		if ( $current_estado !== 'pendiente_pago' || $last_pago_id === (int) $pago_id ) {
 			\Convoca\Core\Logger::info( "Payment $pago_id skipped - already processed or state is $current_estado", 'Enroll/Payment', $origin_id );
@@ -61,8 +61,8 @@ class Payment_Listener {
 		set_transient( $transient_key, 1, HOUR_IN_SECONDS );
 
 		// Update payment info before confirming.
-		update_post_meta( $origin_id, '_bde_metodo_pago', $meta['method'] ?? '' );
-		update_post_meta( $origin_id, '_bde_pago_id', $pago_id );
+		update_post_meta( $origin_id, '_conv_metodo_pago', $meta['method'] ?? '' );
+		update_post_meta( $origin_id, '_conv_pago_id', $pago_id );
 
 		// Confirm the inscription (this handles capacity decrement).
 		$result = Motor_Inscripcion::confirmar( $origin_id );
@@ -73,8 +73,8 @@ class Payment_Listener {
 			\Convoca\Core\Logger::error( "Enroll confirmation failed after payment (Pago: $pago_id, Inscripción: $origin_id): " . $result->get_error_message(), 'Enroll/Payment', $origin_id );
 
 			// Mark as needs manual review.
-			update_post_meta( $origin_id, '_bde_needs_manual_review', '1' );
-			update_post_meta( $origin_id, '_bde_review_note', 'Error en confirmación automática tras pago: ' . $result->get_error_message() );
+			update_post_meta( $origin_id, '_conv_needs_manual_review', '1' );
+			update_post_meta( $origin_id, '_conv_review_note', 'Error en confirmación automática tras pago: ' . $result->get_error_message() );
 		}
 	}
 }

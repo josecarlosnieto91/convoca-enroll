@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Eval_Reminder_Cron {
 
-	private const OPTION = 'bde_settings';
+	private const OPTION = 'conv_enroll_settings';
 
 	public static function init(): void {
 		add_action( 'convoca_enroll_eval_reminder', array( self::class, 'run' ) );
@@ -50,7 +50,7 @@ class Eval_Reminder_Cron {
 				'post_status'    => 'publish',
 				'meta_query'     => array(
 					array(
-						'key'     => '_bde_fecha_fin',
+						'key'     => '_conv_fecha_fin',
 						'value'   => array(
 							$target_day . ' 00:00:00',
 							$target_day . ' 23:59:59',
@@ -96,15 +96,15 @@ class Eval_Reminder_Cron {
 				'meta_query'     => array(
 					'relation' => 'AND',
 					array(
-						'key'   => '_bde_actividad_id',
+						'key'   => '_conv_actividad_id',
 						'value' => $activity_id,
 					),
 					array(
-						'key'   => '_bde_estado',
+						'key'   => '_conv_estado',
 						'value' => 'confirmada',
 					),
 					array(
-						'key'   => '_bde_asistencia',
+						'key'   => '_conv_asistencia',
 						'value' => 'si',
 					),
 				),
@@ -115,7 +115,7 @@ class Eval_Reminder_Cron {
 			if ( $enqueued_count >= $limit ) {
 				break;
 			}
-			$user_id = (int) get_post_meta( $insc->ID, '_bde_user_id', true );
+			$user_id = (int) get_post_meta( $insc->ID, '_conv_user_id', true );
 			if ( ! $user_id ) {
 				continue; // Necesitamos usuario registrado.
 			}
@@ -126,7 +126,7 @@ class Eval_Reminder_Cron {
 			}
 
 			// Filtrar: evitar duplicados.
-			if ( get_post_meta( $insc->ID, '_bde_reminder_eval_sent', true ) ) {
+			if ( get_post_meta( $insc->ID, '_conv_reminder_eval_sent', true ) ) {
 				continue;
 			}
 
@@ -180,7 +180,7 @@ class Eval_Reminder_Cron {
 		$email               = $user->user_email;
 		$nombre              = $user->display_name;
 		$nombre_actividad    = get_the_title( $activity_id );
-		$fecha_actividad_raw = get_post_meta( $activity_id, '_bde_fecha_fin', true );
+		$fecha_actividad_raw = get_post_meta( $activity_id, '_conv_fecha_fin', true );
 		$fecha_actividad     = $fecha_actividad_raw ? wp_date( 'd/m/Y', strtotime( $fecha_actividad_raw ) ) : '';
 
 		$url = $link_base;
@@ -225,7 +225,7 @@ class Eval_Reminder_Cron {
 		);
 
 		// Marcar como enviado.
-		update_post_meta( $insc_id, '_bde_reminder_eval_sent', current_time( 'mysql' ) );
+		update_post_meta( $insc_id, '_conv_reminder_eval_sent', current_time( 'mysql' ) );
 
 		Logger::info(
 			sprintf( 'Recordatorio de evaluación encolado para el usuario ID %d en actividad %d', $user_id, $activity_id ),

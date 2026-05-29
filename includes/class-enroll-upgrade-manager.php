@@ -5,7 +5,7 @@
  * Handles database structure upgrades for the enroll plugin.
  *
  * To add a new upgrade:
- * 1. Increment BDE_DB_VERSION in convoca-enroll.php
+ * 1. Increment CONV_ENROLL_DB_VERSION in convoca-enroll.php
  * 2. Add a callback: '1.1.0' => [$this, 'upgrade_to_1_1_0']
  * 3. Implement the private method with idempotent logic.
  *
@@ -35,11 +35,11 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 	}
 
 	protected function get_db_version(): string {
-		return defined( 'BDE_DB_VERSION' ) ? BDE_DB_VERSION : '0.0.0';
+		return defined( 'CONV_ENROLL_DB_VERSION' ) ? CONV_ENROLL_DB_VERSION : '0.0.0';
 	}
 
 	protected function get_option_name(): string {
-		return 'bde_db_version';
+		return 'conv_enroll_db_version';
 	}
 
 	protected function get_transient_prefix(): string {
@@ -77,7 +77,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 				"INSERT IGNORE INTO $table_name (code, post_id)
              SELECT meta_value, post_id FROM {$wpdb->postmeta}
              WHERE meta_key = %s AND meta_value != ''",
-				'_bde_codigo_reserva'
+				'_conv_codigo_reserva'
 			)
 		);
 
@@ -86,7 +86,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 
 	/**
 	 * Migration: Unify attendance values.
-	 * Converts '1' -> 'si' and '0' -> 'no' in _bde_asistencia meta.
+	 * Converts '1' -> 'si' and '0' -> 'no' in _conv_asistencia meta.
 	 */
 	protected function upgrade_to_1_2_0(): void {
 		global $wpdb;
@@ -96,7 +96,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 			$wpdb->prepare(
 				"UPDATE {$wpdb->postmeta} SET meta_value = 'si' 
              WHERE meta_key = %s AND meta_value = '1'",
-				'_bde_asistencia'
+				'_conv_asistencia'
 			)
 		);
 
@@ -105,7 +105,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 			$wpdb->prepare(
 				"UPDATE {$wpdb->postmeta} SET meta_value = 'no' 
              WHERE meta_key = %s AND meta_value = '0'",
-				'_bde_asistencia'
+				'_conv_asistencia'
 			)
 		);
 

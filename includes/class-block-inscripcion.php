@@ -30,15 +30,15 @@ class Block_Inscripcion {
 		// Register assets first so they are available for register_block_type.
 		wp_register_script(
 			'convoca-enroll-blocks',
-			BDE_URL . 'assets/js/convoca-enroll-blocks.js',
+			CONV_ENROLL_URL . 'assets/js/convoca-enroll-blocks.js',
 			array( 'wp-blocks', 'wp-element', 'wp-server-side-render', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-api-fetch' ),
-			BDE_VERSION,
+			CONV_ENROLL_VERSION,
 			true
 		);
 
 		// 1. Formulario de Inscripción (existing)
 		register_block_type(
-			BDE_DIR . 'blocks/inscripcion',
+			CONV_ENROLL_DIR . 'blocks/inscripcion',
 			array(
 				'apiVersion'      => 3,
 				'render_callback' => array( $this, 'render_inscripcion' ),
@@ -47,7 +47,7 @@ class Block_Inscripcion {
 
 		// 2. Panel de Reservas
 		register_block_type(
-			BDE_DIR . 'blocks/panel-reservas',
+			CONV_ENROLL_DIR . 'blocks/panel-reservas',
 			array(
 				'apiVersion'      => 3,
 				'render_callback' => array( $this, 'render_panel_reservas' ),
@@ -56,7 +56,7 @@ class Block_Inscripcion {
 
 		// 3. Página de Inscripciones
 		register_block_type(
-			BDE_DIR . 'blocks/pagina-inscripcion',
+			CONV_ENROLL_DIR . 'blocks/pagina-inscripcion',
 			array(
 				'apiVersion'      => 3,
 				'render_callback' => array( $this, 'render_pagina_inscripcion' ),
@@ -65,7 +65,7 @@ class Block_Inscripcion {
 
 		// 4. Formulario de Evaluación
 		register_block_type(
-			BDE_DIR . 'blocks/evaluacion',
+			CONV_ENROLL_DIR . 'blocks/evaluacion',
 			array(
 				'apiVersion'      => 3,
 				'render_callback' => array( $this, 'render_evaluacion' ),

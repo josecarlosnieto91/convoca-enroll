@@ -11,21 +11,21 @@ class Checkin_Handler {
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_rewrite_rules' ) );
 		add_action( 'template_redirect', array( $this, 'handle_checkin_page' ) );
-		add_action( 'wp_ajax_bde_qr_checkin', array( $this, 'ajax_qr_checkin' ) );
+		add_action( 'wp_ajax_conv_qr_checkin', array( $this, 'ajax_qr_checkin' ) );
 	}
 
 	/**
 	 * Register rewrite rules for /checkin/ and /checkin/{id}/
 	 */
 	public function register_rewrite_rules(): void {
-		add_rewrite_rule( '^checkin/([^/]+)/?', 'index.php?bde_checkin=$matches[1]', 'top' );
-		add_rewrite_rule( '^checkin/?$', 'index.php?bde_checkin_page=1', 'top' );
+		add_rewrite_rule( '^checkin/([^/]+)/?', 'index.php?conv_enroll_checkin=$matches[1]', 'top' );
+		add_rewrite_rule( '^checkin/?$', 'index.php?conv_enroll_checkin_page=1', 'top' );
 
 		add_filter(
 			'query_vars',
 			function ( $vars ) {
-				$vars[] = 'bde_checkin';
-				$vars[] = 'bde_checkin_page';
+				$vars[] = 'conv_enroll_checkin';
+				$vars[] = 'conv_enroll_checkin_page';
 				return $vars;
 			}
 		);
@@ -35,8 +35,8 @@ class Checkin_Handler {
 	 * Handle the check-in page or direct check-in link.
 	 */
 	public function handle_checkin_page(): void {
-		$checkin_token   = get_query_var( 'bde_checkin' );
-		$is_scanner_page = get_query_var( 'bde_checkin_page' );
+		$checkin_token   = get_query_var( 'conv_enroll_checkin' );
+		$is_scanner_page = get_query_var( 'conv_enroll_checkin_page' );
 
 		if ( ! $checkin_token && ! $is_scanner_page ) {
 			return;
@@ -272,13 +272,13 @@ class Checkin_Handler {
 					let token = decodedText;
 					if (token.includes('token=')) {
 						token = token.split('token=')[1].split('&')[0];
-					} else if (token.includes('bde_token=')) {
-						token = token.split('bde_token=')[1].split('&')[0];
+					} else if (token.includes('conv_enroll_token=')) {
+						token = token.split('conv_enroll_token=')[1].split('&')[0];
 					}
 
 					const formData = new URLSearchParams();
-					formData.append('action', 'bde_qr_checkin');
-					formData.append('nonce', '<?php echo wp_create_nonce( 'bde_qr_checkin' ); ?>');
+					formData.append('action', 'conv_enroll_qr_checkin');
+					formData.append('nonce', '<?php echo wp_create_nonce( 'conv_enroll_qr_checkin' ); ?>');
 					formData.append('id', token);
 
 					try {
@@ -477,7 +477,7 @@ class Checkin_Handler {
                  FROM {$wpdb->posts} p 
                  INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id 
                  WHERE p.post_type = 'inscripcion' 
-                 AND pm.meta_key = '_bde_checkin_token' 
+                 AND pm.meta_key = '_conv_checkin_token' 
                  AND pm.meta_value = %s 
                  LIMIT 1 FOR UPDATE",
 					$token
@@ -493,27 +493,27 @@ class Checkin_Handler {
 			$wpdb->query(
 				$wpdb->prepare(
 					"SELECT meta_id FROM {$wpdb->postmeta} 
-                 WHERE post_id = %d AND meta_key IN ('_bde_checkin_token', '_bde_estado', '_bde_asistencia') 
+                 WHERE post_id = %d AND meta_key IN ('_conv_checkin_token', '_conv_estado', '_conv_asistencia') 
                  FOR UPDATE",
 					$id
 				)
 			);
 
 			// 3. Verify token and check state (now safe from concurrent writes)
-			$db_token = get_post_meta( $id, '_bde_checkin_token', true );
+			$db_token = get_post_meta( $id, '_conv_checkin_token', true );
 			if ( ! hash_equals( $db_token, $token ) ) {
 				$wpdb->query( 'ROLLBACK' );
 				return new \WP_Error( 'invalid_token', __( 'Token de check-in no válido.', 'convoca-enroll' ) );
 			}
 
-			$estado = get_post_meta( $id, '_bde_estado', true );
+			$estado = get_post_meta( $id, '_conv_estado', true );
 			if ( $estado !== 'confirmada' ) {
 				$wpdb->query( 'ROLLBACK' );
 				return new \WP_Error( 'not_confirmed', __( 'La inscripción no está confirmada.', 'convoca-enroll' ) );
 			}
 
 			// 4. IDEMPOTENCY: Check if already attended
-			$asistencia = get_post_meta( $id, '_bde_asistencia', true );
+			$asistencia = get_post_meta( $id, '_conv_asistencia', true );
 			if ( $asistencia === 'si' ) {
 				$wpdb->query( 'COMMIT' );
 				return true;
@@ -549,14 +549,14 @@ class Checkin_Handler {
 		$inscriptions = get_posts(
 			array(
 				'post_type'      => 'inscripcion',
-				'meta_key'       => '_bde_checkin_token',
+				'meta_key'       => '_conv_checkin_token',
 				'meta_value'     => $token,
 				'posts_per_page' => 1,
 			)
 		);
 		$id           = $inscriptions[0]->ID;
-		$nombre       = get_post_meta( $id, '_bde_nombre', true );
-		$act_id       = (int) get_post_meta( $id, '_bde_actividad_id', true );
+		$nombre       = get_post_meta( $id, '_conv_nombre', true );
+		$act_id       = (int) get_post_meta( $id, '_conv_actividad_id', true );
 		$act_title    = get_the_title( $act_id );
 
 		wp_die(
@@ -573,7 +573,7 @@ class Checkin_Handler {
 	 * AJAX handler for scanner check-in.
 	 */
 	public function ajax_qr_checkin(): void {
-		check_ajax_referer( 'bde_qr_checkin', 'nonce' );
+		check_ajax_referer( 'conv_enroll_qr_checkin', 'nonce' );
 
 		$user_id = get_current_user_id();
 		if ( ! current_user_can( 'manage_inscripciones' ) && ! in_array( 'voluntario_aprobado', (array) wp_get_current_user()->roles, true ) ) {
@@ -591,14 +591,14 @@ class Checkin_Handler {
 		$inscriptions = get_posts(
 			array(
 				'post_type'      => 'inscripcion',
-				'meta_key'       => '_bde_checkin_token',
+				'meta_key'       => '_conv_checkin_token',
 				'meta_value'     => $token,
 				'posts_per_page' => 1,
 			)
 		);
 		$id           = $inscriptions[0]->ID;
-		$nombre       = get_post_meta( $id, '_bde_nombre', true );
-		$act_id       = (int) get_post_meta( $id, '_bde_actividad_id', true );
+		$nombre       = get_post_meta( $id, '_conv_nombre', true );
+		$act_id       = (int) get_post_meta( $id, '_conv_actividad_id', true );
 
 		// Check activity permission.
 		if ( ! CPT_Actividad::is_user_responsible( $user_id, $act_id ) ) {

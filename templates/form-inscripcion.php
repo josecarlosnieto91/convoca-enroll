@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$settings         = get_option( 'bde_settings', array() );
+$settings         = get_option( 'conv_enroll_settings', array() );
 $show_plazas      = $attrs['mostrar_plazas'] ?? true;
 $show_precios     = $attrs['mostrar_precios'] ?? true;
 $plazas           = (int) ( $meta['plazas_disponibles'] ?? 0 );
@@ -63,7 +63,7 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 	<?php endif; ?>
 
 	<!-- Activity header card -->
-	<div class="bde-activity-card <?php echo $is_lugg ? 'bde-activity-card--lugg' : ''; ?>">
+	<div class="convoca-activity-card <?php echo $is_lugg ? 'convoca-activity-card--lugg' : ''; ?>">
 		<?php if ( $is_lugg ) : ?>
 			<span class="convoca-badge convoca-badge--lugg" aria-label="Actividad del centro social">Centro Social</span>
 		<?php endif; ?>

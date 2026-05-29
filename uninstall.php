@@ -10,8 +10,8 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 // Delete options.
-delete_option( 'bde_settings' );
-delete_option( 'bde_email_templates' );
+delete_option( 'conv_enroll_settings' );
+delete_option( 'conv_enroll_email_templates' );
 
 // Delete inscripcion posts.
 $posts = get_posts(

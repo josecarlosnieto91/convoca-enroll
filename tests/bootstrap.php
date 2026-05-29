@@ -49,14 +49,14 @@ if ($wp_tests_dir && file_exists($wp_tests_dir . '/includes/functions.php')) {
     if (!defined('WP_DEBUG')) {
         define('WP_DEBUG', true);
     }
-    if (!defined('BDE_VERSION')) {
-        define('BDE_VERSION', '2.5.1');
+    if (!defined('CONV_ENROLL_VERSION')) {
+        define('CONV_ENROLL_VERSION', '2.5.1');
     }
-    if (!defined('BDE_DIR')) {
-        define('BDE_DIR', dirname(__DIR__) . '/');
+    if (!defined('CONV_ENROLL_DIR')) {
+        define('CONV_ENROLL_DIR', dirname(__DIR__) . '/');
     }
-    if (!defined('BDE_DB_VERSION')) {
-        define('BDE_DB_VERSION', '1.3.0');
+    if (!defined('CONV_ENROLL_DB_VERSION')) {
+        define('CONV_ENROLL_DB_VERSION', '1.3.0');
     }
 
     // Load convoca-core classes (dependency).
@@ -79,7 +79,7 @@ if ($wp_tests_dir && file_exists($wp_tests_dir . '/includes/functions.php')) {
     }
 
     // Load enroll classes.
-    $enroll_includes = BDE_DIR . 'includes';
+    $enroll_includes = CONV_ENROLL_DIR . 'includes';
     $enroll_classes = [
         'class-cpt-actividad.php',
         'class-cpt-inscripcion.php',

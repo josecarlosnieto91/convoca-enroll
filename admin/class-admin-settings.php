@@ -13,13 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Settings {
 
-	private const CACHE_KEY = 'bde_enroll_diagnostic_cache';
-	private const OPTION    = 'bde_settings';
+	private const CACHE_KEY = 'conv_enroll_diagnostic_cache';
+	private const OPTION    = 'conv_enroll_settings';
 
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'maybe_save' ) );
 		add_action( 'admin_init', array( $this, 'handle_oauth_callback' ) );
-		add_action( 'wp_ajax_bde_preview_email', array( $this, 'ajax_preview' ) );
+		add_action( 'wp_ajax_conv_preview_email', array( $this, 'ajax_preview' ) );
 	}
 
 	/* ── Render ────────────────────────────────── */
@@ -69,8 +69,8 @@ class Admin_Settings {
 			<?php \Convoca\Core\Utils::render_stored_notices(); ?>
 
 			<form method="post">
-				<?php wp_nonce_field( 'bde_settings_save', 'bde_settings_nonce' ); ?>
-				<input type="hidden" name="bde_active_tab" value="<?php echo esc_attr( $tab ); ?>">
+				<?php wp_nonce_field( 'conv_enroll_settings_save', 'conv_enroll_settings_nonce' ); ?>
+				<input type="hidden" name="conv_enroll_active_tab" value="<?php echo esc_attr( $tab ); ?>">
 
 				<?php
 				match ( $tab ) {
@@ -175,8 +175,8 @@ class Admin_Settings {
 		<div class="convoca-field">
 			<label for="sheets_api_key"><?php esc_html_e( 'API Key de Google Sheets', 'convoca-enroll' ); ?></label>
 			<?php
-			$has_constant = defined( 'BDE_GOOGLE_SHEETS_API_KEY' );
-			$display_val  = $has_constant ? '****************' . substr( BDE_GOOGLE_SHEETS_API_KEY, -4 ) : ( $s['sheets_api_key'] ?? '' );
+			$has_constant = defined( 'CONV_ENROLL_GOOGLE_SHEETS_API_KEY' );
+			$display_val  = $has_constant ? '****************' . substr( CONV_ENROLL_GOOGLE_SHEETS_API_KEY, -4 ) : ( $s['sheets_api_key'] ?? '' );
 			?>
 			<input type="text" id="sheets_api_key" name="bde[sheets_api_key]"
 				value="<?php echo esc_attr( $display_val ); ?>" <?php echo $has_constant ? 'disabled' : ''; ?>>
@@ -184,7 +184,7 @@ class Admin_Settings {
 				<small class="convoca-small" style="color:green;">✓ <?php esc_html_e( 'Definida vía constante en wp-config.php.', 'convoca-enroll' ); ?></small>
 			<?php else : ?>
 				<small class="convoca-small">⚠️ <?php esc_html_e( 'Los datos personales se enviarán a Google. Asegúrate de cumplir la RGPD.', 'convoca-enroll' ); ?></small>
-				<small class="convoca-small"><em><?php esc_html_e( 'Recomendación: define BDE_GOOGLE_SHEETS_API_KEY en tu wp-config.php.', 'convoca-enroll' ); ?></em></small>
+				<small class="convoca-small"><em><?php esc_html_e( 'Recomendación: define CONV_ENROLL_GOOGLE_SHEETS_API_KEY en tu wp-config.php.', 'convoca-enroll' ); ?></em></small>
 			<?php endif; ?>
 		</div>
 
@@ -200,8 +200,8 @@ class Admin_Settings {
 		<div class="convoca-field">
 			<label><?php esc_html_e( 'Integridad de datos', 'convoca-enroll' ); ?></label>
 			<div style="display:flex;gap:10px;">
-				<button type="submit" name="bde_run_maintenance" value="validate" class="convoca-btn convoca-btn-outline"><?php esc_html_e( 'Validar integridad', 'convoca-enroll' ); ?></button>
-				<button type="submit" name="bde_run_maintenance" value="repair" class="convoca-btn convoca-btn--danger"
+				<button type="submit" name="conv_enroll_run_maintenance" value="validate" class="convoca-btn convoca-btn-outline"><?php esc_html_e( 'Validar integridad', 'convoca-enroll' ); ?></button>
+				<button type="submit" name="conv_enroll_run_maintenance" value="repair" class="convoca-btn convoca-btn--danger"
 					onclick="return confirm('<?php esc_attr_e( 'Esto borrará inscripciones huérfanas y recontará plazas. ¿Continuar?', 'convoca-enroll' ); ?>');">
 					<?php esc_html_e( 'Reparar integridad', 'convoca-enroll' ); ?>
 				</button>
@@ -248,7 +248,7 @@ class Admin_Settings {
 		<?php
 		wp_editor(
 			$normas,
-			'bde_normas_inscripcion',
+			'conv_enroll_normas_inscripcion',
 			array(
 				'textarea_name' => 'bde[normas_inscripcion]',
 				'textarea_rows' => 12,
@@ -334,10 +334,10 @@ class Admin_Settings {
 				<div class="bde-attachment-row" style="margin-top: 10px;">
 					<label><strong>Adjunto</strong></label><br>
 					<div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
-						<input type="hidden" name="tpl[<?php echo $slug; ?>][attachment_id]" value="<?php echo esc_attr( $attachment_id ); ?>" class="bde_attachment_id">
+						<input type="hidden" name="tpl[<?php echo $slug; ?>][attachment_id]" value="<?php echo esc_attr( $attachment_id ); ?>" class="conv_enroll_attachment_id">
 						<button type="button" class="convoca-btn convoca-btn-outline bde-upload-attachment"><?php echo esc_html__( 'Seleccionar archivo', 'convoca-enroll' ); ?></button>
 						<button type="button" class="convoca-btn convoca-btn-outline convoca-btn--danger bde-remove-attachment" <?php echo ! $attachment_id ? 'style="display:none"' : ''; ?>><?php echo esc_html__( 'Quitar', 'convoca-enroll' ); ?></button>
-						<span class="convoca-badge convoca-badge--info bde_attachment_name"><?php echo $attachment_url ? esc_html( basename( $attachment_url ) ) : esc_html__( 'Ninguno', 'convoca-enroll' ); ?></span>
+						<span class="convoca-badge convoca-badge--info conv_enroll_attachment_name"><?php echo $attachment_url ? esc_html( basename( $attachment_url ) ) : esc_html__( 'Ninguno', 'convoca-enroll' ); ?></span>
 					</div>
 				</div>
 			</div>
@@ -383,8 +383,8 @@ class Admin_Settings {
 							frame.on('select', function() {
 								const attachment = frame.state().get('selection').first().toJSON();
 								if (window._bdvActiveUploadRow) {
-									window._bdvActiveUploadRow.querySelector('.bde_attachment_id').value = attachment.id;
-									window._bdvActiveUploadRow.querySelector('.bde_attachment_name').textContent = attachment.filename;
+									window._bdvActiveUploadRow.querySelector('.conv_enroll_attachment_id').value = attachment.id;
+									window._bdvActiveUploadRow.querySelector('.conv_enroll_attachment_name').textContent = attachment.filename;
 									window._bdvActiveUploadRow.querySelector('.bde-remove-attachment').style.display = 'inline-block';
 								}
 								// Cleanup active row reference after selection.
@@ -400,8 +400,8 @@ class Admin_Settings {
 				document.querySelectorAll('.bde-remove-attachment').forEach(function(btn) {
 					btn.addEventListener('click', function() {
 						const row = this.closest('.bde-attachment-row');
-						row.querySelector('.bde_attachment_id').value = '';
-						row.querySelector('.bde_attachment_name').textContent = 'Ningún archivo seleccionado';
+						row.querySelector('.conv_enroll_attachment_id').value = '';
+						row.querySelector('.conv_enroll_attachment_name').textContent = 'Ningún archivo seleccionado';
 						this.style.display = 'none';
 					});
 				});
@@ -670,8 +670,8 @@ class Admin_Settings {
 
 	public function maybe_save(): void {
 		if (
-			! isset( $_POST['bde_settings_nonce'] ) ||
-			! wp_verify_nonce( $_POST['bde_settings_nonce'], 'bde_settings_save' )
+			! isset( $_POST['conv_enroll_settings_nonce'] ) ||
+			! wp_verify_nonce( $_POST['conv_enroll_settings_nonce'], 'conv_enroll_settings_save' )
 		) {
 			return;
 		}
@@ -680,7 +680,7 @@ class Admin_Settings {
 			return;
 		}
 
-		$tab = sanitize_text_field( $_POST['bde_active_tab'] ?? 'general' );
+		$tab = sanitize_text_field( $_POST['conv_enroll_active_tab'] ?? 'general' );
 
 		// Load existing settings to merge.
 		$settings = get_option( self::OPTION, array() );
@@ -696,15 +696,15 @@ class Admin_Settings {
 			$settings['plazas_por_defecto']     = absint( $bde['plazas_por_defecto'] ?? 20 );
 			$settings['url_panel_reservas']     = esc_url_raw( $bde['url_panel_reservas'] ?? '' );
 			$settings['sheets_enabled']         = absint( $bde['sheets_enabled'] ?? 0 );
-			if ( ! defined( 'BDE_GOOGLE_SHEETS_API_KEY' ) ) {
+			if ( ! defined( 'CONV_ENROLL_GOOGLE_SHEETS_API_KEY' ) ) {
 				$settings['sheets_api_key'] = sanitize_text_field( $bde['sheets_api_key'] ?? '' );
 			}
 			$settings['log_retention_days'] = absint( $bde['log_retention_days'] ?? 30 );
 			$settings['webhook_url']        = esc_url_raw( $bde['webhook_url'] ?? '' );
 			$settings['webhook_secret']     = sanitize_text_field( $bde['webhook_secret'] ?? '' );
 
-			if ( isset( $_POST['bde_run_maintenance'] ) ) {
-				if ( $_POST['bde_run_maintenance'] === 'repair' ) {
+			if ( isset( $_POST['conv_enroll_run_maintenance'] ) ) {
+				if ( $_POST['conv_enroll_run_maintenance'] === 'repair' ) {
 					Maintenance::reparar_integridad();
 					\Convoca\Core\Utils::set_admin_notice( 'Integridad reparada.', 'success' );
 				} else {
@@ -784,7 +784,7 @@ class Admin_Settings {
 	}
 
 	public function ajax_preview(): void {
-		check_ajax_referer( 'bde_preview_nonce', 'nonce' );
+		check_ajax_referer( 'conv_enroll_preview_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( __( 'No tienes permisos.', 'convoca-enroll' ) );

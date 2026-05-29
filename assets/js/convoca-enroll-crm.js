@@ -44,7 +44,7 @@
                     fd.append('status', status);
                     
                     var nonce = window.bdeCrm ? window.bdeCrm.nonce : '';
-                    var action = currentBtn.classList.contains('mark-attendance') ? 'bde_mark_attendance' : 'bde_crm_update_attendance';
+                    var action = currentBtn.classList.contains('mark-attendance') ? 'conv_enroll_mark_attendance' : 'conv_enroll_crm_update_attendance';
 
                     bdvAdmin.ajaxPost(action, fd, nonce,
                         (res) => {

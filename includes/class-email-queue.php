@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Email_Queue {
 
-	private const TABLE_NAME = 'bde_email_queue';
+	private const TABLE_NAME = 'conv_enroll_email_queue';
 
 	public function __construct() {
 		add_action( 'convoca_enroll_process_email_queue', array( $this, 'process_queue' ) );
@@ -88,7 +88,7 @@ class Email_Queue {
 		$limit = $max_exec - 5; // 5 second margin
 
 		// 0. Acquire lock to prevent concurrent runs
-		if ( ! \Convoca\Core\Utils::acquire_lock( 'bde_email_queue_lock', 300 ) ) {
+		if ( ! \Convoca\Core\Utils::acquire_lock( 'conv_enroll_email_queue_lock', 300 ) ) {
 			return;
 		}
 
@@ -96,13 +96,13 @@ class Email_Queue {
 			global $wpdb;
 			$table_name = self::get_table_name();
 
-			$settings     = get_option( 'bde_settings', array() );
+			$settings     = get_option( 'conv_enroll_settings', array() );
 			$batch_size   = (int) ( $settings['email_batch_size'] ?? 20 );
 			$max_retries  = (int) ( $settings['email_max_retries'] ?? 3 );
 			$hourly_limit = (int) ( $settings['email_hourly_limit'] ?? 100 );
 
 			// Rate limiting check.
-			$hour_key      = 'bde_email_hourly_count_' . gmdate( 'YmdH' );
+			$hour_key      = 'conv_enroll_email_hourly_count_' . gmdate( 'YmdH' );
 			$current_count = (int) get_transient( $hour_key );
 			if ( $current_count >= $hourly_limit ) {
 				\Convoca\Core\Logger::log( 'Límite horario de envío de emails alcanzado (' . $hourly_limit . '). Suspendiendo procesamiento.', 'warning', 'Enroll/Email' );
@@ -173,8 +173,8 @@ class Email_Queue {
 			foreach ( $emails as $email ) {
 				// Heartbeat: extend lock while processing.
 				if ( microtime( true ) - $last_heartbeat > $heartbeat_interval ) {
-					\Convoca\Core\Utils::release_lock( 'bde_email_queue_lock' );
-					\Convoca\Core\Utils::acquire_lock( 'bde_email_queue_lock', 300 );
+					\Convoca\Core\Utils::release_lock( 'conv_enroll_email_queue_lock' );
+					\Convoca\Core\Utils::acquire_lock( 'conv_enroll_email_queue_lock', 300 );
 					$last_heartbeat = microtime( true );
 				}
 
@@ -256,7 +256,7 @@ class Email_Queue {
 			}
 		} finally {
 			// Always release the lock using the proper mechanism.
-			\Convoca\Core\Utils::release_lock( 'bde_email_queue_lock' );
+			\Convoca\Core\Utils::release_lock( 'conv_enroll_email_queue_lock' );
 		}
 	}
 }

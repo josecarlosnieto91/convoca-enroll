@@ -72,7 +72,7 @@ class Email_Queue_List extends \WP_List_Table {
 
 	protected function column_actions( $item ): string {
 		if ( $item->status === 'failed' || $item->status === 'pending' ) {
-			return '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bde_retry_email&id=' . $item->id ), 'bde_retry_' . $item->id ) ) . '" class="convoca-btn convoca-btn-outline" style="padding:2px 8px;font-size:11px;">↻ Reenviar</a>';
+			return '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_retry_email&id=' . $item->id ), 'conv_enroll_retry_' . $item->id ) ) . '" class="convoca-btn convoca-btn-outline" style="padding:2px 8px;font-size:11px;">↻ Reenviar</a>';
 		}
 		return '—';
 	}

@@ -16,8 +16,8 @@ class Form_Inscripcion {
 
 	public function __construct() {
 		add_shortcode( 'convoca_form_inscripcion', array( $this, 'shortcode' ) );
-		add_action( 'wp_ajax_bde_inscribir', array( $this, 'handle_ajax' ) );
-		add_action( 'wp_ajax_nopriv_bde_inscribir', array( $this, 'handle_ajax' ) );
+		add_action( 'wp_ajax_conv_inscribir', array( $this, 'handle_ajax' ) );
+		add_action( 'wp_ajax_nopriv_conv_inscribir', array( $this, 'handle_ajax' ) );
 	}
 
 	/**
@@ -52,20 +52,20 @@ class Form_Inscripcion {
 
 		$meta = CPT_Actividad::get_meta( $actividad_id );
 
-		wp_enqueue_style( 'bde-public', BDE_URL . 'assets/css/convoca-enroll-public.css', array(), BDE_VERSION );
-		wp_enqueue_script( 'bde-public', BDE_URL . 'assets/js/convoca-enroll-public.js', array( 'convoca-common-js' ), BDE_VERSION, true );
+		wp_enqueue_style( 'bde-public', CONV_ENROLL_URL . 'assets/css/convoca-enroll-public.css', array(), CONV_ENROLL_VERSION );
+		wp_enqueue_script( 'bde-public', CONV_ENROLL_URL . 'assets/js/convoca-enroll-public.js', array( 'convoca-common-js' ), CONV_ENROLL_VERSION, true );
 		wp_localize_script(
 			'bde-public',
 			'bdeEnroll',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 				'apiRoot' => esc_url_raw( rest_url() ),
-				'nonce'   => wp_create_nonce( 'bde_inscribir_nonce' ),
+				'nonce'   => wp_create_nonce( 'conv_enroll_inscribir_nonce' ),
 			)
 		);
 
 		ob_start();
-		include BDE_DIR . 'templates/form-inscripcion.php';
+		include CONV_ENROLL_DIR . 'templates/form-inscripcion.php';
 		return ob_get_clean();
 	}
 
@@ -73,7 +73,7 @@ class Form_Inscripcion {
 	 * AJAX handler.
 	 */
 	public function handle_ajax(): void {
-		check_ajax_referer( 'bde_inscribir_nonce', 'nonce' );
+		check_ajax_referer( 'conv_enroll_inscribir_nonce', 'nonce' );
 
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'inscribir', 5, 3600 ) ) {
 			wp_send_json_error( array( 'errors' => array( 'Demasiados intentos de inscripción. Inténtalo de nuevo en una hora.' ) ), 429 );
@@ -172,7 +172,7 @@ class Form_Inscripcion {
 			$actividad = get_post( $actividad_id );
 
 			// 1. Prevenir doble creación de pago por race condition (doble clic)
-			$lock_key = 'bde_payment_creating_' . $result;
+			$lock_key = 'conv_enroll_payment_creating_' . $result;
 			if ( get_transient( $lock_key ) ) {
 				wp_send_json_error( array( 'errors' => array( 'Ya hay un proceso de pago en curso para esta inscripción. Por favor, espera un momento.' ) ), 429 );
 				return;
@@ -180,12 +180,12 @@ class Form_Inscripcion {
 			set_transient( $lock_key, true, 30 );
 
 			// Set inscription the mount paid to the requested one.
-			update_post_meta( $result, '_bde_importe_pagado', $amount_cents );
+			update_post_meta( $result, '_conv_importe_pagado', $amount_cents );
 
 			// Check if gateway plugin is available.
 			if ( \Convoca\Core\Features::is_gateway_active() ) {
 				// 2. Verificar si ya existe un pago asociado que no sea fallido
-				$pago_id_existente = (int) get_post_meta( $result, '_bde_pago_id', true );
+				$pago_id_existente = (int) get_post_meta( $result, '_conv_pago_id', true );
 				$payment           = null;
 
 				if ( $pago_id_existente ) {
@@ -213,14 +213,14 @@ class Form_Inscripcion {
 				delete_transient( $lock_key );
 
 				if ( ! is_wp_error( $payment ) ) {
-					update_post_meta( $result, '_bde_pago_id', $payment['pago_id'] );
+					update_post_meta( $result, '_conv_pago_id', $payment['pago_id'] );
 
 					$success_data = array(
 						'estado'         => 'pendiente_pago',
 						'estado_label'   => 'Pendiente de aportación',
 						'plazas'         => (int) $act_meta['plazas_disponibles'],
 						'redirect'       => $payment['payment_url'],
-						'codigo_reserva' => get_post_meta( $result, '_bde_codigo_reserva', true ),
+						'codigo_reserva' => get_post_meta( $result, '_conv_codigo_reserva', true ),
 					);
 
 					if ( ! empty( Motor_Inscripcion::$last_pdf_error ) ) {
@@ -234,8 +234,8 @@ class Form_Inscripcion {
 				} else {
 					// Error en pasarela: marcar para revisión manual.
 					\Convoca\Core\Logger::error( 'Error al crear el pago en la pasarela (Inscripción): ' . $payment->get_error_message(), 'Enroll/Form', $result );
-					update_post_meta( $result, '_bde_needs_manual_review', '1' );
-					update_post_meta( $result, '_bde_review_note', 'Error en pasarela de pago: ' . $payment->get_error_message() );
+					update_post_meta( $result, '_conv_needs_manual_review', '1' );
+					update_post_meta( $result, '_conv_review_note', 'Error en pasarela de pago: ' . $payment->get_error_message() );
 
 					// Devolver éxito con flag de error de pasarela para que el usuario vea que se registró.
 					wp_send_json_success(
@@ -243,7 +243,7 @@ class Form_Inscripcion {
 							'gateway_error'  => true,
 							'error_message'  => 'La inscripción está registrada pero el pago no se pudo procesar automáticamente. Por favor, contacta con nosotros para completar la aportación.',
 							'estado'         => 'pendiente_pago',
-							'codigo_reserva' => get_post_meta( $result, '_bde_codigo_reserva', true ),
+							'codigo_reserva' => get_post_meta( $result, '_conv_codigo_reserva', true ),
 							'plazas'         => (int) $act_meta['plazas_disponibles'],
 						)
 					);
@@ -251,13 +251,13 @@ class Form_Inscripcion {
 			}
 		}
 
-		$estado = get_post_meta( $result, '_bde_estado', true );
+		$estado = get_post_meta( $result, '_conv_estado', true );
 
 		$success_data = array(
 			'estado'         => $estado,
 			'estado_label'   => CPT_Inscripcion::LABELS[ $estado ] ?? $estado,
 			'plazas'         => (int) $act_meta['plazas_disponibles'],
-			'codigo_reserva' => get_post_meta( $result, '_bde_codigo_reserva', true ),
+			'codigo_reserva' => get_post_meta( $result, '_conv_codigo_reserva', true ),
 			'redirect'       => add_query_arg( 'enroll_success', '1', home_url() ),
 		);
 

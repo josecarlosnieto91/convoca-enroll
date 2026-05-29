@@ -100,7 +100,7 @@ class Checkin_PWA {
 			return;
 		}
 
-		$sw_path = BDE_DIR . 'public/assets/pwa/sw.js';
+		$sw_path = CONV_ENROLL_DIR . 'public/assets/pwa/sw.js';
 		if ( file_exists( $sw_path ) ) {
 			header( 'Content-Type: application/javascript' );
 			header( 'Cache-Control: no-cache' );
@@ -117,7 +117,7 @@ class Checkin_PWA {
 	 * Add PWA meta tags to the scanner page.
 	 */
 	public static function add_meta_tags(): void {
-		if ( ! get_query_var( 'bde_checkin_page' ) ) {
+		if ( ! get_query_var( 'conv_enroll_checkin_page' ) ) {
 			return;
 		}
 
@@ -208,7 +208,7 @@ class Checkin_PWA {
 			}
 
 			// Verify nonce.
-			if ( ! wp_verify_nonce( $nonce, 'bde_qr_checkin' ) ) {
+			if ( ! wp_verify_nonce( $nonce, 'conv_enroll_qr_checkin' ) ) {
 				$results[] = array(
 					'token'  => $token,
 					'status' => 'expired_nonce',

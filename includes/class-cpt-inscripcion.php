@@ -16,7 +16,7 @@ class CPT_Inscripcion {
 	/**
 	 * Meta key prefix for all inscription fields.
 	 */
-	public const META_PREFIX = '_bde_';
+	public const META_PREFIX = '_conv_';
 
 	public const META_KEYS = array(
 		'actividad_id',
@@ -81,7 +81,7 @@ class CPT_Inscripcion {
 	 * When an inscription is saved, link it to the member with matching email.
 	 */
 	public static function on_save_link_member( int $post_id, \WP_Post $post, bool $update ): void {
-		$email = get_post_meta( $post_id, '_bde_email', true );
+		$email = get_post_meta( $post_id, '_conv_email', true );
 		if ( ! $email ) {
 			return;
 		}
@@ -98,7 +98,7 @@ class CPT_Inscripcion {
 		);
 
 		if ( ! empty( $members ) ) {
-			update_post_meta( $post_id, '_bde_member_id', (int) $members[0] );
+			update_post_meta( $post_id, '_conv_member_id', (int) $members[0] );
 		}
 	}
 
@@ -187,7 +187,7 @@ class CPT_Inscripcion {
 	}
 
 	/**
-	 * Get an inscription's meta value with the _bde_ prefix.
+	 * Get an inscription's meta value with the _conv_ prefix.
 	 *
 	 * @param int    $post_id Inscription ID.
 	 * @param string $key Meta key without prefix.
@@ -221,7 +221,7 @@ class CPT_Inscripcion {
 	}
 
 	/**
-	 * Update an inscription's meta value with the _bde_ prefix.
+	 * Update an inscription's meta value with the _conv_ prefix.
 	 *
 	 * @param int    $post_id Inscription ID.
 	 * @param string $key Meta key without prefix.

@@ -293,7 +293,7 @@
     gap: 24px;
 }
 
-.bde-activity-card {
+.convoca-activity-card {
     background: white;
     border-radius: 16px;
     overflow: hidden;
@@ -304,7 +304,7 @@
     border: 1px solid var(--bde-crm-border);
 }
 
-.bde-activity-card:hover {
+.convoca-activity-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
@@ -446,4 +446,4 @@
         white-space: normal;
     }
 }
-
+

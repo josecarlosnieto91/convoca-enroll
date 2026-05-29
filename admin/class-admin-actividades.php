@@ -24,12 +24,12 @@ class Admin_Actividades {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
-		add_action( 'admin_post_bde_save_actividad_admin', array( $this, 'handle_save_admin' ) );
+		add_action( 'admin_post_conv_save_actividad_admin', array( $this, 'handle_save_admin' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'load-post-new.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'load-post.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'admin_bar_menu', array( $this, 'customize_admin_bar' ), 80 );
-		add_action( 'admin_post_bde_duplicate_actividad', array( $this, 'handle_duplicate' ) );
+		add_action( 'admin_post_conv_duplicate_actividad', array( $this, 'handle_duplicate' ) );
 	}
 
 	public function add_menu() {
@@ -130,7 +130,7 @@ class Admin_Actividades {
 
 		$meta = array();
 		foreach ( CPT_Actividad::META_KEYS as $key ) {
-			$meta[ $key ] = $post_id ? get_post_meta( $post_id, '_bde_' . $key, true ) : '';
+			$meta[ $key ] = $post_id ? get_post_meta( $post_id, '_conv_' . $key, true ) : '';
 		}
 
 		// Defaults for new activity.
@@ -150,9 +150,9 @@ class Admin_Actividades {
 			<h1><?php echo esc_html( $title ); ?></h1>
 
 			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="bdv-form-custom">
-				<input type="hidden" name="action" value="bde_save_actividad_admin">
+				<input type="hidden" name="action" value="conv_enroll_save_actividad_admin">
 				<input type="hidden" name="id" value="<?php echo $post_id; ?>">
-				<?php wp_nonce_field( 'bde_save_actividad_nonce' ); ?>
+				<?php wp_nonce_field( 'conv_enroll_save_actividad_nonce' ); ?>
 
 				<div class="bdv-grid bdv-grid--2">
 					<div class="bdv-card">
@@ -244,7 +244,7 @@ class Admin_Actividades {
 				<div class="bdv-form-actions">
 					<?php submit_button( __( 'Guardar Actividad', 'convoca-enroll' ), 'primary', 'submit', false ); ?>
 					<?php if ( $post_id ) : ?>
-						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bde_duplicate_actividad&id=' . $post_id ), 'bde_duplicate_' . $post_id ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📋 <?php _e( 'Duplicar', 'convoca-enroll' ); ?></a>
+						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_duplicate_actividad&id=' . $post_id ), 'conv_enroll_duplicate_' . $post_id ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📋 <?php _e( 'Duplicar', 'convoca-enroll' ); ?></a>
 					<?php endif; ?>
 					<a href="<?php echo admin_url( 'admin.php?page=convoca-core-enroll' ); ?>" class="convoca-btn convoca-btn-outline"><?php _e( 'Cancelar', 'convoca-enroll' ); ?></a>
 				</div>
@@ -257,7 +257,7 @@ class Admin_Actividades {
 	 * Handle save from admin form.
 	 */
 	public function handle_save_admin() {
-		check_admin_referer( 'bde_save_actividad_nonce' );
+		check_admin_referer( 'conv_enroll_save_actividad_nonce' );
 
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_die( __( 'No tienes permisos para realizar esta acción.', 'convoca-enroll' ) );
@@ -289,26 +289,26 @@ class Admin_Actividades {
 		}
 
 		// Save Meta.
-		update_post_meta( $post_id, '_bde_fecha_inicio', sanitize_text_field( str_replace( 'T', ' ', $_POST['fecha_inicio'] ) ) );
-		update_post_meta( $post_id, '_bde_fecha_fin', sanitize_text_field( str_replace( 'T', ' ', $_POST['fecha_fin'] ) ) );
-		update_post_meta( $post_id, '_bde_ubicacion', sanitize_text_field( $_POST['ubicacion'] ) );
+		update_post_meta( $post_id, '_conv_fecha_inicio', sanitize_text_field( str_replace( 'T', ' ', $_POST['fecha_inicio'] ) ) );
+		update_post_meta( $post_id, '_conv_fecha_fin', sanitize_text_field( str_replace( 'T', ' ', $_POST['fecha_fin'] ) ) );
+		update_post_meta( $post_id, '_conv_ubicacion', sanitize_text_field( $_POST['ubicacion'] ) );
 
-		$old_plazas = (int) get_post_meta( $post_id, '_bde_plazas_totales', true );
+		$old_plazas = (int) get_post_meta( $post_id, '_conv_plazas_totales', true );
 		$new_plazas = (int) $_POST['plazas_totales'];
-		update_post_meta( $post_id, '_bde_plazas_totales', $new_plazas );
+		update_post_meta( $post_id, '_conv_plazas_totales', $new_plazas );
 
 		// Update available plazas if total changed.
 		if ( $new_plazas !== $old_plazas ) {
 			$stats = CPT_Inscripcion::count_by_activity( $post_id );
-			update_post_meta( $post_id, '_bde_plazas_disponibles', max( 0, $new_plazas - $stats['confirmada'] ) );
+			update_post_meta( $post_id, '_conv_plazas_disponibles', max( 0, $new_plazas - $stats['confirmada'] ) );
 		}
 
-		update_post_meta( $post_id, '_bde_precio_socio', sanitize_text_field( $_POST['precio_socio'] ) );
-		update_post_meta( $post_id, '_bde_requiere_pago', isset( $_POST['requiere_pago'] ) ? 1 : 0 );
-		update_post_meta( $post_id, '_bde_actividad_lugg', isset( $_POST['actividad_lugg'] ) ? 1 : 0 );
+		update_post_meta( $post_id, '_conv_precio_socio', sanitize_text_field( $_POST['precio_socio'] ) );
+		update_post_meta( $post_id, '_conv_requiere_pago', isset( $_POST['requiere_pago'] ) ? 1 : 0 );
+		update_post_meta( $post_id, '_conv_actividad_lugg', isset( $_POST['actividad_lugg'] ) ? 1 : 0 );
 
 		$responsables = isset( $_POST['responsables'] ) ? array_map( 'intval', $_POST['responsables'] ) : array();
-		update_post_meta( $post_id, '_bde_responsables', implode( ',', $responsables ) );
+		update_post_meta( $post_id, '_conv_responsables', implode( ',', $responsables ) );
 
 		wp_redirect( admin_url( 'admin.php?page=convoca-core-enroll&message=saved' ) );
 		exit;
@@ -319,7 +319,7 @@ class Admin_Actividades {
 	 */
 	public function handle_duplicate(): void {
 		$orig_id = (int) ( $_GET['id'] ?? 0 );
-		if ( ! $orig_id || ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'bde_duplicate_' . $orig_id ) ) {
+		if ( ! $orig_id || ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'conv_enroll_duplicate_' . $orig_id ) ) {
 			wp_die( __( 'Nonce inválido.', 'convoca-enroll' ) );
 		}
 		if ( ! current_user_can( 'edit_posts' ) ) {
@@ -352,20 +352,20 @@ class Admin_Actividades {
 			if ( in_array( $key, $skip_meta, true ) ) {
 				continue;
 			}
-			$val = get_post_meta( $orig_id, '_bde_' . $key, true );
+			$val = get_post_meta( $orig_id, '_conv_' . $key, true );
 			if ( $val !== '' ) {
-				update_post_meta( $new_id, '_bde_' . $key, $val );
+				update_post_meta( $new_id, '_conv_' . $key, $val );
 			}
 		}
 
 		// Shift dates by 7 days.
-		$fecha_ini = get_post_meta( $orig_id, '_bde_fecha_inicio', true );
-		$fecha_fin = get_post_meta( $orig_id, '_bde_fecha_fin', true );
+		$fecha_ini = get_post_meta( $orig_id, '_conv_fecha_inicio', true );
+		$fecha_fin = get_post_meta( $orig_id, '_conv_fecha_fin', true );
 		if ( $fecha_ini ) {
-			update_post_meta( $new_id, '_bde_fecha_inicio', wp_date( 'Y-m-d\TH:i', strtotime( $fecha_ini . ' +7 days' ) ) );
+			update_post_meta( $new_id, '_conv_fecha_inicio', wp_date( 'Y-m-d\TH:i', strtotime( $fecha_ini . ' +7 days' ) ) );
 		}
 		if ( $fecha_fin ) {
-			update_post_meta( $new_id, '_bde_fecha_fin', wp_date( 'Y-m-d\TH:i', strtotime( $fecha_fin . ' +7 days' ) ) );
+			update_post_meta( $new_id, '_conv_fecha_fin', wp_date( 'Y-m-d\TH:i', strtotime( $fecha_fin . ' +7 days' ) ) );
 		}
 
 		\Convoca\Core\Logger::info(
@@ -425,7 +425,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 			$args['order']   = 'DESC';
 			$args['s']       = $search;
 		} else {
-			$args['meta_key'] = '_bde_fecha_inicio';
+			$args['meta_key'] = '_conv_fecha_inicio';
 			$args['orderby']  = 'meta_value';
 			$args['order']    = 'DESC';
 		}
@@ -448,7 +448,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 
 	protected function column_titulo( $item ): string {
 		$edit  = admin_url( 'admin.php?page=bde-actividad-editor&id=' . $item->ID );
-		$lugg  = get_post_meta( $item->ID, '_bde_actividad_lugg', true );
+		$lugg  = get_post_meta( $item->ID, '_conv_actividad_lugg', true );
 		$badge = $lugg === '1' ? ' <span class="convoca-badge convoca-badge--lugg" style="background:#2d5a27;color:#fff;">Centro Social</span>' : '';
 
 		$status_badge = '';
@@ -462,25 +462,25 @@ class Admin_Actividades_List extends \WP_List_Table {
 	}
 
 	protected function column_fecha( $item ): string {
-		$fecha = get_post_meta( $item->ID, '_bde_fecha_inicio', true );
+		$fecha = get_post_meta( $item->ID, '_conv_fecha_inicio', true );
 		return $fecha ? esc_html( \Convoca\Core\Utils::format_date( $fecha, 'd/m/Y H:i' ) ) : '—';
 	}
 
 	protected function column_ubicacion( $item ): string {
-		$ubicacion = get_post_meta( $item->ID, '_bde_ubicacion', true );
+		$ubicacion = get_post_meta( $item->ID, '_conv_ubicacion', true );
 		return $ubicacion ? esc_html( $ubicacion ) : '—';
 	}
 
 	protected function column_plazas( $item ): string {
-		$total = (int) get_post_meta( $item->ID, '_bde_plazas_totales', true );
-		$disp  = (int) get_post_meta( $item->ID, '_bde_plazas_disponibles', true );
+		$total = (int) get_post_meta( $item->ID, '_conv_plazas_totales', true );
+		$disp  = (int) get_post_meta( $item->ID, '_conv_plazas_disponibles', true );
 		$used  = $total - $disp;
 		return $used . '/' . $total;
 	}
 
 	protected function column_ocupacion( $item ): string {
 		$stats = CPT_Inscripcion::count_by_activity( $item->ID );
-		$total = (int) get_post_meta( $item->ID, '_bde_plazas_totales', true );
+		$total = (int) get_post_meta( $item->ID, '_conv_plazas_totales', true );
 		if ( $total <= 0 ) {
 			return '0%';
 		}
@@ -509,7 +509,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 	protected function column_acciones( $item ): string {
 		$actions   = array();
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=bde-checkin&actividad_id=' . $item->ID ) ), 'Check-in' );
-		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bde_duplicate_actividad&id=' . $item->ID ), 'bde_duplicate_' . $item->ID ) ), 'Duplicar' );
+		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_duplicate_actividad&id=' . $item->ID ), 'conv_enroll_duplicate_' . $item->ID ) ), 'Duplicar' );
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=bde-inscripciones&actividad_id=' . $item->ID ) ), 'Inscripciones' );
 
 		return implode( ' | ', $actions );
