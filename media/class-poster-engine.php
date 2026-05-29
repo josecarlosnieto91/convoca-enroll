@@ -193,7 +193,7 @@ class Poster_Engine {
 	/**
 	 * Render main image layer.
 	 */
-	private static function render_image_layer( \Imagick $canvas, array $def, int $image_id ): void {
+	private static function render_image_layer( \Imagick $canvas, array $def, ?int $image_id ): void {
 		if ( ! $image_id ) {
 			return;
 		}
