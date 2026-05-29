@@ -94,14 +94,17 @@ class Poster_Engine {
 			try {
 				$canvas = new \Imagick();
 				$canvas->newImage( $target_w, $target_h, new \ImagickPixel( 'transparent' ) );
-				$canvas->setImageFormat( $export_type );
-				$canvas->setImageCompressionQuality( $quality );
-
 				// Render each layer.
 				foreach ( $template['layers'] as $layer_def ) {
 					self::render_layer( $canvas, $layer_def, $data, $image_id, $template, $format_key );
 				}
 
+				$canvas->setImageFormat( $export_type );
+				$canvas->setImageCompressionQuality( $quality );
+				if ( $export_type === 'jpg' ) {
+					$canvas->setImageBackgroundColor( new \ImagickPixel( '#ffffff' ) );
+					$canvas->mergeImageLayers( \Imagick::LAYERMETHOD_FLATTEN );
+				}
 				$canvas->writeImage( $output_path );
 				$canvas->clear();
 				$files[ $format_key ] = $output_path;
