@@ -21,6 +21,7 @@ class Admin_Media_Dashboard {
 		add_action( 'admin_menu', array( $this, 'register_menu' ), 30 );
 		add_action( 'wp_ajax_convoca_render_poster', array( $this, 'ajax_render_poster' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+		add_action( 'save_post_actividad', array( $this, 'on_save_actividad' ), 10, 3 );
 		add_action( 'wp_ajax_convoca_create_blog_post', array( $this, 'ajax_create_blog_post' ) );
 	}
 
@@ -83,6 +84,22 @@ class Admin_Media_Dashboard {
 					🔄 Generar cartel
 				</button>
 			</p>
+
+			<div style="margin:12px 0;padding:12px;background:#f8f9fa;border-radius:8px;">
+				<p style="margin:0 0 8px;font-weight:600;font-size:12px;">📱 Publicar en redes:</p>
+				<label style="display:block;margin:4px 0;font-size:12px;">
+					<input type="checkbox" name="convoca_publish_meta" value="1"> 📘 Facebook / Instagram
+				</label>
+				<label style="display:block;margin:4px 0;font-size:12px;">
+					<input type="checkbox" name="convoca_publish_google" value="1"> 📍 Google Business Profile
+				</label>
+				<label style="display:block;margin:4px 0;font-size:12px;">
+					<input type="checkbox" name="convoca_publish_whatsapp" value="1"> 💬 Generar enlace WhatsApp
+				</label>
+				<p style="margin:8px 0 0;font-size:11px;color:#666;">
+					<label>📅 Programar: <input type="datetime-local" name="convoca_schedule_at" style="font-size:11px;width:100%;"></label>
+				</p>
+			</div>
 
 			<div class="convoca-media-actions" style="display:flex;gap:8px;flex-wrap:wrap;">
 				<?php if ( $poster_url ) : ?>
@@ -178,6 +195,72 @@ class Admin_Media_Dashboard {
 			'post_id'  => $result,
 			'edit_url' => get_edit_post_link( $result, 'raw' ),
 			'status'   => get_post_status( $result ),
+		) );
+	}
+
+	/**
+	 * Hook: when an activity is saved, schedule social posts if requested.
+	 */
+	public function on_save_actividad( int $post_id, \WP_Post $post, bool $update ): void {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) { return; }
+		if ( wp_is_post_revision( $post_id ) ) { return; }
+		if ( ! current_user_can( 'edit_post', $post_id ) ) { return; }
+
+		$publish_meta   = ! empty( $_POST['convoca_publish_meta'] );
+		$publish_google = ! empty( $_POST['convoca_publish_google'] );
+		$publish_wa     = ! empty( $_POST['convoca_publish_whatsapp'] );
+		$schedule_raw   = sanitize_text_field( $_POST['convoca_schedule_at'] ?? '' );
+		$timestamp      = $schedule_raw ? strtotime( $schedule_raw ) : time() + 60; // 1 min from now if immediate
+
+		if ( ! $publish_meta && ! $publish_google && ! $publish_wa ) {
+			return;
+		}
+
+		// Generate poster if needed.
+		$poster_url = '';
+		$render_result = \Convoca\Enroll\Media\Poster_Engine::render( $post_id, 'nature-classic' );
+		if ( ! is_wp_error( $render_result ) ) {
+			$poster_url = $render_result['url'];
+		}
+
+		$message = \Convoca\Enroll\Social\Social_Payload::build_message( $post_id );
+
+		// Schedule Meta publish.
+		if ( $publish_meta && function_exists( 'as_schedule_single_action' ) ) {
+			// Cancel any existing scheduled task for this post + network.
+			as_unschedule_all_actions( 'convoca_publish_social_post', array( 'post_id' => $post_id, 'network' => 'meta' ), 'convoca-social' );
+			as_schedule_single_action( $timestamp, 'convoca_publish_social_post', array(
+				'post_id'    => $post_id,
+				'network'    => 'meta',
+				'message'    => $message,
+				'poster_url' => $poster_url,
+				'permalink'  => get_permalink( $post_id ),
+			), 'convoca-social' );
+		}
+
+		// Schedule Google publish.
+		if ( $publish_google && function_exists( 'as_schedule_single_action' ) ) {
+			as_unschedule_all_actions( 'convoca_publish_social_post', array( 'post_id' => $post_id, 'network' => 'google' ), 'convoca-social' );
+			as_schedule_single_action( $timestamp, 'convoca_publish_social_post', array(
+				'post_id'    => $post_id,
+				'network'    => 'google',
+				'message'    => $message,
+				'poster_url' => $poster_url,
+				'permalink'  => get_permalink( $post_id ),
+			), 'convoca-social' );
+		}
+
+		// WhatsApp link (stored as post meta for button rendering).
+		if ( $publish_wa ) {
+			$wa_url = \Convoca\Enroll\Social\Social_Payload::get_whatsapp_link( $post_id );
+			update_post_meta( $post_id, '_convoca_whatsapp_link', $wa_url );
+		}
+
+		\Convoca\Enroll\Media\Media_Logger::log( 'social_post', $post_id, 'scheduled', 'ok', array(
+			'meta'   => $publish_meta,
+			'google' => $publish_google,
+			'whatsapp' => $publish_wa,
+			'timestamp' => $timestamp,
 		) );
 	}
 

@@ -1,0 +1,124 @@
+<?php
+/**
+ * Social Payload Builder — generates text and media for social posts.
+ *
+ * @package Convoca\Enroll\Social
+ */
+
+namespace Convoca\Enroll\Social;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Social_Payload {
+
+	/**
+	 * Build a social media message from an activity.
+	 */
+	public static function build_message( int $post_id, array $overrides = array() ): string {
+		$title    = $overrides['title'] ?? get_the_title( $post_id );
+		$excerpt  = $overrides['excerpt'] ?? get_the_excerpt( $post_id ) ?: wp_trim_words( get_post_field( 'post_content', $post_id ), 25 );
+		$fecha    = $overrides['date'] ?? self::get_meta_date( $post_id );
+		$hora     = $overrides['time'] ?? self::get_meta_time( $post_id );
+		$ubicacion = $overrides['location'] ?? self::get_meta_location( $post_id );
+		$precio   = $overrides['price'] ?? self::get_meta_price( $post_id );
+		$permalink = $overrides['permalink'] ?? get_permalink( $post_id );
+		$hashtags = $overrides['hashtags'] ?? self::get_hashtags( $post_id );
+		$tipo     = $overrides['badge_text'] ?? self::get_badge_text( $post_id );
+
+		$parts = array();
+
+		// Emoji header based on type.
+		$emoji = self::type_emoji( $tipo );
+		$parts[] = "{$emoji} {$title}";
+
+		if ( $excerpt ) {
+			$parts[] = '';
+			$parts[] = $excerpt;
+		}
+
+		$details = array();
+		if ( $fecha ) {
+			$details[] = "📅 {$fecha}" . ( $hora ? " a las {$hora} h" : '' );
+		}
+		if ( $ubicacion ) {
+			$details[] = "📍 {$ubicacion}";
+		}
+		if ( $precio ) {
+			$details[] = "💰 {$precio}";
+		}
+		if ( $details ) {
+			$parts[] = '';
+			$parts[] = implode( "\n", $details );
+		}
+
+		$parts[] = '';
+		$parts[] = "🔗 " . $permalink;
+
+		if ( $hashtags ) {
+			$parts[] = '';
+			$parts[] = $hashtags;
+		}
+
+		return implode( "\n", $parts );
+	}
+
+	/**
+	 * Generate WhatsApp share URL.
+	 */
+	public static function get_whatsapp_link( int $post_id, array $overrides = array() ): string {
+		$message = self::build_message( $post_id, $overrides );
+		return 'https://wa.me/?text=' . rawurlencode( $message );
+	}
+
+	// ─── Helpers ────────────────────────────
+
+	private static function get_meta_date( int $post_id ): string {
+		$val = get_post_meta( $post_id, 'conv_fecha_inicio', true ) ?: get_post_meta( $post_id, '_bde_fecha_inicio', true );
+		return $val ? date_i18n( 'j F Y', strtotime( $val ) ) : '';
+	}
+
+	private static function get_meta_time( int $post_id ): string {
+		$val = get_post_meta( $post_id, 'conv_fecha_inicio', true ) ?: get_post_meta( $post_id, '_bde_fecha_inicio', true );
+		return $val ? date( 'H:i', strtotime( $val ) ) : '';
+	}
+
+	private static function get_meta_location( int $post_id ): string {
+		return get_post_meta( $post_id, 'conv_ubicacion', true ) ?: get_post_meta( $post_id, '_bde_ubicacion', true ) ?: '';
+	}
+
+	private static function get_meta_price( int $post_id ): string {
+		$p = get_post_meta( $post_id, 'conv_precio_socio', true ) ?: get_post_meta( $post_id, '_bde_precio_socio', true );
+		return $p ? "{$p}€" : ( self::is_free( $post_id ) ? 'Gratuito' : '' );
+	}
+
+	private static function is_free( int $post_id ): bool {
+		$p = get_post_meta( $post_id, 'conv_precio_socio', true ) ?: get_post_meta( $post_id, '_bde_precio_social', true );
+		return ( $p === '' || $p === false || $p === '0' );
+	}
+
+	private static function get_hashtags( int $post_id ): string {
+		$tags = wp_get_post_tags( $post_id, array( 'fields' => 'names' ) );
+		return $tags ? '#' . implode( ' #', $tags ) : '#Convoca #Actividades';
+	}
+
+	private static function get_badge_text( int $post_id ): string {
+		$tipo = get_post_meta( $post_id, 'conv_tipo_actividad', true ) ?: get_post_meta( $post_id, '_bde_tipo_actividad', true );
+		$registry_class = 'Convoca\\Enroll\\Media\\Event_Style_Registry';
+		if ( class_exists( $registry_class ) && $tipo ) {
+			$style = $registry_class::get( $tipo );
+			return $style['label'] ?? '';
+		}
+		return '';
+	}
+
+	private static function type_emoji( string $tipo ): string {
+		$map = array(
+			'naturaleza' => '🌿', 'familiar' => '👨‍👩‍👧‍👦', 'formacion' => '🎓',
+			'adultos' => '🧑', 'voluntariado' => '🤝', 'infantil' => '🧒',
+			'online' => '💻', 'ruta' => '🥾', 'taller' => '🔧', 'socios' => '⭐',
+		);
+		return $map[ strtolower( $tipo ) ] ?? '🌿';
+	}
+}
