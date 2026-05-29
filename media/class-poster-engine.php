@@ -69,8 +69,17 @@ class Poster_Engine {
 			}
 
 			$format_def = $template['formats'][ $format_key ];
-			$target_w   = $format_def['width'] ?? $format_def[0] ?? $template['width'];
-			$target_h   = $format_def['height'] ?? $format_def[1] ?? $template['height'];
+			if ( isset( $format_def['width'] ) ) {
+				$target_w = $format_def['width'];
+				$target_h = $format_def['height'];
+			} elseif ( is_array( $format_def ) ) {
+				$vals = array_values( $format_def );
+				$target_w = $vals[0] ?? $template['width'] ?? 1080;
+				$target_h = $vals[1] ?? $template['height'] ?? 1080;
+			} else {
+				$target_w = $template['width'] ?? 1080;
+				$target_h = $template['height'] ?? 1080;
+			}
 			$cache_key   = $base_name . '-' . $format_key . '.png';
 			$output_path = $cache_dir . $cache_key;
 
@@ -522,6 +531,8 @@ class Poster_Engine {
 		if ( empty( $fecha_fin ) ) {
 			$fecha_fin = get_post_meta( $actividad_id, '_bde_fecha_fin', true );
 		}
+
+		$plazas = 0;
 
 		$ubicacion = get_post_meta( $actividad_id, 'conv_ubicacion', true );
 		if ( empty( $ubicacion ) ) {
