@@ -62,10 +62,11 @@ spl_autoload_register(
 		$relative = str_replace( $prefix, '', $class );
 		$relative = strtolower( str_replace( '_', '-', $relative ) );
 		$relative = str_replace( '\\', '/', $relative ); // Convert sub-namespace separators.
+		$class_name = basename( $relative ); // Use only the last segment for WP convention.
 
 		foreach ( array( 'includes/', 'admin/', 'public/', 'media/' ) as $dir ) {
 			// Standard WP convention: class-name.php.
-			$wp_file = CONV_ENROLL_DIR . $dir . 'class-' . $relative . '.php';
+			$wp_file = CONV_ENROLL_DIR . $dir . 'class-' . $class_name . '.php';
 			if ( file_exists( $wp_file ) ) {
 				require_once $wp_file;
 				return;
