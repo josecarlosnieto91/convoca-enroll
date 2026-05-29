@@ -92,7 +92,7 @@ class Poster_Engine {
 			// Create canvas.
 			try {
 				$canvas = new \Imagick();
-				$canvas->newImage( $template['width'], $template['height'], new \ImagickPixel( 'transparent' ) );
+				$canvas->newImage( $target_w, $target_h, new \ImagickPixel( 'transparent' ) );
 				$canvas->setImageFormat( 'png' );
 				$canvas->setImageCompressionQuality( $quality );
 
