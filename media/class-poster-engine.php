@@ -183,10 +183,12 @@ class Poster_Engine {
 			$canvas->compositeImage( $gradient, \Imagick::COMPOSITE_OVER, 0, 0 );
 			$gradient->clear();
 		} elseif ( ! empty( $def['color'] ) ) {
-			$pixel = new \ImagickPixel( $def['color'] );
-			$canvas->drawImage( new \ImagickDraw() ); // flush
-			$canvas->setImageBackgroundColor( $pixel );
-			$canvas->setImageAlphaChannel( \Imagick::ALPHACHANNEL_REMOVE );
+			$w = $canvas->getImageWidth();
+			$h = $canvas->getImageHeight();
+			$fill = new \Imagick();
+			$fill->newImage( $w, $h, new \ImagickPixel( $def['color'] ), 'png' );
+			$canvas->compositeImage( $fill, \Imagick::COMPOSITE_DEFAULT, 0, 0 );
+			$fill->clear();
 		}
 	}
 
