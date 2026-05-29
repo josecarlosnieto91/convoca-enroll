@@ -101,10 +101,6 @@ class Poster_Engine {
 
 				$canvas->setImageFormat( $export_type );
 				$canvas->setImageCompressionQuality( $quality );
-				if ( $export_type === 'jpg' ) {
-					$canvas->setImageBackgroundColor( new \ImagickPixel( '#ffffff' ) );
-					$canvas->mergeImageLayers( \Imagick::LAYERMETHOD_FLATTEN );
-				}
 				$canvas->writeImage( $output_path );
 				$canvas->clear();
 				$files[ $format_key ] = $output_path;
