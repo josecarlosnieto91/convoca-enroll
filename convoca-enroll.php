@@ -61,6 +61,7 @@ spl_autoload_register(
 		}
 		$relative = str_replace( $prefix, '', $class );
 		$relative = strtolower( str_replace( '_', '-', $relative ) );
+		$relative = str_replace( '\\', '/', $relative ); // Convert sub-namespace separators.
 
 		foreach ( array( 'includes/', 'admin/', 'public/', 'media/' ) as $dir ) {
 			// Standard WP convention: class-name.php.
