@@ -40,13 +40,14 @@ class Admin_Templates_Page {
 		?>
 		<div class="wrap">
 			<h1>🖼️ <?php esc_html_e( 'Plantillas de carteles', 'convoca-enroll' ); ?></h1>
+			<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-media-wizard' ) ); ?>" class="button button-primary">🚀 Asistente</a> <a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-media-editor' ) ); ?>" class="button">✏️ Editor</a></p>
 			<p><?php esc_html_e( 'Selecciona una plantilla para previsualizar o gestionar sus capas y estilos.', 'convoca-enroll' ); ?></p>
 
 			<div class="convoca-templates-grid">
 				<?php foreach ( $templates as $tpl ) : ?>
 					<div class="convoca-template-card">
 						<div class="template-info">
-							<h3><?php echo esc_html( $tpl['name'] ); ?></h3>
+							<h3><a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-media-editor&template=' . $tpl['slug'] ) ); ?>"><?php echo esc_html( $tpl['name'] ); ?></a></h3>
 							<p><?php echo esc_html( $tpl['description'] ?? '' ); ?></p>
 							<?php if ( ! empty( $tpl['is_system'] ) ) : ?>
 								<span class="convoca-badge"><?php esc_html_e( 'Sistema', 'convoca-enroll' ); ?></span>
