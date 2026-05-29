@@ -1,0 +1,61 @@
+<?php
+/**
+ * Admin page for template management.
+ *
+ * @package Convoca\Enroll\Media
+ */
+
+namespace Convoca\Enroll\Media;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Template management screen under Convoca Media.
+ */
+class Admin_Templates_Page {
+
+	public function __construct() {
+		add_action( 'admin_menu', array( $this, 'register_submenu' ), 40 );
+	}
+
+	public function register_submenu(): void {
+		add_submenu_page(
+			'convoca-media',
+			__( 'Plantillas', 'convoca-enroll' ),
+			__( 'Plantillas', 'convoca-enroll' ),
+			'conv_manage_media',
+			'convoca-media-templates',
+			array( $this, 'render_page' )
+		);
+	}
+
+	public function render_page(): void {
+		if ( ! current_user_can( 'conv_manage_media' ) ) {
+			wp_die( __( 'No tienes permisos.', 'convoca-enroll' ) );
+		}
+
+		$templates = Template_Manager::get_all();
+		?>
+		<div class="wrap">
+			<h1>🖼️ <?php esc_html_e( 'Plantillas de carteles', 'convoca-enroll' ); ?></h1>
+			<p><?php esc_html_e( 'Selecciona una plantilla para previsualizar o gestionar sus capas y estilos.', 'convoca-enroll' ); ?></p>
+
+			<div class="convoca-templates-grid">
+				<?php foreach ( $templates as $tpl ) : ?>
+					<div class="convoca-template-card">
+						<div class="template-info">
+							<h3><?php echo esc_html( $tpl['name'] ); ?></h3>
+							<p><?php echo esc_html( $tpl['description'] ?? '' ); ?></p>
+							<?php if ( ! empty( $tpl['is_system'] ) ) : ?>
+								<span class="convoca-badge"><?php esc_html_e( 'Sistema', 'convoca-enroll' ); ?></span>
+							<?php endif; ?>
+						</div>
+					</div>
+				<?php endforeach; ?>
+			</div>
+		</div>
+		<?php
+	}
+}

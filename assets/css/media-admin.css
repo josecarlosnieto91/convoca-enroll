@@ -1,6 +1,132 @@
-.convoca-media-metabox img { max-width: 100%; height: auto; border-radius: 8px; }
-.convoca-media-metabox p { margin: 8px 0; }
-.convoca-media-metabox .convoca-media-message { font-size: 12px; padding: 4px 8px; border-radius: 4px; }
-.convoca-media-metabox .convoca-media-message.success { background: #d4edda; color: #155724; }
-.convoca-media-metabox .convoca-media-message.error { background: #f8d7da; color: #721c24; }
-.convoca-media-metabox .convoca-media-message.loading { background: #fff3cd; color: #856404; }
+/* Convoca Media Suite - Admin Styles */
+.convoca-media-metabox {
+  font-size: 13px;
+}
+.convoca-media-metabox img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #e2e8f0;
+}
+.convoca-media-metabox select.widefat {
+  margin: 4px 0;
+}
+.convoca-media-metabox .convoca-generate-poster {
+  width: 100%;
+  justify-content: center;
+}
+.convoca-media-metabox .convoca-media-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.convoca-media-metabox .convoca-media-actions .button { flex: 1; text-align: center; }
+.convoca-media-metabox .convoca-media-message {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+.convoca-media-metabox .convoca-media-message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+.convoca-media-metabox .convoca-media-message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+.convoca-media-metabox .convoca-media-message.loading {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+.convoca-media-metabox .convoca-media-message a {
+  font-weight: 600;
+}
+
+/* Dashboard cards */
+.convoca-media-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+.convoca-media-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s;
+}
+.convoca-media-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.convoca-media-card h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+.convoca-media-card p {
+  color: #666;
+  margin: 0 0 16px;
+  font-size: 13px;
+}
+.convoca-media-card .button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Templates list */
+.convoca-templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+.convoca-template-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.convoca-template-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.convoca-template-card .template-preview {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: #f8f9fa;
+}
+.convoca-template-card .template-info {
+  padding: 12px 16px;
+}
+.convoca-template-card .template-info h3 {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.convoca-template-card .template-info p {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+.convoca-template-card .template-info .convoca-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: #ff8700;
+  color: #fff;
+  margin-top: 6px;
+}
