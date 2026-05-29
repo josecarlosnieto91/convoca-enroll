@@ -185,13 +185,8 @@ class Poster_Engine {
 	 * @param array    $template Full template config.
 	 */
 	private static function render_layer( \Imagick $canvas, array $def, array $data, ?int $image_id, array $template, string $format_key = 'square' ): void {
-		// Resolve responsive overrides for this format.
-		if ( ! empty( $def['responsive'][ $format_key ] ) ) {
-			foreach ( $def['responsive'][ $format_key ] as $rk => $rv ) {
-				$def[ $rk ] = $rv;
-			}
-		}
-
+		// Responsive overrides ALREADY resolved in Pass 1 (render())
+		// Do NOT re-resolve here or it overrides dynamic Y stacking positions.
 		$x = $def['x'] ?? 0;
 		$y = $def['y'] ?? 0;
 		$w = $def['w'] ?? 100;
