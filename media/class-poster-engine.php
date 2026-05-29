@@ -94,65 +94,55 @@ class Poster_Engine {
 			try {
 				$canvas = new \Imagick();
 				$canvas->newImage( $target_w, $target_h, new \ImagickPixel( 'transparent' ) );
-				// Dynamic Y stacking: track vertical position for stacked elements.
+				// PASS 1 — Pure calculation. NO drawing.
 				$margin  = $template['design_tokens']['spacing']['margin'] ?? 60;
-				$gap     = $template['design_tokens']['spacing']['gap'] ?? 16;
+				$gap     = $template['design_tokens']['spacing']['gap'] ?? 14;
 				$nextY   = $margin;
-				$bottomY = $target_h - $margin;
+								$render_queue = array();
 
-				// Pre-compute safe positions for bottom-anchored layers.
-				$qr_pos    = null;
-				$logo_pos  = null;
-
-				// Pass 1: Identify bottom-anchored layers and static backgrounds.
-				$render_queue = array();
 				foreach ( $template['layers'] as $layer_def ) {
 					$def = $layer_def;
-					// Resolve responsive overrides.
+
+					// Resolve responsive overrides for this format.
 					if ( ! empty( $def['responsive'][ $format_key ] ) ) {
 						foreach ( $def['responsive'][ $format_key ] as $rk => $rv ) {
 							$def[ $rk ] = $rv;
 						}
 					}
+					// Remove responsive key to prevent any re-resolution in render_layer.
+					unset( $def['responsive'] );
 
-					// Stacked elements: assign dynamic Y position.
+					// Stack: assign dynamic top-to-bottom Y.
 					if ( ! empty( $def['stack'] ) ) {
 						$def['y'] = $nextY;
 					}
 
-					// Bottom-anchored elements: reserve space at bottom.
-					if ( ! empty( $def['anchor_bottom'] ) ) {
-						$bh = $def['h'] ?? 120;
-						$def['y'] = $bottomY - $bh;
-						$bottomY = $def['y'] - $gap; // push up for next bottom element
-					}
+					// (anchor_bottom removed — logo/QR use fixed responsive Y)
 
 					$render_queue[] = $def;
 				}
 
-				// Pass 2: Render all layers.
+				// PASS 2 — Pure render. Strict ImagickDraw lifecycle.
 				foreach ( $render_queue as $def ) {
 					$type = $def['type'] ?? '';
-					$prev_nextY = $nextY;
 
 					self::render_layer( $canvas, $def, $data, $image_id, $template, $format_key );
 
-					// Update nextY after text/stacked layers.
-					if ( ! empty( $def['stack'] ) && in_array( $type, array( 'text', 'badge', 'price_badge', 'cta' ), true ) ) {
-						$rendered_h = $def['h'] ?? 60;
-						// For text with auto-sizing, estimate actual height based on content.
+					// After stack layers: measure and advance nextY.
+					if ( ! empty( $def['stack'] ) ) {
+						$rendered_h = $def['h'] ?? 40;
 						if ( $type === 'text' && ! empty( $def['ref'] ) && ! empty( $data[ $def['ref'] ] ) ) {
 							$ref      = $def['ref'];
 							$text_len = strlen( $data[ $ref ] ?? '' );
 							$font_cfg = $template['design_tokens']['typography'][ $def['font'] ?? 'body' ]
 								?? $template['fonts'][ $def['font'] ?? 'meta' ]
-								?? array( 'size' => 28 );
-							$fs      = $def['font_size'] ?? $font_cfg['size'] ?? 28;
+								?? array( 'size' => 26 );
+							$fs      = $def['font_size'] ?? $font_cfg['size'] ?? 26;
 							$max_w   = $def['w'] ?? ( $target_w - 2 * $margin );
 							$max_lines = $def['max_lines'] ?? 10;
-							$chars_per_line = max( 1, $max_w / ( $fs * 0.5 ) );
-							$lines = min( $max_lines, max( 1, ceil( $text_len / $chars_per_line ) ) );
-							$rendered_h = (int) ( $lines * $fs * 1.4 );
+							$cpl = max( 1, $max_w / ( $fs * 0.55 ) );
+							$lines = min( $max_lines, max( 1, ceil( $text_len / $cpl ) ) );
+							$rendered_h = (int) ( $lines * $fs * 1.35 );
 						}
 						$nextY = $def['y'] + $rendered_h + $gap;
 					}
@@ -547,8 +537,8 @@ class Poster_Engine {
 		$cta_text = $data['cta'] ?? __( 'Inscríbete aquí', 'convoca-enroll' );
 		$x        = $def['x'] ?? 0;
 		$y        = $def['y'] ?? 0;
-		$w        = $def['w'] ?? 360;
-		$h        = $def['h'] ?? 60;
+		$w        = min( (int) ( $def['w'] ?? 360 ), $canvas->getImageWidth() - 40 );
+		$h        = min( (int) ( $def['h'] ?? 60 ), 100 );
 		$align    = $def['align'] ?? 'left';
 		$font_cfg = $data['_font_cta']
 			?? $template['design_tokens']['typography']['cta']
@@ -586,8 +576,9 @@ class Poster_Engine {
 		$free  = ! empty( $data['free'] );
 		$x     = $def['x'] ?? 0;
 		$y     = $def['y'] ?? 0;
-		$w     = $def['w'] ?? 200;
-		$h     = $def['h'] ?? 36;
+		// Clamp badge dimensions to prevent full-canvas rects.
+		$w     = min( (int) ( $def['w'] ?? 200 ), $canvas->getImageWidth() / 3 );
+		$h     = min( (int) ( $def['h'] ?? 36 ), 80 );
 
 		if ( $free ) {
 			$label = 'Gratuito';
