@@ -119,7 +119,7 @@ class Poster_Engine {
 	 * @param int      $image_id Featured image ID (if any).
 	 * @param array    $template Full template config.
 	 */
-	private static function render_layer( \Imagick $canvas, array $def, array $data, int $image_id, array $template ): void {
+	private static function render_layer( \Imagick $canvas, array $def, array $data, ?int $image_id, array $template ): void {
 		$x = $def['x'] ?? 0;
 		$y = $def['y'] ?? 0;
 		$w = $def['w'] ?? 100;
