@@ -50,6 +50,10 @@ class GBP_Provider implements Social_Provider_Interface {
 			return array( 'success' => false, 'message' => 'Token no disponible. Reconecta la cuenta.' );
 		}
 
+		// Truncate and sanitize for GBP.
+		$message = \Convoca\Enroll\Social\Social_Payload::sanitize_for_gbp( $message );
+		$message = \Convoca\Enroll\Social\Social_Payload::truncate_for_network( $message, 'google' );
+
 		// Refresh token if expired.
 		$this->maybe_refresh_token();
 
@@ -103,6 +107,7 @@ class GBP_Provider implements Social_Provider_Interface {
 				'response' => $body,
 				'code'     => $code,
 			) );
+			\Convoca\Enroll\Social\Social_Payload::log_api_error( 'gbp', $response, 'https://businessprofileperformance.googleapis.com/v1/{location_id}/localPosts' );
 			return array( 'success' => false, 'message' => "GBP: $err" );
 		}
 

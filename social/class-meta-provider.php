@@ -61,8 +61,12 @@ class Meta_Provider implements Social_Provider_Interface {
 		$all_ok  = true;
 
 		// 1. Publish to Facebook Page.
+		// Truncate message for network limits.
+		$fb_message   = \Convoca\Enroll\Social\Social_Payload::truncate_for_network( $message, 'facebook' );
+		$ig_message   = \Convoca\Enroll\Social\Social_Payload::truncate_for_network( $message, 'instagram' );
+
 		if ( $this->page_id ) {
-			$fb_result = $this->publish_facebook( $message, $poster_url, $link_url );
+			$fb_result = $this->publish_facebook( $fb_message, $poster_url, $link_url );
 			$results[] = $fb_result;
 			if ( ! $fb_result['success'] ) {
 				$all_ok = false;
@@ -71,7 +75,7 @@ class Meta_Provider implements Social_Provider_Interface {
 
 		// 2. Publish to Instagram (requires image).
 		if ( $this->ig_user_id && $poster_url ) {
-			$ig_result = $this->publish_instagram( $message, $poster_url );
+			$ig_result = $this->publish_instagram( $ig_message, $poster_url );
 			$results[] = $ig_result;
 			if ( ! $ig_result['success'] ) {
 				$all_ok = false;
@@ -112,6 +116,7 @@ class Meta_Provider implements Social_Provider_Interface {
 		$response = wp_remote_post( $endpoint, array( 'body' => $body, 'timeout' => 30 ) );
 
 		if ( is_wp_error( $response ) ) {
+			\Convoca\Enroll\Social\Social_Payload::log_api_error( 'meta_facebook', $response, $endpoint );
 			return array( 'success' => false, 'message' => 'Facebook: ' . $response->get_error_message() );
 		}
 
@@ -120,6 +125,17 @@ class Meta_Provider implements Social_Provider_Interface {
 
 		if ( $code < 200 || $code >= 300 || ! empty( $result['error'] ) ) {
 			$err = $result['error']['message'] ?? "HTTP $code";
+
+			// Fallback: if photo upload failed, retry as text-only post with link.
+			if ( $image_url && strpos( $err, 'url' ) !== false || strpos( $err, 'media' ) !== false || strpos( $err, 'photo' ) !== false ) {
+				\Convoca\Enroll\Media\Media_Logger::log( 'social_post', 0, 'meta_fallback_text', 'warning', array(
+					'error' => $err,
+					'original_endpoint' => $endpoint,
+				) );
+				return self::publish_facebook( $message, '', $link_url );
+			}
+
+			\Convoca\Enroll\Social\Social_Payload::log_api_error( 'meta_facebook', $response, $endpoint );
 			return array( 'success' => false, 'message' => "Facebook: $err" );
 		}
 

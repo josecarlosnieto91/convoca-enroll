@@ -121,4 +121,52 @@ class Social_Payload {
 		);
 		return $map[ strtolower( $tipo ) ] ?? '🌿';
 	}
+	/**
+	 * Truncate message to fit network limits.
+	 */
+	public static function truncate_for_network( string $message, string $network ): string {
+		$limits = array(
+			'facebook'  => 50000,
+			'instagram' => 2200,
+			'google'    => 1500,
+			'meta'      => 2200,
+		);
+		$max = $limits[ $network ] ?? 2200;
+		if ( mb_strlen( $message ) <= $max ) {
+			return $message;
+		}
+		$truncated = mb_substr( $message, 0, $max - 30 );
+		$last_space = mb_strrpos( $truncated, ' ' );
+		if ( $last_space !== false ) {
+			$truncated = mb_substr( $truncated, 0, $last_space );
+		}
+		return $truncated . "\n\n... (sigue en la web)";
+	}
+
+	/**
+	 * Sanitize message for GBP (remove problematic emojis).
+	 */
+	public static function sanitize_for_gbp( string $message ): string {
+		$emoji_pattern = '/[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}\x{1F1E0}-\x{1F1FF}\x{2600}-\x{26FF}\x{2700}-\x{27BF}]/u';
+		$cleaned = preg_replace( $emoji_pattern, '', $message );
+		$cleaned = preg_replace( "/\n{3,}/", "\n\n", $cleaned );
+		return trim( $cleaned );
+	}
+
+	/**
+	 * Log API error payload for debugging.
+	 */
+	public static function log_api_error( string $provider, $response, string $endpoint = '' ): void {
+		$class = 'Convoca\\Enroll\\Media\\Media_Logger';
+		if ( class_exists( $class ) ) {
+			$code = wp_remote_retrieve_response_code( $response );
+			$body = wp_remote_retrieve_body( $response );
+			$class::log( 'social_post', 0, $provider . '_api_error', 'error', array(
+				'endpoint' => $endpoint,
+				'code'     => $code,
+				'body'     => $body,
+			) );
+		}
+	}
+
 }
