@@ -316,6 +316,7 @@ class Poster_Engine {
 			}
 			$draw->annotation( $x, $ly, $line );
 			$ly += $line_h;
+		$canvas->drawImage( $draw );
 		}
 	}
 
@@ -418,6 +419,7 @@ class Poster_Engine {
 			}
 		}
 		$draw->annotation( $x + $pill_w / 2, $y + $pill_h - 8, $badge_text );
+		$canvas->drawImage( $draw );
 	}
 
 	/**
