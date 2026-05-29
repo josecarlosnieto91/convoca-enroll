@@ -11,6 +11,8 @@ namespace Convoca\Enroll\Media;
 
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use chillerlan\QRCode\Output\QRGdImagePNG;
+use chillerlan\QRCode\Common\EccLevel;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,13 +28,8 @@ class QR_Generator {
 	/**
 	 * Generate QR code image for an activity.
 	 *
-	 * Priority URL:
-	 * 1. Blog post associated with activity
-	 * 2. Public activity landing page
-	 * 3. Inscription URL
-	 *
 	 * @param int   $actividad_id Activity post ID.
-	 * @param array $options      Overrides: { size, color, logo_path, margin }.
+	 * @param array $options      Overrides: { size, color }.
 	 * @return string|null File path to generated QR PNG, or null on failure.
 	 */
 	public static function generate( int $actividad_id, array $options = array() ): ?string {
@@ -48,7 +45,6 @@ class QR_Generator {
 		}
 
 		$size       = min( max( $options['size'] ?? 300, 100 ), 1000 );
-		$margin     = $options['margin'] ?? 4;
 		$upload_dir = wp_upload_dir();
 		$qr_dir     = $upload_dir['basedir'] . '/convoca-qr/';
 
@@ -60,24 +56,25 @@ class QR_Generator {
 		$filepath = $qr_dir . $filename;
 
 		try {
-			// Scale: QR modules are 10px each at scale=10, 
-			// so scale = size / 33 (QR v4 has 33x33 modules for URLs)
+			// Scale: modules are about 33 wide for a URL, scale=10 gives ~330px
 			$scale = max( 3, (int) round( $size / 33 ) );
 
 			$qrOptions = new QROptions( array(
-				'outputType'    => QRCode::OUTPUT_IMAGE_PNG,
-				'eccLevel'      => QRCode::ECC_M,
-				'scale'         => $scale,
-				'imageBase64'   => false,
-				'moduleValues'  => null,
-				'addQuietzone'  => true,
-				'quietzoneSize' => $margin,
+				'outputInterface' => QRGdImagePNG::class,
+				'eccLevel'        => EccLevel::M,
+				'scale'           => $scale,
+				'addQuietzone'    => true,
+				'quietzoneSize'   => 2,
+				'outputBase64'    => false,
+				'imageTransparent'=> false,
 			) );
 
-			$qrcode   = new QRCode( $qrOptions );
-			$pngData  = $qrcode->render( $url );
+			$qrcode = new QRCode( $qrOptions );
+			$result = $qrcode->render( $url, $filepath );
 
-			file_put_contents( $filepath, $pngData );
+			if ( ! file_exists( $filepath ) ) {
+				return null;
+			}
 		} catch ( \Throwable $e ) {
 			return null;
 		}
@@ -88,11 +85,7 @@ class QR_Generator {
 	}
 
 	/**
-	 * Get QR URL (not file path) for frontend display.
-	 *
-	 * @param int   $actividad_id Activity ID.
-	 * @param array $options      Overrides.
-	 * @return string|null
+	 * Get QR URL for frontend display.
 	 */
 	public static function get_url( int $actividad_id, array $options = array() ): ?string {
 		$path = self::generate( $actividad_id, $options );
@@ -105,24 +98,18 @@ class QR_Generator {
 
 	/**
 	 * Resolve the best URL for the QR code.
-	 *
-	 * @param int $actividad_id Activity ID.
-	 * @return string|null
 	 */
 	private static function resolve_url( int $actividad_id ): ?string {
-		// 1. Blog post associated with this activity.
 		$blog_post_id = get_post_meta( $actividad_id, '_conv_media_blog_post_id', true );
 		if ( $blog_post_id && get_post_status( $blog_post_id ) === 'publish' ) {
 			return get_permalink( $blog_post_id );
 		}
 
-		// 2. Public activity landing page.
 		$landing = get_permalink( $actividad_id );
 		if ( $landing ) {
 			return $landing;
 		}
 
-		// 3. Inscription URL from settings.
 		$settings = get_option( 'conv_enroll_settings', array() );
 		if ( ! empty( $settings['inscripcion_url'] ) ) {
 			return $settings['inscripcion_url'];
@@ -133,8 +120,6 @@ class QR_Generator {
 
 	/**
 	 * Invalidate QR cache for an activity.
-	 *
-	 * @param int $actividad_id Activity ID.
 	 */
 	public static function invalidate( int $actividad_id ): void {
 		$upload_dir = wp_upload_dir();
