@@ -101,11 +101,6 @@ class Poster_Engine {
 					self::render_layer( $canvas, $layer_def, $data, $image_id, $template, $format_key );
 				}
 
-				// Resize to target format.
-				if ( $target_w !== $template['width'] || $target_h !== $template['height'] ) {
-					$canvas->resizeImage( $target_w, $target_h, \Imagick::FILTER_LANCZOS, 1 );
-				}
-
 				$canvas->writeImage( $output_path );
 				$canvas->clear();
 				$files[ $format_key ] = $output_path;
