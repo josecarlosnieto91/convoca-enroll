@@ -68,7 +68,9 @@ class Poster_Engine {
 				continue;
 			}
 
-			list( $target_w, $target_h ) = $template['formats'][ $format_key ];
+			$format_def = $template['formats'][ $format_key ];
+			$target_w   = $format_def['width'] ?? $format_def[0] ?? $template['width'];
+			$target_h   = $format_def['height'] ?? $format_def[1] ?? $template['height'];
 			$cache_key   = $base_name . '-' . $format_key . '.png';
 			$output_path = $cache_dir . $cache_key;
 
@@ -87,7 +89,7 @@ class Poster_Engine {
 
 				// Render each layer.
 				foreach ( $template['layers'] as $layer_def ) {
-					self::render_layer( $canvas, $layer_def, $data, $image_id, $template );
+					self::render_layer( $canvas, $layer_def, $data, $image_id, $template, $format_key );
 				}
 
 				// Resize to target format.
@@ -119,7 +121,14 @@ class Poster_Engine {
 	 * @param int      $image_id Featured image ID (if any).
 	 * @param array    $template Full template config.
 	 */
-	private static function render_layer( \Imagick $canvas, array $def, array $data, ?int $image_id, array $template ): void {
+	private static function render_layer( \Imagick $canvas, array $def, array $data, ?int $image_id, array $template, string $format_key = 'square' ): void {
+		// Resolve responsive overrides for this format.
+		if ( ! empty( $def['responsive'][ $format_key ] ) ) {
+			foreach ( $def['responsive'][ $format_key ] as $rk => $rv ) {
+				$def[ $rk ] = $rv;
+			}
+		}
+
 		$x = $def['x'] ?? 0;
 		$y = $def['y'] ?? 0;
 		$w = $def['w'] ?? 100;
@@ -157,6 +166,10 @@ class Poster_Engine {
 
 			case 'rect':
 				self::render_rect( $canvas, $def );
+				break;
+
+			case 'cta':
+				self::render_cta( $canvas, $def, $data );
 				break;
 		}
 	}
@@ -279,6 +292,18 @@ class Poster_Engine {
 		$font_size  = $def['font_size'] ?? $font_cfg['size'] ?? 28;
 
 		$draw = new \ImagickDraw();
+		// Auto-shrink title if enabled and text is too long.
+		if ( ! empty( $def['auto_shrink'] ) && ! empty( $def['max_lines'] ) ) {
+			$min_size  = $def['auto_shrink_min'] ?? 24;
+			$max_width = $def['w'] ?? $canvas->getImageWidth() - ( $def['x'] ?? 0 );
+			$words     = str_word_count( $text, 2 );
+			$approx_lines = ( $font_size > 0 ) ? (int) ceil( array_sum( array_map( 'strlen', $words ) ) * $font_size * 0.5 / $max_width ) : 1;
+			while ( $approx_lines > $def['max_lines'] && $font_size > $min_size ) {
+				$font_size -= 4;
+				$approx_lines = (int) ceil( array_sum( array_map( 'strlen', $words ) ) * $font_size * 0.5 / $max_width );
+			}
+		}
+
 		$draw->setFontSize( $font_size );
 
 		// Font file resolution.
@@ -451,8 +476,41 @@ class Poster_Engine {
 	// ─── Helpers ───────────────────────────────────────────────
 
 	/**
-	 * Gather all activity data needed for rendering.
+	 * Render a CTA button (colored pill + text).
 	 */
+	private static function render_cta( \Imagick $canvas, array $def, array $data ): void {
+		$cta_text = $data['cta'] ?? __( 'Inscríbete aquí', 'convoca-enroll' );
+		$x        = $def['x'] ?? 0;
+		$y        = $def['y'] ?? 0;
+		$w        = $def['w'] ?? 360;
+		$h        = $def['h'] ?? 60;
+		$align    = $def['align'] ?? 'left';
+		$font_cfg = $data['_font_cta'] ?? array( 'family' => 'Outfit', 'weight' => 600, 'size' => 30, 'color' => '#ffffff' );
+
+		// Background pill.
+		$draw = new \ImagickDraw();
+		$draw->setFillColor( new \ImagickPixel( '#ffffff' ) );
+		$draw->roundRectangle( $x, $y, $x + $w, $y + $h, $h / 2, $h / 2 );
+		$canvas->drawImage( $draw );
+
+		// Text.
+		$draw = new \ImagickDraw();
+		$font_file = self::resolve_font( $font_cfg['family'], $font_cfg['weight'] );
+		if ( $font_file ) {
+			$draw->setFont( $font_file );
+			$draw->setFontWeight( $font_cfg['weight'] );
+		}
+		$draw->setFontSize( $font_cfg['size'] );
+		$draw->setFillColor( new \ImagickPixel( '#1a1a1a' ) );
+		$draw->setTextAlignment(
+			$align === 'center' ? \Imagick::ALIGN_CENTER : ( $align === 'right' ? \Imagick::ALIGN_RIGHT : \Imagick::ALIGN_LEFT )
+		);
+
+		$tx = $align === 'center' ? $x + $w / 2 : ( $align === 'right' ? $x + $w - 12 : $x + 24 );
+		$ty = $y + ( $h + $font_cfg['size'] * 0.35 ) / 2;
+		$draw->annotation( $tx, (int) $ty, $cta_text );
+		$canvas->drawImage( $draw );
+	}
 		private static function gather_data( int $actividad_id ): array {
 		// Try new meta keys first, then legacy _bde_ keys as fallback.
 		$fecha_inicio = get_post_meta( $actividad_id, 'conv_fecha_inicio', true );
@@ -482,36 +540,42 @@ class Poster_Engine {
 			$time_str  = date( 'H:i', $timestamp );
 		}
 
+		// Build meta block string: date · time · location
+		$meta_parts = array();
+		if ( $fecha_inicio ) {
+			$meta_parts[] = \Convoca\Core\Utils::format_date( $fecha_inicio, 'j F Y' );
+		}
+		if ( $time_str ) {
+			$meta_parts[] = $time_str . ' h';
+		}
+		if ( $ubicacion ) {
+			$meta_parts[] = $ubicacion;
+		}
+		$meta_block = implode( '  ·  ', $meta_parts );
+		if ( $plazas ) {
+			$meta_block .= '  ·  ' . $plazas . ' plazas';
+		}
+
 		return array(
-			'actividad_id' => $actividad_id,
-			'title'        => $title ?: 'Actividad',
-			'subtitle'     => $extracto ?: 'Te esperamos!',
-			'date'         => $fecha_inicio ? \Convoca\Core\Utils::format_date( $fecha_inicio, 'j F Y' ) : '',
-			'time'         => $time_str,
-			'location'     => $ubicacion ?: '',
-			'cta'          => __( 'Inscríbete aquí', 'convoca-enroll' ),
-			'badge_text'   => $badge['label'] ?? '',
-			'badge_color'  => $badge['color'] ?? '#ff8700',
-			'permalink'    => get_permalink( $actividad_id ),
+			'actividad_id'  => $actividad_id,
+			'title'         => $title ?: 'Actividad',
+			'subtitle'      => $extracto ?: 'Te esperamos!',
+			'date'          => $fecha_inicio ? \Convoca\Core\Utils::format_date( $fecha_inicio, 'j F Y' ) : '',
+			'time'          => $time_str,
+			'location'      => $ubicacion ?: '',
+			'meta_block'    => $meta_block,
+			'cta'           => __( 'Inscríbete aquí', 'convoca-enroll' ),
+			'badge_text'    => $badge['label'] ?? '',
+			'badge_color'   => $badge['color'] ?? '#ff8700',
+			'badge_icon'    => $badge['icon'] ?? '',
+			'permalink'     => get_permalink( $actividad_id ),
 		);
 	}
 	/**
 	 * Resolve badge data based on activity type taxonomy.
 	 */
 	private static function get_badge( $tipo ): array {
-		$badges = array(
-			'todos'        => array( 'label' => 'Todos los públicos', 'color' => '#4caf50' ),
-			'familiar'     => array( 'label' => 'Familiar', 'color' => '#ff9800' ),
-			'adulto'       => array( 'label' => 'Público adulto', 'color' => '#9c27b0' ),
-			'socios'       => array( 'label' => 'Exclusiva socios', 'color' => '#e91e63' ),
-			'formacion'    => array( 'label' => 'Formación', 'color' => '#2196f3' ),
-			'voluntariado' => array( 'label' => 'Voluntariado', 'color' => '#009688' ),
-			'infantil'     => array( 'label' => 'Infantil', 'color' => '#ff5722' ),
-			'taller'       => array( 'label' => 'Taller', 'color' => '#795548' ),
-			'ruta'         => array( 'label' => 'Ruta interpretada', 'color' => '#8bc34a' ),
-			'online'       => array( 'label' => 'Evento online', 'color' => '#607d8b' ),
-		);
-		return $badges[ $tipo ] ?? array( 'label' => ucfirst( $tipo ), 'color' => '#ff8700' );
+		return \Convoca\Enroll\Media\Event_Style_Registry::get( $tipo );
 	}
 
 	/**
