@@ -95,9 +95,6 @@ class Poster_Engine {
 				$canvas = new \Imagick();
 				$canvas->newImage( $target_w, $target_h, new \ImagickPixel( 'transparent' ) );
 				$canvas->setImageFormat( $export_type );
-				if ( $export_type === 'jpg' ) {
-					$canvas->setImageCompression( \Imagick::COMPRESSION_JPEG );
-				}
 				$canvas->setImageCompressionQuality( $quality );
 
 				// Render each layer.
