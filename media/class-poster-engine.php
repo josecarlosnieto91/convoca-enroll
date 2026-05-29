@@ -241,7 +241,6 @@ class Poster_Engine {
 			}
 
 			if ( isset( $def['opacity'] ) ) {
-				$layer->setImageAlpha( $def[opacity] );
 			}
 
 			// Border radius.
