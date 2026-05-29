@@ -11,17 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Manage poster templates: create, read, update, delete.
- */
 class Template_Manager {
 
-	/**
-	 * Get all templates.
-	 *
-	 * @param string $orderby Column to order by.
-	 * @return array
-	 */
 	public static function get_all( string $orderby = 'name' ): array {
 		global $wpdb;
 		$orderby = in_array( $orderby, array( 'name', 'slug', 'created_at' ), true ) ? $orderby : 'name';
@@ -38,12 +29,6 @@ class Template_Manager {
 		return $rows ?: array();
 	}
 
-	/**
-	 * Get a single template by slug or ID.
-	 *
-	 * @param string|int $slug_or_id Slug string or numeric ID.
-	 * @return array|null
-	 */
 	public static function get( $slug_or_id ): ?array {
 		global $wpdb;
 		$table = $wpdb->prefix . 'conv_media_templates';
@@ -62,12 +47,6 @@ class Template_Manager {
 		return $row;
 	}
 
-	/**
-	 * Create or update a template.
-	 *
-	 * @param array $data { name, slug, description, config, is_system? }.
-	 * @return int|false Template ID or false on failure.
-	 */
 	public static function save( array $data ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'conv_media_templates';
@@ -92,21 +71,12 @@ class Template_Manager {
 		return $wpdb->insert_id ?: (int) ( $data['id'] ?? 0 );
 	}
 
-	/**
-	 * Delete a template by ID.
-	 *
-	 * @param int $id Template ID.
-	 * @return bool
-	 */
 	public static function delete( int $id ): bool {
 		global $wpdb;
-
-		// Prevent deleting system templates.
 		$tpl = self::get( $id );
 		if ( ! $tpl || ! empty( $tpl['is_system'] ) ) {
 			return false;
 		}
-
 		return (bool) $wpdb->delete(
 			$wpdb->prefix . 'conv_media_templates',
 			array( 'id' => $id ),
@@ -114,26 +84,13 @@ class Template_Manager {
 		);
 	}
 
-	/**
-	 * Get template config (decoded JSON) for rendering.
-	 *
-	 * @param string|int $slug_or_id Slug or ID.
-	 * @return array|null
-	 */
 	public static function get_config( $slug_or_id ): ?array {
 		$tpl = self::get( $slug_or_id );
 		return $tpl ? $tpl['config'] : null;
 	}
 
-	/**
-	 * Validate a template config array.
-	 *
-	 * @param array $config Template config.
-	 * @return array Errors list (empty = valid).
-	 */
 	public static function validate_config( array $config ): array {
 		$errors = array();
-
 		if ( empty( $config['width'] ) || empty( $config['height'] ) ) {
 			$errors[] = __( 'Las dimensiones (width/height) son obligatorias.', 'convoca-enroll' );
 		}
@@ -147,7 +104,44 @@ class Template_Manager {
 				}
 			}
 		}
-
 		return $errors;
+	}
+
+	/**
+	 * Export template as downloadable JSON.
+	 */
+	public static function export_json( $slug_or_id ): array {
+		$tpl = self::get( $slug_or_id );
+		if ( ! $tpl ) {
+			return array( 'error' => 'Plantilla no encontrada.' );
+		}
+		return array(
+			'name'        => $tpl['name'],
+			'slug'        => $tpl['slug'],
+			'description' => $tpl['description'],
+			'config'      => $tpl['config'],
+			'exported_at' => current_time( 'mysql' ),
+			'version'     => '2.0',
+		);
+	}
+
+	/**
+	 * Import template from validated JSON array.
+	 */
+	public static function import_json( array $data ) {
+		if ( empty( $data['name'] ) || empty( $data['config'] ) ) {
+			return new \WP_Error( 'invalid_template_schema', 'El JSON debe contener name y config.' );
+		}
+		if ( ! is_array( $data['config'] ) || empty( $data['config']['layers'] ) ) {
+			return new \WP_Error( 'invalid_template_schema', 'config debe contener un array de layers.' );
+		}
+		$slug = ! empty( $data['slug'] ) ? sanitize_title( $data['slug'] ) : sanitize_title( $data['name'] ) . '-' . uniqid();
+		return self::save( array(
+			'name'        => sanitize_text_field( $data['name'] ),
+			'slug'        => $slug,
+			'description' => sanitize_textarea_field( $data['description'] ?? '' ),
+			'config'      => $data['config'],
+			'is_system'   => 0,
+		) );
 	}
 }
