@@ -59,6 +59,7 @@ class Poster_Engine {
 
 		$formats = $overrides['formats'] ?? array_keys( $template['formats'] ?? array( 'square' ) );
 		$quality = $overrides['quality'] ?? 85;
+		$export_type = $overrides['export_type'] ?? 'png';
 
 		$files   = array();
 		$base_name = 'poster-' . $actividad_id . '-' . sanitize_title( $template_slug_or_id );
