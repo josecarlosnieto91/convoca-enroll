@@ -367,9 +367,9 @@ class Poster_Engine {
 	 * Render organization logo.
 	 */
 	private static function render_logo( \Imagick $canvas, array $def ): void {
-		// Use custom logo if uploaded in settings, or fallback to site icon.
+		// Only use explicitly uploaded organization logo.
 		$settings = get_option( 'conv_enroll_settings', array() );
-		$logo_id  = $settings['poster_logo_id'] ?? get_option( 'site_icon' );
+		$logo_id  = $settings['poster_logo_id'] ?? 0;
 		if ( ! $logo_id ) {
 			return;
 		}
@@ -384,18 +384,21 @@ class Poster_Engine {
 
 			$max_w = $def['w'] ?? 120;
 			$max_h = $def['h'] ?? 120;
-			$logo->resizeImage( $max_w, $max_h, \Imagick::FILTER_LANCZOS, 1, true );
 
-			if ( isset( $def['opacity'] ) ) {
-				$logo->setImageOpacity( $def['opacity'] );
-			}
+			// Resize maintaining aspect ratio, fit within bounds.
+			$lw = $logo->getImageWidth();
+			$lh = $logo->getImageHeight();
+			$scale = min( $max_w / $lw, $max_h / $lh, 1.0 );
+			$new_w = (int) ( $lw * $scale );
+			$new_h = (int) ( $lh * $scale );
+			$logo->resizeImage( $new_w, $new_h, \Imagick::FILTER_LANCZOS, 1 );
 
 			$x = $def['x'] ?? 0;
 			$y = $def['y'] ?? 0;
 
 			// Center alignment within the defined area.
 			if ( ! empty( $def['align'] ) && $def['align'] === 'center' ) {
-				$x += ( ( $def['w'] ?? 0 ) - $logo->getImageWidth() ) / 2;
+				$x += ( ( $def['w'] ?? 120 ) - $new_w ) / 2;
 			}
 
 			$canvas->compositeImage( $logo, \Imagick::COMPOSITE_OVER, (int) $x, (int) $y );
