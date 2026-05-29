@@ -34,6 +34,11 @@ class GBP_Provider implements Social_Provider_Interface {
 	 * Publish a Local Post to Google Business Profile.
 	 */
 	public function publish( string $message, string $image_url = '', string $link_url = '' ): array {
+		$lock_key = 'conv_lock_' . md5( $message . $image_url . 'gbp' );
+		if ( get_transient( $lock_key ) ) {
+			return array( 'success' => false, 'message' => 'Lock activo para este contenido en GBP.' );
+		}
+		set_transient( $lock_key, time(), 300 );
 		if ( $this->is_dry_run() ) {
 			$payload = array(
 				'network'     => 'google',
@@ -108,9 +113,11 @@ class GBP_Provider implements Social_Provider_Interface {
 				'code'     => $code,
 			) );
 			\Convoca\Enroll\Social\Social_Payload::log_api_error( 'gbp', $response, 'https://businessprofileperformance.googleapis.com/v1/{location_id}/localPosts' );
+			delete_transient( $lock_key );
 			return array( 'success' => false, 'message' => "GBP: $err" );
 		}
 
+		delete_transient( $lock_key );
 		return array( 'success' => true, 'message' => 'Publicado en Google Business Profile', 'id' => $body['name'] ?? '' );
 	}
 

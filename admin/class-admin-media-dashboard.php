@@ -23,6 +23,7 @@ class Admin_Media_Dashboard {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'save_post_actividad', array( $this, 'on_save_actividad' ), 10, 3 );
 		add_action( 'wp_ajax_convoca_create_blog_post', array( $this, 'ajax_create_blog_post' ) );
+		add_action( 'wp_ajax_convoca_republish', array( $this, 'ajax_republish' ) );
 	}
 
 	public function enqueue_assets( $hook ): void {
@@ -117,6 +118,29 @@ class Admin_Media_Dashboard {
 			<?php endif; ?>
 
 			<div class="convoca-media-message" style="margin-top:8px;"></div>
+
+			<div style="margin-top:12px;padding:8px;background:#f8f9fa;border-radius:6px;font-size:11px;">
+				<details>
+					<summary style="cursor:pointer;font-weight:600;">📋 Historial de publicación</summary>
+					<div id="convoca-publish-history" style="margin-top:6px;">
+						<?php
+						$logs = \Convoca\Enroll\Media\Media_Logger::get( 'social_post', $post->ID, 5 );
+						if ( $logs ) : foreach ( $logs as $log ) : ?>
+							<div style="padding:4px 0;border-bottom:1px solid #eee;">
+								<strong><?php echo esc_html( $log['action'] ); ?></strong>
+								<span style="color:<?php echo $log['status'] === 'ok' ? 'green' : 'red'; ?>;">(<?php echo esc_html( $log['status'] ); ?>)</span>
+								<br><span style="color:#999;"><?php echo esc_html( $log['created_at'] ); ?></span>
+							</div>
+						<?php endforeach; else : ?>
+							<div style="color:#999;">Sin actividad de publicación.</div>
+						<?php endif; ?>
+					</div>
+				</details>
+				<div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap;">
+					<button type="button" class="button button-small convoca-republish" data-post-id="<?php echo esc_attr( $post->ID ); ?>" data-network="meta">🔄 Meta</button>
+					<button type="button" class="button button-small convoca-republish" data-post-id="<?php echo esc_attr( $post->ID ); ?>" data-network="google">🔄 Google</button>
+				</div>
+			</div>
 		</div>
 		<?php
 	}
@@ -176,6 +200,35 @@ class Admin_Media_Dashboard {
 	/**
 	 * AJAX handler: render poster.
 	 */
+	public function ajax_republish(): void {
+		check_ajax_referer( 'convoca_media_nonce', 'nonce' );
+		$post_id  = (int) ( $_POST['post_id'] ?? 0 );
+		$network  = sanitize_text_field( $_POST['network'] ?? '' );
+		if ( ! current_user_can( 'conv_manage_media' ) || ! $post_id || ! $network ) {
+			wp_send_json_error( array( 'message' => 'Permiso denegado' ) );
+		}
+
+		$message   = \Convoca\Enroll\Social\Social_Payload::build_message( $post_id );
+		$poster_url = '';
+		$r = \Convoca\Enroll\Media\Poster_Engine::render( $post_id, 'nature-classic' );
+		if ( ! is_wp_error( $r ) ) {
+			$poster_url = $r['url'];
+		}
+
+		// Clear previous state and schedule immediate job.
+		as_unschedule_all_actions( 'convoca_publish_social_post', array( 'post_id' => $post_id, 'network' => $network ), 'convoca-social' );
+		as_schedule_single_action( time() + 30, 'convoca_publish_social_post', array(
+			'post_id'    => $post_id,
+			'network'    => $network,
+			'message'    => $message,
+			'poster_url' => $poster_url,
+			'permalink'  => get_permalink( $post_id ),
+		), 'convoca-social' );
+
+		\Convoca\Enroll\Media\Media_Logger::log( 'social_post', $post_id, 'republish_' . $network, 'ok', array( 'scheduled' => true ) );
+		wp_send_json_success( array( 'message' => "Re-publicación programada en {$network}." ) );
+	}
+
 	public function ajax_create_blog_post(): void {
 		check_ajax_referer( 'convoca_media_nonce', 'nonce' );
 
