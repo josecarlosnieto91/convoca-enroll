@@ -8,50 +8,60 @@ $msize = (int) match($format) { 'story' => 28, 'facebook' => 20, default => 22 }
 <meta charset="UTF-8">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:<?= $width ?>px; height:<?= $height ?>px; overflow:hidden; font-family:'Outfit',sans-serif; }
+html, body { width:<?= $width ?>px; height:<?= $height ?>px; overflow:hidden; font-family:sans-serif; }
 body { position:relative; background:<?= $primary_color ?>; color:#fff; padding:<?= $pad ?>px; }
-.deco {
-    position:absolute; bottom:-80px; right:-80px;
-    width:350px; height:350px; border-radius:50%;
-    background:<?= $accent_color ?>; opacity:0.12;
-}
+.deco { position:absolute; bottom:-80px; right:-80px; width:350px; height:350px; border-radius:50%; background:<?= $accent_color ?>; opacity:0.12; }
+
+/* BADGE */
 .badge {
     display:inline-block; padding:8px 22px; border-radius:30px;
     background:rgba(255,255,255,0.2); font-size:15px; font-weight:600;
-    letter-spacing:0.5px; border:1px solid rgba(255,255,255,0.3);
+    border:1px solid rgba(255,255,255,0.3);
 }
 .logo { position:absolute; top:<?= $pad ?>px; right:<?= $pad ?>px; max-width:110px; max-height:55px; }
-.type-line {
-    position:absolute; bottom:<?= $pad+$tsize+$msize+16+40 ?>px; left:<?= $pad ?>px;
-    font-size:15px; font-weight:600; text-transform:uppercase; letter-spacing:3px; opacity:0.8;
-}
+
+/* TITLE */
 .main-title {
-    position:absolute; bottom:<?= $pad+$msize+16+16 ?>px; left:<?= $pad ?>px; right:<?= $pad ?>px;
+    position:absolute;
+    bottom:330px;
+    left:<?= $pad ?>px; right:<?= $pad ?>px;
     font-family:Georgia,serif; font-size:<?= $tsize ?>px;
     font-weight:700; line-height:1.1; max-width:85%;
 }
-.meta-strip { position:absolute; bottom:<?= $pad ?>px; left:<?= $pad ?>px; }
+
+/* META */
+.meta-strip { position:absolute; bottom:250px; left:<?= $pad ?>px; }
 .meta-pill {
-    display:inline-block; font-size:<?= $msize ?>px; font-weight:400;
+    display:inline-block; font-size:<?= $msize ?>px;
     padding:8px 18px; border-radius:30px;
     background:rgba(255,255,255,0.17); border:1px solid rgba(255,255,255,0.14);
-    margin-right:8px; margin-bottom:8px;
+    margin-right:8px; margin-bottom:6px;
 }
 .meta-pill.price { background:#fff; color:<?= $primary_color ?>; font-weight:700; }
-.ftr {
-    position:absolute; bottom:<?= $pad+75+10 ?>px; right:<?= $pad ?>px;
-    text-align:right;
+
+/* ORG */
+.org-name {
+    position:absolute; bottom:<?= $pad ?>px; left:<?= $pad ?>px;
+    font-size:14px; opacity:0.7;
 }
-.org-name { font-size:14px; opacity:0.7; }
-.qr { margin-top:8px; }
-.qr img { width:72px; height:72px; border-radius:6px; opacity:0.9; }
+
+/* QR - independent */
+.qr-abs {
+    position:absolute; bottom:70px; right:70px;
+    width:130px; height:130px; z-index:999;
+}
+.qr-abs img { width:100%; height:100%; border-radius:6px; }
+
+/* COLLAB */
 .poster-brands-footer {
-    position:absolute; bottom:<?= $pad ?>px; left:<?= $pad ?>px; right:<?= $pad ?>px;
-    height:60px; text-align:center; font-size:0;
+    position:absolute;
+    bottom:<?= $pad+28 ?>px;
+    left:<?= $pad ?>px; right:<?= $pad ?>px;
+    height:35px; text-align:center; z-index:990;
 }
 .poster-brands-footer img {
-    display:inline-block; max-height:50px; width:auto;
-    margin:0 15px; vertical-align:middle; opacity:0.8;
+    display:inline-block; max-height:30px; width:auto;
+    margin:0 12px; vertical-align:middle; opacity:0.7;
 }
 </style>
 </head>
@@ -59,7 +69,6 @@ body { position:relative; background:<?= $primary_color ?>; color:#fff; padding:
 <div class="deco"></div>
 <div class="badge"><?= htmlspecialchars($type_label) ?></div>
 <?php if ($logo_image): ?><img class="logo" src="<?= $logo_image ?>" alt="logo"><?php endif; ?>
-<div class="type-line"><?= htmlspecialchars($type_label) ?></div>
 <div class="main-title"><?= htmlspecialchars($title) ?></div>
 <div class="meta-strip">
     <?php if ($date): ?><span class="meta-pill">📅 <?= htmlspecialchars($date) ?></span><?php endif; ?>
@@ -67,10 +76,8 @@ body { position:relative; background:<?= $primary_color ?>; color:#fff; padding:
     <?php if ($location): ?><span class="meta-pill">📍 <?= htmlspecialchars($location) ?></span><?php endif; ?>
     <span class="meta-pill price"><?= htmlspecialchars($price) ?></span>
 </div>
-<div class="ftr">
-    <div class="org-name"><?= htmlspecialchars($org_name) ?></div>
-    <?php if ($qr_image): ?><div class="qr"><img src="<?= $qr_image ?>" alt="QR"></div><?php endif; ?>
-</div>
+<div class="org-name"><?= htmlspecialchars($org_name) ?></div>
+<?php if ($qr_image): ?><div class="qr-abs"><img src="<?= $qr_image ?>" alt="QR"></div><?php endif; ?>
 <?php if (!empty($collaborator_logos)): ?>
 <div class="poster-brands-footer">
     <?php foreach ($collaborator_logos as $c_logo): ?>

@@ -225,6 +225,35 @@ class Meta_Provider implements Social_Provider_Interface {
 		return ! empty( $this->access_token );
 	}
 
+
+	/**
+	 * Test connection to Meta API.
+	 */
+	public function test_connection(): array {
+		$token = Social_OAuth::get_token( $this->account_id );
+		if ( ! $token || empty( $token["access_token"] ) ) {
+			return [ "success" => false, "message" => "Token no encontrado." ];
+		}
+
+		$url = self::BASE_URL . self::API_VERSION . "/me?fields=id,name&access_token=" . $token["access_token"];
+		$resp = wp_remote_get( $url, [ "timeout" => 10 ] );
+
+		if ( is_wp_error( $resp ) ) {
+			return [ "success" => false, "message" => "Error de conexion: " . $resp->get_error_message() ];
+		}
+
+		$code = wp_remote_retrieve_response_code( $resp );
+		$body = json_decode( wp_remote_retrieve_body( $resp ), true );
+
+		if ( $code !== 200 || isset( $body["error"] ) ) {
+			Social_OAuth::update_token_status( $this->account_id, "token_expired", $body["error"]["message"] ?? "Error desconocido" );
+			return [ "success" => false, "message" => $body["error"]["message"] ?? "HTTP $code" ];
+		}
+
+		Social_OAuth::update_token_status( $this->account_id, "active" );
+		return [ "success" => true, "message" => "Conexion OK: " . ($body["name"] ?? "Cuenta Meta") ];
+	}
+
 	public function get_status(): array {
 		return array(
 			'connected'    => $this->is_authenticated(),

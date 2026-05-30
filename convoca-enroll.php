@@ -159,7 +159,13 @@ register_activation_hook(
 			wp_schedule_event( time(), 'daily', 'convoca_enroll_feedback' );
 		}
 		if ( ! wp_next_scheduled( 'convoca_enroll_google_photos_share' ) ) {
+		if ( ! wp_next_scheduled( "convoca_social_token_healthcheck" ) ) {
+			wp_schedule_event( time(), "weekly", "convoca_social_token_healthcheck" );
+		}
 			wp_schedule_event( time(), 'daily', 'convoca_enroll_google_photos_share' );
+		if ( ! wp_next_scheduled( "convoca_social_token_healthcheck" ) ) {
+			wp_schedule_event( time(), "weekly", "convoca_social_token_healthcheck" );
+		}
 		}
 		if ( ! wp_next_scheduled( 'convoca_enroll_process_email_queue' ) ) {
 			wp_schedule_event( time(), 'every_minute', 'convoca_enroll_process_email_queue' );
@@ -185,6 +191,9 @@ register_deactivation_hook(
 		wp_clear_scheduled_hook( 'convoca_enroll_reminder_1hora' );
 		wp_clear_scheduled_hook( 'convoca_enroll_feedback' );
 		wp_clear_scheduled_hook( 'convoca_enroll_google_photos_share' );
+		if ( ! wp_next_scheduled( "convoca_social_token_healthcheck" ) ) {
+			wp_schedule_event( time(), "weekly", "convoca_social_token_healthcheck" );
+		}
 		wp_clear_scheduled_hook( 'convoca_enroll_process_email_queue' );
 		wp_clear_scheduled_hook( 'convoca_enroll_process_webhook_queue' );
 		wp_clear_scheduled_hook( 'convoca_enroll_eval_reminder' );
@@ -229,6 +238,7 @@ add_action(
 		new Convoca\Enroll\Media\Media_Rest_API();
 		Convoca\Enroll\Social\Social_OAuth::class;
 		new Convoca\Enroll\Social\Social_Rest_API();
+		Convoca\Enroll\Social\Social_Healthcheck::init();
 
 		if ( ! function_exists( 'conv_ensure_enroll_capabilities' ) ) {
 			/**

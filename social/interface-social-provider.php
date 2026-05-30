@@ -47,4 +47,11 @@ interface Social_Provider_Interface {
 	 * @return array{connected: bool, account_name: string, expires_at: ?string}
 	 */
 	public function get_status(): array;
+
+	/**
+	 * Test the connection and return status.
+	 *
+	 * @return array{success: bool, message: string}
+	 */
+	public function test_connection(): array;
 }
