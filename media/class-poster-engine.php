@@ -90,7 +90,30 @@ class Poster_Engine {
 		}
 
 		if ( is_wp_error( $result ) ) {
+			Media_Logger::log( 'poster', 'render', "/", [
+				'actividad_id' => $actividad_id,
+				'status'       => 'pdf_error',
+				'error'        => $result->get_error_message(),
+			] );
 			return $result;
+		}
+
+		// Validate PDF was single page
+		if ( class_exists( '\Imagick' ) ) {
+			try {
+				$pdf_check = new \Imagick( $pdf_path );
+				$num_pages = $pdf_check->getNumberImages();
+				$pdf_check->clear();
+				$pdf_check->destroy();
+				if ( $num_pages > 1 ) {
+					Media_Logger::log( 'poster', 'warning', "/ - $num_pages pages", [
+						'actividad_id' => $actividad_id,
+						'pages'        => $num_pages,
+					] );
+				}
+			} catch ( \Exception $e ) {
+				// Ignore validation errors
+			}
 		}
 
 		// ── Log ──
