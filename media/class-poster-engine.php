@@ -82,7 +82,13 @@ class Poster_Engine {
 		}
 
 		// ── Pass 3: PDF → Image ──
-		$result = self::pdf_to_image( $pdf_path, $output_path, $data['width'], $data['height'], $export );
+		$page_info = self::validate_pdf( $pdf_path );
+		if ( $page_info['pages'] > 1 ) {
+			$use_path = $pdf_path . '[' . $page_info['page'] . ']';
+		} else {
+			$use_path = $pdf_path;
+		}
+		$result = self::pdf_to_image( $use_path, $output_path, $data['width'], $data['height'], $export );
 
 		// ── Cleanup: remove temp PDF ──
 		if ( file_exists( $pdf_path ) ) {
@@ -507,7 +513,88 @@ HTML;
 	/**
 	 * List available HTML templates.
 	 */
-	public static function list_html_templates(): array {
+
+
+	/**
+	 * Validate PDF and find the best page to rasterize.
+	 *
+	 * @param string $pdf_path
+	 * @return array{page: int, pages: int, confidence: float}
+	 */
+	private static function validate_pdf( string $pdf_path ): array {
+		$result = [ 'page' => 0, 'pages' => 1, 'confidence' => 1.0 ];
+
+		if ( ! extension_loaded( 'imagick' ) || ! file_exists( $pdf_path ) ) {
+			return $result;
+		}
+
+		try {
+			$img = new \Imagick( $pdf_path );
+			$pages = $img->getNumberImages();
+			$img->clear();
+			$img->destroy();
+
+			$result['pages'] = $pages;
+
+			if ( $pages <= 1 ) {
+				return $result;
+			}
+
+			// Multi-page: find the page with most content
+			$best_page = 0;
+			$best_density = 0;
+
+			for ( $p = 0; $p < $pages; $p++ ) {
+				try {
+					$thumb = new \Imagick();
+					$thumb->setResolution( 36, 36 );
+					$thumb->readImage( $pdf_path . '[' . $p . ']' );
+					$thumb->setImageFormat( 'png32' );
+					$thumb->resizeImage( 100, 100, \Imagick::FILTER_POINT, 1, true );
+					$thumb->quantizeImage( 4, \Imagick::COLORSPACE_SRGB, 0, false, false );
+					$colors = $thumb->getImageHistogram();
+					$thumb->clear();
+					$thumb->destroy();
+
+					$total = 100 * 100;
+					$dominant = 0;
+					foreach ( $colors as $c ) {
+						$cnt = $c->getColorCount();
+						if ( $cnt > $dominant ) $dominant = $cnt;
+					}
+					$density = 1.0 - ( $dominant / $total );
+
+					if ( $density > $best_density ) {
+						$best_density = $density;
+						$best_page = $p;
+					}
+				} catch ( \Exception $e ) {
+					continue;
+				}
+			}
+
+			$result['page'] = $best_page;
+			$result['confidence'] = round( $best_density, 2 );
+
+			// Log warning
+			Media_Logger::log( 'poster', 'warning', sprintf(
+				'PDF has %d pages, using page %d (density: %.0f%%)',
+				$pages, $best_page, $best_density * 100
+			), [
+				'pdf_path' => $pdf_path,
+				'pages'    => $pages,
+				'best_page' => $best_page,
+				'density'  => $best_density,
+			] );
+
+		} catch ( \Exception $e ) {
+			// Fall back to page 0
+		}
+
+		return $result;
+	}
+
+		public static function list_html_templates(): array {
 		$dir = CONV_ENROLL_DIR . 'templates/html/';
 		if ( ! is_dir( $dir ) ) {
 			return [];
