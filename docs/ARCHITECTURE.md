@@ -43,10 +43,26 @@ $iv  = substr(wp_salt('nonce'), 0, 16);
 $encrypted = base64_encode(openssl_encrypt($data, 'aes-256-cbc', $key, 0, $iv));
 ```
 
-## Poster Engine — 2-Pass Rendering
+## Poster Engine — 3-Pass Pipeline (v3)
 
-1. **Pass 1 (Coordinate Resolution)**: Resolve responsive overrides per format, calculate dynamic Y stacking positions, anchor bottom elements. NO canvas drawing occurs here.
-2. **Pass 2 (Render)**: Execute all draw/composite operations using pre-calculated coordinates. Each element
+1. **Pass 1 (HTML Compilation)**: Inject activity data (title, date, price, QR, hero image) into an HTML/CSS template file. Full CSS3 support (Flexbox, Grid, gradients, shadows).
+2. **Pass 2 (PDF Rendering)**: Render the HTML to a 1-page PDF via mPDF (`mpdf/mpdf` v8). Pixel-perfect vector output.
+3. **Pass 3 (Rasterization)**: Open the PDF page with Imagick at appropriate DPI, resize to final format dimensions, export as PNG/WebP/JPG. Temporary PDF is deleted after conversion.
+
+### Template System
+- Templates are PHP files in `templates/html/` that output HTML5 + CSS3.
+- Variables injected: `$title`, `$date`, `$time`, `$location`, `$price`, `$hero_image`, `$qr_image`, `$logo_image`, `$primary_color`, `$accent_color`, `$org_name`, `$type_label`, `$type_icon`, `$format`, `$width`, `$height`.
+- Legacy JSON templates in `media/templates/` are automatically used as fallback via a basic HTML wrapper.
+
+### Format Dimensions
+| Format | Width | Height | Use Case |
+|--------|-------|--------|----------|
+| square | 1080 | 1080 | Instagram Feed |
+| portrait | 1080 | 1350 | Instagram Portrait |
+| story | 1080 | 1920 | Instagram Stories |
+| facebook | 1200 | 630 | Open Graph |
+| banner | 1920 | 1080 | Web banner |
+| a4 | 2480 | 3508 | Print |
 
 ## Action Scheduler Integration
 

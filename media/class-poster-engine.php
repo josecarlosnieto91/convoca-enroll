@@ -1,724 +1,446 @@
 <?php
 /**
- * Poster Engine — Server-side image composition engine.
+ * Poster Engine v3 — HTML → PDF → Image pipeline
  *
- * Uses Imagick (primary) with GD fallback for rendering poster templates
- * with activity data.
+ * Replaces the legacy pure-Imagick composition with an editorial-grade
+ * HTML/CSS templating system. Renders through mPDF and rasterizes with Imagick.
  *
  * @package Convoca\Enroll\Media
+ * @version 3.0.0
  */
 
 namespace Convoca\Enroll\Media;
+
+use \Mpdf\Mpdf;
+use \Mpdf\Output\Destination;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Main poster rendering engine.
- *
- * Takes an activity + template + data and produces a poster image.
+ * Poster_Engine_v3 — Main render controller.
  */
 class Poster_Engine {
 
-	const CACHE_GROUP = 'convoca_poster';
+	const CACHE_DIR = 'convoca-posters';
+	const TEMP_DIR  = 'convoca-temp';
 
 	/**
 	 * Render a poster for an activity.
 	 *
-	 * @param int          $actividad_id Activity post ID.
-	 * @param string|int   $template_slug_or_id Template slug or ID.
-	 * @param array        $overrides   Optional overrides: { image_id, formats, quality }.
-	 * @return array{files: array, url: string}|WP_Error
-	 */
-	public static function render( int $actividad_id, $template_slug_or_id = 'naturaleza', array $overrides = array() ) {
-		$template = Template_Manager::get_config( $template_slug_or_id );
-		if ( ! $template ) {
-			return new \WP_Error( 'template_not_found', __( 'Plantilla no encontrada.', 'convoca-enroll' ) );
-		}
-
-		$actividad = get_post( $actividad_id );
-		if ( ! $actividad || $actividad->post_type !== 'actividad' ) {
-			return new \WP_Error( 'invalid_activity', __( 'Actividad no válida.', 'convoca-enroll' ) );
-		}
-
-		// Gather data.
-		$data = self::gather_data( $actividad_id );
-
-		// Resolve main image.
-		$image_id = $overrides['image_id'] ?? get_post_thumbnail_id( $actividad_id );
-		if ( ! $image_id ) {
-			$image_id = self::find_first_image( $actividad_id );
-		}
-
-		$upload_dir = wp_upload_dir();
-		$cache_dir  = $upload_dir['basedir'] . '/convoca-posters/';
-		if ( ! is_dir( $cache_dir ) ) {
-			wp_mkdir_p( $cache_dir );
-		}
-
-		$formats = $overrides['formats'] ?? array_keys( $template['formats'] ?? array( 'square' ) );
-		$quality = $overrides['quality'] ?? 85;
-
-		$files   = array();
-		$base_name = 'poster-' . $actividad_id . '-' . sanitize_title( $template_slug_or_id );
-
-		foreach ( $formats as $format_key ) {
-			if ( ! isset( $template['formats'][ $format_key ] ) ) {
-				continue;
-			}
-
-			$format_def = $template['formats'][ $format_key ];
-			if ( isset( $format_def['width'] ) ) {
-				$target_w = $format_def['width'];
-				$target_h = $format_def['height'];
-			} elseif ( is_array( $format_def ) ) {
-				$vals = array_values( $format_def );
-				$target_w = $vals[0] ?? $template['width'] ?? 1080;
-				$target_h = $vals[1] ?? $template['height'] ?? 1080;
-			} else {
-				$target_w = $template['width'] ?? 1080;
-				$target_h = $template['height'] ?? 1080;
-			}
-			$cache_key   = $base_name . '-' . $format_key . '.png';
-			$output_path = $cache_dir . $cache_key;
-
-			// Cache check.
-			if ( file_exists( $output_path ) && empty( $overrides['force'] ) ) {
-				$files[ $format_key ] = $output_path;
-				continue;
-			}
-
-			// Create canvas.
-			try {
-				$canvas = new \Imagick();
-				$canvas->newImage( $target_w, $target_h, new \ImagickPixel( 'transparent' ) );
-				$canvas->setImageFormat( 'png' );
-				$canvas->setImageCompressionQuality( $quality );
-
-				// Render each layer.
-				foreach ( $template['layers'] as $layer_def ) {
-					self::render_layer( $canvas, $layer_def, $data, $image_id, $template, $format_key );
-				}
-
-				$canvas->writeImage( $output_path );
-				$canvas->clear();
-				$files[ $format_key ] = $output_path;
-
-			} catch ( \Exception $e ) {
-				return new \WP_Error( 'render_error', $e->getMessage() );
-			}
-		}
-
-		return array(
-			'files' => $files,
-			'url'   => str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], reset( $files ) ),
-		);
-	}
-
-	/**
-	 * Render a single layer onto the canvas.
+	 * 3-pass pipeline:
+	 *   1. Compile HTML from template + activity data
+	 *   2. Render HTML → PDF via mPDF
+	 *   3. Rasterize PDF → PNG via Imagick
 	 *
-	 * @param \Imagick $canvas   Target canvas.
-	 * @param array    $def      Layer definition.
-	 * @param array    $data     Resolved activity data.
-	 * @param int      $image_id Featured image ID (if any).
-	 * @param array    $template Full template config.
+	 * @param int    $actividad_id
+	 * @param string $template_slug
+	 * @param array  $overrides {
+	 *   @type string $format    'square'|'story'|'facebook'|'portrait'|'banner'|'a4'
+	 *   @type bool   $force     Skip cache
+	 *   @type string $export    'png'|'jpg'|'webp'
+	 * }
+	 * @return array|WP_Error { files: [...], url: string }
 	 */
-	private static function render_layer( \Imagick $canvas, array $def, array $data, ?int $image_id, array $template, string $format_key = 'square' ): void {
-		// Resolve responsive overrides for this format.
-		if ( ! empty( $def['responsive'][ $format_key ] ) ) {
-			foreach ( $def['responsive'][ $format_key ] as $rk => $rv ) {
-				$def[ $rk ] = $rv;
-			}
+	public static function render( int $actividad_id, string $template_slug = 'nature-classic', array $overrides = [] ): array|\WP_Error {
+		$format = $overrides['format'] ?? 'square';
+		$force  = ! empty( $overrides['force'] );
+		$export = $overrides['export'] ?? 'png';
+
+		// ── Check cache ──
+		$cache_key = "poster-{$actividad_id}-{$template_slug}-{$format}.{$export}";
+		$upload    = wp_upload_dir();
+		$cache_dir = trailingslashit( $upload['basedir'] ) . self::CACHE_DIR;
+		$cache_url = trailingslashit( $upload['baseurl'] ) . self::CACHE_DIR;
+		wp_mkdir_p( $cache_dir );
+
+		$output_path = "{$cache_dir}/{$cache_key}";
+		if ( ! $force && file_exists( $output_path ) ) {
+			return [
+				'files' => [ $format => $output_path ],
+				'url'   => "{$cache_url}/{$cache_key}",
+				'cached' => true,
+			];
 		}
 
-		$x = $def['x'] ?? 0;
-		$y = $def['y'] ?? 0;
-		$w = $def['w'] ?? 100;
-		$h = $def['h'] ?? 100;
-		$type = $def['type'] ?? '';
-
-		switch ( $type ) {
-			case 'background':
-				self::render_background( $canvas, $def );
-				break;
-
-			case 'image':
-				self::render_image_layer( $canvas, $def, $image_id );
-				break;
-
-			case 'overlay':
-				self::render_overlay( $canvas, $def );
-				break;
-
-			case 'text':
-				self::render_text_layer( $canvas, $def, $data, $template );
-				break;
-
-			case 'logo':
-				self::render_logo( $canvas, $def );
-				break;
-
-			case 'qr':
-				self::render_qr( $canvas, $def, $data['actividad_id'] );
-				break;
-
-			case 'badge':
-				self::render_badge( $canvas, $def, $data );
-				break;
-
-			case 'rect':
-				self::render_rect( $canvas, $def );
-				break;
-
-			case 'cta':
-				self::render_cta( $canvas, $def, $data );
-				break;
+		// ── Gather activity data ──
+		$data = self::gather_activity_data( $actividad_id, $template_slug, $format );
+		if ( is_wp_error( $data ) ) {
+			return $data;
 		}
+
+		// ── Pass 1: Compile HTML ──
+		$html = self::compile_html( $template_slug, $data, $format );
+		if ( is_wp_error( $html ) ) {
+			return $html;
+		}
+
+		// ── Pass 2: HTML → PDF ──
+		$pdf_path = self::html_to_pdf( $html, $data['width'], $data['height'] );
+		if ( is_wp_error( $pdf_path ) ) {
+			return $pdf_path;
+		}
+
+		// ── Pass 3: PDF → Image ──
+		$result = self::pdf_to_image( $pdf_path, $output_path, $data['width'], $data['height'], $export );
+
+		// ── Cleanup: remove temp PDF ──
+		if ( file_exists( $pdf_path ) ) {
+			@unlink( $pdf_path );
+		}
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		// ── Log ──
+		$duration = microtime( true ) - ( $_SERVER['REQUEST_TIME_FLOAT'] ?? microtime( true ) );
+		Media_Logger::log( 'poster', 'render', "{$template_slug}/{$format}", [
+			'actividad_id' => $actividad_id,
+			'status'       => 'success',
+			'duration_ms'  => round( $duration * 1000 ),
+		] );
+
+		return [
+			'files' => [ $format => $output_path ],
+			'url'   => "{$cache_url}/{$cache_key}",
+			'cached' => false,
+		];
 	}
 
 	/**
-	 * Render background layer.
+	 * Gather all data needed for the template.
 	 */
-	private static function render_background( \Imagick $canvas, array $def ): void {
-		if ( ! empty( $def['gradient'] ) && is_array( $def['gradient'] ) ) {
-			$gradient = new \Imagick();
-			$angle    = $def['angle'] ?? 0;
-			$w        = $canvas->getImageWidth();
-			$h        = $canvas->getImageHeight();
-
-			if ( $angle === 0 || $angle === 90 ) {
-				$gradient->newPseudoImage( $w, $h, sprintf( 'gradient:%s-%s', $def['gradient'][0], $def['gradient'][1] ) );
-			} else {
-				// For angled gradients, create a larger image and rotate.
-				$diag = (int) ceil( sqrt( $w * $w + $h * $h ) );
-				$gradient->newPseudoImage( $diag, $diag, sprintf( 'gradient:%s-%s', $def['gradient'][0], $def['gradient'][1] ) );
-				$gradient->rotateImage( new \ImagickPixel( 'transparent' ), $angle );
-				$gradient->cropImage( $w, $h, (int) ( ( $diag - $w ) / 2 ), (int) ( ( $diag - $h ) / 2 ) );
-			}
-			$canvas->compositeImage( $gradient, \Imagick::COMPOSITE_OVER, 0, 0 );
-			$gradient->clear();
-		} elseif ( ! empty( $def['color'] ) ) {
-			$w = $canvas->getImageWidth();
-			$h = $canvas->getImageHeight();
-			$fill = new \Imagick();
-			$fill->newImage( $w, $h, new \ImagickPixel( $def['color'] ), 'png' );
-			$canvas->compositeImage( $fill, \Imagick::COMPOSITE_DEFAULT, 0, 0 );
-			$fill->clear();
+	private static function gather_activity_data( int $actividad_id, string $template_slug, string $format ): array|\WP_Error {
+		$post = get_post( $actividad_id );
+		if ( ! $post || 'actividad' !== $post->post_type ) {
+			return new \WP_Error( 'invalid_activity', 'Actividad no encontrada o tipo incorrecto.' );
 		}
+
+		$meta       = get_post_custom( $actividad_id );
+		$dimensions = self::format_dimensions( $format );
+
+		// Design tokens from template
+		$template = Template_Manager::get_by_slug( $template_slug );
+		$tokens   = $template ? ( $template['config']['design_tokens'] ?? [] ) : [];
+		$palette  = $tokens['palette'] ?? [];
+		$primary  = $palette['primary'] ?? '#2e7d32';
+		$accent   = $palette['accent'] ?? '#8bc34a';
+
+		// Resolve type style
+		$type_slug = $meta['tipo_actividad'][0] ?? '';
+		$style     = Event_Style_Registry::get( $type_slug );
+
+		// Price
+		$price_raw = $meta['precio'][0] ?? '0';
+		$price     = (float) $price_raw > 0 ? number_format( (float) $price_raw, 2 ) . ' €' : 'Gratuito';
+
+		// Hero image (featured image or first gallery)
+		$hero_base64 = '';
+		$thumb_id    = get_post_thumbnail_id( $actividad_id );
+		if ( $thumb_id ) {
+			$hero_base64 = self::image_to_base64( $thumb_id, $dimensions['width'], $dimensions['height'] );
+		}
+		if ( ! $hero_base64 ) {
+			$gallery = get_post_meta( $actividad_id, 'galeria_fotos', true ) ?: [];
+			if ( is_array( $gallery ) && ! empty( $gallery ) ) {
+				$gallery_id = is_numeric( $gallery[0] ) ? (int) $gallery[0] : attachment_url_to_postid( $gallery[0] );
+				if ( $gallery_id ) {
+					$hero_base64 = self::image_to_base64( $gallery_id, $dimensions['width'], $dimensions['height'] );
+				}
+			}
+		}
+
+		// QR
+		$qr_image = '';
+		$qr_result = QR_Generator::generate( get_permalink( $actividad_id ), $actividad_id );
+		if ( ! is_wp_error( $qr_result ) ) {
+			$qr_path  = $qr_result['path'] ?? '';
+			if ( $qr_path && file_exists( $qr_path ) ) {
+				$qr_data  = file_get_contents( $qr_path );
+				$qr_image = 'data:image/png;base64,' . base64_encode( $qr_data );
+			}
+		}
+
+		// Logo
+		$logo_image = '';
+		$site_icon  = get_site_icon_url( 512 );
+		if ( $site_icon ) {
+			$logo_data = file_get_contents( $site_icon );
+			if ( $logo_data ) {
+				$mime = self::get_image_mime( $site_icon );
+				$logo_image = 'data:' . $mime . ';base64,' . base64_encode( $logo_data );
+			}
+		}
+
+		// Format date + time
+		$date_raw = $meta['fecha'][0] ?? '';
+		$time_raw = $meta['hora'][0] ?? '';
+		$date     = $date_raw ? date_i18n( 'j M, Y', strtotime( $date_raw ) ) : '';
+		$time     = $time_raw ? date_i18n( 'H:i', strtotime( $time_raw ) ) : '';
+		if ( $time_raw && str_contains( $time_raw, '-' ) ) {
+			$parts = explode( '-', $time_raw );
+			$time  = trim( $parts[0] ) . ' – ' . trim( $parts[1] ?? '' );
+		}
+
+		return [
+			'title'         => $post->post_title,
+			'subtitle'      => wp_trim_words( $post->post_excerpt ?: $meta['descripcion_corta'][0] ?? '', 20 ),
+			'date'          => $date,
+			'time'          => $time,
+			'location'      => $meta['lugar'][0] ?? '',
+			'price'         => $price,
+			'type_label'    => $style['label'] ?? $type_slug,
+			'type_icon'     => $style['icon'] ?? '🌿',
+			'type_color'    => $style['color'] ?? $primary,
+			'hero_image'    => $hero_base64,
+			'logo_image'    => $logo_image,
+			'qr_image'      => $qr_image,
+			'primary_color' => $primary,
+			'accent_color'  => $accent,
+			'org_name'      => get_bloginfo( 'name' ),
+			'format'        => $format,
+			'width'         => $dimensions['width'],
+			'height'        => $dimensions['height'],
+		];
 	}
 
 	/**
-	 * Render main image layer.
+	 * Compile the HTML template with activity data.
 	 */
-	private static function render_image_layer( \Imagick $canvas, array $def, ?int $image_id ): void {
-		if ( ! $image_id ) {
-			return;
+	private static function compile_html( string $template_slug, array $data, string $format ): string|\WP_Error {
+		// Try HTML template first
+		$html_file = CONV_ENROLL_DIR . "templates/html/{$template_slug}.php";
+		if ( file_exists( $html_file ) ) {
+			ob_start();
+			// Extract data array as variables for the template
+			extract( $data, EXTR_OVERWRITE );
+			include $html_file;
+			return ob_get_clean();
 		}
-		$img_path = get_attached_file( $image_id );
-		if ( ! $img_path || ! file_exists( $img_path ) ) {
-			return;
+
+		// Fallback: try legacy template
+		$legacy_file = CONV_ENROLL_DIR . "media/templates/{$template_slug}.json";
+		if ( file_exists( $legacy_file ) ) {
+			return self::compile_legacy_html( $template_slug, $data );
 		}
+
+		return new \WP_Error( 'template_not_found', "Plantilla '{$template_slug}' no encontrada." );
+	}
+
+	/**
+	 * Fallback compile: legacy JSON template → basic HTML.
+	 */
+	private static function compile_legacy_html( string $template_slug, array $data ): string {
+		$template = Template_Manager::get_by_slug( $template_slug );
+		$config   = $template['config'] ?? [];
+
+		$tokens  = $config['design_tokens'] ?? [];
+		$palette = $tokens['palette'] ?? [];
+		$primary = $palette['primary'] ?? $data['primary_color'];
+		$accent  = $palette['accent'] ?? $data['accent_color'];
+
+		$p = $data;
+		$pad = match($format) { 'story' => '60px', 'banner' => '80px', default => '40px' };
+		$tsize = match($format) { 'story' => '64px', default => '44px' };
+
+		return <<<HTML
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+@page { size: {$p['width']}px {$p['height']}px; margin: 0; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { width:{$p['width']}px; height:{$p['height']}px; overflow:hidden; font-family:sans-serif; }
+.poster { width:100%; height:100%; background:{$primary}; padding:{$pad}; color:#fff; display:flex; flex-direction:column; }
+.title { font-size:{$tsize}; font-weight:700; margin-bottom:20px; }
+.meta { font-size:18px; opacity:0.9; }
+.footer { margin-top:auto; font-size:14px; opacity:0.7; }
+</style></head><body>
+<div class="poster">
+<div class="title">{$p['type_icon']} {$p['title']}</div>
+<div class="meta">📅 {$p['date']} ⏰ {$p['time']} 📍 {$p['location']}<br>{$p['price']}</div>
+<div class="footer">{$p['org_name']}</div>
+</div></body></html>
+HTML;
+	}
+
+	/**
+	 * Pass 2: Render HTML → PDF via mPDF.
+	 */
+	private static function html_to_pdf( string $html, int $width, int $height ): string|\WP_Error {
+		$upload = wp_upload_dir();
+		$temp_dir = trailingslashit( $upload['basedir'] ) . self::TEMP_DIR;
+		wp_mkdir_p( $temp_dir );
+
+		$pdf_path = tempnam( $temp_dir, 'conv-pdf-' ) . '.pdf';
 
 		try {
-			$layer = new \Imagick( $img_path );
-			$fit   = $def['fit'] ?? 'cover';
-			$tw    = $def['w'] ?? $canvas->getImageWidth();
-			$th    = $def['h'] ?? $canvas->getImageHeight();
-			$tx    = $def['x'] ?? 0;
-			$ty    = $def['y'] ?? 0;
+			$mpdf = new Mpdf( [
+				'format'              => [ $width, $height ],
+				'margin_left'         => 0,
+				'margin_right'        => 0,
+				'margin_top'          => 0,
+				'margin_bottom'       => 0,
+				'auto_page_break'     => false,
+				'debug'               => false,
+				'fontDir'             => [ CONV_ENROLL_DIR . 'assets/fonts' ],
+				'default_font'        => 'outfit',
+				'default_font_size'   => 16,
+			] );
 
-			$lw = $layer->getImageWidth();
-			$lh = $layer->getImageHeight();
-
-			if ( $fit === 'cover' ) {
-				$scale = max( $tw / $lw, $th / $lh );
-				$layer->resizeImage( (int) ( $lw * $scale ), (int) ( $lh * $scale ), \Imagick::FILTER_LANCZOS, 1 );
-				$layer->cropImage( $tw, $th, (int) ( ( $layer->getImageWidth() - $tw ) / 2 ), (int) ( ( $layer->getImageHeight() - $th ) / 2 ) );
-			} else {
-				$layer->resizeImage( $tw, $th, \Imagick::FILTER_LANCZOS, 1, true );
+			// Register Outfit as a custom font
+			$outfit_path = CONV_ENROLL_DIR . 'assets/fonts/Outfit-Variable.ttf';
+			if ( file_exists( $outfit_path ) ) {
+				$mpdf->AddFont( 'outfit', '', $outfit_path );
+				$mpdf->AddFont( 'outfit', 'B', $outfit_path );
 			}
 
-			if ( isset( $def['opacity'] ) ) {
-			}
-
-			// Border radius.
-			if ( ! empty( $def['border_radius'] ) ) {
-				self::round_corners( $layer, (int) $def['border_radius'] );
-			}
-
-			$canvas->compositeImage( $layer, \Imagick::COMPOSITE_OVER, $tx, $ty );
-			$layer->clear();
+			$mpdf->WriteHTML( $html );
+			$mpdf->Output( $pdf_path, Destination::FILE );
 		} catch ( \Exception $e ) {
-			// Silently skip if image can't be loaded.
+			return new \WP_Error( 'pdf_error', 'Error al generar PDF: ' . $e->getMessage() );
 		}
+
+		if ( ! file_exists( $pdf_path ) || filesize( $pdf_path ) < 100 ) {
+			return new \WP_Error( 'pdf_empty', 'El PDF generado está vacío o es inválido.' );
+		}
+
+		return $pdf_path;
 	}
 
 	/**
-	 * Render gradient overlay.
+	 * Pass 3: Rasterize PDF → Image via Imagick.
 	 */
-	private static function render_overlay( \Imagick $canvas, array $def ): void {
-		if ( empty( $def['gradient'] ) ) {
-			return;
+	private static function pdf_to_image( string $pdf_path, string $output_path, int $width, int $height, string $export = 'png' ): bool|\WP_Error {
+		if ( ! extension_loaded( 'imagick' ) ) {
+			return new \WP_Error( 'imagick_missing', 'Imagick no está disponible.' );
 		}
 
-		$w = $def['w'] ?? $canvas->getImageWidth();
-		$h = $def['h'] ?? 100;
-		$x = $def['x'] ?? 0;
-		$y = $def['y'] ?? 0;
-
 		try {
-			$overlay = new \Imagick();
-			$overlay->newPseudoImage( $w, $h, sprintf( 'gradient:%s-%s', $def['gradient'][0], $def['gradient'][1] ) );
-			$canvas->compositeImage( $overlay, \Imagick::COMPOSITE_OVER, $x, $y );
-			$overlay->clear();
+			$density = max( 72, (int) round( $width / 3 ) ); // ~360 DPI for 1080px
+
+			$imagick = new \Imagick();
+			$imagick->setResolution( $density, $density );
+
+			if ( ! file_exists( $pdf_path ) ) {
+				return new \WP_Error( 'pdf_not_found', 'Archivo PDF temporal no encontrado.' );
+			}
+
+			$imagick->readImage( $pdf_path . '[0]' );
+
+			// Set output format
+			$format_map = [
+				'png'  => 'png32',
+				'jpg'  => 'jpeg',
+				'jpeg' => 'jpeg',
+				'webp' => 'webp',
+			];
+			$img_format = $format_map[ $export ] ?? 'png32';
+			$imagick->setImageFormat( $img_format );
+
+			// Resize to exact dimensions
+			$imagick->resizeImage( $width, $height, \Imagick::FILTER_LANCZOS, 1, true );
+
+			// Strip metadata for smaller files
+			$imagick->stripImage();
+
+			// Set quality
+			if ( in_array( $img_format, [ 'jpeg', 'webp' ], true ) ) {
+				$imagick->setImageCompressionQuality( 92 );
+			}
+
+			$imagick->writeImage( $output_path );
+			$imagick->clear();
+			$imagick->destroy();
+
+			if ( ! file_exists( $output_path ) || filesize( $output_path ) < 100 ) {
+				return new \WP_Error( 'image_empty', 'La imagen generada está vacía.' );
+			}
+
 		} catch ( \Exception $e ) {
-			// Ignore.
+			return new \WP_Error( 'imagick_error', 'Error al rasterizar PDF: ' . $e->getMessage() );
 		}
+
+		return true;
 	}
 
 	/**
-	 * Render text layer.
+	 * Convert an attachment image to base64 data URI.
 	 */
-	private static function render_text_layer( \Imagick $canvas, array $def, array $data, array $template ): void {
-		$ref  = $def['ref'] ?? '';
-		$text = $data[ $ref ] ?? '';
-
-		if ( empty( $text ) ) {
-			return;
+	private static function image_to_base64( int $attachment_id, int $req_w, int $req_h ): string {
+		$path = get_attached_file( $attachment_id );
+		if ( ! $path || ! file_exists( $path ) ) {
+			return '';
 		}
 
-		// Resolve font config.
-		$font_key   = $def['font'] ?? ( $ref === 'title' ? 'title' : ( in_array( $ref, array( 'cta', 'date', 'location' ), true ) ? $ref : 'meta' ) );
-		// v2 schema: design_tokens.typography. v1 fallback: fonts.
-		$font_cfg   = $template['design_tokens']['typography'][ $font_key ]
-			?? $template['fonts'][ $font_key ]
-			?? $template['design_tokens']['typography']['body']
-			?? $template['fonts']['meta']
-			?? array( 'family' => 'Lato', 'size' => 28, 'color' => '#ffffff' );
-		$font_size  = $def['font_size'] ?? $font_cfg['size'] ?? 28;
-
-		$draw = new \ImagickDraw();
-		// Auto-shrink title if enabled and text is too long.
-		if ( ! empty( $def['auto_shrink'] ) && ! empty( $def['max_lines'] ) ) {
-			$min_size  = $def['auto_shrink_min'] ?? 24;
-			$max_width = $def['w'] ?? $canvas->getImageWidth() - ( $def['x'] ?? 0 );
-			$words     = str_word_count( $text, 2 );
-			$approx_lines = ( $font_size > 0 ) ? (int) ceil( array_sum( array_map( 'strlen', $words ) ) * $font_size * 0.5 / $max_width ) : 1;
-			while ( $approx_lines > $def['max_lines'] && $font_size > $min_size ) {
-				$font_size -= 4;
-				$approx_lines = (int) ceil( array_sum( array_map( 'strlen', $words ) ) * $font_size * 0.5 / $max_width );
-			}
-		}
-
-		$draw->setFontSize( $font_size );
-
-		// Font file resolution.
-		$font_family = $font_cfg['family'] ?? 'Lato';
-		$font_file   = self::resolve_font( $font_family, $font_cfg['weight'] ?? 400 );
-		if ( $font_file ) {
-			$draw->setFont( $font_file );
-			if ( ! empty( $font_cfg['weight'] ) ) {
-				// Weight set via variable font selection
-			}
-		}
-
-		// Color.
-		$text_color = $def['color'] ?? $font_cfg['color'] ?? '#000000';
-		$draw->setFillColor( new \ImagickPixel( $text_color ) );
-
-		// Text shadow for readability (when template has auto_text_shadow).
-		$do_shadow = ! empty( $template['smart']['auto_text_shadow'] ) || ! empty( $template['design_tokens']['smart']['auto_text_shadow'] );
-		if ( $do_shadow && in_array( $ref, array( 'title', 'meta_block', 'date', 'cta' ), true ) ) {
-			$shadow = new \ImagickDraw();
-			$shadow->setFont( $draw->getFont() );
-			$shadow->setFontSize( $font_size );
-			$shadow->setTextAlignment( $draw->getTextAlignment() );
-			$shadow->setFillColor( new \ImagickPixel( 'rgba(0,0,0,0.35)' ) );
-		}
-
-		// Alignment.
-		$align = $def['align'] ?? 'left';
-		$draw->setTextAlignment(
-			$align === 'center' ? \Imagick::ALIGN_CENTER : ( $align === 'right' ? \Imagick::ALIGN_RIGHT : \Imagick::ALIGN_LEFT )
-		);
-
-		// Word wrap.
-		$x      = $def['x'] ?? 0;
-		$y      = $def['y'] ?? 0;
-		$mw     = $def['w'] ?? $canvas->getImageWidth() - $x;
-		$lines  = self::word_wrap( $text, $font_size, $mw, $font_file );
-
-		$line_h = (int) ( $font_size * 1.3 );
-		$ly     = $y + $line_h; // baseline offset
-
-		foreach ( $lines as $line ) {
-			if ( $ly > $y + ( $def['h'] ?? 9999 ) ) {
-				break;
-			}
-			$draw->annotation( $x, $ly, $line );
-			$ly += $line_h;
-		$canvas->drawImage( $draw );
-		}
-	}
-
-	/**
-	 * Render organization logo.
-	 */
-	private static function render_logo( \Imagick $canvas, array $def ): void {
-		// Only use explicitly uploaded organization logo.
-		$settings = get_option( 'conv_enroll_settings', array() );
-		$logo_id  = $settings['poster_logo_id'] ?? 0;
-		if ( ! $logo_id ) {
-			return;
-		}
-
-		$logo_path = get_attached_file( $logo_id );
-		if ( ! $logo_path || ! file_exists( $logo_path ) ) {
-			return;
-		}
+		$mime = self::get_image_mime( $path );
 
 		try {
-			$logo = new \Imagick( $logo_path );
-
-			$max_w = $def['w'] ?? 120;
-			$max_h = $def['h'] ?? 120;
-
-			// Resize maintaining aspect ratio, fit within bounds.
-			$lw = $logo->getImageWidth();
-			$lh = $logo->getImageHeight();
-			$scale = min( $max_w / $lw, $max_h / $lh, 1.0 );
-			$new_w = (int) ( $lw * $scale );
-			$new_h = (int) ( $lh * $scale );
-			$logo->resizeImage( $new_w, $new_h, \Imagick::FILTER_LANCZOS, 1 );
-
-			$x = $def['x'] ?? 0;
-			$y = $def['y'] ?? 0;
-
-			// Center alignment within the defined area.
-			if ( ! empty( $def['align'] ) && $def['align'] === 'center' ) {
-				$x += ( ( $def['w'] ?? 120 ) - $new_w ) / 2;
+			$img = new \Imagick( $path );
+			// Resize if too large (max 1920px on longest side for performance)
+			$geo  = $img->getImageGeometry();
+			$long = max( $geo['width'], $geo['height'] );
+			if ( $long > 1920 ) {
+				$img->resizeImage( 1920, 0, \Imagick::FILTER_LANCZOS, 1 );
 			}
-
-			$canvas->compositeImage( $logo, \Imagick::COMPOSITE_OVER, (int) $x, (int) $y );
-			$logo->clear();
+			$img->setImageFormat( 'jpeg' );
+			$img->setImageCompressionQuality( 85 );
+			$blob = $img->getImageBlob();
+			$img->clear();
+			$img->destroy();
 		} catch ( \Exception $e ) {
-			// Ignore logo errors.
+			return '';
 		}
+
+		return 'data:' . $mime . ';base64,' . base64_encode( $blob );
 	}
 
 	/**
-	 * Render QR code layer.
+	 * Get MIME type for an image path.
 	 */
-	private static function render_qr( \Imagick $canvas, array $def, int $actividad_id ): void {
-		try {
-			$qr_path = QR_Generator::generate( $actividad_id, array(
-				'size' => $def['size'] ?? 300,
-			) );
-
-			if ( ! $qr_path || ! file_exists( $qr_path ) ) {
-				return;
-			}
-
-			$qr = new \Imagick( $qr_path );
-			$canvas->compositeImage( $qr, \Imagick::COMPOSITE_OVER, $def['x'] ?? 0, $def['y'] ?? 0 );
-			$qr->clear();
-		} catch ( \Throwable $e ) {
-			// QR generation is optional — skip silently.
-		}
+	private static function get_image_mime( string $path ): string {
+		$ext = strtolower( pathinfo( $path, PATHINFO_EXTENSION ) );
+		$map = [
+			'jpg'  => 'image/jpeg',
+			'jpeg' => 'image/jpeg',
+			'png'  => 'image/png',
+			'webp' => 'image/webp',
+			'gif'  => 'image/gif',
+		];
+		return $map[ $ext ] ?? 'image/jpeg';
 	}
 
 	/**
-	 * Render activity type badge.
+	 * Get pixel dimensions for each format.
 	 */
-	private static function render_badge( \Imagick $canvas, array $def, array $data ): void {
-		$badge_text = $data['badge_text'] ?? '';
-		if ( empty( $badge_text ) ) {
-			return;
-		}
-
-		$badge_color = $data['badge_color'] ?? '#ff8700';
-		$badge_size  = $def['size'] ?? 36;
-		$x           = $def['x'] ?? 0;
-		$y           = $def['y'] ?? 0;
-
-		// Background pill.
-		$draw = new \ImagickDraw();
-		$draw->setFillColor( new \ImagickPixel( $badge_color ) );
-		$draw->setFontSize( $badge_size - 4 );
-
-		$text_w = strlen( $badge_text ) * ( $badge_size * 0.5 );
-		$pill_w = (int) $text_w + 30;
-		$pill_h = (int) ( $badge_size * 1.2 );
-
-		$draw->roundRectangle( $x, $y, $x + $pill_w, $y + $pill_h, $pill_h / 2, $pill_h / 2 );
-
-		// Text.
-		$draw->setFillColor( new \ImagickPixel( '#ffffff' ) );
-		$draw->setTextAlignment( \Imagick::ALIGN_CENTER );
-		$font_file = self::resolve_font( 'Outfit', 600 );
-		if ( $font_file ) {
-			$draw->setFont( $font_file );
-			if ( ! empty( $font_cfg['weight'] ) ) {
-				// Weight set via variable font selection
-			}
-		}
-		$draw->annotation( $x + $pill_w / 2, $y + $pill_h - 8, $badge_text );
-		$canvas->drawImage( $draw );
+	public static function format_dimensions( string $format ): array {
+		$map = [
+			'square'   => [ 'width' => 1080, 'height' => 1080 ],
+			'portrait' => [ 'width' => 1080, 'height' => 1350 ],
+			'story'    => [ 'width' => 1080, 'height' => 1920 ],
+			'facebook' => [ 'width' => 1200, 'height' => 630 ],
+			'banner'   => [ 'width' => 1920, 'height' => 1080 ],
+			'a4'       => [ 'width' => 2480, 'height' => 3508 ],
+		];
+		return $map[ $format ] ?? $map['square'];
 	}
 
 	/**
-	 * Render a colored rectangle (e.g., CTA button background).
+	 * List available HTML templates.
 	 */
-	private static function render_rect( \Imagick $canvas, array $def ): void {
-		$draw = new \ImagickDraw();
-		$draw->setFillColor( new \ImagickPixel( $def['color'] ?? '#ff8700' ) );
-
-		if ( ! empty( $def['border_radius'] ) ) {
-			$r = (int) $def['border_radius'];
-			$draw->roundRectangle(
-				$def['x'] ?? 0, $def['y'] ?? 0,
-				( $def['x'] ?? 0 ) + ( $def['w'] ?? 100 ),
-				( $def['y'] ?? 0 ) + ( $def['h'] ?? 100 ),
-				$r, $r
-			);
-		} else {
-			$draw->rectangle(
-				$def['x'] ?? 0, $def['y'] ?? 0,
-				( $def['x'] ?? 0 ) + ( $def['w'] ?? 100 ),
-				( $def['y'] ?? 0 ) + ( $def['h'] ?? 100 )
-			);
+	public static function list_html_templates(): array {
+		$dir = CONV_ENROLL_DIR . 'templates/html/';
+		if ( ! is_dir( $dir ) ) {
+			return [];
 		}
-
-		$canvas->drawImage( $draw );
-	}
-
-	// ─── Helpers ───────────────────────────────────────────────
-
-	/**
-	 * Render a CTA button (colored pill + text).
-	 */
-	private static function render_cta( \Imagick $canvas, array $def, array $data ): void {
-		$cta_text = $data['cta'] ?? __( 'Inscríbete aquí', 'convoca-enroll' );
-		$x        = $def['x'] ?? 0;
-		$y        = $def['y'] ?? 0;
-		$w        = $def['w'] ?? 360;
-		$h        = $def['h'] ?? 60;
-		$align    = $def['align'] ?? 'left';
-		$font_cfg = $data['_font_cta']
-			?? $template['design_tokens']['typography']['cta']
-			?? $template['fonts']['cta']
-			?? array( 'family' => 'Outfit', 'weight' => 600, 'size' => 30, 'color' => '#ffffff' );
-
-		// Background pill.
-		$draw = new \ImagickDraw();
-		$draw->setFillColor( new \ImagickPixel( '#ffffff' ) );
-		$draw->roundRectangle( $x, $y, $x + $w, $y + $h, $h / 2, $h / 2 );
-		$canvas->drawImage( $draw );
-
-		// Text.
-		$draw = new \ImagickDraw();
-		$font_file = self::resolve_font( $font_cfg['family'], $font_cfg['weight'] );
-		if ( $font_file ) {
-			$draw->setFont( $font_file );
+		$templates = [];
+		foreach ( glob( $dir . '*.php' ) as $file ) {
+			$slug = basename( $file, '.php' );
+			$templates[] = [
+				'slug' => $slug,
+				'file' => $file,
+				'type' => 'v3-html',
+			];
 		}
-		$draw->setFontSize( $font_cfg['size'] );
-		$draw->setFillColor( new \ImagickPixel( '#1a1a1a' ) );
-		$draw->setTextAlignment(
-			$align === 'center' ? \Imagick::ALIGN_CENTER : ( $align === 'right' ? \Imagick::ALIGN_RIGHT : \Imagick::ALIGN_LEFT )
-		);
-
-		$tx = $align === 'center' ? $x + $w / 2 : ( $align === 'right' ? $x + $w - 12 : $x + 24 );
-		$ty = $y + ( $h + $font_cfg['size'] * 0.35 ) / 2;
-		$draw->annotation( $tx, (int) $ty, $cta_text );
-		$canvas->drawImage( $draw );
-	}
-		private static function gather_data( int $actividad_id ): array {
-		// Try new meta keys first, then legacy _bde_ keys as fallback.
-		$fecha_inicio = get_post_meta( $actividad_id, 'conv_fecha_inicio', true );
-		if ( empty( $fecha_inicio ) ) {
-			$fecha_inicio = get_post_meta( $actividad_id, '_bde_fecha_inicio', true );
-		}
-
-		$fecha_fin = get_post_meta( $actividad_id, 'conv_fecha_fin', true );
-		if ( empty( $fecha_fin ) ) {
-			$fecha_fin = get_post_meta( $actividad_id, '_bde_fecha_fin', true );
-		}
-
-		$plazas = 0;
-
-		$ubicacion = get_post_meta( $actividad_id, 'conv_ubicacion', true );
-		if ( empty( $ubicacion ) ) {
-			$ubicacion = get_post_meta( $actividad_id, '_bde_ubicacion', true );
-		}
-
-		$tipo  = get_post_meta( $actividad_id, 'conv_tipo_actividad', true );
-		$badge = self::get_badge( $tipo );
-
-		$title    = get_the_title( $actividad_id );
-		$extracto = get_the_excerpt( $actividad_id ) ?: wp_trim_words( strip_tags( get_post_field( 'post_content', $actividad_id ) ), 30 );
-		$time_str = '';
-
-		if ( $fecha_inicio ) {
-			$timestamp = strtotime( $fecha_inicio );
-			$time_str  = date( 'H:i', $timestamp );
-		}
-
-		// Build meta block string: date · time · location
-		$meta_parts = array();
-		if ( $fecha_inicio ) {
-			$meta_parts[] = \Convoca\Core\Utils::format_date( $fecha_inicio, 'j F Y' );
-		}
-		if ( $time_str ) {
-			$meta_parts[] = $time_str . ' h';
-		}
-		if ( $ubicacion ) {
-			$meta_parts[] = $ubicacion;
-		}
-		$meta_block = implode( '  ·  ', $meta_parts );
-		if ( $plazas ) {
-			$meta_block .= '  ·  ' . $plazas . ' plazas';
-		}
-
-		return array(
-			'actividad_id'  => $actividad_id,
-			'title'         => $title ?: 'Actividad',
-			'subtitle'      => $extracto ?: 'Te esperamos!',
-			'date'          => $fecha_inicio ? \Convoca\Core\Utils::format_date( $fecha_inicio, 'j F Y' ) : '',
-			'time'          => $time_str,
-			'location'      => $ubicacion ?: '',
-			'meta_block'    => $meta_block,
-			'cta'           => __( 'Inscríbete aquí', 'convoca-enroll' ),
-			'badge_text'    => $badge['label'] ?? '',
-			'badge_color'   => $badge['color'] ?? '#ff8700',
-			'badge_icon'    => $badge['icon'] ?? '',
-			'permalink'     => get_permalink( $actividad_id ),
-		);
-	}
-	/**
-	 * Resolve badge data based on activity type taxonomy.
-	 */
-	private static function get_badge( $tipo ): array {
-		return \Convoca\Enroll\Media\Event_Style_Registry::get( $tipo );
-	}
-
-	/**
-	 * Resolve TTF font file path.
-	 */
-	private static function resolve_font( string $family, int $weight = 400 ): ?string {
-		$fonts = array(
-			'Outfit'  => array(
-				'var' => '/usr/share/fonts/TTF/Outfit-variable.ttf',
-				400 => '/usr/share/fonts/TTF/Outfit-variable.ttf',
-				500 => '/usr/share/fonts/TTF/Outfit-variable.ttf',
-				600 => '/usr/share/fonts/TTF/Outfit-variable.ttf',
-				700 => '/usr/share/fonts/TTF/Outfit-variable.ttf',
-				800 => '/usr/share/fonts/TTF/Outfit-variable.ttf',
-			),
-			'Lato'    => array(
-				300 => '/usr/share/fonts/TTF/Lato-Light.ttf',
-				400 => '/usr/share/fonts/TTF/Lato-Regular.ttf',
-				700 => '/usr/share/fonts/TTF/Lato-Bold.ttf',
-			),
-		);
-
-		if ( isset( $fonts[ $family ][ $weight ] ) && file_exists( $fonts[ $family ][ $weight ] ) ) {
-			return $fonts[ $family ][ $weight ];
-		}
-
-		// Fallback: try common paths.
-		$fallbacks = array(
-			"/usr/share/fonts/truetype/{$family}-{$weight}.ttf",
-			"/usr/share/fonts/{$family}-{$weight}.ttf",
-			"/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-			"/usr/share/fonts/TTF/DejaVuSans.ttf",
-		);
-
-		foreach ( $fallbacks as $fb ) {
-			if ( file_exists( $fb ) ) {
-				return $fb;
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Simple word wrap for Imagick annotation.
-	 */
-	private static function word_wrap( string $text, int $font_size, int $max_width, ?string $font_file = null ): array {
-		$words = explode( ' ', $text );
-		$lines = array();
-		$line  = '';
-
-		foreach ( $words as $word ) {
-			$test = $line ? $line . ' ' . $word : $word;
-			$w    = self::text_width( $test, $font_size, $font_file );
-			if ( $w > $max_width && $line ) {
-				$lines[] = $line;
-				$line    = $word;
-			} else {
-				$line = $test;
-			}
-		}
-		if ( $line ) {
-			$lines[] = $line;
-		}
-
-		return $lines;
-	}
-
-	/**
-	 * Estimate text width using Imagick query metrics.
-	 */
-	private static function text_width( string $text, int $size, ?string $font_file ): int {
-		$draw = new \ImagickDraw();
-		$draw->setFontSize( $size );
-		if ( $font_file ) {
-			$draw->setFont( $font_file );
-			if ( ! empty( $font_cfg['weight'] ) ) {
-				// Weight set via variable font selection
-			}
-		}
-		$metrics = ( new \Imagick() )->queryFontMetrics( $draw, $text );
-		return (int) ( $metrics['textWidth'] ?? strlen( $text ) * $size * 0.5 );
-	}
-
-	/**
-	 * Round corners of an Imagick image.
-	 */
-	private static function round_corners( \Imagick $image, int $radius ): void {
-		$w = $image->getImageWidth();
-		$h = $image->getImageHeight();
-
-		$mask = new \Imagick();
-		$mask->newImage( $w, $h, new \ImagickPixel( 'transparent' ), 'png' );
-
-		$draw = new \ImagickDraw();
-		$draw->setFillColor( new \ImagickPixel( 'white' ) );
-		$draw->roundRectangle( 0, 0, $w, $h, $radius, $radius );
-		$mask->drawImage( $draw );
-
-		$image->compositeImage( $mask, \Imagick::COMPOSITE_COPYOPACITY, 0, 0 );
-		$mask->clear();
-	}
-
-	/**
-	 * Find first image embedded in activity content.
-	 */
-	private static function find_first_image( int $post_id ): ?int {
-		$post = get_post( $post_id );
-		if ( ! $post ) {
-			return null;
-		}
-
-		preg_match( '/wp:image {"id":(\d+)}/', $post->post_content, $matches );
-		if ( ! empty( $matches[1] ) ) {
-			return (int) $matches[1];
-		}
-
-		preg_match( '/<img[^>]+wp-image-(\d+)/', $post->post_content, $matches );
-		return ! empty( $matches[1] ) ? (int) $matches[1] : null;
+		return $templates;
 	}
 }

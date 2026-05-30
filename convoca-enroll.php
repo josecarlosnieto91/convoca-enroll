@@ -204,6 +204,7 @@ add_action(
 		}
 
 		// Core.
+		
 		new Convoca\Enroll\CPT_Actividad();
 		new Convoca\Enroll\CPT_Inscripcion();
 		new Convoca\Enroll\Motor_Inscripcion();

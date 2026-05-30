@@ -1,109 +1,38 @@
-# Poster Engine — Technical Reference
+# Poster Engine — Technical Reference (v3)
 
-## Layer System
+## Architecture: HTML → PDF → Image
 
-Posters are composed by rendering an ordered list of layers onto an Imagick canvas.
+Instead of composing images pixel-by-pixel with Imagick, the v3 engine follows an editorial-grade pipeline:
 
-### Layer Types
-
-| Type | Renderer | Description |
-|------|----------|-------------|
-| `background` | `render_background()` | Solid color or linear gradient |
-| `image` | `render_image_layer()` | Photo with cover/contain fit, opacity, border radius |
-| `overlay` | `render_overlay()` | Semi-transparent gradient for text readability |
-| `text` | `render_text_layer()` | TTF text with word wrap, auto-shrink, shadow |
-| `badge` | `render_badge()` | Colored pill with text (activity type) |
-| `price_badge` | `render_price_badge()` | Small pill showing price or "Gratuito" |
-| `cta` | `render_cta()` | White pill with dark CTA text |
-| `logo` | `render_logo()` | Organization logo with aspect ratio |
-| `qr` | `render_qr()` | QR code pointing to activity URL |
-| `rect` | `render_rect()` | Colored rectangle with border radius |
-
-### Sub-Canvas Isolation
-
-For badge, price_badge, and cta — each element is rendered on its own transparent Imagick canvas, measured using `queryFontMetrics()`, then composited onto the main canvas. This prevents state leakage between layers.
-
-```php
-// Example: price_badge sub-canvas
-$metrics = $tmp->queryFontMetrics($draw, $text);
-$sub = new Imagick();
-$sub->newImage($pill_w, $pill_h, new ImagickPixel('transparent'), 'png');
-// Draw on sub-canvas...
-$canvas->compositeImage($sub, Imagick::COMPOSITE_OVER, $x, $y);
-$sub->clear(); $sub->destroy();
+```
+Activity Data → HTML/CSS Template → mPDF → PNG/WebP
 ```
 
-### Font System
+### Why This Approach
 
-- **Primary**: Outfit (variable font, TTF)
-- **Secondary**: Lato (static weights)
-- **Fallback**: DejaVu Sans
-- Font paths resolved via `resolve_font($family, $weight)`:
+- **CSS3 native**: Flexbox, Grid, gradients, shadows, border-radius — no manual coordinate calculations
+- **Google Fonts**: Load any font via `@import url(...)` without TTF files on the server
+- **Maintainable**: Edit posters by modifying HTML/CSS files, not PHP array logic
+- **Clean rasterization**: Imagick only handles mechanical PDF→PNG conversion (DPI, resize, export)
 
-```php
-'Outfit' => [
-    'var' => '/usr/share/fonts/TTF/Outfit-variable.ttf',
-    400   => '/usr/share/fonts/TTF/Outfit-variable.ttf',
-    // ... all weights point to variable font
-],
-```
+### Pipeline Details
 
-### Responsive Composition
+1. **Pass 1 — HTML Compilation** (`compile_html()`)
+   - Reads PHP template from `templates/html/{slug}.php`
+   - Injects activity data as extracted variables
+   - Returns full HTML document with `<style>` block
 
-Each layer can define positions per format using `responsive.{format_key}`:
+2. **Pass 2 — PDF Rendering** (`html_to_pdf()`)
+   - Uses `mpdf/mpdf` v8 with format set to exact pixel dimensions
+   - No margins, no page breaks
+   - Temporary PDF stored in uploads `convoca-temp/`
 
-```json
-{
-  "id": "title",
-  "type": "text",
-  "ref": "title",
-  "max_lines": 3,
-  "auto_shrink": true,
-  "responsive": {
-    "square":   { "x": 60, "y": 520, "w": 960, "h": 200, "font_size": 68 },
-    "story":    { "x": 60, "y": 900, "w": 960, "h": 400, "font_size": 96 },
-    "facebook": { "x": 40, "y": 300, "w": 1120, "h": 180, "font_size": 52 }
-  }
-}
-```
+3. **Pass 3 — Rasterization** (`pdf_to_image()`)
+   - Opens PDF page 1 with Imagick at ~360 DPI
+   - Resizes to exact format dimensions (Lanczos filter)
+   - Strips metadata, sets quality (92% for JPEG/WebP)
+   - Deletes temporary PDF
 
-### Format Output
+### Template Variables
 
-| Format | Width | Height | Use Case |
-|--------|-------|--------|----------|
-| square | 1080 | 1080 | Instagram Feed |
-| portrait | 1080 | 1350 | Instagram Portrait |
-| story | 1080 | 1920 | Instagram Stories |
-| facebook | 1200 | 630 | Open Graph |
-| banner | 1920 | 1080 | Web banner |
-| a4 | 2480 | 3508 | Print |
-
-### Image Cache
-
-- Posters stored in: `/wp-content/uploads/convoca-posters/`
-- QR codes stored in: `/wp-content/uploads/convoca-qr/`
-- Cache key: `poster-{actividad_id}-{template_slug}-{format}.{ext}`
-- Force regeneration: pass `force => true` in render overrides
-
-## Design Tokens
-
-Templates expose a `design_tokens` object for consistent theming:
-
-```json
-"design_tokens": {
-  "palette": { "primary": "#2e7d32", "accent": "#8bc34a", "text_light": "#ffffff" },
-  "typography": {
-    "title": { "family": "Outfit", "weight": 700, "size": 72, "color": "#ffffff" }
-  },
-  "spacing": { "margin": 70, "gap": 16, "corner": 20 }
-}
-```
-
-## Event Style Registry
-
-Maps activity types to visual styles (color + icon):
-
-```php
-Event_Style_Registry::get('ruta')
-// → { label: 'Ruta interpretada', color: '#8bc34a', icon: '🚶' }
-```
+All PHP templates in `templates/html/` receive:
