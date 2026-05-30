@@ -129,7 +129,7 @@ class Poster_Engine {
 
 		// Resolve type style
 		$type_slug = $meta['tipo_actividad'][0] ?? '';
-		$style     = Event_Style_Registry::get( $type_slug );
+		$style     = \Convoca\Core\Event_Style_Registry::get( $type_slug );
 
 		// Price
 		$price_raw = $meta['precio'][0] ?? '0';

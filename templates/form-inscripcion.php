@@ -86,12 +86,12 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 			<?php endif; ?>
 		</div>
 		<?php if ( $show_precios && $requiere_pago ) : ?>
-			<div class="bde-price-toggle" aria-label="<?php echo esc_attr( Convoca\Enroll\Utils::get_aportacion_label( 'plural' ) ); ?>">
-				<span class="bde-price bde-price--socio" id="bde-precio-socio"><?php echo esc_html( Convoca\Enroll\Utils::get_aportacion_label( 'socio' ) ); ?>:
+			<div class="bde-price-toggle" aria-label="<?php echo esc_attr( Convoca\Core\Utils::get_aportacion_label( 'plural' ) ); ?>">
+				<span class="bde-price bde-price--socio" id="bde-precio-socio"><?php echo esc_html( Convoca\Core\Utils::get_aportacion_label( 'socio' ) ); ?>:
 					<?php echo esc_html( number_format( (float) $precio_s, 2, ',', '.' ) ); ?>€
 				</span>
 				<?php if ( $has_socio_dia ) : ?>
-					<span class="bde-price bde-price--socio-dia bde-price--active" id="bde-precio-socio-dia"><?php echo esc_html( Convoca\Enroll\Utils::get_aportacion_label( 'trasgu' ) ); ?>:
+					<span class="bde-price bde-price--socio-dia bde-price--active" id="bde-precio-socio-dia"><?php echo esc_html( Convoca\Core\Utils::get_aportacion_label( 'trasgu' ) ); ?>:
 						<?php echo esc_html( number_format( (float) $precio_sd, 2, ',', '.' ) ); ?>€
 					</span>
 				<?php endif; ?>

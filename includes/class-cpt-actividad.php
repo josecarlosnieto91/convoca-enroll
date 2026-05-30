@@ -163,7 +163,7 @@ class CPT_Actividad {
 			</div>
 			<div class="convoca-field">
 				<label for="conv_enroll_precio_socio">
-					<?php echo esc_html( Utils::get_aportacion_label( 'sugerida_socio' ) ); ?> (€)
+					<?php echo esc_html( \Convoca\Core\Utils::get_aportacion_label( 'sugerida_socio' ) ); ?> (€)
 				</label>
 				<input type="number" id="conv_enroll_precio_socio" name="conv_enroll_precio_socio" min="0" step="0.01"
 					value="<?php echo esc_attr( $m( 'precio_socio' ) ); ?>" placeholder="0">

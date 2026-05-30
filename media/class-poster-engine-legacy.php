@@ -600,7 +600,7 @@ class Poster_Engine {
 	 * Resolve badge data based on activity type taxonomy.
 	 */
 	private static function get_badge( $tipo ): array {
-		return \Convoca\Enroll\Media\Event_Style_Registry::get( $tipo );
+		return \Convoca\Core\Event_Style_Registry::get( $tipo );
 	}
 
 	/**

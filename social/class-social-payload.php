@@ -105,7 +105,7 @@ class Social_Payload {
 
 	private static function get_badge_text( int $post_id ): string {
 		$tipo = get_post_meta( $post_id, 'conv_tipo_actividad', true ) ?: get_post_meta( $post_id, '_bde_tipo_actividad', true );
-		$registry_class = 'Convoca\\Enroll\\Media\\Event_Style_Registry';
+		$registry_class = 'Convoca\\Core\\Event_Style_Registry';
 		if ( class_exists( $registry_class ) && $tipo ) {
 			$style = $registry_class::get( $tipo );
 			return $style['label'] ?? '';
