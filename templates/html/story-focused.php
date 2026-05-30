@@ -124,10 +124,11 @@ body { background-image:url("<?= $hero_image ?>"); background-size:cover; backgr
 }
 
 
-/* Nature Classic — green tones, organic */
-.badge { background:rgba(255,255,255,0.2); }
-.title { font-family:"Playfair Display",Georgia,serif; }
-.cta { background:<?= $accent_color ?>; color:#fff; }
+/* Story Focused — vertical/portrait optimized */
+.badge { background:<?= $accent_color ?>; }
+.title { bottom:380px; font-family:"Playfair Display",Georgia,serif; }
+.subtitle { bottom:330px; }
+.cta { bottom:160px; background:<?= $accent_color ?>; color:#fff; }
 
 
 <?php if ($debug): ?>

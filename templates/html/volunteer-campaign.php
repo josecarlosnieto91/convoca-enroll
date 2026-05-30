@@ -124,10 +124,11 @@ body { background-image:url("<?= $hero_image ?>"); background-size:cover; backgr
 }
 
 
-/* Nature Classic — green tones, organic */
-.badge { background:rgba(255,255,255,0.2); }
-.title { font-family:"Playfair Display",Georgia,serif; }
-.cta { background:<?= $accent_color ?>; color:#fff; }
+/* Volunteer — energetic, action */
+.badge { background:<?= $accent_color ?>; border-radius:4px; }
+.title { font-family:"Outfit",sans-serif; font-weight:900; text-transform:uppercase; letter-spacing:-0.5px; }
+.cta { background:<?= $accent_color ?>; color:#fff; font-size:16px; padding:12px 36px; box-shadow:0 4px 15px rgba(0,0,0,0.2); }
+.brands { border-top:1px solid rgba(255,255,255,0.15); padding-top:8px; }
 
 
 <?php if ($debug): ?>

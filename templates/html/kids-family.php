@@ -124,10 +124,13 @@ body { background-image:url("<?= $hero_image ?>"); background-size:cover; backgr
 }
 
 
-/* Nature Classic — green tones, organic */
-.badge { background:rgba(255,255,255,0.2); }
-.title { font-family:"Playfair Display",Georgia,serif; }
-.cta { background:<?= $accent_color ?>; color:#fff; }
+/* Kids & Family — fun, rounded, colorful */
+.badge { background:<?= $accent_color ?>; border-radius:15px; }
+.title { font-family:"Outfit",sans-serif; font-weight:800; }
+.meta-item { border-radius:15px; background:rgba(255,255,255,0.2); }
+.meta-item.price { background:<?= $accent_color ?>; }
+.cta { background:<?= $accent_color ?>; color:#fff; border-radius:15px; font-size:16px; padding:12px 32px; }
+.qr-abs { border-radius:15px; }
 
 
 <?php if ($debug): ?>

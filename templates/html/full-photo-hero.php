@@ -124,10 +124,14 @@ body { background-image:url("<?= $hero_image ?>"); background-size:cover; backgr
 }
 
 
-/* Nature Classic — green tones, organic */
-.badge { background:rgba(255,255,255,0.2); }
-.title { font-family:"Playfair Display",Georgia,serif; }
-.cta { background:<?= $accent_color ?>; color:#fff; }
+/* Full Photo Hero — image dominant, minimal UI */
+body { background:#000; }
+.title { bottom:300px; font-family:"Outfit",sans-serif; font-weight:300; text-shadow:0 2px 20px rgba(0,0,0,0.5); }
+.subtitle { bottom:260px; text-shadow:0 2px 10px rgba(0,0,0,0.3); }
+.badge { background:rgba(0,0,0,0.3); backdrop-filter:blur(8px); }
+.meta-item { background:rgba(0,0,0,0.25); backdrop-filter:blur(4px); }
+.cta { background:rgba(255,255,255,0.9); color:#000; }
+.org-info { opacity:0.5; }
 
 
 <?php if ($debug): ?>

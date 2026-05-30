@@ -124,10 +124,12 @@ body { background-image:url("<?= $hero_image ?>"); background-size:cover; backgr
 }
 
 
-/* Nature Classic — green tones, organic */
-.badge { background:rgba(255,255,255,0.2); }
-.title { font-family:"Playfair Display",Georgia,serif; }
-.cta { background:<?= $accent_color ?>; color:#fff; }
+/* Educational — warm, playful */
+body { background:<?= $accent_color ?>; }
+.badge { background:<?= $primary_color ?>; }
+.title { font-family:"Outfit",sans-serif; font-weight:800; text-shadow:0 2px 8px rgba(0,0,0,0.2); }
+.meta-item { background:rgba(0,0,0,0.1); }
+.cta { background:<?= $primary_color ?>; color:#fff; box-shadow:0 4px 15px rgba(0,0,0,0.15); }
 
 
 <?php if ($debug): ?>
