@@ -50,13 +50,13 @@ body { position:relative; background:<?= $primary_color ?>; color:#fff; }
     display:inline-block; max-height:50px; max-width:120px; width:auto;
     margin:0 12px; vertical-align:middle; opacity:0.7;
 }
-.collab-strip {
+.poster-brands-footer {
     position:absolute; bottom:<?= intval($pad)+75 ?>px; left:<?= $pad ?>px; right:<?= $pad ?>px;
     height:60px; text-align:center; font-size:0;
 }
-.collab-strip img {
-    display:inline-block; max-height:50px; max-width:100px; width:auto;
-    margin:0 10px; vertical-align:middle; opacity:0.7;
+.poster-brands-footer img {
+    display:inline-block; max-height:50px; width:auto;
+    margin:0 15px; vertical-align:middle; opacity:0.8;
 }
 </style>
 </head>
@@ -81,7 +81,7 @@ body { position:relative; background:<?= $primary_color ?>; color:#fff; }
 </div>
 <?php endif; ?>
 <?php if (!empty($collaborator_logos)): ?>
-<div class="collab-strip">
+<div class="poster-brands-footer">
     <?php foreach ($collaborator_logos as $c_logo): ?>
     <img src="<?= $c_logo ?>" alt="col">
     <?php endforeach; ?>
