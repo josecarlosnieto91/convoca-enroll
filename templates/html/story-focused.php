@@ -1,172 +1,51 @@
 <?php
-$pad = (int) match($format) { 'story' => 120, 'portrait' => 90, 'banner' => 60, 'facebook' => 60, default => 80 };
-$tsize = (int) match($format) { 'story' => 64, 'facebook' => 34, 'banner' => 44, default => 48 };
-$msize = (int) match($format) { 'story' => 24, 'banner' => 16, default => 18 };
-$maxlines = (int) match($format) { 'story' => 4, 'banner' => 2, default => 3 };
+$pad = 80;
 $debug = !empty($_GET['poster_debug']);
-$cta_text = $meta['cta_text'][0] ?? 'Apuntate ahora';
-$cta_url  = $meta['cta_url'][0] ?? '';
-?><!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Convoca Poster</title>
-<style>
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:<?= $width ?>px; height:<?= $height ?>px; overflow:hidden; }
-body {
-    position:relative;
-    font-family:'Playfair Display',Georgia,serif;
-    color:#fff;
-    page-break-inside:avoid;
-    break-inside:avoid;
-    background:<?= $primary_color ?>;
-}
-<?php if (!empty($hero_image)): ?>
-body { background-image:url("<?= $hero_image ?>"); background-size:cover; background-position:center; }
+$cta_text = is_array($meta['cta_text']??null)?($meta['cta_text'][0]??'Apuntate ahora'):($meta['cta_text']['text']??$meta['cta_text']??'Apuntate ahora');
+$cta_url = is_array($meta['cta_url']??null)?($meta['cta_url'][0]??''):($meta['cta_url']['url']??$meta['cta_url']??'');
+$text_color = '#fff';
+$bg = '#0d47a1';
+$accent = '#1976d2';
+$cta_bg = '#ff8700';
+$meta_bg = 'rgba(255,255,255,0.1)';
+$hero_full = "50%";
+?><!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
+@font-face{font-family:'Playfair';src:url('<?= CONV_ENROLL_URL ?>assets/fonts/PlayfairDisplay.ttf')format('truetype');font-weight:700}
+@font-face{font-family:'Montserrat';src:url('<?= CONV_ENROLL_URL ?>assets/fonts/Montserrat.ttf')format('truetype');font-weight:400}
+@font-face{font-family:'Montserrat';src:url('<?= CONV_ENROLL_URL ?>assets/fonts/Montserrat.ttf')format('truetype');font-weight:700}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:<?= $width ?>px;height:<?= $height ?>px;overflow:hidden}
+body{position:relative;font-family:'Playfair',Georgia,serif;color:<?= $text_color ?>;background:<?= $bg ?>;page-break-inside:avoid;break-inside:avoid}
+.hero{position:absolute;top:0;left:0;width:100%;height:<?= $hero_full ?>;background:<?= $bg ?>;overflow:hidden}
+<?php if (!empty($hero_image)): ?>.hero{background-image:url("<?= $hero_image ?>");background-size:cover;background-position:center}
 <?php endif; ?>
+.solid{position:absolute;bottom:0;left:0;width:100%;height:<?= $hero_full ?>;background:<?= $bg ?>}
+.badge{position:absolute;top:<?= $pad ?>px;left:<?= $pad ?>px;display:inline-block;padding:6px 16px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;background:<?= $accent ?>;color:#fff}
+.logo{position:absolute;top:<?= $pad ?>px;right:<?= $pad ?>px;max-width:80px;max-height:40px}
+.title{position:absolute;bottom:<?= $pad+220 ?>px;left:<?= $pad ?>px;right:<?= $pad ?>px;font-size:80px;font-weight:700;line-height:1.05;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;color:<?= $text_color ?>}
+.subtitle{position:absolute;bottom:<?= $pad+180 ?>px;left:<?= $pad ?>px;right:<?= $pad ?>px;font-family:'Montserrat',sans-serif;font-size:14px;font-weight:400;opacity:0.7;line-height:1.3;letter-spacing:0.5px;color:<?= $text_color ?>}
+.meta-row{position:absolute;bottom:<?= $pad+130 ?>px;left:<?= $pad ?>px;right:<?= $pad ?>px}
+.meta-item{display:inline-block;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:400;text-transform:uppercase;letter-spacing:1.5px;background:<?= $meta_bg ?>;padding:5px 14px;margin:0 6px 4px 0;color:<?= $text_color ?>}
+.meta-item.price{background:<?= $accent ?>;font-weight:700;color:#fff}
+.cta{position:absolute;bottom:<?= $pad+55 ?>px;left:<?= $pad ?>px;display:inline-block;font-family:'Montserrat',sans-serif;font-size:28px;font-weight:700;letter-spacing:1px;padding:16px 40px;background:<?= $cta_bg ?>;color:#fff;border-radius:8px;text-decoration:none;text-transform:uppercase}
+.org-info{position:absolute;bottom:<?= $pad ?>px;left:<?= $pad ?>px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:400;opacity:0.5;letter-spacing:1px;text-transform:uppercase;color:<?= $text_color ?>}
+.qr-abs{position:absolute;bottom:<?= $pad+48 ?>px;right:<?= $pad ?>px;width:90px;height:90px;z-index:999;background:#fff;padding:5px;border-radius:6px}
+.qr-abs img{width:100%;height:100%;display:block}
+.brands{position:absolute;bottom:<?= $pad+8 ?>px;left:<?= $pad ?>px;right:<?= $pad+100 ?>px;height:20px;text-align:center}
+.brands img{display:inline-block;max-height:18px;width:auto;margin:0 6px;vertical-align:middle;opacity:0.5}
 
-/* ── HERO OVERLAY ── */
-.hero-overlay {
-    position:absolute; top:0; left:0; width:100%; height:100%;
-    background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.55) 100%);
-}
-
-/* ── SAFE AREA ── */
-.safe {
-    position:absolute; top:<?= $pad ?>px; left:<?= $pad ?>px;
-    right:<?= $pad ?>px; bottom:<?= $pad ?>px;
-}
-
-/* ── BADGE ── */
-.badge {
-    display:inline-block; padding:7px 18px; border-radius:50px;
-    font-family:'Outfit','Lato',sans-serif;
-    font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px;
-    background:<?= $accent_color ?>;
-    margin-bottom:0;
-}
-
-/* ── LOGO (top right) ── */
-.logo { position:absolute; top:<?= $pad ?>px; right:<?= $pad ?>px; max-width:90px; max-height:45px; }
-
-/* ── TITLE ── */
-.title {
-    position:absolute; bottom:340px; left:0; right:0;
-    font-size:<?= $tsize ?>px; font-weight:700; line-height:1.15;
-    overflow:hidden;
-    display:-webkit-box; -webkit-line-clamp:<?= $maxlines ?>; -webkit-box-orient:vertical;
-    <?php if ($debug): ?>
-    border:1px solid rgba(255,100,100,0.5); background:rgba(255,100,100,0.08);
-    <?php endif; ?>
-}
-
-/* ── SUBTITLE ── */
-.subtitle {
-    position:absolute; bottom:295px; left:0; right:0;
-    font-family:'Outfit','Lato',sans-serif;
-    font-size:16px; font-weight:400; opacity:0.85; line-height:1.3;
-    overflow:hidden;
-    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
-}
-
-/* ── META ROW ── */
-.meta-row {
-    position:absolute; bottom:250px; left:0; right:0;
-    page-break-inside:avoid; break-inside:avoid;
-}
-.meta-item {
-    display:inline-block;
-    font-family:'Outfit','Lato',sans-serif;
-    font-size:<?= $msize ?>px; font-weight:500; letter-spacing:0.3px;
-    background:rgba(255,255,255,0.12); padding:6px 16px; border-radius:30px;
-    margin:0 6px 4px 0;
-}
-.meta-item.price { background:<?= $accent_color ?>; font-weight:700; }
-
-/* ── CTA BUTTON ── */
-.cta {
-    position:absolute; bottom:200px; left:0;
-    display:inline-block;
-    font-family:'Outfit','Lato',sans-serif;
-    font-size:14px; font-weight:700; letter-spacing:0.5px;
-    padding:10px 28px; border-radius:30px;
-    background:#fff; color:<?= $primary_color ?>;
-    text-decoration:none; text-transform:uppercase;
-    <?php if ($debug): ?>
-    border:1px solid rgba(255,200,100,0.5);
-    <?php endif; ?>
-}
-
-/* ── ORG NAME ── */
-.org-info {
-    position:absolute; bottom:<?= $pad ?>px; left:<?= $pad ?>px;
-    font-family:'Outfit','Lato',sans-serif;
-    font-size:12px; font-weight:500; opacity:0.75; letter-spacing:0.5px;
-}
-
-/* ── QR ── */
-.qr-abs {
-    position:absolute; bottom:<?= $pad+45 ?>px; right:<?= $pad ?>px;
-    width:100px; height:100px; z-index:999;
-    background:#fff; padding:6px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.12);
-}
-.qr-abs img { width:100%; height:100%; display:block; }
-
-/* ── BRANDS FOOTER ── */
-.brands {
-    position:absolute; bottom:<?= $pad+20 ?>px; left:<?= $pad ?>px; right:<?= $pad ?>px;
-    height:22px; text-align:center; z-index:990;
-}
-.brands img {
-    display:inline-block; max-height:20px; width:auto;
-    margin:0 8px; vertical-align:middle; opacity:0.65;
-}
-
-
-/* Story Focused — vertical/portrait optimized */
-.badge { background:<?= $accent_color ?>; }
-.title { bottom:380px; font-family:"Playfair Display",Georgia,serif; }
-.subtitle { bottom:330px; }
-.cta { bottom:160px; background:<?= $accent_color ?>; color:#fff; }
-
-
-<?php if ($debug): ?>
-.dbg-canvas{position:absolute;top:0;left:0;width:100%;height:100%;outline:2px solid rgba(0,255,0,0.5);pointer-events:none;z-index:9997}
-.dbg-safe{position:absolute;top:<?= $pad ?>px;left:<?= $pad ?>px;right:<?= $pad ?>px;bottom:<?= $pad ?>px;border:2px dashed rgba(0,255,255,0.4);z-index:9998}
-.dbg-info{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}
+<?php if($debug): ?>.dbg-canvas{position:absolute;top:0;left:0;width:100%;height:100%;outline:2px solid rgba(0,255,0,0.5);pointer-events:none;z-index:9997}.dbg-info{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}
 <?php endif; ?>
-</style>
-</head>
-<body>
-<?php if ($debug): ?>
-<div class="dbg-canvas"></div><div class="dbg-safe"></div><div class="dbg-info"><?= basename(__FILE__) ?> | <?= $format ?> | <?= $width ?>x<?= $height ?> | safe:<?= $pad ?>px</div>
-<?php endif; ?>
-<?php if (!empty($hero_image)): ?><div class="hero-overlay"></div><?php endif; ?>
-<div class="safe">
+</style></head><body>
+<?php if($debug): ?><div class="dbg-canvas"></div><div class="dbg-info"><?= basename(__FILE__) ?> | <?= $format ?> | <?= $width ?>x<?= $height ?></div><?php endif; ?>
+<div class="hero"></div><div class="solid">
 <div class="badge"><?= htmlspecialchars($type_label) ?></div>
-<?php if ($logo_image): ?><img class="logo" src="<?= $logo_image ?>" alt="logo"><?php endif; ?>
+<?php if($logo_image): ?><img class="logo" src="<?= $logo_image ?>" alt="logo"><?php endif; ?>
 <div class="title"><?= htmlspecialchars($title) ?></div>
-<?php if ($subtitle): ?><div class="subtitle"><?= htmlspecialchars($subtitle) ?></div><?php endif; ?>
-<div class="meta-row">
-    <span class="meta-item">&bull; <?= htmlspecialchars($date) ?></span>
-    <?php if ($time): ?><span class="meta-item">&bull; <?= htmlspecialchars($time) ?></span><?php endif; ?>
-    <?php if ($location): ?><span class="meta-item">&bull; <?= htmlspecialchars($location) ?></span><?php endif; ?>
-    <span class="meta-item price"><?= htmlspecialchars($price) ?></span>
-</div>
-<?php if (!empty($cta_text)): ?>
-<a class="cta" href="<?= $cta_url ?: '#' ?>"><?= htmlspecialchars($cta_text) ?></a>
-<?php endif; ?>
+<?php if($subtitle): ?><div class="subtitle"><?= htmlspecialchars($subtitle) ?></div><?php endif; ?>
+<div class="meta-row"><span class="meta-item">&bull; <?= htmlspecialchars($date) ?></span><?php if($time): ?><span class="meta-item">&bull; <?= htmlspecialchars($time) ?></span><?php endif; ?><?php if($location): ?><span class="meta-item">&bull; <?= htmlspecialchars($location) ?></span><?php endif; ?><span class="meta-item price"><?= htmlspecialchars($price) ?></span></div>
+<?php if(!empty($cta_text)): ?><a class="cta" href="<?= $cta_url ?: '#' ?>"><?= htmlspecialchars($cta_text) ?></a><?php endif; ?>
 <div class="org-info"><?= htmlspecialchars($org_name) ?></div>
-<?php if ($qr_image): ?><div class="qr-abs"><img src="<?= $qr_image ?>" alt="QR"></div><?php endif; ?>
-<?php if (!empty($collaborator_logos)): ?>
-<div class="brands">
-    <?php foreach ($collaborator_logos as $c_logo): ?>
-    <img src="<?= $c_logo ?>" alt="col">
-    <?php endforeach; ?>
-</div>
-<?php endif; ?>
-</div>
-
-</body>
-</html>
+<?php if($qr_image): ?><div class="qr-abs"><img src="<?= $qr_image ?>" alt="QR"></div><?php endif; ?>
+<?php if(!empty($collaborator_logos)): ?><div class="brands"><?php foreach($collaborator_logos as $c): ?><img src="<?= $c ?>" alt="col"><?php endforeach; ?></div><?php endif; ?>
+</div></body></html>
