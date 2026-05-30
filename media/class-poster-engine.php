@@ -217,7 +217,8 @@ class Poster_Engine {
 			'type_icon'     => $style['icon'] ?? '🌿',
 			'type_color'    => $style['color'] ?? $primary,
 			'hero_image'    => $hero_base64,
-			'logo_image'    => $logo_image,
+			'logo_image'         => $logo_image,
+			'collaborator_logos' => $collaborators,
 			'qr_image'      => $qr_image,
 			'primary_color' => $primary,
 			'accent_color'  => $accent,
@@ -445,6 +446,62 @@ HTML;
 			'a4'       => [ 'width' => 2480, 'height' => 3508 ],
 		];
 		return $map[ $format ] ?? $map['square'];
+	}
+	/**
+	 * Extract collaborator/partner logos for an activity.
+	 *
+	 * @param int $actividad_id
+	 * @return array Base64 data URIs
+	 */
+	private static function extract_collaborator_logos( int $actividad_id ): array {
+		$logos = [];
+
+		// Meta keys to check
+		$meta_keys = [ 'colaboradores', 'organizadores', 'patrocinadores', 'partner_logos', 'entidades_colaboradoras' ];
+		$found_ids = [];
+
+		foreach ( $meta_keys as $key ) {
+			$value = get_post_meta( $actividad_id, $key, true );
+			if ( empty( $value ) ) continue;
+
+			if ( is_array( $value ) ) {
+				foreach ( $value as $item ) {
+					if ( is_numeric( $item ) ) $found_ids[] = (int) $item;
+				}
+			} elseif ( is_string( $value ) && str_contains( $value, ',' ) ) {
+				foreach ( explode( ',', $value ) as $part ) {
+					$part = trim( $part );
+					if ( is_numeric( $part ) ) $found_ids[] = (int) $part;
+				}
+			} elseif ( is_numeric( $value ) ) {
+				$found_ids[] = (int) $value;
+			}
+		}
+
+		// Taxonomy terms with logo/image meta
+		foreach ( [ 'collaborator', 'colaborador', 'partner', 'patrocinador' ] as $tax ) {
+			$terms = wp_get_post_terms( $actividad_id, $tax, [ 'fields' => 'ids' ] );
+			if ( is_array( $terms ) && ! empty( $terms ) ) {
+				foreach ( $terms as $term_id ) {
+					$img_id = get_term_meta( $term_id, 'logo', true ) ?: get_term_meta( $term_id, 'image', true );
+					if ( $img_id && is_numeric( $img_id ) ) $found_ids[] = (int) $img_id;
+				}
+			}
+		}
+
+		$found_ids = array_unique( $found_ids );
+		$found_ids = array_slice( $found_ids, 0, 6 );
+
+		foreach ( $found_ids as $attachment_id ) {
+			$path = get_attached_file( $attachment_id );
+			if ( ! $path || ! file_exists( $path ) ) continue;
+			$mime = self::get_image_mime( $path );
+			$data = @file_get_contents( $path );
+			if ( $data === false ) continue;
+			$logos[] = 'data:' . $mime . ';base64,' . base64_encode( $data );
+		}
+
+		return $logos;
 	}
 
 	/**

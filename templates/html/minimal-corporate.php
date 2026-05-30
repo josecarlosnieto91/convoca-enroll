@@ -38,6 +38,22 @@ body { position:relative; background:<?= $primary_color ?>; color:#fff; padding:
 .org { font-size:14px; opacity:0.6; }
 .qr { margin-top:8px; }
 .qr img { width:70px; height:70px; border-radius:4px; }
+.collab-footer {
+    position:absolute; bottom:<?= $pad ?>px; left:<?= $pad ?>px; right:<?= $pad ?>px;
+    height:70px; text-align:center; font-size:0;
+}
+.collab-footer img {
+    display:inline-block; max-height:50px; max-width:120px; width:auto;
+    margin:0 12px; vertical-align:middle; opacity:0.7;
+}
+.collab-strip {
+    position:absolute; bottom:<?= intval($pad)+75 ?>px; left:<?= $pad ?>px; right:<?= $pad ?>px;
+    height:60px; text-align:center; font-size:0;
+}
+.collab-strip img {
+    display:inline-block; max-height:50px; max-width:100px; width:auto;
+    margin:0 10px; vertical-align:middle; opacity:0.7;
+}
 </style>
 </head>
 <body>
@@ -56,5 +72,19 @@ body { position:relative; background:<?= $primary_color ?>; color:#fff; padding:
     <div class="org"><?= htmlspecialchars($org_name) ?></div>
     <?php if ($qr_image): ?><div class="qr"><img src="<?= $qr_image ?>" alt="QR"></div><?php endif; ?>
 </div>
+<?php if (!empty($collaborator_logos)): ?>
+<div class="collab-footer">
+    <?php foreach ($collaborator_logos as $c_logo): ?>
+    <img src="<?= $c_logo ?>" alt="collaborator">
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>
+<?php if (!empty($collaborator_logos)): ?>
+<div class="collab-strip">
+    <?php foreach ($collaborator_logos as $c_logo): ?>
+    <img src="<?= $c_logo ?>" alt="col">
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>
 </body>
 </html>
