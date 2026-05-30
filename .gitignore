@@ -4,3 +4,6 @@
 /test-results/
 *.zip
 .env
+auth.json
+tests/results/
+

@@ -1,0 +1,16 @@
+{
+  "name": "convoca-enroll-e2e",
+  "version": "2.6.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:poster": "playwright test --grep @poster",
+    "test:visual": "playwright test --grep @visual",
+    "test:media": "playwright test --grep @media",
+    "snapshots:update": "UPDATE_SNAPSHOTS=1 playwright test --grep @visual",
+    "codegen": "playwright codegen --save-storage=auth.json http://localhost:8080/wp-admin"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
+  }
+}

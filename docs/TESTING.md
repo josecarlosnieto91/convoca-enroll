@@ -35,18 +35,26 @@ phpunit --configuration tests/Unit/phpunit.xml
 | `tests/e2e/poster-generation.spec.js` | 5 | Metabox, poster generation, social checkboxes, blog post, dashboard |
 | `tests/e2e/visual-regression.spec.js` | 25 | 3 templates × 3 formats + all 8 templates |
 
+### Prerequisites (first time)
+
+```bash
+cd /home/josecnr91/convoca-enroll
+npm install
+npx playwright install chromium
+```
+
 ### Running E2E Tests
 
 ```bash
-cd projects/convoca-ecosystem
+cd /home/josecnr91/convoca-enroll
 
 # All tests
 npx playwright test
 
 # Media-specific
-npm run test:media        # --grep @media
-npm run test:poster       # poster-generation.spec.js
-npm run test:visual       # visual-regression.spec.js
+npx playwright test --grep @media
+npm run test:poster       # --grep @poster
+npm run test:visual       # --grep @visual
 
 # Update visual reference snapshots
 npm run snapshots:update  # UPDATE_SNAPSHOTS=1 ...
