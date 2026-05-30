@@ -175,4 +175,39 @@ class Poster_Layout_Validator {
         return ! ( $a['x'] + $a['w'] < $b['x'] || $b['x'] + $b['w'] < $a['x']
                 || $a['y'] + $a['h'] < $b['y'] || $b['y'] + $b['h'] < $a['y'] );
     }
-}
+
+
+	/**
+	 * Analyze rendered image for luminance and density.
+	 */
+	public static function analyze_image( string $image_path ): array {
+		$r = ['luminance'=>0.5,'density'=>0,'dominant_color'=>'#000000','empty_pct'=>100];
+		if(!file_exists($image_path)||!extension_loaded('imagick')) return $r;
+		try{
+			$img=new \Imagick($image_path);$w=$img->getImageWidth();$h=$img->getImageHeight();
+			$s=clone $img;$s->cropImage((int)($w*0.6),(int)($h*0.6),(int)($w*0.2),(int)($h*0.2));
+			$s->quantizeImage(1,\Imagick::COLORSPACE_SRGB,0,false,false);$p=$s->getImageHistogram();$s->clear();$s->destroy();
+			if(!empty($p)){$c=$p[0]->getColor();$r['dominant_color']=sprintf('#%02x%02x%02x',$c['r'],$c['g'],$c['b']);$r['luminance']=(0.299*$c['r']+0.587*$c['g']+0.114*$c['b'])/255;}
+			$img->quantizeImage(8,\Imagick::COLORSPACE_SRGB,0,false,false);$c=$img->getImageHistogram();$img->clear();$img->destroy();
+			$t=$w*$h;$d=0;foreach($c as $x){$n=$x->getColorCount();if($n>$d)$d=$n;}
+			$r['density']=round(1.0-($d/$t),2);$r['empty_pct']=round(($d/$t)*100,1);
+		}catch(\Exception $e){}
+		return $r;
+	}
+
+	/**
+	 * Detect collisions between layout elements.
+	 */
+	public static function detect_collisions(array $elements):array{
+		$c=[];$n=count($elements);
+		for($i=0;$i<$n;$i++){for($j=$i+1;$j<$n;$j++){
+			$a=$elements[$i];$b=$elements[$j];
+			if(!($a['x']+$a['w']<$b['x']||$b['x']+$b['w']<$a['x']||$a['y']+$a['h']<$b['y']||$b['y']+$b['h']<$a['y'])){
+				$ox=max(0,min($a['x']+$a['w'],$b['x']+$b['w'])-max($a['x'],$b['x']));
+				$oy=max(0,min($a['y']+$a['h'],$b['y']+$b['h'])-max($a['y'],$b['y']));
+				$ov=round(($ox*$oy)/($a['w']*$a['h']+$b['w']*$b['h'])*100,1);
+				$c[]=['a'=>$a['label']??$a['id'],'b'=>$b['label']??$b['id'],'overlap_pct'=>$ov,'severity'=>$ov>20?'critical':($ov>5?'warning':'minor')];
+			}
+		}}
+		return $c;
+	}}
