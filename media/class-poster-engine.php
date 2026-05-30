@@ -11,8 +11,7 @@
 
 namespace Convoca\Enroll\Media;
 
-use \Mpdf\Mpdf;
-use \Mpdf\Output\Destination;
+// Uses Dompdf from convoca-core vendor
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -264,7 +263,7 @@ HTML;
 	}
 
 	/**
-	 * Pass 2: Render HTML → PDF via mPDF.
+	 * Pass 2: Render HTML → PDF via Dompdf (from convoca-core).
 	 */
 	private static function html_to_pdf( string $html, int $width, int $height ): string|\WP_Error {
 		$upload = wp_upload_dir();
@@ -274,28 +273,29 @@ HTML;
 		$pdf_path = tempnam( $temp_dir, 'conv-pdf-' ) . '.pdf';
 
 		try {
-			$mpdf = new Mpdf( [
-				'format'              => [ $width, $height ],
-				'margin_left'         => 0,
-				'margin_right'        => 0,
-				'margin_top'          => 0,
-				'margin_bottom'       => 0,
-				'auto_page_break'     => false,
-				'debug'               => false,
-				'fontDir'             => [ CONV_ENROLL_DIR . 'assets/fonts' ],
-				'default_font'        => 'outfit',
-				'default_font_size'   => 16,
-			] );
-
-			// Register Outfit as a custom font
-			$outfit_path = CONV_ENROLL_DIR . 'assets/fonts/Outfit-Variable.ttf';
-			if ( file_exists( $outfit_path ) ) {
-				$mpdf->AddFont( 'outfit', '', $outfit_path );
-				$mpdf->AddFont( 'outfit', 'B', $outfit_path );
+			if ( ! class_exists( '\Dompdf\Dompdf' ) ) {
+				return new \WP_Error( 'dompdf_missing', 'Dompdf no está disponible. ¿Está activo convoca-core?' );
 			}
 
-			$mpdf->WriteHTML( $html );
-			$mpdf->Output( $pdf_path, Destination::FILE );
+			$dompdf = new \Dompdf\Dompdf();
+			$dompdf->set_option( 'isRemoteEnabled', true );
+			$dompdf->set_option( 'isHtml5ParserEnabled', true );
+			$dompdf->set_option( 'defaultFont', 'Outfit' );
+			$dompdf->set_option( 'defaultMediaType', 'print' );
+			$dompdf->set_option( 'isFontSubsettingEnabled', true );
+
+			// Set paper size to exact pixel dimensions
+			// Dompdf accepts custom sizes in points: width_pt x height_pt
+			// 1px = 0.75pt at 96 DPI base
+			$width_pt  = round( $width * 0.75 );
+			$height_pt = round( $height * 0.75 );
+			$dompdf->setPaper( array( 0, 0, $width_pt, $height_pt ) );
+
+			$dompdf->loadHtml( $html );
+			$dompdf->render();
+
+			$pdf_content = $dompdf->output();
+			file_put_contents( $pdf_path, $pdf_content );
 		} catch ( \Exception $e ) {
 			return new \WP_Error( 'pdf_error', 'Error al generar PDF: ' . $e->getMessage() );
 		}
