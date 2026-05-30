@@ -17,8 +17,8 @@ module.exports = defineConfig({
     ['list'],
   ],
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:8080',
-    storageState: 'auth.json',
+    baseURL: "https://getconvoca.app",
+    // storageState: "auth.json",
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     trace: 'retain-on-failure',
