@@ -23,8 +23,8 @@ class TestPosterEngine extends \WP_UnitTestCase {
 			'post_type'  => 'actividad',
 			'post_title' => 'Test Activity',
 		) );
-		update_post_meta( $this->actividad_id, '_bde_fecha_inicio', date( 'Y-m-d H:i:s', strtotime( '+7 days' ) ) );
-		update_post_meta( $this->actividad_id, '_bde_ubicacion', 'Test Location' );
+		update_post_meta( $this->actividad_id, '_conv_fecha_inicio', date( 'Y-m-d H:i:s', strtotime( '+7 days' ) ) );
+		update_post_meta( $this->actividad_id, '_conv_ubicacion', 'Test Location' );
 	}
 
 	public function test_render_returns_array(): void {

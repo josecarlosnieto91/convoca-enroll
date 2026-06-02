@@ -13,7 +13,7 @@ parameters:
 			path: admin/class-admin-actividades.php
 
 		-
-			message: '#^Cannot unset offset ''s'' on array\{post_type\: ''inscripcion'', posts_per_page\: \-1, post_status\: array\{''publish'', ''pending'', ''draft'', ''private'', ''future''\}, meta_query\: array\{relation\: ''AND'', 0\: array\{key\: ''_bde_actividad_id'', value\: int\<min, \-1\>\|int\<1, max\>\}, 1\: array\{key\: ''_bde_estado'', value\: ''cancelada'', compare\: ''\!\=''\}\}, orderby\: ''title'', order\: ''ASC''\}\.$#'
+			message: '#^Cannot unset offset ''s'' on array\{post_type\: ''inscripcion'', posts_per_page\: \-1, post_status\: array\{''publish'', ''pending'', ''draft'', ''private'', ''future''\}, meta_query\: array\{relation\: ''AND'', 0\: array\{key\: ''_conv_actividad_id'', value\: int\<min, \-1\>\|int\<1, max\>\}, 1\: array\{key\: ''_conv_estado'', value\: ''cancelada'', compare\: ''\!\=''\}\}, orderby\: ''title'', order\: ''ASC''\}\.$#'
 			identifier: unset.offset
 			count: 1
 			path: admin/class-admin-checkin.php
@@ -29,6 +29,18 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: admin/class-admin-logs.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: admin/class-admin-media-dashboard.php
+
+		-
+			message: '#^Function as_unschedule_all_actions not found\.$#'
+			identifier: function.notFound
+			count: 3
+			path: admin/class-admin-media-dashboard.php
 
 		-
 			message: '#^Call to an undefined method Convoca\\Enroll\\Admin_Monitor_CRM\:\:render_scripts\(\)\.$#'
@@ -115,24 +127,6 @@ parameters:
 			path: convoca-enroll.php
 
 		-
-			message: '#^Call to static method add_command\(\) on an unknown class WP_CLI\.$#'
-			identifier: class.notFound
-			count: 2
-			path: convoca-enroll.php
-
-		-
-			message: '#^Call to static method error\(\) on an unknown class WP_CLI\.$#'
-			identifier: class.notFound
-			count: 2
-			path: includes/class-CLI_Webhooks.php
-
-		-
-			message: '#^Call to static method success\(\) on an unknown class WP_CLI\.$#'
-			identifier: class.notFound
-			count: 2
-			path: includes/class-CLI_Webhooks.php
-
-		-
 			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
 			identifier: class.notFound
 			count: 3
@@ -145,21 +139,15 @@ parameters:
 			path: includes/class-checkin-pwa.php
 
 		-
-			message: '#^Call to static method error\(\) on an unknown class WP_CLI\.$#'
-			identifier: class.notFound
-			count: 2
-			path: includes/class-cli-webhooks.php
-
-		-
-			message: '#^Call to static method success\(\) on an unknown class WP_CLI\.$#'
-			identifier: class.notFound
-			count: 2
-			path: includes/class-cli-webhooks.php
-
-		-
 			message: '#^Call to static method format_date\(\) on an unknown class Convoca\\Core\\Utils\.$#'
 			identifier: class.notFound
 			count: 2
+			path: includes/class-cpt-actividad.php
+
+		-
+			message: '#^Call to static method get_aportacion_label\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
 			path: includes/class-cpt-actividad.php
 
 		-
@@ -215,12 +203,6 @@ parameters:
 			identifier: class.notFound
 			count: 2
 			path: includes/class-email-queue.php
-
-		-
-			message: '#^Call to an undefined method Convoca\\Enroll\\Enroll_Upgrade_Manager\:\:init\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: includes/class-enroll-upgrade-manager.php
 
 		-
 			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
@@ -493,28 +475,46 @@ parameters:
 			path: includes/class-webhook-dispatcher.php
 
 		-
-			message: '#^Call to static method log\(\) on an unknown class WP_CLI\.$#'
+			message: '#^Call to static method format_date\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 2
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Call to static method format_date\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 2
+			path: media/class-poster-engine-legacy.php
+
+		-
+			message: '#^Call to static method get\(\) on an unknown class Convoca\\Core\\Event_Style_Registry\.$#'
 			identifier: class.notFound
 			count: 1
-			path: includes/class-wp-cli-migration.php
+			path: media/class-poster-engine-legacy.php
 
 		-
-			message: '#^Call to static method success\(\) on an unknown class WP_CLI\.$#'
-			identifier: class.notFound
-			count: 4
-			path: includes/class-wp-cli-migration.php
-
-		-
-			message: '#^Call to static method error\(\) on an unknown class WP_CLI\.$#'
-			identifier: class.notFound
+			message: '#^Call to an undefined static method Convoca\\Enroll\\Media\\Template_Manager\:\:get_by_slug\(\)\.$#'
+			identifier: staticMethod.notFound
 			count: 2
-			path: includes/class-wp-cli-webhooks.php
+			path: media/class-poster-engine.php
 
 		-
-			message: '#^Call to static method success\(\) on an unknown class WP_CLI\.$#'
+			message: '#^Call to static method get\(\) on an unknown class Convoca\\Core\\Event_Style_Registry\.$#'
 			identifier: class.notFound
-			count: 2
-			path: includes/class-wp-cli-webhooks.php
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Undefined variable\: \$collaborators$#'
+			identifier: variable.undefined
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Undefined variable\: \$format$#'
+			identifier: variable.undefined
+			count: 1
+			path: media/class-poster-engine.php
 
 		-
 			message: '#^Access to an undefined static property Convoca\\Enroll\\Motor_Inscripcion\:\:\$last_pdf_error\.$#'
@@ -577,13 +577,25 @@ parameters:
 			path: public/class-panel-reservas.php
 
 		-
-			message: '#^Path in require_once\(\) "wp\-load\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: scratch/debug_meta.php
+			message: '#^Access to an undefined property Convoca\\Enroll\\Social\\GBP_Provider\:\:\$account_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: social/class-gbp-provider.php
+
+		-
+			message: '#^Access to an undefined property Convoca\\Enroll\\Social\\Meta_Provider\:\:\$account_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: social/class-meta-provider.php
 
 		-
 			message: '#^Call to static method format_date\(\) on an unknown class Convoca\\Core\\Utils\.$#'
 			identifier: class.notFound
 			count: 1
+			path: templates/form-inscripcion.php
+
+		-
+			message: '#^Call to static method get_aportacion_label\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 3
 			path: templates/form-inscripcion.php

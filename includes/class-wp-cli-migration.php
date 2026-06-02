@@ -22,7 +22,7 @@ class WP_CLI_Migration extends \WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp bde migrate rgpd_prices
+	 *     wp conv migrate rgpd_prices
 	 *
 	 * @when after_wp_load
 	 */
@@ -84,4 +84,4 @@ class WP_CLI_Migration extends \WP_CLI_Command {
 	}
 }
 
-\WP_CLI::add_command( 'bde migrate', __NAMESPACE__ . '\\WP_CLI_Migration' );
+\WP_CLI::add_command( 'conv migrate', __NAMESPACE__ . '\\WP_CLI_Migration' );

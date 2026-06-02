@@ -60,13 +60,13 @@ class QR_Generator {
 			$scale = max( 3, (int) round( $size / 33 ) );
 
 			$qrOptions = new QROptions( array(
-				'outputInterface' => QRGdImagePNG::class,
-				'eccLevel'        => EccLevel::M,
-				'scale'           => $scale,
-				'addQuietzone'    => true,
-				'quietzoneSize'   => 2,
-				'outputBase64'    => false,
-				'imageTransparent'=> false,
+				'outputInterface'  => QRGdImagePNG::class,
+				'eccLevel'         => EccLevel::M,
+				'scale'            => $scale,
+				'addQuietzone'     => true,
+				'quietzoneSize'    => 2,
+				'outputBase64'     => false,
+				'imageTransparent' => false,
 			) );
 
 			$qrcode = new QRCode( $qrOptions );

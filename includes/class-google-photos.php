@@ -15,7 +15,7 @@ class Google_Photos
 {
     private const OPTION = 'conv_enroll_settings';
 
-    private $client = null;
+    private $client  = null;
     private $service = null;
 
     public function __construct()
@@ -25,8 +25,8 @@ class Google_Photos
 
     private function init_client(): void
     {
-        $settings = get_option(self::OPTION, []);
-        $client_id = $settings['google_photos_client_id'] ?? '';
+        $settings      = get_option(self::OPTION, []);
+        $client_id     = $settings['google_photos_client_id'] ?? '';
         $client_secret = $settings['google_photos_client_secret'] ?? '';
         $refresh_token = $settings['google_photos_refresh_token'] ?? '';
 
@@ -51,7 +51,7 @@ class Google_Photos
 
     public function get_auth_url(): string
     {
-        $settings = get_option(self::OPTION, []);
+        $settings  = get_option(self::OPTION, []);
         $client_id = $settings['google_photos_client_id'] ?? '';
 
         if (empty($client_id)) {
@@ -77,8 +77,8 @@ class Google_Photos
 
     public function handle_oauth_callback(string $code, string $received_state = ''): bool
     {
-        $settings = get_option(self::OPTION, []);
-        $client_id = $settings['google_photos_client_id'] ?? '';
+        $settings      = get_option(self::OPTION, []);
+        $client_id     = $settings['google_photos_client_id'] ?? '';
         $client_secret = $settings['google_photos_client_secret'] ?? '';
 
         if (empty($client_id) || empty($client_secret)) {
@@ -118,16 +118,16 @@ class Google_Photos
         $album_id = get_post_meta($actividad_id, '_conv_google_album_id', true);
         if (!empty($album_id)) {
             return [
-                'id' => $album_id,
+                'id'  => $album_id,
                 'url' => get_post_meta($actividad_id, '_conv_google_album_url', true),
             ];
         }
 
         $actividad = get_post($actividad_id);
-        $settings = get_option(self::OPTION, []);
-        $prefix = $settings['google_photos_album_prefix'] ?? 'Biodevas - ';
+        $settings  = get_option(self::OPTION, []);
+        $prefix    = $settings['google_photos_album_prefix'] ?? 'Biodevas - ';
         
-        $fecha = get_post_meta($actividad_id, '_conv_fecha_inicio', true);
+        $fecha           = get_post_meta($actividad_id, '_conv_fecha_inicio', true);
         $fecha_formatted = $fecha ? wp_date('d/m/Y', strtotime($fecha)) : '';
         
         $album_title = $prefix . $actividad->post_title . ($fecha_formatted ? ' - ' . $fecha_formatted : '');
@@ -142,7 +142,7 @@ class Google_Photos
             update_post_meta($actividad_id, '_conv_google_album_created_at', current_time('mysql'));
 
             return [
-                'id' => $created->getId(),
+                'id'  => $created->getId(),
                 'url' => $created->getProductUrl(),
             ];
         } catch (\Exception $e) {
@@ -168,7 +168,7 @@ class Google_Photos
         }
 
         try {
-            $share_request = new \Google\Service\PhotosLibrary\ShareAlbumRequest();
+            $share_request  = new \Google\Service\PhotosLibrary\ShareAlbumRequest();
             $share_response = $this->service->albums->share($album_id, $share_request);
             
             $shareable_url = $share_response->getShareInfo()->getShareableUrl();
@@ -186,10 +186,10 @@ class Google_Photos
     public function get_participants_emails(int $actividad_id): array
     {
         $inscriptions = get_posts([
-            'post_type' => 'inscripcion',
+            'post_type'      => 'inscripcion',
             'posts_per_page' => -1,
-            'post_status' => 'publish',
-            'meta_query' => [
+            'post_status'    => 'publish',
+            'meta_query'     => [
                 'relation' => 'AND',
                 ['key' => '_conv_actividad_id', 'value' => $actividad_id],
                 ['key' => '_conv_estado', 'value' => 'confirmada'],
@@ -214,7 +214,7 @@ class Google_Photos
             return null;
         }
 
-        $ids = array_map('trim', explode(',', $responsables));
+        $ids      = array_map('trim', explode(',', $responsables));
         $first_id = isset($ids[0]) ? absint($ids[0]) : 0;
 
         if ($first_id > 0) {
@@ -239,9 +239,9 @@ class Google_Photos
 
         $actividad = get_post($actividad_id);
         $templates = Email_Automation::get_templates();
-        $tpl = $templates['google_photos_album_creado'] ?? [
+        $tpl       = $templates['google_photos_album_creado'] ?? [
             'subject' => '[Biodevas] Álbum de fotos para "{actividad}"',
-            'body' => "Hola,\n\nSe ha creado un álbum de Google Photos para la actividad \"{actividad}\".\n\nPuedes acceder y subir fotos aquí:\n{album_url}\n\nUna vez el evento haya terminado, puedes compartir el álbum con los participantes desde este mismo panel.\n\n— Equipo Biodevas",
+            'body'    => "Hola,\n\nSe ha creado un álbum de Google Photos para la actividad \"{actividad}\".\n\nPuedes acceder y subir fotos aquí:\n{album_url}\n\nUna vez el evento haya terminado, puedes compartir el álbum con los participantes desde este mismo panel.\n\n— Equipo Biodevas",
         ];
 
         $vars = [
@@ -250,15 +250,15 @@ class Google_Photos
         ];
 
         $subject = str_replace(array_keys($vars), array_values($vars), $tpl['subject']);
-        $body = str_replace(array_keys($vars), array_values($vars), $tpl['body']);
+        $body    = str_replace(array_keys($vars), array_values($vars), $tpl['body']);
 
         $email_automation = new Email_Automation();
-        $html_body = $email_automation->get_html_layout($body, $subject);
+        $html_body        = $email_automation->get_html_layout($body, $subject);
 
         Email_Queue::enqueue([
-            'to' => $coordinator_email,
+            'to'      => $coordinator_email,
             'subject' => $subject,
-            'body' => $html_body,
+            'body'    => $html_body,
             'headers' => ['Content-Type: text/html; charset=UTF-8'],
         ]);
 
@@ -292,9 +292,9 @@ class Google_Photos
 
             $actividad = get_post($actividad_id);
             $templates = Email_Automation::get_templates();
-            $tpl = $templates['google_photos_album_compartido'] ?? [
+            $tpl       = $templates['google_photos_album_compartido'] ?? [
                 'subject' => '[Biodevas] Fotos de la actividad "{actividad}"',
-                'body' => "Hola,\n\n¡Ya puedes ver las fotos de la actividad \"{actividad}\"!\n\nHemos subido un álbum con los mejores momentos. Puedes verlo aquí:\n{album_url}\n\n¡Gracias por participar en nuestras actividades!\n\n— Equipo Biodevas",
+                'body'    => "Hola,\n\n¡Ya puedes ver las fotos de la actividad \"{actividad}\"!\n\nHemos subido un álbum con los mejores momentos. Puedes verlo aquí:\n{album_url}\n\n¡Gracias por participar en nuestras actividades!\n\n— Equipo Biodevas",
             ];
 
             $vars = [
@@ -303,20 +303,20 @@ class Google_Photos
             ];
 
             $subject = str_replace(array_keys($vars), array_values($vars), $tpl['subject']);
-            $body = str_replace(array_keys($vars), array_values($vars), $tpl['body']);
+            $body    = str_replace(array_keys($vars), array_values($vars), $tpl['body']);
             
             $email_automation = new Email_Automation();
-            $html_body = $email_automation->get_html_layout($body, $subject);
+            $html_body        = $email_automation->get_html_layout($body, $subject);
 
             $sent = 0;
             foreach ($emails as $email) {
                 Email_Queue::enqueue([
-                    'to' => $email,
+                    'to'      => $email,
                     'subject' => $subject,
-                    'body' => $html_body,
+                    'body'    => $html_body,
                     'headers' => ['Content-Type: text/html; charset=UTF-8'],
                 ]);
-                $sent++;
+                ++$sent;
             }
 
             delete_transient($lock_key);
@@ -337,26 +337,26 @@ class Google_Photos
         }
 
         $yesterday = gmdate('Y-m-d\T00:00', strtotime('-1 day'));
-        $today = gmdate('Y-m-d\T23:59', strtotime('-1 day'));
+        $today     = gmdate('Y-m-d\T23:59', strtotime('-1 day'));
 
         $activities = get_posts([
-            'post_type' => 'actividad',
+            'post_type'      => 'actividad',
             'posts_per_page' => -1,
-            'post_status' => 'publish',
-            'meta_query' => [
+            'post_status'    => 'publish',
+            'meta_query'     => [
                 'relation' => 'AND',
                 [
-                    'key' => '_conv_fecha_fin',
-                    'value' => [$yesterday, $today],
+                    'key'     => '_conv_fecha_fin',
+                    'value'   => [$yesterday, $today],
                     'compare' => 'BETWEEN',
-                    'type' => 'DATETIME',
+                    'type'    => 'DATETIME',
                 ],
                 [
-                    'key' => '_conv_google_album_id',
+                    'key'     => '_conv_google_album_id',
                     'compare' => 'EXISTS',
                 ],
                 [
-                    'key' => '_conv_google_album_shared',
+                    'key'     => '_conv_google_album_shared',
                     'compare' => 'NOT EXISTS',
                 ],
             ],

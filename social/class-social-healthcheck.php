@@ -1,5 +1,6 @@
 <?php
 namespace Convoca\Enroll\Social;
+
 if (!defined("ABSPATH")) exit;
 
 class Social_Healthcheck {
@@ -17,7 +18,8 @@ class Social_Healthcheck {
             if (!$provider) continue;
             $result = $provider->test_connection();
             \Convoca\Enroll\Media\Media_Logger::log(
-                "social_healthcheck", (int)$acct["id"],
+                "social_healthcheck",
+                (int)$acct["id"],
                 $result["success"] ? "ok" : "fail",
                 $result["message"] ?? "",
                 ["network" => $acct["network"]]
@@ -28,7 +30,7 @@ class Social_Healthcheck {
     public static function admin_warning(): void {
         if (!current_user_can("conv_manage_social")) return;
         $accounts = Social_OAuth::get_accounts();
-        $expired = [];
+        $expired  = [];
         foreach ($accounts as $acct) {
             if (empty($acct["is_active"])) {
                 $expired[] = $acct["network"] . ": " . ($acct["account_name"] ?? $acct["label"]);
@@ -40,7 +42,7 @@ class Social_Healthcheck {
         if ($screen && $screen->id === "admin_page_convoca-media-accounts") return;
 
         $list = implode(", ", $expired);
-        $url = admin_url("admin.php?page=convoca-media-accounts");
+        $url  = admin_url("admin.php?page=convoca-media-accounts");
         echo "<div class=\"notice notice-error is-dismissible\"><p>";
         echo "⚠️ Convoca Media Suite: La conexión con <strong>" . esc_html($list) . "</strong> ha expirado. ";
         echo "Por favor, ve a <a href=\"" . esc_url($url) . "\">Media → Redes Sociales</a> y vuelve a conectar la cuenta.";
@@ -48,7 +50,7 @@ class Social_Healthcheck {
     }
 
     private static function get_provider(array $acct) {
-        return match($acct["network"]) {
+        return match ($acct["network"]) {
             "facebook", "instagram" => new Meta_Provider((int)$acct["id"]),
             "google_my_business" => new GBP_Provider((int)$acct["id"]),
             default => null,

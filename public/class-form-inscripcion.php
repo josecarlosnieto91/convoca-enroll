@@ -189,7 +189,7 @@ class Form_Inscripcion {
 				$payment           = null;
 
 				if ( $pago_id_existente ) {
-					$pago_status = get_post_meta( $pago_id_existente, '_bdg_status', true );
+					$pago_status = get_post_meta( $pago_id_existente, '_conv_status', true );
 					if ( $pago_status !== 'failed' ) {
 						$payment = array(
 							'pago_id'     => $pago_id_existente,

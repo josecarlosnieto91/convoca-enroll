@@ -31,7 +31,7 @@ class Poster_Layout_Validator {
      */
     public static function validate( string $html, string $format, int $width, int $height ): array {
         $issues = [];
-        $safe = self::SAFE_AREAS[$format] ?? 80;
+        $safe   = self::SAFE_AREAS[ $format ] ?? 80;
         
         // Check if hero image is present
         $has_hero = strpos($html, 'url(&quot;data:image') !== false || strpos($html, "url('data:image") !== false || strpos($html, 'url("data:image') !== false;
@@ -79,7 +79,7 @@ class Poster_Layout_Validator {
         // Score calculation
         $score = 100;
         foreach ( $issues as $iss ) {
-            $penalty = match($iss['severity']) {
+            $penalty = match ($iss['severity']) {
                 'error'   => 25,
                 'warning' => 10,
                 'info'    => 3,
@@ -90,8 +90,8 @@ class Poster_Layout_Validator {
         $score = max( 0, min( 100, $score ) );
         
         return [
-            'score'  => $score,
-            'issues' => $issues,
+            'score'   => $score,
+            'issues'  => $issues,
             'metrics' => [
                 'format'     => $format,
                 'width'      => $width,
@@ -109,10 +109,10 @@ class Poster_Layout_Validator {
      * Generate debug HTML overlay with bounding boxes.
      */
     public static function debug_overlay( string $template_slug, string $format, int $width, int $height ): string {
-        $safe = self::SAFE_AREAS[$format] ?? 80;
+        $safe     = self::SAFE_AREAS[ $format ] ?? 80;
         $elements = self::get_element_positions( $template_slug, $format, $width, $height );
         
-        $css = '<style>';
+        $css  = '<style>';
         $css .= '.dl-canvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9997}';
         $css .= '.dl-canvas{outline:2px solid rgba(0,255,0,0.5)}';
         $css .= '.dl-safe{position:absolute;top:'.$safe.'px;left:'.$safe.'px;right:'.$safe.'px;bottom:'.$safe.'px;border:2px dashed rgba(0,255,255,0.5);z-index:9998}';
@@ -123,7 +123,7 @@ class Poster_Layout_Validator {
             $css .= 'top:'.$el['y'].'px;left:'.$el['x'].'px;';
             $css .= 'width:'.$el['w'].'px;height:'.$el['h'].'px;';
             $css .= 'border:1px solid '.$el['color'].';';
-            $css .= 'background:'.str_replace(')',',0.08)',$el['color']).';';
+            $css .= 'background:'.str_replace(')', ',0.08)', $el['color']).';';
             $css .= 'z-index:9996}';
             $css .= '.dl-'.$el['id'].'::after{content:"'.$el['label'].'";';
             $css .= 'position:absolute;top:-16px;left:0;';
@@ -134,7 +134,7 @@ class Poster_Layout_Validator {
         
         $debug_info = "{$template_slug} | {$format} | {$width}x{$height} | safe:{$safe}px | elements:".count($elements);
         
-        $html = '<div class="dl-canvas"></div>';
+        $html  = '<div class="dl-canvas"></div>';
         $html .= '<div class="dl-safe"></div>';
         foreach ( $elements as $el ) {
             $html .= '<div class="dl-'.$el['id'].'"></div>';
@@ -148,7 +148,8 @@ class Poster_Layout_Validator {
      * Get expected element positions for a template.
      */
     private static function get_element_positions( string $slug, string $format, int $w, int $h ): array {
-        $pad = match($format) { 'story' => 100, 'banner' => 60, default => 80 };
+        $pad = match ($format) {
+			'story' => 100, 'banner' => 60, default => 80 };
         $els = [
             ['id' => 'badge', 'x' => $pad, 'y' => $pad, 'w' => 200, 'h' => 36, 'color' => 'rgba(255,100,100,0.8)', 'label' => 'BADGE'],
             ['id' => 'title', 'x' => $pad, 'y' => $h-360, 'w' => $w-$pad*2, 'h' => 80, 'color' => 'rgba(100,255,100,0.8)', 'label' => 'TITLE'],
@@ -162,7 +163,7 @@ class Poster_Layout_Validator {
         // Check collisions
         for ( $i = 0; $i < count($els); $i++ ) {
             for ( $j = $i+1; $j < count($els); $j++ ) {
-                if ( self::rects_overlap( $els[$i], $els[$j] ) ) {
+                if ( self::rects_overlap( $els[ $i ], $els[ $j ] ) ) {
                     // Mark both as having collision
                 }
             }
@@ -181,33 +182,39 @@ class Poster_Layout_Validator {
 	 * Analyze rendered image for luminance and density.
 	 */
 	public static function analyze_image( string $image_path ): array {
-		$r = ['luminance'=>0.5,'density'=>0,'dominant_color'=>'#000000','empty_pct'=>100];
-		if(!file_exists($image_path)||!extension_loaded('imagick')) return $r;
-		try{
-			$img=new \Imagick($image_path);$w=$img->getImageWidth();$h=$img->getImageHeight();
-			$s=clone $img;$s->cropImage((int)($w*0.6),(int)($h*0.6),(int)($w*0.2),(int)($h*0.2));
-			$s->quantizeImage(1,\Imagick::COLORSPACE_SRGB,0,false,false);$p=$s->getImageHistogram();$s->clear();$s->destroy();
-			if(!empty($p)){$c=$p[0]->getColor();$r['dominant_color']=sprintf('#%02x%02x%02x',$c['r'],$c['g'],$c['b']);$r['luminance']=(0.299*$c['r']+0.587*$c['g']+0.114*$c['b'])/255;}
-			$img->quantizeImage(8,\Imagick::COLORSPACE_SRGB,0,false,false);$c=$img->getImageHistogram();$img->clear();$img->destroy();
-			$t=$w*$h;$d=0;foreach($c as $x){$n=$x->getColorCount();if($n>$d)$d=$n;}
-			$r['density']=round(1.0-($d/$t),2);$r['empty_pct']=round(($d/$t)*100,1);
-		}catch(\Exception $e){}
+		$r = ['luminance'=>0.5, 'density'=>0, 'dominant_color'=>'#000000', 'empty_pct'=>100];
+		if (!file_exists($image_path)||!extension_loaded('imagick')) return $r;
+		try {
+			$img =new \Imagick($image_path);$w=$img->getImageWidth();$h =$img->getImageHeight();
+			$s =clone $img;$s->cropImage((int)($w*0.6), (int)($h*0.6), (int)($w*0.2), (int)($h*0.2));
+			$s->quantizeImage(1, \Imagick::COLORSPACE_SRGB, 0, false, false);$p =$s->getImageHistogram();$s->clear();$s->destroy();
+			if (!empty($p)) {
+				$c =$p[0]->getColor();$r['dominant_color']=sprintf('#%02x%02x%02x', $c['r'], $c['g'], $c['b']);$r['luminance'] =(0.299*$c['r']+0.587*$c['g']+0.114*$c['b'])/255;}
+			$img->quantizeImage(8, \Imagick::COLORSPACE_SRGB, 0, false, false);$c =$img->getImageHistogram();$img->clear();$img->destroy();
+			$t =$w*$h;$d=0;foreach ($c as $x) {
+				$n =$x->getColorCount();if ($n>$d)$d=$n;}
+			$r['density'] =round(1.0-($d/$t), 2);$r['empty_pct']=round(($d/$t)*100, 1);
+		}catch (\Exception $e) {
+		}
 		return $r;
 	}
 
 	/**
 	 * Detect collisions between layout elements.
 	 */
-	public static function detect_collisions(array $elements):array{
-		$c=[];$n=count($elements);
-		for($i=0;$i<$n;$i++){for($j=$i+1;$j<$n;$j++){
-			$a=$elements[$i];$b=$elements[$j];
-			if(!($a['x']+$a['w']<$b['x']||$b['x']+$b['w']<$a['x']||$a['y']+$a['h']<$b['y']||$b['y']+$b['h']<$a['y'])){
-				$ox=max(0,min($a['x']+$a['w'],$b['x']+$b['w'])-max($a['x'],$b['x']));
-				$oy=max(0,min($a['y']+$a['h'],$b['y']+$b['h'])-max($a['y'],$b['y']));
-				$ov=round(($ox*$oy)/($a['w']*$a['h']+$b['w']*$b['h'])*100,1);
-				$c[]=['a'=>$a['label']??$a['id'],'b'=>$b['label']??$b['id'],'overlap_pct'=>$ov,'severity'=>$ov>20?'critical':($ov>5?'warning':'minor')];
+	public static function detect_collisions(array $elements): array {
+		$c =[];$n=count($elements);
+		for ($i=0;$i<$n;$i++) {
+			for ($j=$i+1;$j<$n;$j++) {
+				$a =$elements[ $i ];$b=$elements[ $j ];
+				if (!($a['x']+$a['w']<$b['x']||$b['x']+$b['w']<$a['x']||$a['y']+$a['h']<$b['y']||$b['y']+$b['h']<$a['y'])) {
+					$ox  =max(0, min($a['x']+$a['w'], $b['x']+$b['w'])-max($a['x'], $b['x']));
+					$oy  =max(0, min($a['y']+$a['h'], $b['y']+$b['h'])-max($a['y'], $b['y']));
+					$ov  =round(($ox*$oy)/($a['w']*$a['h']+$b['w']*$b['h'])*100, 1);
+					$c[] =['a'=>$a['label']??$a['id'], 'b'=>$b['label']??$b['id'], 'overlap_pct'=>$ov, 'severity'=>$ov>20?'critical':($ov>5?'warning':'minor')];
+				}
 			}
-		}}
+		}
 		return $c;
-	}}
+	}
+}

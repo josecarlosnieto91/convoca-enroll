@@ -36,8 +36,8 @@ class Admin_Setup_Wizard {
 	}
 
 	public function render_wizard(): void {
-		$step  = (int) ( $_GET['step'] ?? 1 );
-		$steps = array(
+		$step     = (int) ( $_GET['step'] ?? 1 );
+		$steps    = array(
 			1 => 'Logo y marca',
 			2 => 'Plantilla por defecto',
 			3 => 'Redes sociales',
@@ -192,7 +192,7 @@ class Admin_Setup_Wizard {
 			wp_send_json_error( array( 'message' => 'Sin permisos.' ) );
 		}
 		$activities = get_posts( array( 'post_type' => 'actividad', 'posts_per_page' => 1, 'fields' => 'ids' ) );
-		$act_id = $activities[0] ?? 0;
+		$act_id     = $activities[0] ?? 0;
 		if ( ! $act_id ) {
 			wp_send_json_error( array( 'message' => 'Crea una actividad primero.' ) );
 		}

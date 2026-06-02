@@ -27,8 +27,8 @@ class Google_Calendar
 {
     private const OPTION = 'conv_enroll_settings';
 
-    private $client = null;
-    private $service = null;
+    private $client      = null;
+    private $service     = null;
     private $calendar_id = 'primary';
 
     public function __construct()
@@ -42,10 +42,10 @@ class Google_Calendar
 
     private function init_client(): void
     {
-        $settings = get_option(self::OPTION, []);
-        $client_id = $settings['google_calendar_client_id'] ?? $settings['google_photos_client_id'] ?? '';
-        $client_secret = $settings['google_calendar_client_secret'] ?? $settings['google_photos_client_secret'] ?? '';
-        $refresh_token = $settings['google_calendar_refresh_token'] ?? '';
+        $settings          = get_option(self::OPTION, []);
+        $client_id         = $settings['google_calendar_client_id'] ?? $settings['google_photos_client_id'] ?? '';
+        $client_secret     = $settings['google_calendar_client_secret'] ?? $settings['google_photos_client_secret'] ?? '';
+        $refresh_token     = $settings['google_calendar_refresh_token'] ?? '';
         $this->calendar_id = $settings['google_calendar_id'] ?? 'primary';
 
         if (empty($client_id) || empty($client_secret) || empty($refresh_token)) {
@@ -75,7 +75,7 @@ class Google_Calendar
 
     public function get_auth_url(): string
     {
-        $settings = get_option(self::OPTION, []);
+        $settings  = get_option(self::OPTION, []);
         $client_id = $settings['google_calendar_client_id'] ?? $settings['google_photos_client_id'] ?? '';
 
         if (empty($client_id)) {
@@ -101,8 +101,8 @@ class Google_Calendar
 
     public function handle_oauth_callback(string $code, string $received_state = ''): bool
     {
-        $settings = get_option(self::OPTION, []);
-        $client_id = $settings['google_calendar_client_id'] ?? $settings['google_photos_client_id'] ?? '';
+        $settings      = get_option(self::OPTION, []);
+        $client_id     = $settings['google_calendar_client_id'] ?? $settings['google_photos_client_id'] ?? '';
         $client_secret = $settings['google_calendar_client_secret'] ?? $settings['google_photos_client_secret'] ?? '';
 
         if (empty($client_id) || empty($client_secret)) {
@@ -167,7 +167,7 @@ class Google_Calendar
         $event_id = get_post_meta($post_id, '_conv_google_event_id', true);
         if (empty($event_id)) return;
 
-        $settings = get_option(self::OPTION, []);
+        $settings    = get_option(self::OPTION, []);
         $calendar_id = $settings['google_calendar_id'] ?? 'primary';
 
         try {
@@ -181,14 +181,14 @@ class Google_Calendar
     {
         if (!$this->is_configured()) return null;
 
-        $settings = get_option(self::OPTION, []);
+        $settings    = get_option(self::OPTION, []);
         $calendar_id = $settings['google_calendar_id'] ?? 'primary';
-        $event_id = get_post_meta($actividad_id, '_conv_google_event_id', true);
+        $event_id    = get_post_meta($actividad_id, '_conv_google_event_id', true);
 
-        $actividad = get_post($actividad_id);
+        $actividad    = get_post($actividad_id);
         $fecha_inicio = get_post_meta($actividad_id, '_conv_fecha_inicio', true);
-        $fecha_fin = get_post_meta($actividad_id, '_conv_fecha_fin', true);
-        $ubicacion = get_post_meta($actividad_id, '_conv_ubicacion', true);
+        $fecha_fin    = get_post_meta($actividad_id, '_conv_fecha_fin', true);
+        $ubicacion    = get_post_meta($actividad_id, '_conv_ubicacion', true);
 
         if (!$fecha_inicio) return null;
 
@@ -198,24 +198,24 @@ class Google_Calendar
         }
 
         $event_data = [
-            'summary' => $actividad->post_title,
+            'summary'     => $actividad->post_title,
             'description' => wp_strip_all_tags($actividad->post_content),
-            'location' => $ubicacion,
-            'start' => [
+            'location'    => $ubicacion,
+            'start'       => [
                 'dateTime' => \Convoca\Core\Utils::format_date($fecha_inicio, 'c'),
                 'timeZone' => wp_timezone_string(),
             ],
-            'end' => [
+            'end'         => [
                 'dateTime' => \Convoca\Core\Utils::format_date($fecha_fin, 'c'),
                 'timeZone' => wp_timezone_string(),
             ],
-            'source' => [
+            'source'      => [
                 'title' => $actividad->post_title,
-                'url' => get_permalink($actividad_id),
+                'url'   => get_permalink($actividad_id),
             ],
         ];
 
-        $event = new GoogleEvent($event_data);
+        $event     = new GoogleEvent($event_data);
         $sync_type = get_post_meta($actividad_id, '_conv_google_calendar_sync', true);
 
         try {
@@ -242,11 +242,11 @@ class Google_Calendar
         $actividad = get_post($actividad_id);
         if (!$actividad || $actividad->post_type !== 'actividad') return null;
 
-        $act_start = get_post_meta($actividad_id, '_conv_fecha_inicio', true);
-        $act_end = get_post_meta($actividad_id, '_conv_fecha_fin', true);
+        $act_start    = get_post_meta($actividad_id, '_conv_fecha_inicio', true);
+        $act_end      = get_post_meta($actividad_id, '_conv_fecha_fin', true);
         $act_location = get_post_meta($actividad_id, '_conv_ubicacion', true);
-        $act_title = $actividad->post_title;
-        $act_desc = $actividad->post_content;
+        $act_title    = $actividad->post_title;
+        $act_desc     = $actividad->post_content;
 
         if (!$act_start) return null;
         if (!$act_end) {
@@ -314,7 +314,7 @@ class Google_Calendar
 
         $temp_dir = get_temp_dir();
         $filename = 'actividad-' . $actividad_id . '-' . wp_hash($actividad_id) . '.ics';
-        $path = $temp_dir . $filename;
+        $path     = $temp_dir . $filename;
 
         // Clean up old ICS files for this activity first.
         $this->cleanup_ics_files($actividad_id);
@@ -332,7 +332,7 @@ class Google_Calendar
     public function cleanup_ics_files(int $actividad_id): void
     {
         $temp_dir = get_temp_dir();
-        $pattern = 'actividad-' . $actividad_id . '-*.ics';
+        $pattern  = 'actividad-' . $actividad_id . '-*.ics';
         
         foreach (glob($temp_dir . $pattern) as $file) {
             if (is_file($file) && filemtime($file) < time() - DAY_IN_SECONDS) {

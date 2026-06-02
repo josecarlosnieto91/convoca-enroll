@@ -30,8 +30,8 @@ class CLI_Webhooks extends \WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp bde webhooks retry_failed --all
-	 *     wp bde webhooks retry_failed --limit=50
+	 *     wp conv webhooks retry_failed --all
+	 *     wp conv webhooks retry_failed --limit=50
 	 *
 	 * @when after_wp_load
 	 */
@@ -73,4 +73,4 @@ class CLI_Webhooks extends \WP_CLI_Command {
 	}
 }
 
-\WP_CLI::add_command( 'bde webhooks', __NAMESPACE__ . '\\CLI_Webhooks' );
+\WP_CLI::add_command( 'conv webhooks', __NAMESPACE__ . '\\CLI_Webhooks' );

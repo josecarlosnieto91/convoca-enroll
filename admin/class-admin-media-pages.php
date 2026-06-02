@@ -42,7 +42,10 @@ class Admin_Media_Subpages {
 							<td><?php echo esc_html( substr( $item['last_error'] ?? '', 0, 80 ) ); ?></td>
 							<td><?php echo esc_html( $item['created_at'] ); ?></td>
 						</tr>
-					<?php endforeach; if ( empty( $items ) ) : ?><tr><td colspan="7"><?php esc_html_e( 'No hay publicaciones en la cola.', 'convoca-enroll' ); ?></td></tr><?php endif; ?>
+						<?php
+                    endforeach; if ( empty( $items ) ) :
+						?>
+                        <tr><td colspan="7"><?php esc_html_e( 'No hay publicaciones en la cola.', 'convoca-enroll' ); ?></td></tr><?php endif; ?>
 				</tbody>
 			</table>
 		</div>
@@ -54,13 +57,13 @@ class Admin_Media_Subpages {
 		$error    = sanitize_text_field( $_GET['convoca_error'] ?? '' );
 		$success  = sanitize_text_field( $_GET['convoca_success'] ?? '' );
 
-		$error_msgs = array(
-			'oauth_denied' => 'Autorización cancelada por el usuario.',
-			'csrf'         => 'Error de seguridad: state inválido. Intenta de nuevo.',
-			'token_failed' => 'Error al obtener el token de acceso.',
-			'meta_no_app'  => 'Meta App ID no configurado. Define CONVOCA_META_APP_ID y CONVOCA_META_APP_SECRET en wp-config.php.',
+		$error_msgs   = array(
+			'oauth_denied'  => 'Autorización cancelada por el usuario.',
+			'csrf'          => 'Error de seguridad: state inválido. Intenta de nuevo.',
+			'token_failed'  => 'Error al obtener el token de acceso.',
+			'meta_no_app'   => 'Meta App ID no configurado. Define CONVOCA_META_APP_ID y CONVOCA_META_APP_SECRET en wp-config.php.',
 			'google_no_app' => 'Google Client ID no configurado. Define CONVOCA_GOOGLE_CLIENT_ID y CONVOCA_GOOGLE_CLIENT_SECRET en wp-config.php.',
-			'no_pages'     => 'Conectado pero no se encontraron páginas de Facebook. Crea una página primero.',
+			'no_pages'      => 'Conectado pero no se encontraron páginas de Facebook. Crea una página primero.',
 		);
 		$success_msgs = array(
 			'connected' => '✅ Cuenta(s) conectada(s) correctamente.',
@@ -124,7 +127,10 @@ class Admin_Media_Subpages {
 							<td><?php echo $l['duration_ms'] ? $l['duration_ms'] . 'ms' : '—'; ?></td>
 							<td><?php echo esc_html( $l['created_at'] ); ?></td>
 						</tr>
-					<?php endforeach; if ( empty( $logs ) ) : ?><tr><td colspan="6"><?php esc_html_e( 'No hay logs todavía. Genera un cartel para ver registros.', 'convoca-enroll' ); ?></td></tr><?php endif; ?>
+						<?php
+                    endforeach; if ( empty( $logs ) ) :
+						?>
+                        <tr><td colspan="6"><?php esc_html_e( 'No hay logs todavía. Genera un cartel para ver registros.', 'convoca-enroll' ); ?></td></tr><?php endif; ?>
 				</tbody>
 			</table>
 		</div>
