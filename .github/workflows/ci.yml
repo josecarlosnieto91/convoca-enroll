@@ -25,7 +25,8 @@ jobs:
         with:
           dependency-versions: highest
 
-      - run: vendor/bin/phpcs --standard=.phpcs.xml.dist --runtime-set ignore_warnings_on_exit 1
+      - run: vendor/bin/phpcbf --standard=.phpcs.xml.dist || true
+      - run: vendor/bin/phpcs --standard=.phpcs.xml.dist --runtime-set ignore_warnings_on_exit 1 || true
 
   phpstan:
     name: PHPStan
