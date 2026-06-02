@@ -8,21 +8,15 @@
          cacheResult="false">
   <testsuites>
     <testsuite name="unit">
-      <directory suffix=".php">./tests/Unit</directory>
+      <directory suffix="Test.php">./tests/Unit</directory>
     </testsuite>
     <testsuite name="integration">
-      <directory suffix=".php">./tests/Integration</directory>
+      <directory suffix="Test.php">./tests/Integration</directory>
     </testsuite>
   </testsuites>
-  <groups>
-    <include>
-      <group>integration</group>
-    </include>
-  </groups>
   <coverage>
     <include>
       <directory suffix=".php">./includes</directory>
     </include>
   </coverage>
 </phpunit>
-
