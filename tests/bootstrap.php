@@ -42,6 +42,23 @@ if ($wp_tests_dir && file_exists($wp_tests_dir . '/includes/functions.php')) {
 
     require_once $wp_tests_dir . '/includes/bootstrap.php';
 } else {
+
+// Standalone WP function stubs for test environment without WordPress.
+namespace Convoca\Enroll {
+    if (!function_exists('Convoca\Enroll\add_action')) {
+        function add_action(...$args): void {}
+        function add_filter(...$args): void {}
+        function apply_filters($tag, $value, ...$args) { return $value; }
+        function do_action(...$args): void {}
+        function __($text, $domain = null) { return $text; }
+        function _x($text, $context, $domain = null) { return $text; }
+        function esc_html($text) { return htmlspecialchars($text); }
+        function esc_attr($text) { return htmlspecialchars($text); }
+        function wp_parse_args($args, $defaults = []) {
+            return is_array($args) ? array_merge($defaults, $args) : $defaults;
+        }
+    }
+}
     // Standalone test mode.
     if (!defined('ABSPATH')) {
         define('ABSPATH', dirname(__DIR__) . '/');
