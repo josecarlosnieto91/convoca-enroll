@@ -5,6 +5,26 @@
  * @package Convoca\Enroll\Tests
  */
 
+// ── WP function stubs (standalone test mode) ──
+// These must be at file level, not inside control structures.
+namespace Convoca\Enroll {
+
+if (!function_exists('Convoca\Enroll\add_action')) {
+    function add_action() {}
+    function add_filter() {}
+    function apply_filters($tag, $value) { return $value; }
+    function do_action() {}
+    function __($text, $domain = null) { return $text; }
+    function _x($text, $context, $domain = null) { return $text; }
+    function esc_html($text) { return htmlspecialchars((string)$text); }
+    function esc_attr($text) { return htmlspecialchars((string)$text); }
+}
+
+} // end namespace Convoca\Enroll
+
+// ── Back to global namespace ──
+namespace {
+
 // Try to find WordPress test library.
 $wp_tests_dir = getenv('WP_TESTS_DIR');
 
@@ -39,20 +59,6 @@ if ($wp_tests_dir && file_exists($wp_tests_dir . '/includes/functions.php')) {
     tests_add_filter('muplugins_loaded', '_manually_load_plugin');
     require_once $wp_tests_dir . '/includes/bootstrap.php';
 } else {
-    // Standalone WP function stubs for test environment without WordPress.
-    namespace Convoca\Enroll {
-        if (!function_exists('Convoca\Enroll\add_action')) {
-            function add_action() {}
-            function add_filter() {}
-            function apply_filters($tag, $value) { return $value; }
-            function do_action() {}
-            function __($text, $domain = null) { return $text; }
-            function _x($text, $context, $domain = null) { return $text; }
-            function esc_html($text) { return htmlspecialchars((string)$text); }
-            function esc_attr($text) { return htmlspecialchars((string)$text); }
-        }
-    }
-
     // Standalone test mode.
     if (!defined('ABSPATH')) {
         define('ABSPATH', dirname(__DIR__) . '/');
@@ -108,3 +114,5 @@ if ($wp_tests_dir && file_exists($wp_tests_dir . '/includes/functions.php')) {
 if (!defined('CONVOCA_ENROLL_TEST_MODE')) {
     define('CONVOCA_ENROLL_TEST_MODE', true);
 }
+
+} // end global namespace
