@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7acd5fcbf330257a7bae1eb194ddf005",
+    "content-hash": "1d07278715c66dc2d16b8e19e17bee8e",
     "packages": [
         {
             "name": "chillerlan/php-qrcode",
@@ -559,50 +559,6 @@
             "time": "2026-05-01T20:36:01+00:00"
         },
         {
-            "name": "php-stubs/wp-cli-stubs",
-            "version": "v2.12.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-stubs/wp-cli-stubs.git",
-                "reference": "af16401e299a3fd2229bd0fa9a037638a4174a9d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/wp-cli-stubs/zipball/af16401e299a3fd2229bd0fa9a037638a4174a9d",
-                "reference": "af16401e299a3fd2229bd0fa9a037638a4174a9d",
-                "shasum": ""
-            },
-            "require": {
-                "php-stubs/wordpress-stubs": "^4.7 || ^5.0 || ^6.0"
-            },
-            "require-dev": {
-                "php": "~7.3 || ~8.0",
-                "php-stubs/generator": "^0.8.0"
-            },
-            "suggest": {
-                "symfony/polyfill-php73": "Symfony polyfill backporting some PHP 7.3+ features to lower PHP versions",
-                "szepeviktor/phpstan-wordpress": "WordPress extensions for PHPStan"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "WP-CLI function and class declaration stubs for static analysis.",
-            "homepage": "https://github.com/php-stubs/wp-cli-stubs",
-            "keywords": [
-                "PHPStan",
-                "static analysis",
-                "wordpress",
-                "wp-cli"
-            ],
-            "support": {
-                "issues": "https://github.com/php-stubs/wp-cli-stubs/issues",
-                "source": "https://github.com/php-stubs/wp-cli-stubs/tree/v2.12.0"
-            },
-            "time": "2025-06-10T09:58:05+00:00"
-        },
-        {
             "name": "phpcsstandards/phpcsextra",
             "version": "1.5.0",
             "source": {
@@ -779,11 +735,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.2.1",
+            "version": "2.2.2",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/dea9c8f2d25cc849391042b71e429c1a4bf82660",
-                "reference": "dea9c8f2d25cc849391042b71e429c1a4bf82660",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e5cc34d491a90e79c216d824f60fe21fd4d93bd6",
+                "reference": "e5cc34d491a90e79c216d824f60fe21fd4d93bd6",
                 "shasum": ""
             },
             "require": {
@@ -839,7 +795,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-28T14:44:12+00:00"
+            "time": "2026-06-05T09:00:01+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
