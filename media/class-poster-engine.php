@@ -96,9 +96,7 @@ class Poster_Engine {
 		}
 
 		if ( is_wp_error( $result ) ) {
-			Media_Logger::log( 'poster', 'render', "/", [
-				'actividad_id' => $actividad_id,
-				'status'       => 'pdf_error',
+			Media_Logger::log( 'poster', $actividad_id, 'render', 'pdf_error', [
 				'error'        => $result->get_error_message(),
 			] );
 			return $result;
@@ -124,9 +122,7 @@ class Poster_Engine {
 
 		// ── Log ──
 		$duration = microtime( true ) - ( $_SERVER['REQUEST_TIME_FLOAT'] ?? microtime( true ) );
-		Media_Logger::log( 'poster', 'render', "{$template_slug}/{$format}", [
-			'actividad_id' => $actividad_id,
-			'status'       => 'success',
+		Media_Logger::log( 'poster', $actividad_id, 'render', 'success', [
 			'duration_ms'  => round( $duration * 1000 ),
 		] );
 
@@ -150,7 +146,7 @@ class Poster_Engine {
 		$dimensions = self::format_dimensions( $format );
 
 		// Design tokens from template
-		$template = Template_Manager::get_by_slug( $template_slug );
+		$template = Template_Manager::get( $template_slug );
 		$tokens   = $template ? ( $template['config']['design_tokens'] ?? [] ) : [];
 		$palette  = $tokens['palette'] ?? [];
 		$primary  = $palette['primary'] ?? '#2e7d32';
@@ -181,18 +177,16 @@ class Poster_Engine {
 		}
 
 		// QR
+		$logo_image = '';
+		$collaborators = array();
 		$qr_image = '';
-		$qr_result = QR_Generator::generate( get_permalink( $actividad_id ), $actividad_id );
-		if ( ! is_wp_error( $qr_result ) ) {
-			$qr_path  = $qr_result['path'] ?? '';
-			if ( $qr_path && file_exists( $qr_path ) ) {
-				$qr_data  = file_get_contents( $qr_path );
-				$qr_image = 'data:image/png;base64,' . base64_encode( $qr_data );
-			}
+		$qr_result = QR_Generator::generate( $actividad_id );
+		if ( $qr_result && file_exists( $qr_result ) ) {
+			$qr_data  = file_get_contents( $qr_result );
+			$qr_image = 'data:image/png;base64,' . base64_encode( $qr_data );
 		}
 
 		// Logo
-		$logo_image = '';
 		$site_icon  = get_site_icon_url( 512 );
 		if ( $site_icon ) {
 			$logo_data = file_get_contents( $site_icon );
@@ -262,7 +256,7 @@ class Poster_Engine {
 	 * Fallback compile: legacy JSON template → basic HTML.
 	 */
 	private static function compile_legacy_html( string $template_slug, array $data ): string {
-		$template = Template_Manager::get_by_slug( $template_slug );
+		$template = Template_Manager::get( $template_slug );
 		$config   = $template['config'] ?? [];
 
 		$tokens  = $config['design_tokens'] ?? [];
