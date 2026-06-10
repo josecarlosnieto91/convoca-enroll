@@ -110,10 +110,8 @@ class Poster_Engine {
 				$pdf_check->clear();
 				$pdf_check->destroy();
 				if ( $num_pages > 1 ) {
-					Media_Logger::log( 'poster', 'warning', "/ - $num_pages pages", [
-						'actividad_id' => $actividad_id,
-						'pages'        => $num_pages,
-					] );
+				Media_Logger::log( 'poster', $actividad_id, 'validate', 'warning', [
+				] );
 				}
 			} catch ( \Exception $e ) {
 				// Ignore validation errors
@@ -345,11 +343,13 @@ HTML;
 			$imagick = new \Imagick();
 			$imagick->setResolution( $density, $density );
 
-			if ( ! file_exists( $pdf_path ) ) {
+			// Strip Imagick page selector suffix (e.g. "[0]") before checking file path
+			$check_path = preg_replace( '/\\[\\d+\\]$/', '', $pdf_path );
+			if ( ! file_exists( $check_path ) ) {
 				return new \WP_Error( 'pdf_not_found', 'Archivo PDF temporal no encontrado.' );
 			}
 
-			$imagick->readImage( $pdf_path . '[0]' );
+			$imagick->readImage( $pdf_path ); //  already has [0] from validate_pdf or not
 
 			// Set output format
 			$format_map = [
@@ -571,14 +571,11 @@ HTML;
 			$result['confidence'] = round( $best_density, 2 );
 
 			// Log warning
-			Media_Logger::log( 'poster', 'warning', sprintf(
-				'PDF has %d pages, using page %d (density: %.0f%%)',
-				$pages, $best_page, $best_density * 100
-			), [
+			Media_Logger::log( 'poster', $actividad_id, 'validate', 'warning', [
+				'message'  => sprintf('PDF has %d pages, using page %d (density: %.0f%%)', $pages, $best_page, $best_density * 100),
 				'pdf_path' => $pdf_path,
 				'pages'    => $pages,
 				'best_page' => $best_page,
-				'density'  => $best_density,
 			] );
 
 		} catch ( \Exception $e ) {

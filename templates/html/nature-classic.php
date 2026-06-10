@@ -1,82 +1,42 @@
-<?php
-$pad      = 80;
-$debug    = !empty($_GET['poster_debug']);
-$cta_text = is_array($meta['cta_text']??null)?($meta['cta_text'][0]??'Apuntate ahora'):($meta['cta_text']['text']??$meta['cta_text']??'Apuntate ahora');
-$cta_url  = is_array($meta['cta_url']??null)?($meta['cta_url'][0]??''):($meta['cta_url']['url']??$meta['cta_url']??'');
+<?php $debug = !empty($debug);
+$pad = 80;
+$unsplash = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80';
 ?><!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
-@font-face{font-family:'Playfair';src:url('<?php echo CONV_ENROLL_URL; ?>assets/fonts/PlayfairDisplay.ttf')format('truetype');font-weight:700}
-@font-face{font-family:'Montserrat';src:url('<?php echo CONV_ENROLL_URL; ?>assets/fonts/Montserrat.ttf')format('truetype');font-weight:400}
-@font-face{font-family:'Montserrat';src:url('<?php echo CONV_ENROLL_URL; ?>assets/fonts/Montserrat.ttf')format('truetype');font-weight:700}
+@font-face{font-family:'Playfair';src:url('<?php $debug = !empty($debug); echo CONV_ENROLL_URL; ?>assets/fonts/PlayfairDisplay.ttf')format('truetype');font-weight:700}
+@font-face{font-family:'Montserrat';src:url('<?php $debug = !empty($debug); echo CONV_ENROLL_URL; ?>assets/fonts/Montserrat.ttf')format('truetype')}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html,body{width:<?php echo $width; ?>px;height:<?php echo $height; ?>px;overflow:hidden}
-body{position:relative;font-family:'Playfair',Georgia,serif;color:#fff;background:#1a3a2a;page-break-inside:avoid;break-inside:avoid}
-.hero{position:absolute;top:0;left:0;width:100%;height:50%;overflow:hidden;background:#1a3a2a}
-<?php
-if (!empty($hero_image)) :
-	?>
-    .hero{background-image:url("<?php echo $hero_image; ?>");background-size:cover;background-position:center}
-<?php endif; ?>
-.solid{position:absolute;bottom:0;left:0;width:100%;height:50%;background:#1a3a2a;display:block}
-.badge{position:absolute;top:80px;left:80px;display:inline-block;padding:8px 20px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;background:#2d6a4f;color:#fff;z-index:1000}
-.logo{position:absolute;top:80px;right:80px;max-width:80px;max-height:40px;z-index:1000}
-.title{position:absolute;bottom:320px;left:80px;right:80px;font-family:'Playfair',Georgia,serif;font-size:84px;font-weight:700;line-height:1.0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,0.3)}
-.subtitle{position:absolute;bottom:275px;left:80px;right:80px;font-family:'Montserrat',sans-serif;font-size:15px;font-weight:400;opacity:0.8;line-height:1.35;letter-spacing:0.5px;color:#fff}
-.meta-row{position:absolute;bottom:220px;left:80px;right:80px}
-.meta-item{display:inline-block;font-family:'Montserrat',sans-serif;font-size:14px;font-weight:500;text-transform:uppercase;letter-spacing:2px;background:rgba(255,255,255,0.1);padding:5px 14px;margin:0 6px 4px 0;color:#fff}
-.meta-item.price{background:#2d6a4f;font-weight:700;color:#fff}
-.cta{position:absolute;bottom:140px;left:80px;display:inline-block;font-family:'Montserrat',sans-serif;font-size:32px;font-weight:700;letter-spacing:1px;padding:18px 50px;background:#ff8700;color:#fff;border-radius:8px;text-decoration:none;text-transform:uppercase;z-index:100}
-.org-info{position:absolute;bottom:80px;left:80px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:400;opacity:0.7;letter-spacing:1px;text-transform:uppercase;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.5)}
-.qr-abs{position:absolute;bottom:130px;right:80px;width:110px;height:110px;z-index:999;background:#fff;padding:6px;border-radius:8px}
-.qr-abs img{width:100%;height:100%;display:block}
-.brands{position:absolute;bottom:85px;left:80px;right:210px;height:20px;text-align:center;z-index:100}
-.brands img{display:inline-block;max-height:18px;width:auto;margin:0 6px;vertical-align:middle;opacity:0.5}
-<?php
-if ($debug) :
-	?>
-    .dbg-canvas{position:absolute;top:0;left:0;width:100%;height:100%;outline:2px solid rgba(0,255,0,0.5);pointer-events:none;z-index:9997}.dbg-info{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}
-<?php endif; ?>
+html,body{width:<?php $debug = !empty($debug); echo $width; ?>px;height:<?php echo $height; ?>px;overflow:hidden}
+body{position:relative;font-family:'Playfair',Georgia,serif;color:#fff;page-break-inside:avoid;break-inside:avoid;background:#1a3a2a}
+.bg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+.overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to top,rgba(10,30,20,0.92) 0%,rgba(10,30,20,0.4) 35%,rgba(10,30,20,0.15) 65%,transparent 100%)}
+.badge{position:absolute;top:60px;left:60px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:3px;padding:8px 22px;background:rgba(45,106,79,0.9);color:#fff;border-radius:30px;z-index:10}
+.title-group{position:absolute;bottom:200px;left:60px;right:200px;z-index:10}
+.title{font-size:clamp(48px,6vw,100px);font-weight:700;line-height:1.05;margin-bottom:12px;text-shadow:0 2px 20px rgba(0,0,0,0.4)}
+.subtitle{font-family:'Montserrat',sans-serif;font-size:16px;line-height:1.4;opacity:0.85;max-width:70%}
+.meta-bar{position:absolute;bottom:120px;left:60px;right:60px;display:flex;gap:20px;z-index:10;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:500;letter-spacing:1px;text-transform:uppercase}
+.meta-item{display:flex;align-items:center;gap:6px;padding:6px 16px;background:rgba(255,255,255,0.1);border-radius:20px;backdrop-filter:blur(4px)}
+.meta-item.price{background:#2d6a4f;font-weight:700}
+.cta{position:absolute;bottom:55px;left:60px;font-family:'Montserrat',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;padding:14px 40px;background:#ff8700;color:#fff;border-radius:50px;text-decoration:none;text-transform:uppercase;z-index:10;box-shadow:0 4px 15px rgba(255,135,0,0.4)}
+.qr-wrap{position:absolute;bottom:55px;right:60px;width:90px;height:90px;background:#fff;border-radius:12px;padding:5px;z-index:10;box-shadow:0 4px 15px rgba(0,0,0,0.2)}
+.qr-wrap img{width:100%;height:100%;display:block}
+.org{position:absolute;bottom:60px;left:60px;right:180px;font-family:'Montserrat',sans-serif;font-size:10px;opacity:0.5;letter-spacing:2px;text-transform:uppercase;text-align:center;z-index:10}
+<?php $debug = !empty($debug); if($debug): ?>.dbg{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}.dbg-c{position:absolute;top:0;left:0;width:100%;height:100%;outline:2px solid rgba(0,255,0,0.5);pointer-events:none;z-index:9997}
+<?php $debug = !empty($debug); endif; ?>
 </style></head><body>
-<?php
-if ($debug) :
-	?>
-    <div class="dbg-canvas"></div><div class="dbg-info"><?php echo basename(__FILE__); ?> | <?php echo $format; ?> | <?php echo $width; ?>x<?php echo $height; ?></div><?php endif; ?>
-<div class="hero"></div>
-<div class="badge"><?php echo htmlspecialchars($type_label); ?></div>
-<?php
-if ($logo_image) :
-	?>
-    <img class="logo" src="<?php echo $logo_image; ?>" alt="logo"><?php endif; ?>
-<div class="solid">
-<div class="title"><?php echo htmlspecialchars($title); ?></div>
-<?php
-if ($subtitle) :
-	?>
-    <div class="subtitle"><?php echo htmlspecialchars($subtitle); ?></div><?php endif; ?>
-<div class="meta-row"><span class="meta-item">📅 <?php echo htmlspecialchars($date); ?></span>
-<?php
-if ($time) :
-	?>
-    <span class="meta-item">🕐 <?php echo htmlspecialchars($time); ?></span><?php endif; ?>
-    <?php
-	if ($location) :
-		?>
-    <span class="meta-item">📍 <?php echo htmlspecialchars($location); ?></span><?php endif; ?><span class="meta-item price"><?php echo htmlspecialchars($price); ?></span></div>
-<?php
-if (!empty($cta_text)) :
-	?>
-    <a class="cta" href="<?php echo $cta_url ?: '#'; ?>"><?php echo htmlspecialchars($cta_text); ?></a><?php endif; ?>
-<div class="org-info"><?php echo htmlspecialchars($org_name); ?></div>
-<?php
-if ($qr_image) :
-	?>
-    <div class="qr-abs"><img src="<?php echo $qr_image; ?>" alt="QR"></div><?php endif; ?>
-<?php
-if (!empty($collaborator_logos)) :
-	?>
-    <div class="brands">
-    <?php
-	foreach ($collaborator_logos as $c) :
-		?>
-    <img src="<?php echo $c; ?>" alt="col"><?php endforeach; ?></div><?php endif; ?>
+<?php $debug = !empty($debug); if($debug): ?><div class="dbg-c"></div><div class="dbg"><?php echo basename(__FILE__); ?> | <?php echo $format; ?> | <?php echo $width; ?>x<?php echo $height; ?></div><?php endif; ?>
+<img class="bg" src="<?php $debug = !empty($debug); echo !empty($hero_image)?$hero_image:$unsplash; ?>" alt="">
+<div class="overlay"></div>
+<div class="badge"><?php $debug = !empty($debug); echo htmlspecialchars($type_label); ?></div>
+<div class="title-group">
+  <div class="title"><?php $debug = !empty($debug); echo htmlspecialchars($title); ?></div>
+  <?php $debug = !empty($debug); if($subtitle): ?><div class="subtitle"><?php echo htmlspecialchars($subtitle); ?></div><?php endif; ?>
 </div>
+<div class="meta-bar">
+  <span class="meta-item">📅 <?php $debug = !empty($debug); echo htmlspecialchars($date); ?></span>
+  <?php $debug = !empty($debug); if($time): ?><span class="meta-item">🕐 <?php echo htmlspecialchars($time); ?></span><?php endif; ?>
+  <?php $debug = !empty($debug); if($location): ?><span class="meta-item">📍 <?php echo htmlspecialchars($location); ?></span><?php endif; ?>
+  <span class="meta-item price"><?php $debug = !empty($debug); echo htmlspecialchars($price); ?></span>
+</div>
+<a class="cta" href="#">Apúntate ahora</a>
+<?php $debug = !empty($debug); if($qr_image): ?><div class="qr-wrap"><img src="<?php echo $qr_image; ?>" alt="QR"></div><?php endif; ?>
 </body></html>
