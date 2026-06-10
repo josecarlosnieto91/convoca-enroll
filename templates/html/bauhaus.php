@@ -28,7 +28,7 @@ body{position:relative;font-family:'Montserrat',sans-serif;background:#f5f0e8;pa
 <div class="circle-big"></div><div class="square"></div><div class="rect"></div><div class="circle-sm"></div>
 <div class="img-block"><img src="<?php echo $background_image; ?>" alt=""></div>
 <div class="text-block">
-  <div class="badge"><?php echo htmlspecialchars($type_label); ?></div>
+  <?php if($logo_image): ?><img class="logo-tpl" src="<?php echo $logo_image; ?>" alt="logo" style="position:absolute;top:35px;right:35px;max-width:70px;max-height:35px;z-index:10"><?php endif; ?><div class="badge"><?php echo htmlspecialchars($type_icon); ?> <?php echo htmlspecialchars($type_label); ?></div>
   <div class="title"><?php echo htmlspecialchars($title); ?></div>
   <?php if($subtitle): ?><div class="subtitle"><?php echo htmlspecialchars($subtitle); ?></div><?php endif; ?>
   <div class="meta-grid">

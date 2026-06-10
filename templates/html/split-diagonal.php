@@ -29,7 +29,7 @@ background:linear-gradient(135deg,rgba(15,52,96,0.3) 0%,transparent 100%);z-inde
 <div class="tri-top"></div>
 <div class="tri-img"><img src="<?php echo $background_image; ?>" alt=""></div>
 <div class="tri-overlay"></div>
-<div class="badge"><?php echo htmlspecialchars($type_label); ?></div>
+<?php if($logo_image): ?><img class="logo-tpl" src="<?php echo $logo_image; ?>" alt="logo" style="position:absolute;top:35px;right:35px;max-width:70px;max-height:35px;z-index:10"><?php endif; ?><div class="badge"><?php echo htmlspecialchars($type_icon); ?> <?php echo htmlspecialchars($type_label); ?></div>
 <div class="panel">
   <div class="title"><?php echo htmlspecialchars($title); ?></div>
   <?php if($subtitle): ?><div class="subtitle"><?php echo htmlspecialchars($subtitle); ?></div><?php endif; ?>

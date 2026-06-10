@@ -33,7 +33,7 @@ background:#fff;border-radius:20px;padding:30px 35px;z-index:5;display:flex;flex
 </style></head><body>
 <div class="bg-full"><img src="<?php echo $background_image; ?>" alt=""></div>
 <div class="bg-overlay"></div>
-<div class="badge"><?php echo htmlspecialchars($type_label); ?></div>
+<?php if($logo_image): ?><img class="logo-tpl" src="<?php echo $logo_image; ?>" alt="logo" style="position:absolute;top:35px;right:35px;max-width:70px;max-height:35px;z-index:10"><?php endif; ?><div class="badge"><?php echo htmlspecialchars($type_icon); ?> <?php echo htmlspecialchars($type_label); ?></div>
 <div class="date-badge"><span class="day-num"><?php echo htmlspecialchars(explode(' ',$date)[0]??''); ?></span><?php echo htmlspecialchars(explode(' ',$date)[1]??$date); ?></div>
 <div class="card-layer">
   <div class="title-card"><?php echo htmlspecialchars($title); ?></div>

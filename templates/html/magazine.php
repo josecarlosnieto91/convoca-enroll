@@ -40,6 +40,6 @@ background:linear-gradient(to bottom,rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.15) 50%,rg
     <a class="cta" href="#">Apúntate ahora</a>
     <?php if($qr_image): ?><div class="qr-card"><img src="<?php echo $qr_image; ?>" alt="QR"></div><?php endif; ?>
   </div>
-  <div class="org"><?php echo htmlspecialchars($org_name); ?></div>
+  <?php if(!empty($collaborator_logos)): ?><div style="display:flex;gap:8px;margin-top:6px"><?php foreach($collaborator_logos as $cl): ?><img src="<?php echo $cl; ?>" style="max-height:15px;opacity:0.5" alt=""><?php endforeach; ?></div><?php endif; ?><div class="org"><?php echo htmlspecialchars($org_name); ?></div>
 </div>
 </body></html>

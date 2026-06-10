@@ -11,7 +11,7 @@ body{position:relative;font-family:'Montserrat',sans-serif;color:#fff;background
 .overlay{position:absolute;top:0;left:0;width:100%;height:100%;
 background:linear-gradient(to bottom,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.85) 60%,rgba(0,0,0,0.95) 100%)}
 .badge{position:absolute;top:35px;left:35px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:3px;padding:8px 20px;background:#e50914;color:#fff;z-index:10;border-radius:2px}
-.logo-area{position:absolute;top:35px;right:35px;z-index:10;text-align:right}
+.logo-area{position:absolute;top:35px;right:35px;z-index:11;text-align:right}
 .logo-area .date-big{font-size:28px;font-weight:700;font-family:'Playfair',serif;color:#f7c948;line-height:1}
 .logo-area .date-sm{font-size:10px;opacity:0.5;letter-spacing:1px;text-transform:uppercase}
 .hero-text{position:absolute;bottom:180px;left:50px;right:50px;z-index:10}
@@ -33,8 +33,8 @@ background:linear-gradient(to bottom,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.85) 60%,rgb
 <div class="bar-top"></div><div class="bar-bottom"></div>
 <img class="bg" src="<?php echo $background_image; ?>" alt="">
 <div class="overlay"></div>
-<div class="badge"><?php echo htmlspecialchars($type_label); ?></div>
-<div class="logo-area">
+<?php if($logo_image): ?><img class="logo-tpl" src="<?php echo $logo_image; ?>" alt="logo" style="position:absolute;top:35px;right:35px;max-width:60px;max-height:30px;z-index:10"><?php endif; ?><div class="badge"><?php echo htmlspecialchars($type_icon); ?> <?php echo htmlspecialchars($type_label); ?></div>
+<div class="logo-area" style="top:80px">
   <div class="date-big"><?php echo htmlspecialchars(explode(' ',$date)[0]??''); ?></div>
   <div class="date-sm"><?php echo htmlspecialchars(explode(' ',$date)[1]??$date); ?></div>
 </div>
