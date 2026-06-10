@@ -15,6 +15,27 @@ if (!function_exists('Convoca\Enroll\add_action')) {
     function apply_filters($tag, $value) { return $value; }
     function do_action() {}
     function __($text, $domain = null) { return $text; }
+    function current_user_can($cap = '') { return true; }
+    function get_user_meta($user_id, $key = '', $single = false) { return ''; }
+    function wp_upload_dir() { return array('basedir' => sys_get_temp_dir(), 'baseurl' => 'http://localhost'); }
+    function get_option($option, $default = false) { if ($option === 'conv_enroll_settings') return array('admin_email' => 'test@test.com', 'rgpd_version' => '1.0'); return $default; }
+    function update_option($option, $value) { return true; }
+    function get_post_meta($post_id, $key = '', $single = false) { return ''; }
+    function update_post_meta($post_id, $meta_key, $meta_value) { return $post_id > 0 ? true : false; }
+    function delete_post_meta($post_id, $key) { return true; }
+    function wp_parse_args($args, $defaults) { return array_merge($defaults, is_array($args) ? $args : array()); }
+    function wp_json_encode($data) { return json_encode($data); }
+    function wp_create_nonce($action = '') { return md5($action); }
+    function wp_verify_nonce($nonce, $action = '') { return true; }
+    function wp_generate_password($length = 12, $special_chars = true) { return str_repeat('x', $length); }
+    function sanitize_text_field($str) { return $str; }
+    function sanitize_title($title) { return strtolower(str_replace(' ', '-', $title)); }
+    function absint($maybe_int) { return (int)$maybe_int; }
+    function trailingslashit($string) { return rtrim($string, '/') . '/'; }
+    function get_posts($args = array()) { return array(); }
+    function user_can($user, $cap) { return true; }
+    function wp_list_pluck($list, $field) { return array_map(function($item) use ($field) { return is_array($item) ? ($item[$field] ?? null) : ($item->$field ?? null); }, $list); }
+    function current_time($type) { return date('Y-m-d H:i:s'); }
     function _x($text, $context, $domain = null) { return $text; }
     function esc_html($text) { return htmlspecialchars((string)$text); }
     function esc_attr($text) { return htmlspecialchars((string)$text); }

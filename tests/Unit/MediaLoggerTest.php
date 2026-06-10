@@ -9,7 +9,7 @@ namespace Convoca\Enroll\Tests;
 
 use Convoca\Enroll\Media\Media_Logger;
 
-class TestMediaLogger extends \WP_UnitTestCase {
+class MediaLoggerTest extends \WP_UnitTestCase {
 
 	public function test_log_creates_entry(): void {
 		Media_Logger::log( 'test', 1, 'test_action', 'ok', array( 'message' => 'Test log' ) );

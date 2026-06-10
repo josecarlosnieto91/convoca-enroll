@@ -13,7 +13,7 @@ use Convoca\Enroll\Media\Template_Manager;
 /**
  * Test poster generation and template management.
  */
-class TestPosterEngine extends \WP_UnitTestCase {
+class PosterEngineTest extends \WP_UnitTestCase {
 
 	protected $actividad_id;
 

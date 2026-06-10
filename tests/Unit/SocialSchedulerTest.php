@@ -10,7 +10,7 @@ namespace Convoca\Enroll\Tests;
 use Convoca\Enroll\Social\Social_Scheduler;
 use Convoca\Enroll\Social\Social_OAuth;
 
-class TestSocialScheduler extends \WP_UnitTestCase {
+class SocialSchedulerTest extends \WP_UnitTestCase {
 
 	public function test_queue_creates_entry(): void {
 		global $wpdb;

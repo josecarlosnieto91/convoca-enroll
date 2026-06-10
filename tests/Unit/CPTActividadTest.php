@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
  * @covers ::META_PREFIX
  * @covers ::REMINDER_TYPES
  */
-class TestCPTActividad extends TestCase
+class CPTActividadTest extends TestCase
 {
     /**
      * Test that META_PREFIX is defined correctly.

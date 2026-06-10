@@ -1,6 +1,7 @@
 {
     "name": "convoca/enroll",
-    "description": "Plugin de inscripcion para Convoca",
+    "license": "GPL-2.0-or-later",
+	"description": "Plugin de inscripcion para Convoca",
     "type": "wordpress-plugin",
     "require": {
         "php": ">=8.1",

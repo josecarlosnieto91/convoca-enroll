@@ -9,7 +9,7 @@ namespace Convoca\Enroll\Tests;
 
 use Convoca\Enroll\Media\Blog_Post_Manager;
 
-class TestBlogPostManager extends \WP_UnitTestCase {
+class BlogPostManagerTest extends \WP_UnitTestCase {
 
 	protected $actividad_id;
 

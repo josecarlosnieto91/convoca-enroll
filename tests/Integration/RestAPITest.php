@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
  * @covers ::register_routes
  * @covers ::handle_checkin
  */
-class TestRestAPI extends TestCase
+class RestAPITest extends TestCase
 {
     /**
      * Instance of the REST API class.

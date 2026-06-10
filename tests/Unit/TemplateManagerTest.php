@@ -9,7 +9,7 @@ namespace Convoca\Enroll\Tests;
 
 use Convoca\Enroll\Media\Template_Manager;
 
-class TestTemplateManager extends \WP_UnitTestCase {
+class TemplateManagerTest extends \WP_UnitTestCase {
 
 	public function test_get_all_returns_array(): void {
 		$templates = Template_Manager::get_all();

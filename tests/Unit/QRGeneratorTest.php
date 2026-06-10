@@ -9,7 +9,7 @@ namespace Convoca\Enroll\Tests;
 
 use Convoca\Enroll\Media\QR_Generator;
 
-class TestQRGenerator extends \WP_UnitTestCase {
+class QRGeneratorTest extends \WP_UnitTestCase {
 
 	protected $actividad_id;
 

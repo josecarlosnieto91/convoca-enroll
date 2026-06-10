@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
  * @covers ::regenerar_token_checkin
  * @covers ::buscar_por_codigo
  */
-class TestMotorInscripcion extends TestCase
+class MotorInscripcionTest extends TestCase
 {
     /**
      * Test generar_codigo produces an 8-character alphanumeric code.
