@@ -337,6 +337,97 @@ class Template_Defaults {
 	/**
 	 * Generate a minimal but complete template from common defaults.
 	 */
+	
+	/**
+	 * Template 1: Cinemascope — Widescreen cinematic, gradient bars, dramatic feel.
+	 */
+	private static function cinemascope(): array {
+		return array(
+			"name"        => "Cinemascope",
+			"slug"        => "cinemascope",
+			"description" => "Widescreen cinematográfico con banda de color superior e inferior. Ideal para eventos con impacto visual.",
+			"config"      => array(
+				"design_tokens" => array(
+					"palette" => array( "primary" => "#111111", "accent" => "#e50914", "highlight" => "#f7c948" ),
+					"fonts"   => array( "heading" => "Playfair Display", "body" => "Montserrat" ),
+				),
+			),
+			"is_system"   => 1,
+		);
+	}
+
+	/**
+	 * Template 2: Magazine — Editorial, photo backdrop + bottom card.
+	 */
+	private static function magazine(): array {
+		return array(
+			"name"        => "Magazine",
+			"slug"        => "magazine",
+			"description" => "Estilo editorial con foto de portada y tarjeta informativa inferior. Profesional y elegante.",
+			"config"      => array(
+				"design_tokens" => array(
+					"palette" => array( "primary" => "#f5f5f5", "accent" => "#c62828", "highlight" => "#1a1a1a" ),
+					"fonts"   => array( "heading" => "Playfair Display", "body" => "Montserrat" ),
+				),
+			),
+			"is_system"   => 1,
+		);
+	}
+
+	/**
+	 * Template 3: Bauhaus — Geometric shapes, primary colors, bold typography.
+	 */
+	private static function bauhaus(): array {
+		return array(
+			"name"        => "Bauhaus",
+			"slug"        => "bauhaus",
+			"description" => "Inspiración Bauhaus: formas geométricas, colores primarios, tipografía bold. Rompedor.",
+			"config"      => array(
+				"design_tokens" => array(
+					"palette" => array( "primary" => "#f5f0e8", "accent" => "#d91e36", "highlight" => "#2d6a4f" ),
+					"fonts"   => array( "heading" => "Montserrat", "body" => "Montserrat" ),
+				),
+			),
+			"is_system"   => 1,
+		);
+	}
+
+	/**
+	 * Template 4: Split Diagonal — Diagonal division with triangular photo.
+	 */
+	private static function split_diagonal(): array {
+		return array(
+			"name"        => "Split Diagonal",
+			"slug"        => "split-diagonal",
+			"description" => "División diagonal del espacio con foto recortada geométricamente. Moderno y dinámico.",
+			"config"      => array(
+				"design_tokens" => array(
+					"palette" => array( "primary" => "#0f3460", "accent" => "#e94560", "highlight" => "#a0c4ff" ),
+					"fonts"   => array( "heading" => "Playfair Display", "body" => "Montserrat" ),
+				),
+			),
+			"is_system"   => 1,
+		);
+	}
+
+	/**
+	 * Template 5: Card Overlap — Full photo with overlapping bottom card.
+	 */
+	private static function card_overlap(): array {
+		return array(
+			"name"        => "Card Overlap",
+			"slug"        => "card-overlap",
+			"description" => "Foto completa con tarjeta blanca solapada inferior. Limpio, moderno, gran QR visible.",
+			"config"      => array(
+				"design_tokens" => array(
+					"palette" => array( "primary" => "#16213e", "accent" => "#0f3460", "highlight" => "#ffffff" ),
+					"fonts"   => array( "heading" => "Playfair Display", "body" => "Montserrat" ),
+				),
+			),
+			"is_system"   => 1,
+		);
+	}
+
 	private static function mini_template( string $name, string $slug, string $desc, array $bg, string $accent_text, string $title_color = '#ffffff' ): array {
 		return array(
 			'name'        => $name,

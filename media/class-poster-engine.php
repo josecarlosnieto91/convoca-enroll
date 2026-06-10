@@ -204,6 +204,31 @@ class Poster_Engine {
 			$time  = trim( $parts[0] ) . ' – ' . trim( $parts[1] ?? '' );
 		}
 
+		// Default Unsplash backgrounds per activity type
+		$default_bgs = [
+			'restauracion' => 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80',
+			'educacion'    => 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=1920&q=80',
+			'social'       => 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1920&q=80',
+			'cultural'     => 'https://images.unsplash.com/photo-1490730141103-6cac27aaab94?w=1920&q=80',
+		];
+		$type = $meta['tipo'][0] ?? 'restauracion';
+		$default_bg = $default_bgs[$type] ?? $default_bgs['restauracion'];
+
+		// Convert background image to base64 for Dompdf compatibility
+		$bg_url = !empty($hero_base64) ? $hero_base64 : (!empty($meta['imagen_fondo'][0]) ? $meta['imagen_fondo'][0] : $default_bg);
+		if (!empty($bg_url) && strpos($bg_url, 'data:') !== 0) {
+			$bg_resp = wp_remote_get($bg_url, array('timeout' => 10, 'sslverify' => false));
+			if (!is_wp_error($bg_resp)) {
+				$bg_body = wp_remote_retrieve_body($bg_resp);
+				if (!empty($bg_body)) {
+					$finfo = finfo_open(FILEINFO_MIME_TYPE);
+					$mime = finfo_buffer($finfo, $bg_body);
+					finfo_close($finfo);
+					$bg_url = 'data:' . $mime . ';base64,' . base64_encode($bg_body);
+				}
+			}
+		}
+
 		return [
 			'title'         => $post->post_title,
 			'subtitle'      => wp_trim_words( $post->post_excerpt ?: $meta['descripcion_corta'][0] ?? '', 20 ),
@@ -215,6 +240,7 @@ class Poster_Engine {
 			'type_icon'     => $style['icon'] ?? '🌿',
 			'type_color'    => $style['color'] ?? $primary,
 			'hero_image'    => $hero_base64,
+			'background_image' => $bg_url,
 			'logo_image'         => $logo_image,
 			'collaborator_logos' => $collaborators,
 			'qr_image'      => $qr_image,
