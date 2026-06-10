@@ -18,6 +18,11 @@
 
 if ( ! defined( 'ABSPATH' ) ) {
 
+// Load translations.
+add_action( 'init', function () {
+	load_plugin_textdomain( 'convoca-enroll', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+} );
+
 	exit;
 }
 
