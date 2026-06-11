@@ -30,6 +30,7 @@ class Admin_Media_Dashboard {
 		if ( ! in_array( $hook, array( 'post.php', 'post-new.php', 'toplevel_page_convoca-media' ), true ) ) {
 			return;
 		}
+		wp_enqueue_media();
 		wp_enqueue_style( 'convoca-media-admin', CONV_ENROLL_URL . 'assets/css/media-admin.css', array(), CONV_ENROLL_VERSION );
 		wp_enqueue_script( 'convoca-media-admin', CONV_ENROLL_URL . 'assets/js/media-admin.js', array( 'jquery' ), CONV_ENROLL_VERSION, true );
 		wp_localize_script( 'convoca-media-admin', 'convocaMedia', array(
@@ -56,10 +57,14 @@ class Admin_Media_Dashboard {
 	 * Render the poster metabox.
 	 */
 	public function render_metabox( \WP_Post $post ): void {
-		$templates = Template_Manager::get_all();
-		$blog_id   = get_post_meta( $post->ID, '_conv_media_blog_post_id', true );
-		$poster_url = '';
-		$render_result = Poster_Engine::render( $post->ID, 'nature-classic' );
+		$templates       = Template_Manager::get_all();
+		$formats         = Poster_Engine::all_format_dimensions();
+		$blog_id         = get_post_meta( $post->ID, '_conv_media_blog_post_id', true );
+		$selected_format = get_post_meta( $post->ID, '_conv_poster_last_format', true ) ?: 'square';
+		$image_id        = (int) get_post_meta( $post->ID, '_conv_poster_image_id', true );
+		$image_url       = $image_id ? wp_get_attachment_image_url( $image_id, 'medium' ) : '';
+		$poster_url      = '';
+		$render_result   = Poster_Engine::render( $post->ID, 'nature-classic', array( 'format' => $selected_format ) );
 		if ( ! is_wp_error( $render_result ) ) {
 			$poster_url = $render_result['url'];
 		}
@@ -79,6 +84,33 @@ class Admin_Media_Dashboard {
 					<?php endforeach; ?>
 				</select>
 			</p>
+
+			<p>
+				<label for="convoca-format-select"><?php esc_html_e( "Formato:", "convoca-enroll" ); ?></label>
+				<select id="convoca-format-select" class="widefat">
+					<?php foreach ( $formats as $format => $def ) : ?>
+						<option value="<?php echo esc_attr( $format ); ?>" <?php selected( $selected_format, $format ); ?>>
+							<?php echo esc_html( $def["label"] . " · " . $def["width"] . "×" . $def["height"] ); ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+			</p>
+
+			<div class="convoca-poster-image-picker">
+				<label><?php esc_html_e( "Imagen del cartel:", "convoca-enroll" ); ?></label>
+				<input type="hidden" id="convoca-poster-image-id" value="<?php echo esc_attr( $image_id ); ?>">
+				<div class="convoca-poster-image-preview <?php echo $image_url ? "" : "is-empty"; ?>">
+					<?php if ( $image_url ) : ?>
+						<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php esc_attr_e( "Imagen seleccionada", "convoca-enroll" ); ?>">
+					<?php else : ?>
+						<span><?php esc_html_e( "Usará imagen destacada o fondo automático.", "convoca-enroll" ); ?></span>
+					<?php endif; ?>
+				</div>
+				<div class="convoca-image-actions">
+					<button type="button" class="button button-small convoca-select-poster-image"><?php esc_html_e( "Elegir imagen", "convoca-enroll" ); ?></button>
+					<button type="button" class="button button-small convoca-clear-poster-image" <?php disabled( ! $image_id ); ?>><?php esc_html_e( "Quitar", "convoca-enroll" ); ?></button>
+				</div>
+			</div>
 
 			<p>
 				<button type="button" class="button button-primary convoca-generate-poster" data-post-id="<?php echo esc_attr( $post->ID ); ?>">
@@ -323,13 +355,22 @@ class Admin_Media_Dashboard {
 		$post_id     = (int) ( $_POST['post_id'] ?? 0 );
 		$template    = sanitize_text_field( $_POST['template'] ?? 'nature-classic' );
 		$format      = sanitize_text_field( $_POST['format'] ?? 'square' );
+		$image_id    = absint( $_POST['image_id'] ?? 0 );
 
 		if ( ! current_user_can( 'conv_manage_media' ) || ! $post_id ) {
 			wp_send_json_error( array( 'message' => 'Permiso denegado' ) );
 		}
 
+		update_post_meta( $post_id, '_conv_poster_last_format', $format );
+		if ( $image_id ) {
+			update_post_meta( $post_id, '_conv_poster_image_id', $image_id );
+		} else {
+			delete_post_meta( $post_id, '_conv_poster_image_id' );
+		}
+
 		$result = Poster_Engine::render( $post_id, $template, array(
-			'formats' => array( $format ),
+			'format'   => $format,
+			'image_id' => $image_id,
 			'force'   => true,
 		) );
 
