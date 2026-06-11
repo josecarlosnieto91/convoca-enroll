@@ -1,4 +1,4 @@
-<?php $debug = !empty($debug);
+<?php $debug = ! empty( $debug );
 ?><!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
 @font-face{font-family:'Playfair';src:url('<?php echo CONV_ENROLL_URL; ?>assets/fonts/PlayfairDisplay.ttf')format('truetype');font-weight:700}
 @font-face{font-family:'Montserrat';src:url('<?php echo CONV_ENROLL_URL; ?>assets/fonts/Montserrat.ttf')format('truetype')}
@@ -26,29 +26,47 @@ background:linear-gradient(to bottom,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.85) 60%,rgb
 .qr-pos{position:absolute;bottom:35px;right:35px;width:120px;height:120px;background:#fff;padding:6px;z-index:10;border-radius:2px;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
 .qr-pos img{width:100%;height:100%;display:block}
 .org-line{position:absolute;bottom:45px;left:180px;font-size:9px;opacity:0.25;letter-spacing:2px;text-transform:uppercase;z-index:10}
-<?php if($debug): ?>.dbg{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}
+<?php
+if ( $debug ) :
+	?>
+	.dbg{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}
 <?php endif; ?>
 </style></head><body>
-<?php if($debug): ?><div class="dbg-c"></div><div class="dbg"><?php echo basename(__FILE__); ?> | <?php echo $format; ?> | <?php echo $width; ?>x<?php echo $height; ?></div><?php endif; ?>
+<?php
+if ( $debug ) :
+	?>
+	<div class="dbg-c"></div><div class="dbg"><?php echo basename( __FILE__ ); ?> | <?php echo $format; ?> | <?php echo $width; ?>x<?php echo $height; ?></div><?php endif; ?>
 <div class="bar-top"></div><div class="bar-bottom"></div>
 <img class="bg" src="<?php echo $background_image; ?>" alt="">
 <div class="overlay"></div>
-<?php if($logo_image): ?><img class="logo-tpl" src="<?php echo $logo_image; ?>" alt="logo" style="position:absolute;top:35px;right:35px;max-width:60px;max-height:30px;z-index:10"><?php endif; ?><div class="badge"><?php echo htmlspecialchars($type_icon); ?> <?php echo htmlspecialchars($type_label); ?></div>
+<?php
+if ( $logo_image ) :
+	?>
+	<img class="logo-tpl" src="<?php echo $logo_image; ?>" alt="logo" style="position:absolute;top:35px;right:35px;max-width:60px;max-height:30px;z-index:10"><?php endif; ?><div class="badge"><?php echo htmlspecialchars( $type_icon ); ?> <?php echo htmlspecialchars( $type_label ); ?></div>
 <div class="logo-area" style="top:80px">
-  <div class="date-big"><?php echo htmlspecialchars(explode(' ',$date)[0]??''); ?></div>
-  <div class="date-sm"><?php echo htmlspecialchars(explode(' ',$date)[1]??$date); ?></div>
+	<div class="date-big"><?php echo htmlspecialchars( explode( ' ', $date )[0] ?? '' ); ?></div>
+	<div class="date-sm"><?php echo htmlspecialchars( explode( ' ', $date )[1] ?? $date ); ?></div>
 </div>
 <div class="hero-text">
-  <div class="pre-title"><?php echo htmlspecialchars($type_label); ?></div>
-  <div class="title"><?php echo htmlspecialchars($title); ?></div>
-  <?php if($subtitle): ?><div class="subtitle"><?php echo htmlspecialchars($subtitle); ?></div><?php endif; ?>
+	<div class="pre-title"><?php echo htmlspecialchars( $type_label ); ?></div>
+	<div class="title"><?php echo htmlspecialchars( $title ); ?></div>
+	<?php
+	if ( $subtitle ) :
+		?>
+		<div class="subtitle"><?php echo htmlspecialchars( $subtitle ); ?></div><?php endif; ?>
 </div>
 <div class="meta-strip">
-  <span class="meta-item">📍 <?php echo htmlspecialchars($location); ?></span>
-  <?php if($time): ?><span class="meta-item">🕐 <?php echo htmlspecialchars($time); ?></span><?php endif; ?>
-  <span class="meta-item price"><?php echo htmlspecialchars($price); ?></span>
+	<span class="meta-item">📍 <?php echo htmlspecialchars( $location ); ?></span>
+	<?php
+	if ( $time ) :
+		?>
+		<span class="meta-item">🕐 <?php echo htmlspecialchars( $time ); ?></span><?php endif; ?>
+	<span class="meta-item price"><?php echo htmlspecialchars( $price ); ?></span>
 </div>
 <div class="cta-bar"><a class="cta" href="#">Apúntate ahora</a></div>
-<?php if($qr_image): ?><div class="qr-pos"><img src="<?php echo $qr_image; ?>" alt="QR"></div><?php endif; ?>
-<div class="org-line"><?php echo htmlspecialchars($org_name); ?></div>
+<?php
+if ( $qr_image ) :
+	?>
+	<div class="qr-pos"><img src="<?php echo $qr_image; ?>" alt="QR"></div><?php endif; ?>
+<div class="org-line"><?php echo htmlspecialchars( $org_name ); ?></div>
 </body></html>

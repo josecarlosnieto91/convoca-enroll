@@ -59,15 +59,17 @@ class QR_Generator {
 			// Scale: modules are about 33 wide for a URL, scale=10 gives ~330px
 			$scale = max( 3, (int) round( $size / 33 ) );
 
-			$qrOptions = new QROptions( array(
-				'outputInterface'  => QRGdImagePNG::class,
-				'eccLevel'         => EccLevel::M,
-				'scale'            => $scale,
-				'addQuietzone'     => true,
-				'quietzoneSize'    => 2,
-				'outputBase64'     => false,
-				'imageTransparent' => false,
-			) );
+			$qrOptions = new QROptions(
+				array(
+					'outputInterface'  => QRGdImagePNG::class,
+					'eccLevel'         => EccLevel::M,
+					'scale'            => $scale,
+					'addQuietzone'     => true,
+					'quietzoneSize'    => 2,
+					'outputBase64'     => false,
+					'imageTransparent' => false,
+				) 
+			);
 
 			$qrcode = new QRCode( $qrOptions );
 			$result = $qrcode->render( $url, $filepath );

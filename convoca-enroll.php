@@ -18,10 +18,13 @@
 
 if ( ! defined( 'ABSPATH' ) ) {
 
-// Load translations.
-add_action( 'init', function () {
-	load_plugin_textdomain( 'convoca-enroll', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-} );
+	// Load translations.
+	add_action(
+		'init',
+		function () {
+			load_plugin_textdomain( 'convoca-enroll', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+		} 
+	);
 
 	exit;
 }
@@ -80,9 +83,9 @@ spl_autoload_register(
 		if ( ! str_starts_with( $class, $prefix ) ) {
 			return;
 		}
-		$relative = str_replace( $prefix, '', $class );
-		$relative = strtolower( str_replace( '_', '-', $relative ) );
-		$relative = str_replace( '\\', '/', $relative ); // Convert sub-namespace separators.
+		$relative   = str_replace( $prefix, '', $class );
+		$relative   = strtolower( str_replace( '_', '-', $relative ) );
+		$relative   = str_replace( '\\', '/', $relative ); // Convert sub-namespace separators.
 		$class_name = basename( $relative ); // Use only the last segment for WP convention.
 
 		foreach ( array( 'includes/', 'admin/', 'public/', 'media/', 'social/' ) as $dir ) {
@@ -180,13 +183,13 @@ register_activation_hook(
 			wp_schedule_event( time(), 'daily', 'convoca_enroll_feedback' );
 		}
 		if ( ! wp_next_scheduled( 'convoca_enroll_google_photos_share' ) ) {
-		if ( ! wp_next_scheduled( "convoca_social_token_healthcheck" ) ) {
-			wp_schedule_event( time(), "weekly", "convoca_social_token_healthcheck" );
-		}
+			if ( ! wp_next_scheduled( 'convoca_social_token_healthcheck' ) ) {
+				wp_schedule_event( time(), 'weekly', 'convoca_social_token_healthcheck' );
+			}
 			wp_schedule_event( time(), 'daily', 'convoca_enroll_google_photos_share' );
-		if ( ! wp_next_scheduled( "convoca_social_token_healthcheck" ) ) {
-			wp_schedule_event( time(), "weekly", "convoca_social_token_healthcheck" );
-		}
+			if ( ! wp_next_scheduled( 'convoca_social_token_healthcheck' ) ) {
+				wp_schedule_event( time(), 'weekly', 'convoca_social_token_healthcheck' );
+			}
 		}
 		if ( ! wp_next_scheduled( 'convoca_enroll_process_email_queue' ) ) {
 			wp_schedule_event( time(), 'every_minute', 'convoca_enroll_process_email_queue' );
@@ -212,8 +215,8 @@ register_deactivation_hook(
 		wp_clear_scheduled_hook( 'convoca_enroll_reminder_1hora' );
 		wp_clear_scheduled_hook( 'convoca_enroll_feedback' );
 		wp_clear_scheduled_hook( 'convoca_enroll_google_photos_share' );
-		if ( ! wp_next_scheduled( "convoca_social_token_healthcheck" ) ) {
-			wp_schedule_event( time(), "weekly", "convoca_social_token_healthcheck" );
+		if ( ! wp_next_scheduled( 'convoca_social_token_healthcheck' ) ) {
+			wp_schedule_event( time(), 'weekly', 'convoca_social_token_healthcheck' );
 		}
 		wp_clear_scheduled_hook( 'convoca_enroll_process_email_queue' );
 		wp_clear_scheduled_hook( 'convoca_enroll_process_webhook_queue' );
@@ -402,9 +405,12 @@ add_action(
 );
 
 // Register Action Scheduler hook for social publishing.
-add_action( 'convoca_social_publish', function( $queue_id ) {
-	Convoca\Enroll\Social\Social_Scheduler::process( $queue_id );
-} );
+add_action(
+	'convoca_social_publish',
+	function ( $queue_id ) {
+		Convoca\Enroll\Social\Social_Scheduler::process( $queue_id );
+	} 
+);
 
 // Register every_minute cron schedule at top level (must be available during activation).
 add_filter(

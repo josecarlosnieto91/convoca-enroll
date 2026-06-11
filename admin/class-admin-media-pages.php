@@ -43,9 +43,9 @@ class Admin_Media_Subpages {
 							<td><?php echo esc_html( $item['created_at'] ); ?></td>
 						</tr>
 						<?php
-                    endforeach; if ( empty( $items ) ) :
+					endforeach; if ( empty( $items ) ) :
 						?>
-                        <tr><td colspan="7"><?php esc_html_e( 'No hay publicaciones en la cola.', 'convoca-enroll' ); ?></td></tr><?php endif; ?>
+						<tr><td colspan="7"><?php esc_html_e( 'No hay publicaciones en la cola.', 'convoca-enroll' ); ?></td></tr><?php endif; ?>
 				</tbody>
 			</table>
 		</div>
@@ -128,9 +128,9 @@ class Admin_Media_Subpages {
 							<td><?php echo esc_html( $l['created_at'] ); ?></td>
 						</tr>
 						<?php
-                    endforeach; if ( empty( $logs ) ) :
+					endforeach; if ( empty( $logs ) ) :
 						?>
-                        <tr><td colspan="6"><?php esc_html_e( 'No hay logs todavía. Genera un cartel para ver registros.', 'convoca-enroll' ); ?></td></tr><?php endif; ?>
+						<tr><td colspan="6"><?php esc_html_e( 'No hay logs todavía. Genera un cartel para ver registros.', 'convoca-enroll' ); ?></td></tr><?php endif; ?>
 				</tbody>
 			</table>
 		</div>

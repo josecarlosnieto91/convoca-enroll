@@ -55,14 +55,17 @@ class Template_Manager {
 			? wp_json_encode( $data['config'], JSON_UNESCAPED_UNICODE )
 			: ( $data['config'] ?? '{}' );
 
-		$result = $wpdb->replace( $table, array(
-			'id'          => $data['id'] ?? 0,
-			'name'        => sanitize_text_field( $data['name'] ?? '' ),
-			'slug'        => sanitize_title( $data['slug'] ?? '' ),
-			'description' => sanitize_textarea_field( $data['description'] ?? '' ),
-			'config'      => $config,
-			'is_system'   => ! empty( $data['is_system'] ) ? 1 : 0,
-		) );
+		$result = $wpdb->replace(
+			$table,
+			array(
+				'id'          => $data['id'] ?? 0,
+				'name'        => sanitize_text_field( $data['name'] ?? '' ),
+				'slug'        => sanitize_title( $data['slug'] ?? '' ),
+				'description' => sanitize_textarea_field( $data['description'] ?? '' ),
+				'config'      => $config,
+				'is_system'   => ! empty( $data['is_system'] ) ? 1 : 0,
+			) 
+		);
 
 		if ( false === $result ) {
 			return false;
@@ -136,12 +139,14 @@ class Template_Manager {
 			return new \WP_Error( 'invalid_template_schema', 'config debe contener un array de layers.' );
 		}
 		$slug = ! empty( $data['slug'] ) ? sanitize_title( $data['slug'] ) : sanitize_title( $data['name'] ) . '-' . uniqid();
-		return self::save( array(
-			'name'        => sanitize_text_field( $data['name'] ),
-			'slug'        => $slug,
-			'description' => sanitize_textarea_field( $data['description'] ?? '' ),
-			'config'      => $data['config'],
-			'is_system'   => 0,
-		) );
+		return self::save(
+			array(
+				'name'        => sanitize_text_field( $data['name'] ),
+				'slug'        => $slug,
+				'description' => sanitize_textarea_field( $data['description'] ?? '' ),
+				'config'      => $data['config'],
+				'is_system'   => 0,
+			) 
+		);
 	}
 }

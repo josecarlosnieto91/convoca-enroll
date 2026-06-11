@@ -22,40 +22,64 @@ class Social_Rest_API {
 
 	public function register_routes(): void {
 		// ── OAuth Start ──
-		register_rest_route( 'convoca/v1', '/social/auth/meta', array(
-			'methods'             => 'GET',
-			'callback'            => array( $this, 'auth_meta_start' ),
-			'permission_callback' => array( $this, 'can_manage_social' ),
-		) );
-		register_rest_route( 'convoca/v1', '/social/auth/google', array(
-			'methods'             => 'GET',
-			'callback'            => array( $this, 'auth_google_start' ),
-			'permission_callback' => array( $this, 'can_manage_social' ),
-		) );
+		register_rest_route(
+			'convoca/v1',
+			'/social/auth/meta',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'auth_meta_start' ),
+				'permission_callback' => array( $this, 'can_manage_social' ),
+			) 
+		);
+		register_rest_route(
+			'convoca/v1',
+			'/social/auth/google',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'auth_google_start' ),
+				'permission_callback' => array( $this, 'can_manage_social' ),
+			) 
+		);
 
 		// ── OAuth Callbacks ──
-		register_rest_route( 'convoca/v1', '/social/callback/meta', array(
-			'methods'             => 'GET',
-			'callback'            => array( $this, 'callback_meta' ),
-			'permission_callback' => '__return_true',
-		) );
-		register_rest_route( 'convoca/v1', '/social/callback/google', array(
-			'methods'             => 'GET',
-			'callback'            => array( $this, 'callback_google' ),
-			'permission_callback' => '__return_true',
-		) );
+		register_rest_route(
+			'convoca/v1',
+			'/social/callback/meta',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'callback_meta' ),
+				'permission_callback' => '__return_true',
+			) 
+		);
+		register_rest_route(
+			'convoca/v1',
+			'/social/callback/google',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'callback_google' ),
+				'permission_callback' => '__return_true',
+			) 
+		);
 
 		// ── Account Management ──
-		register_rest_route( 'convoca/v1', '/social/accounts', array(
-			'methods'             => 'GET',
-			'callback'            => array( $this, 'list_accounts' ),
-			'permission_callback' => array( $this, 'can_manage_social' ),
-		) );
-		register_rest_route( 'convoca/v1', '/social/accounts/(?P<id>\d+)', array(
-			'methods'             => 'DELETE',
-			'callback'            => array( $this, 'delete_account' ),
-			'permission_callback' => array( $this, 'can_manage_social' ),
-		) );
+		register_rest_route(
+			'convoca/v1',
+			'/social/accounts',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'list_accounts' ),
+				'permission_callback' => array( $this, 'can_manage_social' ),
+			) 
+		);
+		register_rest_route(
+			'convoca/v1',
+			'/social/accounts/(?P<id>\d+)',
+			array(
+				'methods'             => 'DELETE',
+				'callback'            => array( $this, 'delete_account' ),
+				'permission_callback' => array( $this, 'can_manage_social' ),
+			) 
+		);
 	}
 
 	public function can_manage_social(): bool {
@@ -75,7 +99,7 @@ class Social_Rest_API {
 		set_transient( 'convoca_oauth_state_meta', $state, 600 );
 
 		$redirect_uri = rawurlencode( rest_url( 'convoca/v1/social/callback/meta' ) );
-		$url = "https://www.facebook.com/v22.0/dialog/oauth?client_id={$app_id}&redirect_uri={$redirect_uri}&state={$state}&scope=pages_manage_posts,pages_read_engagement,instagram_basic,instagram_content_publish";
+		$url          = "https://www.facebook.com/v22.0/dialog/oauth?client_id={$app_id}&redirect_uri={$redirect_uri}&state={$state}&scope=pages_manage_posts,pages_read_engagement,instagram_basic,instagram_content_publish";
 		wp_redirect( $url );
 		exit;
 	}
@@ -107,12 +131,12 @@ class Social_Rest_API {
 
 		// Step 1: Exchange code for short-lived token.
 		$token_url = "https://graph.facebook.com/v22.0/oauth/access_token?client_id={$app_id}&redirect_uri=" . rawurlencode( rest_url( 'convoca/v1/social/callback/meta' ) ) . "&client_secret={$app_secret}&code={$code}";
-		$resp = wp_remote_get( $token_url );
+		$resp      = wp_remote_get( $token_url );
 		if ( is_wp_error( $resp ) ) {
 			wp_redirect( admin_url( 'admin.php?page=convoca-media-accounts&convoca_error=token_failed' ) );
 			exit;
 		}
-		$body = json_decode( wp_remote_retrieve_body( $resp ), true );
+		$body        = json_decode( wp_remote_retrieve_body( $resp ), true );
 		$short_token = $body['access_token'] ?? '';
 		if ( ! $short_token ) {
 			wp_redirect( admin_url( 'admin.php?page=convoca-media-accounts&convoca_error=token_failed' ) );
@@ -120,17 +144,17 @@ class Social_Rest_API {
 		}
 
 		// Step 2: Exchange for long-lived token.
-		$long_url = "https://graph.facebook.com/v22.0/oauth/access_token?grant_type=fb_exchange_token&client_id={$app_id}&client_secret={$app_secret}&fb_exchange_token={$short_token}";
-		$long_resp = wp_remote_get( $long_url );
-		$long_body = json_decode( wp_remote_retrieve_body( $long_resp ), true );
+		$long_url   = "https://graph.facebook.com/v22.0/oauth/access_token?grant_type=fb_exchange_token&client_id={$app_id}&client_secret={$app_secret}&fb_exchange_token={$short_token}";
+		$long_resp  = wp_remote_get( $long_url );
+		$long_body  = json_decode( wp_remote_retrieve_body( $long_resp ), true );
 		$long_token = $long_body['access_token'] ?? $short_token;
 		$expires_in = $long_body['expires_in'] ?? 5184000; // ~60 days
 
 		// Step 3: Get user Pages.
-		$pages_url = "https://graph.facebook.com/v22.0/me/accounts?access_token={$long_token}";
+		$pages_url  = "https://graph.facebook.com/v22.0/me/accounts?access_token={$long_token}";
 		$pages_resp = wp_remote_get( $pages_url );
 		$pages_body = json_decode( wp_remote_retrieve_body( $pages_resp ), true );
-		$pages = $pages_body['data'] ?? array();
+		$pages      = $pages_body['data'] ?? array();
 
 		$connected = 0;
 		foreach ( $pages as $page ) {
@@ -142,10 +166,10 @@ class Social_Rest_API {
 			}
 
 			Social_OAuth::store_token( 'facebook', $page_id, $page_name, $page_token, $long_token, $expires_in );
-			$connected++;
+			++$connected;
 
 			// Check for linked Instagram account.
-			$ig_url = "https://graph.facebook.com/v22.0/{$page_id}?fields=instagram_business_account&access_token={$page_token}";
+			$ig_url  = "https://graph.facebook.com/v22.0/{$page_id}?fields=instagram_business_account&access_token={$page_token}";
 			$ig_resp = wp_remote_get( $ig_url );
 			$ig_body = json_decode( wp_remote_retrieve_body( $ig_resp ), true );
 			if ( ! empty( $ig_body['instagram_business_account']['id'] ) ) {
@@ -173,7 +197,7 @@ class Social_Rest_API {
 		set_transient( 'convoca_oauth_state_google', $state, 600 );
 
 		$redirect_uri = rawurlencode( rest_url( 'convoca/v1/social/callback/google' ) );
-		$url = "https://accounts.google.com/o/oauth2/v2/auth?client_id={$client_id}&redirect_uri={$redirect_uri}&response_type=code&scope=https://www.googleapis.com/auth/business.manage&access_type=offline&prompt=consent&state={$state}";
+		$url          = "https://accounts.google.com/o/oauth2/v2/auth?client_id={$client_id}&redirect_uri={$redirect_uri}&response_type=code&scope=https://www.googleapis.com/auth/business.manage&access_type=offline&prompt=consent&state={$state}";
 		wp_redirect( $url );
 		exit;
 	}
@@ -203,20 +227,23 @@ class Social_Rest_API {
 		}
 
 		// Exchange code for tokens.
-		$resp = wp_remote_post( 'https://oauth2.googleapis.com/token', array(
-			'body' => array(
-				'code'          => $code,
-				'client_id'     => $client_id,
-				'client_secret' => $client_secret,
-				'redirect_uri'  => rest_url( 'convoca/v1/social/callback/google' ),
-				'grant_type'    => 'authorization_code',
-			),
-		) );
+		$resp = wp_remote_post(
+			'https://oauth2.googleapis.com/token',
+			array(
+				'body' => array(
+					'code'          => $code,
+					'client_id'     => $client_id,
+					'client_secret' => $client_secret,
+					'redirect_uri'  => rest_url( 'convoca/v1/social/callback/google' ),
+					'grant_type'    => 'authorization_code',
+				),
+			) 
+		);
 		if ( is_wp_error( $resp ) ) {
 			wp_redirect( admin_url( 'admin.php?page=convoca-media-accounts&convoca_error=token_failed' ) );
 			exit;
 		}
-		$body = json_decode( wp_remote_retrieve_body( $resp ), true );
+		$body          = json_decode( wp_remote_retrieve_body( $resp ), true );
 		$access_token  = $body['access_token'] ?? '';
 		$refresh_token = $body['refresh_token'] ?? '';
 		$expires_in    = $body['expires_in'] ?? 3600;
@@ -227,10 +254,13 @@ class Social_Rest_API {
 		}
 
 		// Get account name.
-		$info_resp = wp_remote_get( 'https://www.googleapis.com/oauth2/v2/userinfo', array(
-			'headers' => array( 'Authorization' => "Bearer {$access_token}" ),
-		) );
-		$info_body = json_decode( wp_remote_retrieve_body( $info_resp ), true );
+		$info_resp    = wp_remote_get(
+			'https://www.googleapis.com/oauth2/v2/userinfo',
+			array(
+				'headers' => array( 'Authorization' => "Bearer {$access_token}" ),
+			) 
+		);
+		$info_body    = json_decode( wp_remote_retrieve_body( $info_resp ), true );
 		$account_name = $info_body['email'] ?? 'Google Account';
 
 		Social_OAuth::store_token( 'google', $info_body['id'] ?? 'google_1', $account_name, $access_token, $refresh_token, $expires_in );

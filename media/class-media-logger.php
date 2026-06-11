@@ -55,13 +55,18 @@ class Media_Logger {
 	public static function get( string $object_type, int $object_id, int $limit = 20 ): array {
 		global $wpdb;
 
-		return $wpdb->get_results( $wpdb->prepare(
-			"SELECT * FROM {$wpdb->prefix}conv_media_logs
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$wpdb->prefix}conv_media_logs
 			WHERE object_type = %s AND object_id = %d
 			ORDER BY created_at DESC
 			LIMIT %d",
-			$object_type, $object_id, $limit
-		), ARRAY_A );
+				$object_type,
+				$object_id,
+				$limit
+			),
+			ARRAY_A 
+		);
 	}
 
 	/**
@@ -71,9 +76,11 @@ class Media_Logger {
 	 */
 	public static function purge( int $days = 90 ): void {
 		global $wpdb;
-		$wpdb->query( $wpdb->prepare(
-			"DELETE FROM {$wpdb->prefix}conv_media_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)",
-			$days
-		) );
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->prefix}conv_media_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)",
+				$days
+			) 
+		);
 	}
 }

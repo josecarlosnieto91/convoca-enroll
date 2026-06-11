@@ -17,8 +17,10 @@ class GBP_Provider implements Social_Provider_Interface {
 	private string $access_token;
 	private string $refresh_token;
 	private string $location_id;
+	private int $account_id;
 
 	public function __construct( int $account_id ) {
+		$this->account_id    = $account_id;
 		$data = Social_OAuth::get_token( $account_id );
 		$this->account       = $data ?: array();
 		$this->access_token  = $this->account['access_token'] ?? '';

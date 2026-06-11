@@ -1,4 +1,4 @@
-<?php $debug = !empty($debug);
+<?php $debug = ! empty( $debug );
 ?><!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
 @font-face{font-family:'Montserrat';src:url('<?php echo CONV_ENROLL_URL; ?>assets/fonts/Montserrat.ttf')format('truetype')}
 @font-face{font-family:'Montserrat';src:url('<?php echo CONV_ENROLL_URL; ?>assets/fonts/Montserrat.ttf')format('truetype');font-weight:900}
@@ -22,25 +22,40 @@ body{position:relative;font-family:'Montserrat',sans-serif;background:#f5f0e8;pa
 .qr-area{display:inline-block;margin-left:15px;vertical-align:middle;width:125px;height:125px;background:#fff;border:2px solid #111;padding:4px}
 .qr-area img{width:100%;height:100%;display:block}
 .org{font-size:8px;opacity:0.3;letter-spacing:2px;text-transform:uppercase;color:#111;margin-top:10px}
-<?php if($debug): ?>.dbg{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}
+<?php
+if ( $debug ) :
+	?>
+	.dbg{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}
 <?php endif; ?>
 </style></head><body>
 <div class="circle-big"></div><div class="square"></div><div class="rect"></div><div class="circle-sm"></div>
 <div class="img-block"><img src="<?php echo $background_image; ?>" alt=""></div>
 <div class="text-block">
-  <?php if($logo_image): ?><img class="logo-tpl" src="<?php echo $logo_image; ?>" alt="logo" style="position:absolute;top:35px;right:35px;max-width:70px;max-height:35px;z-index:10"><?php endif; ?><div class="badge"><?php echo htmlspecialchars($type_icon); ?> <?php echo htmlspecialchars($type_label); ?></div>
-  <div class="title"><?php echo htmlspecialchars($title); ?></div>
-  <?php if($subtitle): ?><div class="subtitle"><?php echo htmlspecialchars($subtitle); ?></div><?php endif; ?>
-  <div class="meta-grid">
-    <span class="meta-badge">📅 <?php echo htmlspecialchars($date); ?></span>
-    <?php if($time): ?><span class="meta-badge">🕐 <?php echo htmlspecialchars($time); ?></span><?php endif; ?>
-    <span class="meta-badge">📍 <?php echo htmlspecialchars($location); ?></span>
-    <span class="meta-badge price"><?php echo htmlspecialchars($price); ?></span>
-  </div>
-  <div style="display:flex;align-items:center">
-    <a class="cta" href="#">Apúntate</a>
-    <?php if($qr_image): ?><div class="qr-area"><img src="<?php echo $qr_image; ?>" alt="QR"></div><?php endif; ?>
-  </div>
-  <div class="org"><?php echo htmlspecialchars($org_name); ?></div>
+	<?php
+	if ( $logo_image ) :
+		?>
+		<img class="logo-tpl" src="<?php echo $logo_image; ?>" alt="logo" style="position:absolute;top:35px;right:35px;max-width:70px;max-height:35px;z-index:10"><?php endif; ?><div class="badge"><?php echo htmlspecialchars( $type_icon ); ?> <?php echo htmlspecialchars( $type_label ); ?></div>
+	<div class="title"><?php echo htmlspecialchars( $title ); ?></div>
+	<?php
+	if ( $subtitle ) :
+		?>
+		<div class="subtitle"><?php echo htmlspecialchars( $subtitle ); ?></div><?php endif; ?>
+	<div class="meta-grid">
+	<span class="meta-badge">📅 <?php echo htmlspecialchars( $date ); ?></span>
+	<?php
+	if ( $time ) :
+		?>
+		<span class="meta-badge">🕐 <?php echo htmlspecialchars( $time ); ?></span><?php endif; ?>
+	<span class="meta-badge">📍 <?php echo htmlspecialchars( $location ); ?></span>
+	<span class="meta-badge price"><?php echo htmlspecialchars( $price ); ?></span>
+	</div>
+	<div style="display:flex;align-items:center">
+	<a class="cta" href="#">Apúntate</a>
+	<?php
+	if ( $qr_image ) :
+		?>
+		<div class="qr-area"><img src="<?php echo $qr_image; ?>" alt="QR"></div><?php endif; ?>
+	</div>
+	<div class="org"><?php echo htmlspecialchars( $org_name ); ?></div>
 </div>
 </body></html>

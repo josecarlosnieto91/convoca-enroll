@@ -1,10 +1,13 @@
+includes:
+	- ../convoca-core/dev-tools/phpstan.neon.dist
 parameters:
 	level: 0
 	paths:
 		- .
+		- ../convoca-core/includes/
+		- ../convoca-core/convoca-core.php
 	excludePaths:
 		- vendor/
-includes:
-	- ../convoca-core/dev-tools/phpstan.neon.dist
-scanFiles:
-	- vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+		- tests/
+	scanFiles:
+		- vendor/php-stubs/wordpress-stubs/wordpress-stubs.php

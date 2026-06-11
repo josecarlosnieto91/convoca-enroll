@@ -27,16 +27,19 @@ class Social_OAuth {
 		$encrypted = self::encrypt( $access_token );
 		$refresh   = $refresh_token ? self::encrypt( $refresh_token ) : null;
 
-		$wpdb->replace( $wpdb->prefix . 'conv_social_accounts', array(
-			'network'         => $network,
-			'account_id'      => $account_id,
-			'account_name'    => $account_name,
-			'access_token'    => $encrypted,
-			'refresh_token'   => $refresh,
-			'token_expires_at' => $expires_in ? date( 'Y-m-d H:i:s', time() + $expires_in ) : null,
-			'is_active'       => 1,
-			'last_sync_at'    => current_time( 'mysql' ),
-		) );
+		$wpdb->replace(
+			$wpdb->prefix . 'conv_social_accounts',
+			array(
+				'network'          => $network,
+				'account_id'       => $account_id,
+				'account_name'     => $account_name,
+				'access_token'     => $encrypted,
+				'refresh_token'    => $refresh,
+				'token_expires_at' => $expires_in ? date( 'Y-m-d H:i:s', time() + $expires_in ) : null,
+				'is_active'        => 1,
+				'last_sync_at'     => current_time( 'mysql' ),
+			) 
+		);
 
 		return $wpdb->insert_id;
 	}
@@ -46,10 +49,13 @@ class Social_OAuth {
 	 */
 	public static function get_token( int $account_id ): ?array {
 		global $wpdb;
-		$row = $wpdb->get_row( $wpdb->prepare(
-			"SELECT * FROM {$wpdb->prefix}conv_social_accounts WHERE id = %d AND is_active = 1",
-			$account_id
-		), ARRAY_A );
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT * FROM {$wpdb->prefix}conv_social_accounts WHERE id = %d AND is_active = 1",
+				$account_id
+			),
+			ARRAY_A 
+		);
 
 		if ( ! $row ) {
 			return null;
@@ -69,16 +75,18 @@ class Social_OAuth {
 		/**
 	 * Update token status for an account.
 	 */
-	public static function update_token_status( int $account_id, string $status, string $error = "" ): void {
+	public static function update_token_status( int $account_id, string $status, string $error = '' ): void {
 		global $wpdb;
 		$wpdb->update(
-			$wpdb->prefix . "conv_social_accounts",
-			array( "is_active" => ( $status === "active" ? 1 : 0 ), "last_error" => $error ),
-			array( "id" => $account_id )
+			$wpdb->prefix . 'conv_social_accounts',
+			array(
+				'is_active' => ( $status === 'active' ? 1 : 0 ), 'last_error' => $error
+			),
+			array( 'id' => $account_id )
 		);
 	}
 
-public static function get_accounts( string $network = '' ): array {
+	public static function get_accounts( string $network = '' ): array {
 		global $wpdb;
 		$where = $network ? $wpdb->prepare( 'WHERE network = %s AND is_active = 1', $network ) : 'WHERE is_active = 1';
 		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}conv_social_accounts {$where} ORDER BY network, account_name", ARRAY_A );

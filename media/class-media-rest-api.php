@@ -68,9 +68,15 @@ class Media_Rest_API {
 		$actividad_id = (int) $request->get_param( 'actividad_id' );
 		$template     = $request->get_param( 'template' ) ?: 'naturaleza';
 		$format       = $request->get_param( 'format' ) ?: 'square';
+		$image_id     = absint( $request->get_param( 'image_id' ) ?: 0 );
+		$force        = (bool) $request->get_param( 'force' );
+		$export       = $request->get_param( 'export' ) ?: 'png';
 
 		$result = Poster_Engine::render( $actividad_id, $template, array(
-			'formats' => array( $format ),
+			'formats'  => array( $format ),
+			'image_id' => $image_id,
+			'force'    => $force,
+			'export'   => $export,
 		) );
 
 		if ( is_wp_error( $result ) ) {
@@ -143,7 +149,9 @@ class Media_Rest_API {
 			'actividad_id' => array( 'required' => true, 'validate_callback' => 'absint' ),
 			'template'     => array( 'required' => false, 'default' => 'naturaleza' ),
 			'format'       => array( 'required' => false, 'default' => 'square' ),
+			'image_id'     => array( 'required' => false, 'validate_callback' => 'absint' ),
 			'force'        => array( 'required' => false, 'default' => false ),
+			'export'       => array( 'required' => false, 'default' => 'png' ),
 		);
 	}
 }

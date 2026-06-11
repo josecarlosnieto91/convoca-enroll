@@ -152,7 +152,7 @@ class Admin_Setup_Wizard {
 				btn.prop('disabled', true).text('Generando...');
 				$.post(ajaxurl, {
 					action: 'convoca_wizard_test_poster',
-					nonce: '<?php echo wp_create_nonce( "convoca_wizard_test" ); ?>'
+					nonce: '<?php echo wp_create_nonce( 'convoca_wizard_test' ); ?>'
 				}, function(resp) {
 					if (resp.success) {
 						$('#convoca-wizard-preview').html('<img src="' + resp.data.url + '" style="max-width:300px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);"><p style="margin-top:8px;font-size:12px;color:#666;">Cartel generado (' + Math.round(resp.data.size/1024) + 'KB)</p>');
@@ -191,7 +191,11 @@ class Admin_Setup_Wizard {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => 'Sin permisos.' ) );
 		}
-		$activities = get_posts( array( 'post_type' => 'actividad', 'posts_per_page' => 1, 'fields' => 'ids' ) );
+		$activities = get_posts(
+			array(
+				'post_type' => 'actividad', 'posts_per_page' => 1, 'fields' => 'ids'
+			) 
+		);
 		$act_id     = $activities[0] ?? 0;
 		if ( ! $act_id ) {
 			wp_send_json_error( array( 'message' => 'Crea una actividad primero.' ) );
@@ -200,9 +204,11 @@ class Admin_Setup_Wizard {
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
-		wp_send_json_success( array(
-			'url'  => $result['url'],
-			'size' => filesize( $result['files']['square'] ?? 0 ),
-		) );
+		wp_send_json_success(
+			array(
+				'url'  => $result['url'],
+				'size' => filesize( $result['files']['square'] ?? 0 ),
+			) 
+		);
 	}
 }

@@ -1,4 +1,4 @@
-<?php $debug = !empty($debug);
+<?php $debug = ! empty( $debug );
 ?><!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
 @font-face{font-family:'Playfair';src:url('<?php echo CONV_ENROLL_URL; ?>assets/fonts/PlayfairDisplay.ttf')format('truetype');font-weight:700}
 @font-face{font-family:'Montserrat';src:url('<?php echo CONV_ENROLL_URL; ?>assets/fonts/Montserrat.ttf')format('truetype')}
@@ -21,25 +21,44 @@ background:linear-gradient(to bottom,rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.15) 50%,rg
 .qr-card{width:130px;height:130px;background:#fff;border:2px solid #e0e0e0;border-radius:4px;padding:5px}
 .qr-card img{width:100%;height:100%;display:block}
 .org{font-size:8px;opacity:0.35;letter-spacing:1.5px;text-transform:uppercase;color:#999;margin-top:8px}
-<?php if($debug): ?>.dbg{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}
+<?php
+if ( $debug ) :
+	?>
+	.dbg{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}
 <?php endif; ?>
 </style></head><body>
 <div class="photo-zone"><img src="<?php echo $background_image; ?>" alt=""></div>
 <div class="photo-overlay"></div>
 <div class="card">
-  <div class="tag"><?php echo htmlspecialchars($type_label); ?></div>
-  <div class="title"><?php echo htmlspecialchars($title); ?></div>
-  <?php if($subtitle): ?><div class="subtitle"><?php echo htmlspecialchars($subtitle); ?></div><?php endif; ?>
-  <div class="meta-line">
-    <span class="meta-chip">📅 <?php echo htmlspecialchars($date); ?></span>
-    <?php if($time): ?><span class="meta-chip">🕐 <?php echo htmlspecialchars($time); ?></span><?php endif; ?>
-    <span class="meta-chip">📍 <?php echo htmlspecialchars($location); ?></span>
-    <span class="meta-chip price"><?php echo htmlspecialchars($price); ?></span>
-  </div>
-  <div class="cta-row">
-    <a class="cta" href="#">Apúntate ahora</a>
-    <?php if($qr_image): ?><div class="qr-card"><img src="<?php echo $qr_image; ?>" alt="QR"></div><?php endif; ?>
-  </div>
-  <?php if(!empty($collaborator_logos)): ?><div style="display:flex;gap:8px;margin-top:6px"><?php foreach($collaborator_logos as $cl): ?><img src="<?php echo $cl; ?>" style="max-height:15px;opacity:0.5" alt=""><?php endforeach; ?></div><?php endif; ?><div class="org"><?php echo htmlspecialchars($org_name); ?></div>
+	<div class="tag"><?php echo htmlspecialchars( $type_label ); ?></div>
+	<div class="title"><?php echo htmlspecialchars( $title ); ?></div>
+	<?php
+	if ( $subtitle ) :
+		?>
+		<div class="subtitle"><?php echo htmlspecialchars( $subtitle ); ?></div><?php endif; ?>
+	<div class="meta-line">
+	<span class="meta-chip">📅 <?php echo htmlspecialchars( $date ); ?></span>
+	<?php
+	if ( $time ) :
+		?>
+		<span class="meta-chip">🕐 <?php echo htmlspecialchars( $time ); ?></span><?php endif; ?>
+	<span class="meta-chip">📍 <?php echo htmlspecialchars( $location ); ?></span>
+	<span class="meta-chip price"><?php echo htmlspecialchars( $price ); ?></span>
+	</div>
+	<div class="cta-row">
+	<a class="cta" href="#">Apúntate ahora</a>
+	<?php
+	if ( $qr_image ) :
+		?>
+		<div class="qr-card"><img src="<?php echo $qr_image; ?>" alt="QR"></div><?php endif; ?>
+	</div>
+	<?php
+	if ( ! empty( $collaborator_logos ) ) :
+		?>
+		<div style="display:flex;gap:8px;margin-top:6px">
+		<?php
+		foreach ( $collaborator_logos as $cl ) :
+			?>
+		<img src="<?php echo $cl; ?>" style="max-height:15px;opacity:0.5" alt=""><?php endforeach; ?></div><?php endif; ?><div class="org"><?php echo htmlspecialchars( $org_name ); ?></div>
 </div>
 </body></html>

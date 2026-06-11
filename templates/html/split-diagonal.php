@@ -1,5 +1,5 @@
-<?php $debug = !empty($debug);
-$split_y = round($height * 0.55);
+<?php $debug = ! empty( $debug );
+$split_y     = round( $height * 0.55 );
 ?><!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
 @font-face{font-family:'Playfair';src:url('<?php echo CONV_ENROLL_URL; ?>assets/fonts/PlayfairDisplay.ttf')format('truetype');font-weight:700}
 @font-face{font-family:'Montserrat';src:url('<?php echo CONV_ENROLL_URL; ?>assets/fonts/Montserrat.ttf')format('truetype')}
@@ -23,26 +23,41 @@ background:linear-gradient(135deg,rgba(15,52,96,0.3) 0%,transparent 100%);z-inde
 .qr-diag{width:135px;height:135px;background:rgba(255,255,255,0.95);border-radius:12px;padding:5px}
 .qr-diag img{width:100%;height:100%;display:block}
 .org{font-size:8px;opacity:0.25;letter-spacing:2px;text-transform:uppercase;color:#a0c4ff;margin-top:10px}
-<?php if($debug): ?>.dbg{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}
+<?php
+if ( $debug ) :
+	?>
+	.dbg{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}
 <?php endif; ?>
 </style></head><body>
 <div class="tri-top"></div>
 <div class="tri-img"><img src="<?php echo $background_image; ?>" alt=""></div>
 <div class="tri-overlay"></div>
-<?php if($logo_image): ?><img class="logo-tpl" src="<?php echo $logo_image; ?>" alt="logo" style="position:absolute;top:35px;right:35px;max-width:70px;max-height:35px;z-index:10"><?php endif; ?><div class="badge"><?php echo htmlspecialchars($type_icon); ?> <?php echo htmlspecialchars($type_label); ?></div>
+<?php
+if ( $logo_image ) :
+	?>
+	<img class="logo-tpl" src="<?php echo $logo_image; ?>" alt="logo" style="position:absolute;top:35px;right:35px;max-width:70px;max-height:35px;z-index:10"><?php endif; ?><div class="badge"><?php echo htmlspecialchars( $type_icon ); ?> <?php echo htmlspecialchars( $type_label ); ?></div>
 <div class="panel">
-  <div class="title"><?php echo htmlspecialchars($title); ?></div>
-  <?php if($subtitle): ?><div class="subtitle"><?php echo htmlspecialchars($subtitle); ?></div><?php endif; ?>
-  <div class="meta-dots">
-    <span class="meta-dot">📅 <?php echo htmlspecialchars($date); ?></span>
-    <?php if($time): ?><span class="meta-dot">🕐 <?php echo htmlspecialchars($time); ?></span><?php endif; ?>
-    <span class="meta-dot">📍 <?php echo htmlspecialchars($location); ?></span>
-    <span class="meta-dot price"><?php echo htmlspecialchars($price); ?></span>
-  </div>
-  <div class="action-row">
-    <a class="cta" href="#">Apúntate ahora</a>
-    <?php if($qr_image): ?><div class="qr-diag"><img src="<?php echo $qr_image; ?>" alt="QR"></div><?php endif; ?>
-  </div>
-  <div class="org"><?php echo htmlspecialchars($org_name); ?></div>
+	<div class="title"><?php echo htmlspecialchars( $title ); ?></div>
+	<?php
+	if ( $subtitle ) :
+		?>
+		<div class="subtitle"><?php echo htmlspecialchars( $subtitle ); ?></div><?php endif; ?>
+	<div class="meta-dots">
+	<span class="meta-dot">📅 <?php echo htmlspecialchars( $date ); ?></span>
+	<?php
+	if ( $time ) :
+		?>
+		<span class="meta-dot">🕐 <?php echo htmlspecialchars( $time ); ?></span><?php endif; ?>
+	<span class="meta-dot">📍 <?php echo htmlspecialchars( $location ); ?></span>
+	<span class="meta-dot price"><?php echo htmlspecialchars( $price ); ?></span>
+	</div>
+	<div class="action-row">
+	<a class="cta" href="#">Apúntate ahora</a>
+	<?php
+	if ( $qr_image ) :
+		?>
+		<div class="qr-diag"><img src="<?php echo $qr_image; ?>" alt="QR"></div><?php endif; ?>
+	</div>
+	<div class="org"><?php echo htmlspecialchars( $org_name ); ?></div>
 </div>
 </body></html>

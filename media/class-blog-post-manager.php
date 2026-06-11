@@ -51,31 +51,33 @@ class Blog_Post_Manager {
 			return new \WP_Error( 'invalid_activity', __( 'Actividad no encontrada.', 'convoca-enroll' ) );
 		}
 
-		$meta_prefix = 'conv_';
-		$fecha_inicio = get_post_meta( $actividad_id, $meta_prefix . 'fecha_inicio', true );
-		$fecha_fin    = get_post_meta( $actividad_id, $meta_prefix . 'fecha_fin', true );
-		$ubicacion    = get_post_meta( $actividad_id, $meta_prefix . 'ubicacion', true );
-		$precio_socio = get_post_meta( $actividad_id, $meta_prefix . 'precio_socio', true );
-		$plazas       = get_post_meta( $actividad_id, $meta_prefix . 'plazas_totales', true );
-		$permalink    = get_permalink( $actividad_id );
+		$meta_prefix     = 'conv_';
+		$fecha_inicio    = get_post_meta( $actividad_id, $meta_prefix . 'fecha_inicio', true );
+		$fecha_fin       = get_post_meta( $actividad_id, $meta_prefix . 'fecha_fin', true );
+		$ubicacion       = get_post_meta( $actividad_id, $meta_prefix . 'ubicacion', true );
+		$precio_socio    = get_post_meta( $actividad_id, $meta_prefix . 'precio_socio', true );
+		$plazas          = get_post_meta( $actividad_id, $meta_prefix . 'plazas_totales', true );
+		$permalink       = get_permalink( $actividad_id );
 		$inscripcion_url = $permalink ? $permalink . '#inscribirme' : '';
 
 		$content = self::build_content( $actividad, $poster_url, $fecha_inicio, $fecha_fin, $ubicacion, $precio_socio, $plazas, $inscripcion_url );
 
-		$post_id = wp_insert_post( array(
-			'post_title'    => $actividad->post_title,
-			'post_content'  => $content,
-			'post_excerpt'  => get_the_excerpt( $actividad_id ) ?: wp_trim_words( $actividad->post_content, 40 ),
-			'post_status'   => $status,
-			'post_type'     => 'post',
-			'post_author'   => get_post_field( 'post_author', $actividad_id ),
-			'tags_input'    => self::get_tags( $actividad_id ),
-			'category'      => self::get_category_id(),
-			'meta_input'    => array(
-				self::META_ACTIVIDAD_ID => $actividad_id,
-				'_conv_schema_event'    => self::build_schema( $actividad, $fecha_inicio, $fecha_fin, $ubicacion, $permalink ),
-			),
-		) );
+		$post_id = wp_insert_post(
+			array(
+				'post_title'   => $actividad->post_title,
+				'post_content' => $content,
+				'post_excerpt' => get_the_excerpt( $actividad_id ) ?: wp_trim_words( $actividad->post_content, 40 ),
+				'post_status'  => $status,
+				'post_type'    => 'post',
+				'post_author'  => get_post_field( 'post_author', $actividad_id ),
+				'tags_input'   => self::get_tags( $actividad_id ),
+				'category'     => self::get_category_id(),
+				'meta_input'   => array(
+					self::META_ACTIVIDAD_ID => $actividad_id,
+					'_conv_schema_event'    => self::build_schema( $actividad, $fecha_inicio, $fecha_fin, $ubicacion, $permalink ),
+				),
+			) 
+		);
 
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
@@ -91,10 +93,16 @@ class Blog_Post_Manager {
 			set_post_thumbnail( $post_id, get_post_thumbnail_id( $actividad_id ) );
 		}
 
-		\Convoca\Enroll\Media\Media_Logger::log( 'blog_post', $post_id, 'created', 'ok', array(
-			'actividad_id' => $actividad_id,
-			'status'       => $status,
-		) );
+		\Convoca\Enroll\Media\Media_Logger::log(
+			'blog_post',
+			$post_id,
+			'created',
+			'ok',
+			array(
+				'actividad_id' => $actividad_id,
+				'status'       => $status,
+			) 
+		);
 
 		return $post_id;
 	}
@@ -108,24 +116,26 @@ class Blog_Post_Manager {
 			return $post_id;
 		}
 
-		$meta_prefix = 'conv_';
-		$fecha_inicio = get_post_meta( $actividad_id, $meta_prefix . 'fecha_inicio', true );
-		$fecha_fin    = get_post_meta( $actividad_id, $meta_prefix . 'fecha_fin', true );
-		$ubicacion    = get_post_meta( $actividad_id, $meta_prefix . 'ubicacion', true );
-		$precio_socio = get_post_meta( $actividad_id, $meta_prefix . 'precio_socio', true );
-		$plazas       = get_post_meta( $actividad_id, $meta_prefix . 'plazas_totales', true );
-		$permalink    = get_permalink( $actividad_id );
+		$meta_prefix     = 'conv_';
+		$fecha_inicio    = get_post_meta( $actividad_id, $meta_prefix . 'fecha_inicio', true );
+		$fecha_fin       = get_post_meta( $actividad_id, $meta_prefix . 'fecha_fin', true );
+		$ubicacion       = get_post_meta( $actividad_id, $meta_prefix . 'ubicacion', true );
+		$precio_socio    = get_post_meta( $actividad_id, $meta_prefix . 'precio_socio', true );
+		$plazas          = get_post_meta( $actividad_id, $meta_prefix . 'plazas_totales', true );
+		$permalink       = get_permalink( $actividad_id );
 		$inscripcion_url = $permalink ? $permalink . '#inscribirme' : '';
 
 		$content = self::build_content( $actividad, $poster_url, $fecha_inicio, $fecha_fin, $ubicacion, $precio_socio, $plazas, $inscripcion_url );
 
-		wp_update_post( array(
-			'ID'           => $post_id,
-			'post_title'   => $actividad->post_title,
-			'post_content' => $content,
-			'post_excerpt' => get_the_excerpt( $actividad_id ) ?: wp_trim_words( $actividad->post_content, 40 ),
-			'post_status'  => $status,
-		) );
+		wp_update_post(
+			array(
+				'ID'           => $post_id,
+				'post_title'   => $actividad->post_title,
+				'post_content' => $content,
+				'post_excerpt' => get_the_excerpt( $actividad_id ) ?: wp_trim_words( $actividad->post_content, 40 ),
+				'post_status'  => $status,
+			) 
+		);
 
 		// Update schema.
 		update_post_meta( $post_id, '_conv_schema_event', self::build_schema( $actividad, $fecha_inicio, $fecha_fin, $ubicacion, $permalink ) );
@@ -135,9 +145,15 @@ class Blog_Post_Manager {
 			self::set_featured_image_from_url( $post_id, $poster_url, $actividad_id );
 		}
 
-		\Convoca\Enroll\Media\Media_Logger::log( 'blog_post', $post_id, 'updated', 'ok', array(
-			'actividad_id' => $actividad_id,
-		) );
+		\Convoca\Enroll\Media\Media_Logger::log(
+			'blog_post',
+			$post_id,
+			'updated',
+			'ok',
+			array(
+				'actividad_id' => $actividad_id,
+			) 
+		);
 
 		return $post_id;
 	}
@@ -236,10 +252,13 @@ class Blog_Post_Manager {
 			$filetype = wp_check_filetype( $local_path );
 			$filename = 'poster-actividad-' . $actividad_id . '.' . ( $filetype['ext'] ?? 'png' );
 
-			$attachment_id = media_handle_sideload( array(
-				'name'     => $filename,
-				'tmp_name' => $local_path,
-			), $post_id );
+			$attachment_id = media_handle_sideload(
+				array(
+					'name'     => $filename,
+					'tmp_name' => $local_path,
+				),
+				$post_id 
+			);
 
 			if ( ! is_wp_error( $attachment_id ) ) {
 				set_post_thumbnail( $post_id, $attachment_id );

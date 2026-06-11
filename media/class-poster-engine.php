@@ -1,6 +1,6 @@
 <?php
 /**
- * Poster Engine v5 — Direct GD image renderer for activity posters.
+ * Poster Engine v6 — Direct Imagick image renderer for activity posters.
  *
  * Renders deterministic canvas posters without HTML/CSS/PDF pipelines.
  * Features: 6 social formats, 8 templates, text centering, auto-shrink,
@@ -31,12 +31,12 @@ class Poster_Engine {
 	 * @return array|\WP_Error
 	 */
 	public static function render( int $actividad_id, string $template_slug = 'nature-classic', array $overrides = array() ): array|\WP_Error {
-		if ( ! extension_loaded( 'gd' ) ) {
-			return new \WP_Error( 'gd_missing', __( 'GD no está disponible. Activa la extensión PHP GD para generar carteles.', 'convoca-enroll' ) );
+		if ( ! extension_loaded( 'imagick' ) || ! class_exists( '\\Imagick' ) ) {
+			return new \WP_Error( 'imagick_missing', __( 'Imagick no está disponible. Instala/activa la extensión PHP Imagick para generar carteles.', 'convoca-enroll' ) );
 		}
 
 		$formats = self::normalize_formats( $overrides );
-		$export  = self::normalize_export( $overrides['export'] ?? 'png' );
+		$export  = self::normalize_export( (string) ( $overrides['export'] ?? $overrides['export_type'] ?? 'png' ) );
 		$force   = ! empty( $overrides['force'] );
 		$upload  = wp_upload_dir();
 		$dir     = trailingslashit( $upload['basedir'] ) . self::CACHE_DIR;
@@ -129,7 +129,10 @@ class Poster_Engine {
 
 	private static function normalize_export( string $export ): string {
 		$export = strtolower( sanitize_key( $export ) );
-		return in_array( $export, array( 'png', 'jpg', 'jpeg', 'webp' ), true ) ? $export : 'png';
+		if ( 'jpeg' === $export ) {
+			return 'jpg';
+		}
+		return in_array( $export, array( 'png', 'jpg', 'webp' ), true ) ? $export : 'png';
 	}
 
 	public static function format_dimensions( string $format ): array {
@@ -195,6 +198,8 @@ class Poster_Engine {
 			'location'   => wp_strip_all_tags( self::meta_first( $id, array( '_conv_lugar', 'lugar', 'ubicacion', '_conv_ubicacion' ) ) ),
 			'places'     => absint( self::meta_first( $id, array( '_conv_plazas_totales', 'plazas_totales' ) ) ),
 			'price'      => self::price_label( $id ),
+			'organizer'  => wp_strip_all_tags( self::meta_first( $id, array( '_conv_organizador', 'organizador', 'organiza', '_conv_organiza' ) ) ),
+			'age'        => wp_strip_all_tags( self::meta_first( $id, array( '_conv_edad', 'edad', 'edad_recomendada', '_conv_edad_recomendada' ) ) ),
 			'type_label' => $style['label'],
 			'type_color' => $style['color'],
 			'org_name'   => get_bloginfo( 'name' ),
@@ -349,90 +354,170 @@ class Poster_Engine {
 	 * ───────────────────────────────────────────── */
 
 	private static function draw( array $d, string $path, string $export ): bool|\WP_Error {
-		$img = imagecreatetruecolor( $d['w'], $d['h'] );
-		if ( ! $img ) {
-			return new \WP_Error( 'canvas_error', __( 'No se pudo crear el lienzo del cartel.', 'convoca-enroll' ) );
-		}
-		imagealphablending( $img, true );
-		imagesavealpha( $img, true );
+		try {
+			$img = new \Imagick();
+			$img->newImage( $d['w'], $d['h'], new \ImagickPixel( $d['palette']['bg'] ) );
+			$img->setImageFormat( 'png' );
+			$img->setImageAlphaChannel( \Imagick::ALPHACHANNEL_SET );
+			$p = $d['palette'];
+			$l = self::layout( $d['format'], $d['w'], $d['h'] );
 
-		$p = $d['palette'];
-		$l = self::layout( $d['format'], $d['w'], $d['h'] );
+			$rgba = static function( string $hex, float $opacity ): string {
+				$hex = trim( $hex );
+				if ( str_starts_with( $hex, 'rgb' ) ) { return $hex; }
+				$hex = ltrim( $hex, '#' );
+				if ( 3 === strlen( $hex ) ) { $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2]; }
+				if ( 6 !== strlen( $hex ) ) { return 'rgba(0,0,0,' . max( 0, min( 1, $opacity ) ) . ')'; }
+				return sprintf( 'rgba(%d,%d,%d,%.3F)', hexdec( substr( $hex, 0, 2 ) ), hexdec( substr( $hex, 2, 2 ) ), hexdec( substr( $hex, 4, 2 ) ), max( 0, min( 1, $opacity ) ) );
+			};
 
-		// 1. Background gradient
-		self::gradient( $img, $d['w'], $d['h'], $p['bg'], $p['deep'] );
+			$text_draw = static function( string $font, int $size, string $color ): \ImagickDraw {
+				$draw = new \ImagickDraw();
+				$draw->setFont( $font ?: 'DejaVu-Sans' );
+				$draw->setFontSize( $size );
+				$draw->setFillColor( new \ImagickPixel( $color ) );
+				$draw->setTextAntialias( true );
+				return $draw;
+			};
 
-		// 2. Photo zone
-		$has_photo = self::has_image( $d['image_path'] );
-		if ( $has_photo ) {
-			self::photo( $img, $d['image_path'], $l['photo'] );
-			self::photo_overlay( $img, $l['photo'], $p['bg'] );
-		} else {
-			self::placeholder( $img, $l['photo'], $p );
-		}
+			$wrap = static function( \Imagick $canvas, string $text, string $font, int $size, int $max_width ) use ( $text_draw ): array {
+				$draw = $text_draw( $font, $size, '#000000' );
+				$out  = array();
+				foreach ( preg_split( '/\R/u', trim( $text ) ) as $paragraph ) {
+					$paragraph = trim( $paragraph );
+					if ( '' === $paragraph ) { continue; }
+					$line = '';
+					foreach ( preg_split( '/\s+/u', $paragraph ) as $word ) {
+						$test = '' === $line ? $word : $line . ' ' . $word;
+						$metrics = $canvas->queryFontMetrics( $draw, $test );
+						if ( (float) ( $metrics['textWidth'] ?? 0 ) > $max_width && '' !== $line ) { $out[] = $line; $line = $word; }
+						else { $line = $test; }
+					}
+					if ( '' !== $line ) { $out[] = $line; }
+				}
+				return $out ?: array( $text );
+			};
 
-		// 3. Semi-transparent panel for text
-		self::round_rect( $img, $l['panel'], self::color( $img, $p['panel'] ), $l['radius'] );
+			$ellipsize = static function( \Imagick $canvas, string $text, string $font, int $size, int $max_width ) use ( $text_draw ): string {
+				$draw = $text_draw( $font, $size, '#000000' );
+				while ( mb_strlen( $text ) > 1 ) { $test = rtrim( $text, " .,-–" ) . '…'; $metrics = $canvas->queryFontMetrics( $draw, $test ); if ( (float) ( $metrics['textWidth'] ?? 0 ) <= $max_width ) { return $test; } $text = mb_substr( $text, 0, -1 ); }
+				return '…';
+			};
 
-		// 4. Badge
-		self::badge( $img, $d, $l['badge'] );
+			$text_box = static function( \Imagick $canvas, string $text, array $box, string $font, string $color, int $size, float $line_height = 1.15, string $align = 'left', bool $shadow = false, int $max_lines = 0 ) use ( $text_draw, $wrap, $ellipsize ): void {
+				$text = trim( preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $text ) );
+				if ( '' === $text || $box['w'] <= 0 || $box['h'] <= 0 ) { return; }
+				$draw = $text_draw( $font, $size, $color );
+				$lines = $wrap( $canvas, $text, $font, $size, $box['w'] );
+				if ( $max_lines > 0 && count( $lines ) > $max_lines ) { $lines = array_slice( $lines, 0, $max_lines ); $lines[ $max_lines - 1 ] = $ellipsize( $canvas, $lines[ $max_lines - 1 ], $font, $size, $box['w'] ); }
+				$step = (int) round( $size * $line_height );
+				$total_h = count( $lines ) * $step;
+				$y = $box['y'] + max( $size, (int) round( ( $box['h'] - $total_h ) / 2 ) + $size );
+				foreach ( $lines as $line ) {
+					if ( $y > $box['y'] + $box['h'] ) { break; }
+					$metrics = $canvas->queryFontMetrics( $draw, $line );
+					$tw = (float) ( $metrics['textWidth'] ?? 0 );
+					$x = $box['x'];
+					if ( 'center' === $align ) { $x = $box['x'] + (int) round( ( $box['w'] - $tw ) / 2 ); }
+					if ( 'right' === $align ) { $x = $box['x'] + $box['w'] - (int) round( $tw ); }
+					if ( $shadow ) { $canvas->annotateImage( $text_draw( $font, $size, 'rgba(0,0,0,0.32)' ), $x + 3, $y + 3, 0, $line ); }
+					$canvas->annotateImage( $draw, $x, $y, 0, $line );
+					$y += $step;
+				}
+			};
 
-		// 5. Title (with auto-shrink)
-		$title_size = self::auto_shrink_size(
-			$d['title'],
-			self::font( self::FONT_PLAYFAIR ),
-			$l['title']['w'],
-			$l['title']['h'],
-			$l['title_size'],
-			1.05
+			$round_rect = static function( \Imagick $canvas, array $r, string $fill, int $radius, string $stroke = 'transparent', int $stroke_width = 0 ): void {
+				$draw = new \ImagickDraw();
+				$draw->setFillColor( new \ImagickPixel( $fill ) );
+				$draw->setStrokeColor( new \ImagickPixel( $stroke ) );
+				$draw->setStrokeWidth( $stroke_width );
+				$draw->roundRectangle( $r['x'], $r['y'], $r['x'] + $r['w'], $r['y'] + $r['h'], $radius, $radius );
+				$canvas->drawImage( $draw );
+			};
+
+			$gradient = new \Imagick();
+			$gradient->newPseudoImage( $d['w'], $d['h'], 'gradient:' . $p['bg'] . '-' . $p['deep'] );
+			$gradient->setImageFormat( 'png' );
+			$img->compositeImage( $gradient, \Imagick::COMPOSITE_OVER, 0, 0 );
+			$gradient->clear(); $gradient->destroy();
+
+			$decor = new \ImagickDraw();
+			$decor->setFillColor( new \ImagickPixel( $rgba( $p['accent'], 0.16 ) ) );
+			$decor->circle( (int) ( $d['w'] * 0.92 ), (int) ( $d['h'] * 0.12 ), (int) ( $d['w'] * 1.10 ), (int) ( $d['h'] * 0.12 ) );
+			$decor->setFillColor( new \ImagickPixel( $rgba( '#ffffff', 0.08 ) ) );
+			$decor->circle( (int) ( $d['w'] * 0.10 ), (int) ( $d['h'] * 0.92 ), (int) ( $d['w'] * 0.26 ), (int) ( $d['h'] * 0.92 ) );
+			$img->drawImage( $decor );
+
+			if ( self::has_image( $d['image_path'] ) ) {
+				$photo = new \Imagick( $d['image_path'] );
+				if ( method_exists( $photo, 'autoOrient' ) ) { $photo->autoOrient(); }
+				$photo->cropThumbnailImage( $l['photo']['w'], $l['photo']['h'] );
+				$img->compositeImage( $photo, \Imagick::COMPOSITE_OVER, $l['photo']['x'], $l['photo']['y'] );
+				$photo->clear(); $photo->destroy();
+				$overlay = new \Imagick();
+				$overlay->newPseudoImage( $l['photo']['w'], $l['photo']['h'], 'gradient:rgba(0,0,0,0.18)-rgba(0,0,0,0.72)' );
+				$overlay->setImageFormat( 'png' );
+				$img->compositeImage( $overlay, \Imagick::COMPOSITE_OVER, $l['photo']['x'], $l['photo']['y'] );
+				$overlay->clear(); $overlay->destroy();
+			} else {
+				$placeholder = new \ImagickDraw();
+				$placeholder->setFillColor( new \ImagickPixel( $p['deep'] ) );
+				$placeholder->rectangle( $l['photo']['x'], $l['photo']['y'], $l['photo']['x'] + $l['photo']['w'], $l['photo']['y'] + $l['photo']['h'] );
+				$cx = $l['photo']['x'] + (int) round( $l['photo']['w'] / 2 ); $cy = $l['photo']['y'] + (int) round( $l['photo']['h'] / 2 ); $rr = (int) round( min( $l['photo']['w'], $l['photo']['h'] ) * 0.18 );
+				$placeholder->setFillColor( new \ImagickPixel( $rgba( $p['accent'], 0.92 ) ) ); $placeholder->circle( $cx, $cy, $cx + $rr, $cy );
+				$placeholder->setFillColor( new \ImagickPixel( $rgba( '#ffffff', 0.16 ) ) ); $placeholder->circle( $cx, $cy, $cx + (int) round( $rr * 0.58 ), $cy );
+				$img->drawImage( $placeholder );
+				$text_box( $img, __( 'Imagen de la actividad', 'convoca-enroll' ), array( 'x' => $l['photo']['x'] + (int) ( $l['photo']['w'] * 0.18 ), 'y' => $cy + $rr + 22, 'w' => (int) ( $l['photo']['w'] * 0.64 ), 'h' => 80 ), self::font( self::FONT_MONTSERRAT ), '#ffffff', max( 24, (int) round( min( $l['photo']['w'], $l['photo']['h'] ) * 0.045 ) ), 1.1, 'center' );
+			}
+
+			$panel_text = '#0f172a'; $panel_muted = '#334155';
+			$round_rect( $img, $l['panel'], $rgba( '#ffffff', 0.95 ), $l['radius'], $rgba( '#000000', 0.10 ), 2 );
+
+			$round_rect( $img, $l['badge'], $p['accent'], (int) round( $l['badge']['h'] / 2 ) );
+			$text_box( $img, mb_strtoupper( $d['type_label'] ?: __( 'Actividad', 'convoca-enroll' ) ), array( 'x' => $l['badge']['x'] + 18, 'y' => $l['badge']['y'], 'w' => $l['badge']['w'] - 36, 'h' => $l['badge']['h'] ), self::font( self::FONT_MONTSERRAT ), $p['accent_text'], max( 18, (int) round( $l['badge']['h'] * 0.36 ) ), 1.0, 'center', false, 1 );
+
+			$title_size = $l['title_size'];
+			while ( $title_size > max( 28, (int) round( $l['title_size'] * 0.46 ) ) ) { $lines = $wrap( $img, $d['title'], self::font( self::FONT_PLAYFAIR ), $title_size, $l['title']['w'] ); if ( count( $lines ) * (int) round( $title_size * 1.04 ) <= $l['title']['h'] ) { break; } $title_size = (int) round( $title_size * 0.90 ); }
+			$text_box( $img, $d['title'], $l['title'], self::font( self::FONT_PLAYFAIR ), $panel_text, $title_size, 1.04, 'left', true );
+			if ( $d['subtitle'] ) { $text_box( $img, $d['subtitle'], $l['subtitle'], self::font( self::FONT_MONTSERRAT ), $panel_muted, $l['subtitle_size'], 1.18, 'left', false, 2 ); }
+
+			$meta_lines = array(
+			array( __( 'Fecha', 'convoca-enroll' ), (string) ( $d['date'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) ),
+			array( __( 'Hora', 'convoca-enroll' ), (string) ( $d['time'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) ),
+			array( __( 'Lugar', 'convoca-enroll' ), (string) ( $d['location'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) ),
+			array( __( 'Plazas', 'convoca-enroll' ), $d['places'] ? sprintf( _n( '%d plaza', '%d plazas', $d['places'], 'convoca-enroll' ), $d['places'] ) : __( 'Por confirmar', 'convoca-enroll' ) ),
+			array( __( 'Precio', 'convoca-enroll' ), (string) ( $d['price'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) )
 		);
-		self::text_box( $img, $d['title'], $l['title'], self::font( self::FONT_PLAYFAIR ), $p['text'], $title_size, 1.05, 'left', true );
+			if ( ! empty( $d['organizer'] ) ) { $meta_lines[] = array( __( 'Organiza', 'convoca-enroll' ), $d['organizer'] ); }
+			if ( ! empty( $d['age'] ) ) { $meta_lines[] = array( __( 'Edad', 'convoca-enroll' ), $d['age'] ); }
+			if ( $meta_lines ) {
+				$gap = max( 4, (int) round( $l['meta']['h'] * 0.030 ) );
+				$row_h = max( 28, min( 52, (int) floor( ( $l['meta']['h'] - $gap * ( count( $meta_lines ) - 1 ) ) / count( $meta_lines ) ) ) );
+				$y = $l['meta']['y'];
+				foreach ( $meta_lines as $line ) { $row = array( 'x' => $l['meta']['x'], 'y' => $y, 'w' => $l['meta']['w'], 'h' => $row_h ); $round_rect( $img, $row, $rgba( '#111827', 0.055 ), (int) round( $row_h * 0.24 ) ); $label_w = min( 170, (int) round( $row['w'] * 0.26 ) ); $text_box( $img, mb_strtoupper( $line[0] ), array( 'x' => $row['x'] + 18, 'y' => $row['y'], 'w' => $label_w, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $p['accent'], max( 14, (int) round( $row_h * 0.25 ) ), 1.0, 'left', false, 1 ); $text_box( $img, $line[1], array( 'x' => $row['x'] + $label_w + 18, 'y' => $row['y'], 'w' => $row['w'] - $label_w - 36, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $panel_text, max( 18, (int) round( $row_h * 0.38 ) ), 1.05, 'left', false, 2 ); $y += $row_h + $gap; if ( $y > $l['meta']['y'] + $l['meta']['h'] ) { break; } }
+			}
 
-		// 6. Subtitle
-		if ( $d['subtitle'] ) {
-			self::text_box( $img, $d['subtitle'], $l['subtitle'], self::font( self::FONT_MONTSERRAT ), $p['muted'], $l['subtitle_size'], 1.18, 'left' );
+			$round_rect( $img, $l['cta'], $p['accent'], (int) round( $l['cta']['h'] / 2 ) );
+			$cta_text = __( 'Apúntate', 'convoca-enroll' );
+			if ( $d['price'] && __( 'Gratuito', 'convoca-enroll' ) !== $d['price'] ) { $cta_text .= ' · ' . $d['price']; }
+			$text_box( $img, $cta_text, array( 'x' => $l['cta']['x'] + 22, 'y' => $l['cta']['y'], 'w' => $l['cta']['w'] - 44, 'h' => $l['cta']['h'] ), self::font( self::FONT_MONTSERRAT ), $p['accent_text'], max( 20, (int) round( $l['cta']['h'] * 0.36 ) ), 1.0, 'center', false, 1 );
+
+			if ( self::has_image( $d['qr_path'] ) ) { $pad = max( 10, (int) round( $l['qr']['size'] * 0.08 ) ); $round_rect( $img, array( 'x' => $l['qr']['x'] - $pad, 'y' => $l['qr']['y'] - $pad, 'w' => $l['qr']['size'] + 2 * $pad, 'h' => $l['qr']['size'] + 2 * $pad ), '#ffffff', max( 14, (int) round( $pad * 1.5 ) ), $rgba( '#000000', 0.10 ), 1 ); $qr = new \Imagick( $d['qr_path'] ); $qr->resizeImage( $l['qr']['size'], $l['qr']['size'], \Imagick::FILTER_LANCZOS, 1, true ); $img->compositeImage( $qr, \Imagick::COMPOSITE_OVER, $l['qr']['x'], $l['qr']['y'] ); $qr->clear(); $qr->destroy(); }
+			$text_box( $img, $d['org_name'], array( 'x' => $l['logo']['x'], 'y' => $l['logo']['y'], 'w' => $l['logo']['size'] ?? 240, 'h' => $l['logo']['size'] ?? 80 ), self::font( self::FONT_MONTSERRAT ), $panel_muted, max( 18, (int) round( ( $l['logo']['size'] ?? 70 ) * 0.32 ) ), 1.1, 'right', false, 2 );
+
+			if ( 'jpg' === $export ) { $img->setImageBackgroundColor( new \ImagickPixel( '#ffffff' ) ); $img = $img->mergeImageLayers( \Imagick::LAYERMETHOD_FLATTEN ); $img->setImageFormat( 'jpeg' ); $img->setImageCompressionQuality( 92 ); }
+			elseif ( 'webp' === $export ) { $img->setImageFormat( 'webp' ); $img->setImageCompressionQuality( 92 ); }
+			else { $img->setImageFormat( 'png' ); $img->setImageCompressionQuality( 92 ); }
+			$img->stripImage();
+			$ok = $img->writeImage( $path );
+			$img->clear(); $img->destroy();
+		} catch ( \Throwable $e ) {
+			return new \WP_Error( 'imagick_render_error', sprintf( __( 'Error generando el cartel: %s', 'convoca-enroll' ), $e->getMessage() ) );
 		}
 
-		// 7. Meta block
-		$meta_lines = array_filter(
-			array(
-				$d['date'] ? $d['date'] : '',
-				$d['time'] ? $d['time'] : '',
-			)
-		);
-		if ( $d['location'] ) {
-			$meta_lines[] = '📍 ' . $d['location'];
-		}
-		if ( $d['places'] ) {
-			$meta_lines[] = sprintf( _n( '%d plaza', '%d plazas', $d['places'], 'convoca-enroll' ), $d['places'] );
-		}
-		if ( $d['price'] ) {
-			$meta_lines[] = '💰 ' . $d['price'];
-		}
-		self::text_box( $img, implode( "\n", $meta_lines ), $l['meta'], self::font( self::FONT_MONTSERRAT ), $p['text'], $l['meta_size'], 1.28, 'left' );
-
-		// 8. CTA button
-		self::cta( $img, $d, $l['cta'] );
-
-		// 9. QR code
-		self::qr( $img, $d['qr_path'], $l['qr'] );
-
-		// 10. Logo
-		self::logo( $img, $d, $l['logo'] );
-
-		$ok = match ( $export ) {
-			'jpg', 'jpeg' => imagejpeg( $img, $path, 92 ),
-			'webp'        => function_exists( 'imagewebp' ) ? imagewebp( $img, $path, 92 ) : false,
-			default       => imagepng( $img, $path, 6 ),
-		};
-		imagedestroy( $img );
-
-		if ( ! $ok || ! file_exists( $path ) || filesize( $path ) < 100 ) {
-			return new \WP_Error( 'save_error', __( 'No se pudo guardar el cartel generado.', 'convoca-enroll' ) );
-		}
+		if ( ! $ok || ! file_exists( $path ) || filesize( $path ) < 1000 ) { return new \WP_Error( 'save_error', __( 'No se pudo guardar el cartel generado.', 'convoca-enroll' ) ); }
 		return true;
 	}
-
 	/* ─────────────────────────────────────────────
 	 *  LAYOUT CALCULATION
 	 * ───────────────────────────────────────────── */
@@ -441,7 +526,7 @@ class Poster_Engine {
 		$landscape = $w > $h;
 		$min_dim   = min( $w, $h );
 		$m         = (int) round( $min_dim * 0.055 );
-		$gap       = (int) round( $min_dim * 0.028 );
+		$gap       = (int) round( $min_dim * 0.022 );
 		$radius    = (int) round( $min_dim * 0.028 );
 
 		if ( $landscape ) {
@@ -459,10 +544,10 @@ class Poster_Engine {
 
 		$badge_h      = 56;
 		$available_h  = $panel['h'] - 2 * $gap;
-		$title_h      = (int) round( $available_h * 0.35 );
+		$title_h      = (int) round( $available_h * 0.28 );
 		$subtitle_h   = (int) round( $available_h * 0.15 );
-		$cta_h        = 60;
-		$meta_h       = $available_h - $badge_h - $title_h - $subtitle_h - $cta_h - 3 * $gap;
+		$cta_h        = 48;
+		$meta_h       = max( 110, $available_h - $badge_h - $title_h - $subtitle_h - $cta_h - 3 * $gap );
 		$meta_h       = max( 40, $meta_h );
 
 		$badge_y    = $panel['y'] + $gap;
@@ -470,6 +555,7 @@ class Poster_Engine {
 		$subtitle_y = $title_y + $title_h + $gap;
 		$meta_y     = $subtitle_y + $subtitle_h + $gap;
 		$cta_y      = $panel['y'] + $panel['h'] - $gap - $cta_h;
+		$meta_h     = max( 60, min( $meta_h, $cta_y - $meta_y - $gap ) );
 
 		$qr_size  = (int) round( min( $w, $h ) * 0.12 );
 		$logo_size = (int) round( min( $w, $h ) * 0.06 );
@@ -496,6 +582,7 @@ class Poster_Engine {
 			'story'   => 0.48,
 			'a4'      => 0.45,
 			'portrait' => 0.44,
+			'square'   => 0.38,
 			default   => 0.45,
 		};
 		$photo_h  = (int) round( $h * $photo_ratio );
@@ -505,7 +592,7 @@ class Poster_Engine {
 		$panel_y  = $photo_h - $overlap;
 		$panel    = array( 'x' => $m, 'y' => $panel_y, 'w' => $w - 2 * $m, 'h' => $h - $panel_y - $m );
 
-		$qr_size   = (int) round( min( $w, $h ) * ( 'story' === $format ? 0.16 : 0.12 ) );
+		$qr_size   = (int) round( min( $w, $h ) * ( 'story' === $format ? 0.16 : ( $format === 'square' ? 0.09 : 0.12 ) ) );
 		$logo_size = (int) round( min( $w, $h ) * ( 'story' === $format ? 0.075 : 0.065 ) );
 
 		$font_base = max( 42, (int) round( min( $w, $h ) * ( 'story' === $format ? 0.065 : 0.060 ) ) );
@@ -514,17 +601,18 @@ class Poster_Engine {
 		$bottom_zone_h    = max( $qr_size, $logo_size ) + $gap;
 		$text_available_h = $available_h - $bottom_zone_h;
 
-		$badge_h    = (int) round( min( $w, $h ) * 0.065 );
-		$title_h    = (int) round( $text_available_h * 0.38 );
-		$subtitle_h = (int) round( $text_available_h * 0.12 );
-		$cta_h      = (int) round( min( $w, $h ) * 0.075 );
-		$meta_h     = max( 40, $text_available_h - $badge_h - $title_h - $subtitle_h - $cta_h - 3 * $gap );
+		$badge_h    = (int) round( min( $w, $h ) * ( $format === 'square' ? 0.040 : 0.058 ) );
+		$title_h    = (int) round( $text_available_h * ( $format === 'square' ? 0.20 : 0.28 ) );
+		$subtitle_h = (int) round( $text_available_h * 0.10 );
+		$cta_h      = (int) round( min( $w, $h ) * ( $format === 'square' ? 0.050 : 0.062 ) );
+		$meta_h     = max( 130, $text_available_h - $badge_h - $title_h - $subtitle_h - $cta_h - 3 * $gap );
 
 		$badge_y    = $panel['y'] + $gap;
 		$title_y    = $badge_y + $badge_h + $gap;
 		$subtitle_y = $title_y + $title_h + $gap;
 		$meta_y     = $subtitle_y + $subtitle_h + $gap;
 		$cta_y      = $panel['y'] + $panel['h'] - $gap - $bottom_zone_h - $gap - $cta_h;
+		$meta_h     = max( 80, min( $meta_h, $cta_y - $meta_y - $gap ) );
 
 		$qr_logo_y  = $panel['y'] + $panel['h'] - $gap - max( $qr_size, $logo_size );
 
@@ -546,328 +634,16 @@ class Poster_Engine {
 	}
 
 	/* ─────────────────────────────────────────────
-	 *  RENDERING PRIMITIVES
+	 *  FILE HELPERS
 	 * ───────────────────────────────────────────── */
 
 	private static function has_image( string $path ): bool {
 		return $path && file_exists( $path ) && filesize( $path ) > 100;
 	}
 
-	private static function gradient( $img, int $w, int $h, string $from, string $to ): void {
-		$f = sscanf( ltrim( $from, '#' ), '%02x%02x%02x' );
-		$t = sscanf( ltrim( $to, '#' ), '%02x%02x%02x' );
-		for ( $y = 0; $y < $h; $y++ ) {
-			$ratio = $y / max( 1, $h - 1 );
-			$r = (int) ( $f[0] + ( $t[0] - $f[0] ) * $ratio );
-			$g = (int) ( $f[1] + ( $t[1] - $f[1] ) * $ratio );
-			$b = (int) ( $f[2] + ( $t[2] - $f[2] ) * $ratio );
-			imageline( $img, 0, $y, $w, $y, imagecolorallocate( $img, $r, $g, $b ) );
-		}
-	}
-
-	private static function load_image( string $path ) {
-		$info = $path ? @getimagesize( $path ) : false;
-		if ( ! $info ) {
-			return null;
-		}
-		return match ( $info[2] ) {
-			IMAGETYPE_JPEG => imagecreatefromjpeg( $path ),
-			IMAGETYPE_PNG  => imagecreatefrompng( $path ),
-			IMAGETYPE_WEBP => function_exists( 'imagecreatefromwebp' ) ? imagecreatefromwebp( $path ) : null,
-			default        => null,
-		};
-	}
-
-	private static function photo( $canvas, string $path, array $r ): void {
-		$src = self::load_image( $path );
-		if ( ! $src ) {
-			return;
-		}
-		$sw = imagesx( $src );
-		$sh = imagesy( $src );
-		$sc = max( $r['w'] / $sw, $r['h'] / $sh );
-		$cw = (int) round( $r['w'] / $sc );
-		$ch = (int) round( $r['h'] / $sc );
-		$sx = (int) max( 0, ( $sw - $cw ) / 2 );
-		$sy = (int) max( 0, ( $sh - $ch ) / 2 );
-		imagecopyresampled( $canvas, $src, $r['x'], $r['y'], $sx, $sy, $r['w'], $r['h'], $cw, $ch );
-		imagedestroy( $src );
-	}
-
-	private static function photo_overlay( $img, array $r, string $color_hex ): void {
-		$overlay_h = (int) round( $r['h'] * 0.40 );
-		$c         = sscanf( ltrim( $color_hex, '#' ), '%02x%02x%02x' );
-		for ( $y = $r['h'] - $overlay_h; $y < $r['h']; $y++ ) {
-			$ratio = ( $y - ( $r['h'] - $overlay_h ) ) / max( 1, $overlay_h );
-			$alpha = (int) round( $ratio * 80 );
-			$color = imagecolorallocatealpha( $img, $c[0], $c[1], $c[2], $alpha );
-			imageline( $img, $r['x'], $r['y'] + $y, $r['x'] + $r['w'], $r['y'] + $y, $color );
-		}
-	}
-
-	private static function placeholder( $img, array $r, array $p ): void {
-		$bg_color = self::color( $img, $p['deep'] );
-		imagefilledrectangle( $img, $r['x'], $r['y'], $r['x'] + $r['w'], $r['y'] + $r['h'], $bg_color );
-
-		$cx     = $r['x'] + (int) round( $r['w'] / 2 );
-		$cy     = $r['y'] + (int) round( $r['h'] / 2 );
-		$cr     = (int) round( min( $r['w'], $r['h'] ) * 0.18 );
-		$accent = self::color( $img, $p['accent'] );
-		imagefilledellipse( $img, $cx, $cy, $cr * 2, $cr * 2, $accent );
-
-		$inner_r = (int) round( $cr * 0.65 );
-		$light   = self::color( $img, $p['bg'] );
-		imagefilledellipse( $img, $cx, $cy, $inner_r * 2, $inner_r * 2, $light );
-
-		$font_path = self::font( self::FONT_MONTSERRAT );
-		if ( $font_path ) {
-			$icon_size = (int) round( $cr * 0.65 );
-			$icon_text = '📅';
-			$bbox      = @imagettfbbox( $icon_size, 0, $font_path, $icon_text );
-			$tw        = $bbox ? abs( $bbox[2] - $bbox[0] ) : $icon_size;
-			$tx        = $cx - (int) round( $tw / 2 );
-			$ty        = $cy + (int) round( $icon_size * 0.35 );
-			imagettftext( $img, $icon_size, 0, $tx, $ty, self::color( $img, $p['accent'] ), $font_path, $icon_text );
-		}
-
-		$line_color = self::color( $img, $p['muted'] );
-		$line_x     = $r['x'] + $r['w'] - (int) round( $r['w'] * 0.15 );
-		$line_y     = $r['y'] + $r['h'] - (int) round( $r['h'] * 0.08 );
-		$line_w     = (int) round( $r['w'] * 0.08 );
-		imageline( $img, $line_x, $line_y, $line_x + $line_w, $line_y, $line_color );
-		imageline( $img, $line_x, $line_y + 4, $line_x + (int) round( $line_w * 0.7 ), $line_y + 4, $line_color );
-	}
-
-	private static function round_rect( $img, array $r, $color, int $radius ): void {
-		$x = $r['x']; $y = $r['y']; $w = $r['w']; $h = $r['h'];
-		if ( $radius > min( $w, $h ) / 2 ) {
-			$radius = (int) round( min( $w, $h ) / 2 );
-		}
-		imagefilledrectangle( $img, $x + $radius, $y, $x + $w - $radius, $y + $h, $color );
-		imagefilledrectangle( $img, $x, $y + $radius, $x + $w, $y + $h - $radius, $color );
-		imagefilledellipse( $img, $x + $radius, $y + $radius, 2 * $radius, 2 * $radius, $color );
-		imagefilledellipse( $img, $x + $w - $radius, $y + $radius, 2 * $radius, 2 * $radius, $color );
-		imagefilledellipse( $img, $x + $radius, $y + $h - $radius, 2 * $radius, 2 * $radius, $color );
-		imagefilledellipse( $img, $x + $w - $radius, $y + $h - $radius, 2 * $radius, 2 * $radius, $color );
-	}
-
 	/* ─────────────────────────────────────────────
-	 *  ELEMENT DRAWING
+	 *  FONT HELPERS
 	 * ───────────────────────────────────────────── */
-
-	private static function badge( $img, array $d, array $r ): void {
-		$radius   = (int) round( $r['h'] / 2 );
-		$bg_color = self::color( $img, $d['palette']['accent'] );
-		self::round_rect( $img, $r, $bg_color, $radius );
-
-		$text  = mb_strtoupper( $d['type_label'] );
-		$size  = (int) round( $r['h'] * 0.36 );
-		$font  = self::font( self::FONT_MONTSERRAT );
-
-		$bbox = $font ? @imagettfbbox( $size, 0, $font, $text ) : false;
-		$tw   = $bbox ? abs( $bbox[2] - $bbox[0] ) : strlen( $text ) * 6;
-		$tx   = $r['x'] + (int) round( ( $r['w'] - $tw ) / 2 );
-		$ty   = $r['y'] + (int) round( ( $r['h'] + $size * 0.8 ) / 2 );
-
-		if ( $font && function_exists( 'imagettftext' ) ) {
-			imagettftext( $img, $size, 0, $tx, $ty, self::color( $img, $d['palette']['accent_text'] ), $font, $text );
-		} else {
-			imagestring( $img, 5, $tx, $ty - $size, $text, self::color( $img, $d['palette']['accent_text'] ) );
-		}
-	}
-
-	private static function cta( $img, array $d, array $r ): void {
-		$radius   = (int) round( $r['h'] / 2 );
-		$bg_color = self::color( $img, $d['palette']['accent'] );
-		self::round_rect( $img, $r, $bg_color, $radius );
-
-		$text = __( 'Apúntate', 'convoca-enroll' ) . ' · ' . $d['price'];
-		$size = (int) round( $r['h'] * 0.34 );
-		$font = self::font( self::FONT_MONTSERRAT );
-
-		$bbox = $font ? @imagettfbbox( $size, 0, $font, $text ) : false;
-		$tw   = $bbox ? abs( $bbox[2] - $bbox[0] ) : strlen( $text ) * 6;
-		$tx   = $r['x'] + (int) round( ( $r['w'] - $tw ) / 2 );
-		$ty   = $r['y'] + (int) round( ( $r['h'] + $size * 0.8 ) / 2 );
-
-		if ( $font && function_exists( 'imagettftext' ) ) {
-			imagettftext( $img, $size, 0, $tx, $ty, self::color( $img, $d['palette']['accent_text'] ), $font, $text );
-		} else {
-			imagestring( $img, 5, $tx, $ty - $size, $text, self::color( $img, $d['palette']['accent_text'] ) );
-		}
-	}
-
-	private static function qr( $img, string $path, array $r ): void {
-		$qr = self::load_image( $path );
-		if ( ! $qr ) {
-			return;
-		}
-		$pad = max( 8, (int) round( $r['size'] * 0.08 ) );
-		self::round_rect(
-			$img,
-			array( 'x' => $r['x'] - $pad, 'y' => $r['y'] - $pad, 'w' => $r['size'] + 2 * $pad, 'h' => $r['size'] + 2 * $pad ),
-			self::color( $img, '#ffffff' ),
-			12
-		);
-		imagecopyresampled( $img, $qr, $r['x'], $r['y'], 0, 0, $r['size'], $r['size'], imagesx( $qr ), imagesy( $qr ) );
-		imagedestroy( $qr );
-	}
-
-	private static function logo( $img, array $d, array $r ): void {
-		$logo = self::load_image( $d['logo_path'] );
-		if ( $logo ) {
-			imagecopyresampled( $img, $logo, $r['x'], $r['y'], 0, 0, $r['size'], $r['size'], imagesx( $logo ), imagesy( $logo ) );
-			imagedestroy( $logo );
-			return;
-		}
-		self::text_box(
-			$img,
-			$d['org_name'],
-			array( 'x' => $r['x'] - 220, 'y' => $r['y'] + (int) round( $r['size'] * 0.1 ), 'w' => 210, 'h' => $r['size'] ),
-			self::font( self::FONT_MONTSERRAT ),
-			$d['palette']['text'],
-			20,
-			1.1,
-			'right'
-		);
-	}
-
-	/* ─────────────────────────────────────────────
-	 *  TEXT RENDERING ENGINE
-	 * ───────────────────────────────────────────── */
-
-	private static function text_box(
-		$img,
-		string $text,
-		array $box,
-		string $font,
-		string $color,
-		int $size,
-		float $line_height = 1.18,
-		string $align = 'left',
-		bool $shadow = false
-	): void {
-		$text = trim( $text );
-		if ( '' === $text ) {
-			return;
-		}
-
-		$color_id     = self::color( $img, $color );
-		$lines        = self::wrap( $text, $font, $size, $box['w'] );
-		$line_spacing = (int) round( $size * $line_height );
-		$max_y        = $box['y'] + $box['h'];
-		$has_ttf      = $font && function_exists( 'imagettftext' );
-
-		// Calculate total text height
-		$total_text_h = count( $lines ) * $line_spacing - (int) round( $size * ( $line_height - 1 ) );
-
-		// Vertical centering if text fits with room
-		$start_y = $box['y'] + $size;
-		if ( $total_text_h < $box['h'] && count( $lines ) > 0 ) {
-			$start_y = $box['y'] + (int) round( ( $box['h'] - $total_text_h ) / 2 ) + $size;
-		}
-
-		$y = $start_y;
-		foreach ( $lines as $line ) {
-			if ( $y > $max_y ) {
-				break;
-			}
-
-			$line_x = $box['x'];
-			if ( 'center' === $align || 'right' === $align ) {
-				$bbox = $has_ttf ? @imagettfbbox( $size, 0, $font, $line ) : false;
-				$tw   = $bbox ? abs( $bbox[2] - $bbox[0] ) : mb_strlen( $line ) * 8;
-				if ( 'center' === $align ) {
-					$line_x = $box['x'] + (int) round( ( $box['w'] - $tw ) / 2 );
-				} else {
-					$line_x = $box['x'] + $box['w'] - $tw;
-				}
-			}
-
-			if ( $has_ttf ) {
-				if ( $shadow ) {
-					$shadow_color = imagecolorallocatealpha( $img, 0, 0, 0, 60 );
-					imagettftext( $img, $size, 0, $line_x + 2, $y + 2, $shadow_color, $font, $line );
-				}
-				imagettftext( $img, $size, 0, $line_x, $y, $color_id, $font, $line );
-			} else {
-				imagestring( $img, 5, $line_x, $y - $size, $line, $color_id );
-			}
-
-			$y += $line_spacing;
-		}
-	}
-
-	private static function wrap( string $text, string $font, int $size, int $max_width ): array {
-		if ( $max_width <= 0 ) {
-			return array( $text );
-		}
-
-		$has_ttf = $font && function_exists( 'imagettfbbox' );
-		$out     = array();
-
-		foreach ( preg_split( '/\R/u', $text ) as $paragraph ) {
-			$words = preg_split( '/\s+/u', trim( $paragraph ) );
-			if ( empty( $words ) || ( 1 === count( $words ) && '' === $words[0] ) ) {
-				$out[] = '';
-				continue;
-			}
-			$line = '';
-			foreach ( $words as $word ) {
-				$test  = '' === $line ? $word : $line . ' ' . $word;
-				$bbox  = $has_ttf ? @imagettfbbox( $size, 0, $font, $test ) : false;
-				$width = $bbox ? abs( $bbox[2] - $bbox[0] ) : mb_strlen( $test ) * 9;
-				if ( $width > $max_width && '' !== $line ) {
-					$out[] = $line;
-					$line  = $word;
-				} else {
-					$line = $test;
-				}
-			}
-			if ( '' !== $line ) {
-				$out[] = $line;
-			}
-		}
-
-		return $out;
-	}
-
-	private static function auto_shrink_size(
-		string $text,
-		string $font,
-		int $max_width,
-		int $max_height,
-		int $start_size,
-		float $line_height = 1.05
-	): int {
-		if ( '' === $text || ! $font || ! function_exists( 'imagettfbbox' ) ) {
-			return $start_size;
-		}
-
-		$min_size = max( 24, (int) round( $start_size * 0.4 ) );
-		$size     = $start_size;
-
-		for ( $attempt = 0; $attempt < 6; $attempt++ ) {
-			$lines   = self::wrap( $text, $font, $size, $max_width );
-			$total_h = count( $lines ) * (int) round( $size * $line_height );
-
-			if ( $total_h <= $max_height ) {
-				return $size;
-			}
-
-			$size = (int) round( $size * 0.88 );
-			if ( $size < $min_size ) {
-				return $min_size;
-			}
-		}
-
-		return $min_size;
-	}
-
-	/* ─────────────────────────────────────────────
-	 *  FONT & COLOR HELPERS
-	 * ───────────────────────────────────────────── */
-
 	private static function font( string $name ): string {
 		$files = array(
 			self::FONT_MONTSERRAT => 'assets/fonts/Montserrat.ttf',
@@ -877,15 +653,4 @@ class Poster_Engine {
 		return file_exists( $path ) ? $path : '';
 	}
 
-	private static function color( $img, string $color ) {
-		$compact = str_replace( ' ', '', $color );
-		if ( preg_match( '/rgba\((\d+),(\d+),(\d+),([0-9.]+)\)/', $compact, $m ) ) {
-			return imagecolorallocatealpha( $img, (int) $m[1], (int) $m[2], (int) $m[3], 127 - (int) round( (float) $m[4] * 127 ) );
-		}
-		$hex = ltrim( $color, '#' );
-		if ( 3 === strlen( $hex ) ) {
-			$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
-		}
-		return imagecolorallocate( $img, hexdec( substr( $hex, 0, 2 ) ), hexdec( substr( $hex, 2, 2 ) ), hexdec( substr( $hex, 4, 2 ) ) );
-	}
 }

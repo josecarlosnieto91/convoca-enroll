@@ -15,6 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Motor_Inscripcion {
 
+	/**
+	 * Stores the last PDF generation error message, if any.
+	 *
+	 * @var string|null
+	 */
+	public static ?string $last_pdf_error = null;
+
+
 
 	public function __construct() {
 		// Nothing to hook — methods are called directly.

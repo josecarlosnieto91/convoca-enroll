@@ -1,8 +1,8 @@
-<?php $debug = !empty($debug);
-$card_w = round($width * 0.7);
-$card_x = round(($width - $card_w) / 2);
-$card_y = round($height * 0.52);
-$card_h = round($height * 0.48);
+<?php $debug = ! empty( $debug );
+$card_w      = round( $width * 0.7 );
+$card_x      = round( ( $width - $card_w ) / 2 );
+$card_y      = round( $height * 0.52 );
+$card_h      = round( $height * 0.48 );
 ?><!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
 @font-face{font-family:'Playfair';src:url('<?php echo CONV_ENROLL_URL; ?>assets/fonts/PlayfairDisplay.ttf')format('truetype');font-weight:700}
 @font-face{font-family:'Montserrat';src:url('<?php echo CONV_ENROLL_URL; ?>assets/fonts/Montserrat.ttf')format('truetype')}
@@ -28,25 +28,40 @@ background:#fff;border-radius:20px;padding:30px 35px;z-index:5;display:flex;flex
 .qr-card-over{width:140px;height:140px;background:#f0f2f5;border-radius:15px;padding:5px}
 .qr-card-over img{width:100%;height:100%;display:block}
 .org-card{font-size:8px;opacity:0.3;letter-spacing:1.5px;text-transform:uppercase;color:#999;margin-top:8px}
-<?php if($debug): ?>.dbg{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}
+<?php
+if ( $debug ) :
+	?>
+	.dbg{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:3px 6px;z-index:9999}
 <?php endif; ?>
 </style></head><body>
 <div class="bg-full"><img src="<?php echo $background_image; ?>" alt=""></div>
 <div class="bg-overlay"></div>
-<?php if($logo_image): ?><img class="logo-tpl" src="<?php echo $logo_image; ?>" alt="logo" style="position:absolute;top:35px;right:35px;max-width:70px;max-height:35px;z-index:10"><?php endif; ?><div class="badge"><?php echo htmlspecialchars($type_icon); ?> <?php echo htmlspecialchars($type_label); ?></div>
-<div class="date-badge"><span class="day-num"><?php echo htmlspecialchars(explode(' ',$date)[0]??''); ?></span><?php echo htmlspecialchars(explode(' ',$date)[1]??$date); ?></div>
+<?php
+if ( $logo_image ) :
+	?>
+	<img class="logo-tpl" src="<?php echo $logo_image; ?>" alt="logo" style="position:absolute;top:35px;right:35px;max-width:70px;max-height:35px;z-index:10"><?php endif; ?><div class="badge"><?php echo htmlspecialchars( $type_icon ); ?> <?php echo htmlspecialchars( $type_label ); ?></div>
+<div class="date-badge"><span class="day-num"><?php echo htmlspecialchars( explode( ' ', $date )[0] ?? '' ); ?></span><?php echo htmlspecialchars( explode( ' ', $date )[1] ?? $date ); ?></div>
 <div class="card-layer">
-  <div class="title-card"><?php echo htmlspecialchars($title); ?></div>
-  <?php if($subtitle): ?><div class="subtitle-card"><?php echo htmlspecialchars($subtitle); ?></div><?php endif; ?>
-  <div class="meta-card">
-    <?php if($time): ?><span class="meta-tag">🕐 <?php echo htmlspecialchars($time); ?></span><?php endif; ?>
-    <span class="meta-tag">📍 <?php echo htmlspecialchars($location); ?></span>
-    <span class="meta-tag price">💰 <?php echo htmlspecialchars($price); ?></span>
-  </div>
-  <div class="cta-card-row">
-    <a class="cta-card" href="#">Apúntate ahora</a>
-    <?php if($qr_image): ?><div class="qr-card-over"><img src="<?php echo $qr_image; ?>" alt="QR"></div><?php endif; ?>
-  </div>
-  <div class="org-card"><?php echo htmlspecialchars($org_name); ?></div>
+	<div class="title-card"><?php echo htmlspecialchars( $title ); ?></div>
+	<?php
+	if ( $subtitle ) :
+		?>
+		<div class="subtitle-card"><?php echo htmlspecialchars( $subtitle ); ?></div><?php endif; ?>
+	<div class="meta-card">
+	<?php
+	if ( $time ) :
+		?>
+		<span class="meta-tag">🕐 <?php echo htmlspecialchars( $time ); ?></span><?php endif; ?>
+	<span class="meta-tag">📍 <?php echo htmlspecialchars( $location ); ?></span>
+	<span class="meta-tag price">💰 <?php echo htmlspecialchars( $price ); ?></span>
+	</div>
+	<div class="cta-card-row">
+	<a class="cta-card" href="#">Apúntate ahora</a>
+	<?php
+	if ( $qr_image ) :
+		?>
+		<div class="qr-card-over"><img src="<?php echo $qr_image; ?>" alt="QR"></div><?php endif; ?>
+	</div>
+	<div class="org-card"><?php echo htmlspecialchars( $org_name ); ?></div>
 </div>
 </body></html>
