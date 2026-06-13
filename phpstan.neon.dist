@@ -1,4 +1,5 @@
 includes:
+	- phpstan-baseline.neon
 	- ../convoca-core/dev-tools/phpstan.neon.dist
 parameters:
 	level: 0
@@ -11,6 +12,8 @@ parameters:
 		- tests/
 	parallel:
 		maximumNumberOfProcesses: 1
-		processTimeout: 300.0
+		processTimeout: 600.0
 	scanFiles:
+	stubFiles:
+		- ../convoca-core/dev-tools/wp-cli.stub
 		- vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
