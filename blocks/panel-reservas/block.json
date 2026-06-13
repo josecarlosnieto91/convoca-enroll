@@ -3,13 +3,15 @@
     "apiVersion": 3,
     "name": "convoca-enroll/panel-reservas",
     "version": "1.0.0",
-    "title": "Panel de Reservas",
+    "title": "Panel de Reservas Convoca",
     "category": "convoca-enroll",
-    "icon": "tickets-alt",
-    "description": "Panel donde los usuarios pueden consultar y cancelar sus reservas mediante email y código.",
-    "keywords": ["convoca", ""reservas", "panel", "consultar", "biodevas"],
-    "supports": { "html": false, "align": ["wide", "full"] },
-    "attributes": {},
+    "icon": "tickets",
+    "description": "Panel de reservas donde los usuarios pueden consultar y gestionar sus reservas mediante email y código.",
+    "keywords": ["convoca", "reservas", "panel", "consultar"],
+    "supports": {
+        "align": ["wide", "full"],
+        "html": false
+    },
     "textdomain": "convoca-enroll",
-    "editorScript": "biodevas-enroll-blocks"
+    "editorScript": "convoca-enroll-blocks"
 }

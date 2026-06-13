@@ -2,10 +2,10 @@
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
     "name": "convoca-enroll/evaluacion",
-    "title": "Biodevas: Formulario de Evaluación",
+    "title": "Biodevas: Formulario de Evaluaci\u00f3n",
     "category": "convoca-enroll",
     "icon": "star-filled",
-    "description": "Muestra un formulario de evaluación para una actividad finalizada.",
+    "description": "Muestra un formulario de evaluaci\u00f3n para una actividad finalizada.",
     "attributes": {
         "actividadId": {
             "type": "number",

@@ -7,33 +7,11 @@
     "category": "convoca-enroll",
     "icon": "clipboard",
     "description": "Formulario de inscripción dinámico vinculado a una actividad.",
-    "keywords": ["convoca", "
-        "inscripción",
-        "actividad",
-        "formulario",
-        "biodevas"
-    ],
+    "keywords": ["convoca", "inscripción", "actividad", "formulario"],
     "supports": {
-        "html": false,
-        "align": [
-            "wide",
-            "full"
-        ]
-    },
-    "attributes": {
-        "actividadId": {
-            "type": "number",
-            "default": 0
-        },
-        "mostrarPlazas": {
-            "type": "boolean",
-            "default": true
-        },
-        "mostrarPrecios": {
-            "type": "boolean",
-            "default": true
-        }
+        "align": ["wide", "full"],
+        "html": false
     },
     "textdomain": "convoca-enroll",
-    "editorScript": "biodevas-enroll-blocks"
+    "editorScript": "convoca-enroll-blocks"
 }

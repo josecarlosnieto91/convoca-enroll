@@ -3,13 +3,15 @@
     "apiVersion": 3,
     "name": "convoca-enroll/pagina-inscripcion",
     "version": "1.0.0",
-    "title": "Página de Inscripciones",
+    "title": "Página de Inscripción Convoca",
     "category": "convoca-enroll",
-    "icon": "list-view",
-    "description": "Página completa de inscripciones mostrando todas las actividades disponibles con enlace al panel de reservas.",
-    "keywords": ["convoca", ""inscripciones", "actividades", "listado", "biodevas"],
-    "supports": { "html": false, "align": ["wide", "full"] },
-    "attributes": {},
+    "icon": "welcome-write-blog",
+    "description": "Página completa con formulario y datos de la actividad.",
+    "keywords": ["convoca", "inscripciones", "actividades", "listado"],
+    "supports": {
+        "align": ["wide", "full"],
+        "html": false
+    },
     "textdomain": "convoca-enroll",
-    "editorScript": "biodevas-enroll-blocks"
+    "editorScript": "convoca-enroll-blocks"
 }
