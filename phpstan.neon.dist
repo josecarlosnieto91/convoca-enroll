@@ -9,5 +9,8 @@ parameters:
 	excludePaths:
 		- vendor/
 		- tests/
+	parallel:
+		maximumNumberOfProcesses: 1
+		processTimeout: 300.0
 	scanFiles:
 		- vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
