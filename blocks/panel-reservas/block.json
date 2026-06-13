@@ -1,15 +1,15 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "name": "biodevas-enroll/panel-reservas",
+    "name": "convoca-enroll/panel-reservas",
     "version": "1.0.0",
     "title": "Panel de Reservas",
-    "category": "biodevas-enroll",
+    "category": "convoca-enroll",
     "icon": "tickets-alt",
     "description": "Panel donde los usuarios pueden consultar y cancelar sus reservas mediante email y código.",
-    "keywords": ["reservas", "panel", "consultar", "biodevas"],
+    "keywords": ["convoca", ""reservas", "panel", "consultar", "biodevas"],
     "supports": { "html": false, "align": ["wide", "full"] },
     "attributes": {},
-    "textdomain": "biodevas-enroll",
+    "textdomain": "convoca-enroll",
     "editorScript": "biodevas-enroll-blocks"
 }

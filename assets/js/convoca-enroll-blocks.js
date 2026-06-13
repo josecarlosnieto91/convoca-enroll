@@ -1,5 +1,5 @@
 /**
- * Gutenberg blocks for Biodevas Enroll.
+ * Gutenberg blocks for Convoca Enroll.
  * Consolidated editor-only scripts.
  */
 (function (wp) {
@@ -79,7 +79,7 @@
                             )
                             : (Placeholder ? el(Placeholder, {
                                 icon: 'clipboard',
-                                label: 'Formulario de Inscripción Biodevas',
+                                label: "Formulario de Inscripción Convoca',
                                 instructions: 'Selecciona una actividad:'
                             },
                                 el('select', {

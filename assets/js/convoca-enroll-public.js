@@ -1,5 +1,5 @@
 /**
- * Biodevas Enroll — Public JS
+ * Convoca Enroll — Public JS
  * Form validation, socio toggle, AJAX submission using convoca namespaces.
  */
 (function (bdv) {

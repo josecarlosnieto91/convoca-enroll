@@ -91,7 +91,7 @@ class Admin_Page {
 
 		// 1. Menú Principal (Top-level)
 		add_menu_page(
-			__( 'Inscripciones Biodevas', 'convoca-enroll' ),
+			__( 'Inscripciones Convoca', 'convoca-enroll' ),
 			__( 'Actividades', 'convoca-enroll' ),
 			$cap,
 			'convoca-enroll',
@@ -225,7 +225,7 @@ class Admin_Page {
 	/* ── Dashboard widget ──────────────────────── */
 
 	public function dashboard_widget(): void {
-		wp_add_dashboard_widget( 'conv_enroll_stats', __( 'Inscripciones Biodevas', 'convoca-enroll' ), array( $this, 'render_widget' ) );
+		wp_add_dashboard_widget( 'conv_enroll_stats', __( 'Inscripciones Convoca', 'convoca-enroll' ), array( $this, 'render_widget' ) );
 	}
 
 	public function render_widget(): void {

@@ -31,7 +31,7 @@ class Admin_Settings {
 		}
 
 		if ( ! \Convoca\Core\Utils::is_plugin_active_safe( 'convoca-common/convoca-common.php' ) ) {
-			echo '<div class="notice notice-warning"><p>⚠️ ' . esc_html__( 'Biodevas Common no está activo. Algunas funciones podrían no estar disponibles.', 'convoca-enroll' ) . '</p></div>';
+			echo '<div class="notice notice-warning"><p>⚠️ ' . esc_html__( 'Convoca Common no está activo. Algunas funciones podrían no estar disponibles.', 'convoca-enroll' ) . '</p></div>';
 		}
 
 		$s         = get_option( self::OPTION, array() );
@@ -50,7 +50,7 @@ class Admin_Settings {
 		?>
 		<div class="wrap bde-settings-wrap">
 			<div class="bde-admin-header" style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
-				<img src="<?php echo esc_url( CONVOCA_IMAGES_URL . 'logo.png' ); ?>" alt="Biodevas Enroll" style="width: 80px; height: 80px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+				<img src="<?php echo esc_url( CONVOCA_IMAGES_URL . 'logo.png' ); ?>" alt="Convoca Enroll" style="width: 80px; height: 80px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
 				<div>
 					<h1 style="margin: 0; padding: 0;"><?php esc_html_e( 'Ajustes de Inscripciones', 'convoca-enroll' ); ?></h1>
 					<p style="margin: 5px 0 0; color: #666; font-size: 1.1em;"><?php _e( 'Gestión de actividades y motor de reservas', 'convoca-enroll' ); ?></p>
@@ -848,17 +848,17 @@ class Admin_Settings {
 		// 1. Plugins
 		$plugin_definitions = array(
 			'convoca-core'    => array(
-				'name'     => 'Biodevas Common',
+				'name'     => 'Convoca Common',
 				'class'    => '\\Convoca\\Core\\Utils',
 				'severity' => 'error',
 			),
 			'convoca-members' => array(
-				'name'     => 'Biodevas Members',
+				'name'     => 'Convoca Members',
 				'class'    => '\\Convoca\\Members\\Process_Member',
 				'severity' => 'warning',
 			),
 			'convoca-gateway' => array(
-				'name'     => 'Biodevas Gateway',
+				'name'     => 'Convoca Gateway',
 				'class'    => '\\Convoca\\Gateway\\Payment_Handler',
 				'severity' => 'warning',
 			),

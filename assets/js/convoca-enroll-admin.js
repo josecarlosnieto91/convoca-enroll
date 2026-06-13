@@ -1,5 +1,5 @@
 /**
- * Biodevas Enroll — Admin JS
+ * Convoca Enroll — Admin JS
  * State change, check-in toggles, and email resends using convocaAdmin.
  */
 (function (bdvAdmin) {

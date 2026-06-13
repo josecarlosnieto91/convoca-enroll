@@ -45,14 +45,14 @@ if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
 	}
 }
 
-// Compatibility Check: Ensure Biodevas Common is loaded.
+// Compatibility Check: Ensure Convoca Common is loaded.
 if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
 	add_action(
 		'admin_notices',
 		function () {
 			printf(
 				'<div class="notice notice-error"><p>%s</p></div>',
-				'Biodevas Enroll requiere el plugin Biodevas Common Utilities activo para funcionar.'
+				'Convoca Enroll requiere el plugin Convoca Common Utilities activo para funcionar.'
 			);
 		}
 	);

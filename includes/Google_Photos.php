@@ -241,7 +241,7 @@ class Google_Photos
         $templates = Email_Automation::get_templates();
         $tpl       = $templates['google_photos_album_creado'] ?? [
             'subject' => '[Biodevas] Álbum de fotos para "{actividad}"',
-            'body'    => "Hola,\n\nSe ha creado un álbum de Google Photos para la actividad \"{actividad}\".\n\nPuedes acceder y subir fotos aquí:\n{album_url}\n\nUna vez el evento haya terminado, puedes compartir el álbum con los participantes desde este mismo panel.\n\n— Equipo Biodevas",
+            'body'    => "Hola,\n\nSe ha creado un álbum de Google Photos para la actividad \"{actividad}\".\n\nPuedes acceder y subir fotos aquí:\n{album_url}\n\nUna vez el evento haya terminado, puedes compartir el álbum con los participantes desde este mismo panel.\n\n— Equipo Convoca",
         ];
 
         $vars = [
@@ -294,7 +294,7 @@ class Google_Photos
             $templates = Email_Automation::get_templates();
             $tpl       = $templates['google_photos_album_compartido'] ?? [
                 'subject' => '[Biodevas] Fotos de la actividad "{actividad}"',
-                'body'    => "Hola,\n\n¡Ya puedes ver las fotos de la actividad \"{actividad}\"!\n\nHemos subido un álbum con los mejores momentos. Puedes verlo aquí:\n{album_url}\n\n¡Gracias por participar en nuestras actividades!\n\n— Equipo Biodevas",
+                'body'    => "Hola,\n\n¡Ya puedes ver las fotos de la actividad \"{actividad}\"!\n\nHemos subido un álbum con los mejores momentos. Puedes verlo aquí:\n{album_url}\n\n¡Gracias por participar en nuestras actividades!\n\n— Equipo Convoca",
             ];
 
             $vars = [

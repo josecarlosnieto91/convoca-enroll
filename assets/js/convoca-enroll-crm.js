@@ -1,5 +1,5 @@
 /**
- * Biodevas Enroll — CRM Monitor JS
+ * Convoca Enroll — CRM Monitor JS
  * Vanilla JS refactor
  */
 (function (bdvAdmin) {

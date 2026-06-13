@@ -1,13 +1,13 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "name": "biodevas-enroll/formulario-inscripcion",
+    "name": "convoca-enroll/formulario-inscripcion",
     "version": "1.0.0",
-    "title": "Formulario de Inscripción Biodevas",
-    "category": "biodevas-enroll",
+    "title": "Formulario de Inscripción Convoca",
+    "category": "convoca-enroll",
     "icon": "clipboard",
     "description": "Formulario de inscripción dinámico vinculado a una actividad.",
-    "keywords": [
+    "keywords": ["convoca", "
         "inscripción",
         "actividad",
         "formulario",
@@ -34,6 +34,6 @@
             "default": true
         }
     },
-    "textdomain": "biodevas-enroll",
+    "textdomain": "convoca-enroll",
     "editorScript": "biodevas-enroll-blocks"
 }

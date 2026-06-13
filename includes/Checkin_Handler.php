@@ -68,7 +68,7 @@ class Checkin_Handler {
 		<head>
 			<meta charset="<?php bloginfo( 'charset' ); ?>">
 			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-			<title><?php _e( 'Check-in Biodevas', 'convoca-enroll' ); ?></title>
+			<title><?php _e( 'Check-in Convoca', 'convoca-enroll' ); ?></title>
 			<?php wp_head(); ?>
 			<link rel="preconnect" href="https://fonts.googleapis.com">.
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>.
@@ -214,7 +214,7 @@ class Checkin_Handler {
 		<body>
 			<div class="app-container">
 				<div class="header">
-					<h1><?php _e( 'Check-in Biodevas', 'convoca-enroll' ); ?></h1>
+					<h1><?php _e( 'Check-in Convoca', 'convoca-enroll' ); ?></h1>
 					<p class="subtitle"><?php _e( 'Escáner de Asistencia', 'convoca-enroll' ); ?></p>
 				</div>
 

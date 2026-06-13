@@ -66,7 +66,7 @@ class Checkin_PWA {
 		header( 'Content-Type: application/json' );
 		echo json_encode(
 			array(
-				'name'             => __( 'Check-in Biodevas', 'convoca-enroll' ),
+				'name'             => __( 'Check-in Convoca', 'convoca-enroll' ),
 				'short_name'       => __( 'Check-in', 'convoca-enroll' ),
 				'description'      => __( 'Escáner QR de asistencia para monitores de Biodevas', 'convoca-enroll' ),
 				'start_url'        => home_url( '/checkin/' ),
@@ -127,7 +127,7 @@ class Checkin_PWA {
 		<?php /* SW served via PHP (no .js suffix to avoid nginx static file handling) */ ?>
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-		<meta name="apple-mobile-web-app-title" content="Check-in Biodevas">
+		<meta name="apple-mobile-web-app-title" content="Check-in Convoca">
 		<meta name="mobile-web-app-capable" content="yes">
 		<meta name="theme-color" content="#0f172a">
 		<?php if ( $logo_url ) : ?>

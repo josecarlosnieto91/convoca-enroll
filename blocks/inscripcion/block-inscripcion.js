@@ -1,5 +1,5 @@
 /**
- * Gutenberg block: Formulario de Inscripción Biodevas
+ * Gutenberg block: Formulario de Inscripción Convoca
  * Editor-only — server-side rendered.
  */
 (function (wp) {
@@ -78,7 +78,7 @@
                             )
                             : el(Placeholder, {
                                 icon: 'clipboard',
-                                label: 'Formulario de Inscripción Biodevas',
+                                label: 'Formulario de Inscripción Convoca',
                                 instructions: 'Selecciona una actividad:'
                             },
                                 el('select', {

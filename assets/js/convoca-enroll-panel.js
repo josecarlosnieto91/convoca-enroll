@@ -1,5 +1,5 @@
 /**
- * Biodevas Enroll — Panel de Reservas JS
+ * Convoca Enroll — Panel de Reservas JS
  * Login via email+code, display reservations, cancel with confirmation.
  */
 (function (bdv) {
