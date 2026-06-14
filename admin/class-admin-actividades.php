@@ -38,7 +38,7 @@ class Admin_Actividades {
 			__( 'Actividades', 'convoca-enroll' ),
 			__( 'Actividades', 'convoca-enroll' ),
 			'edit_posts',
-			'bde-actividades',
+			'convoca-enroll-actividades',
 			array( $this, 'render_page' )
 		);
 
@@ -47,7 +47,7 @@ class Admin_Actividades {
 			__( 'Añadir nueva actividad', 'convoca-enroll' ),
 			__( 'Añadir nueva', 'convoca-enroll' ),
 			'edit_posts',
-			'bde-actividad-editor',
+			'convoca-enroll-actividad-editor',
 			array( $this, 'render_editor' )
 		);
 	}
@@ -64,9 +64,9 @@ class Admin_Actividades {
 			<hr class="wp-header-end">
 
 			<form method="get">
-				<input type="hidden" name="page" value="bde-actividades">
+				<input type="hidden" name="page" value="convoca-enroll-actividades">
 				<?php
-				$table->search_box( __( 'Buscar actividades', 'convoca-enroll' ), 'bde-search' );
+				$table->search_box( __( 'Buscar actividades', 'convoca-enroll' ), 'convoca-enroll-search' );
 				$table->display();
 				?>
 			</form>
@@ -83,7 +83,7 @@ class Admin_Actividades {
 	 * Enqueue assets for the custom editor.
 	 */
 	public function enqueue_assets( $hook ) {
-		if ( strpos( $hook, 'bde-actividad-editor' ) !== false ) {
+		if ( strpos( $hook, 'convoca-enroll-actividad-editor' ) !== false ) {
 			wp_enqueue_style( 'convoca-core', CONV_COMMON_URL . 'assets/css/convoca-common.css', array(), CONV_COMMON_VERSION );
 		}
 	}
@@ -100,12 +100,12 @@ class Admin_Actividades {
 
 		if ( ( $screen && $screen->id === 'actividad' ) || $post_type === 'actividad' ) {
 			if ( isset( $screen->action ) && $screen->action === 'add' || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
-				wp_redirect( admin_url( 'admin.php?page=bde-actividad-editor' ) );
+				wp_redirect( admin_url( 'admin.php?page=convoca-enroll-actividad-editor' ) );
 				exit;
 			} else {
 				$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
 				if ( $post_id && strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false ) {
-					wp_redirect( admin_url( 'admin.php?page=bde-actividad-editor&id=' . $post_id ) );
+					wp_redirect( admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $post_id ) );
 					exit;
 				}
 			}
@@ -116,7 +116,7 @@ class Admin_Actividades {
 		$node_id = 'new-actividad';
 		$node    = $wp_admin_bar->get_node( $node_id );
 		if ( $node ) {
-			$node->href = admin_url( 'admin.php?page=bde-actividad-editor' );
+			$node->href = admin_url( 'admin.php?page=convoca-enroll-actividad-editor' );
 			$wp_admin_bar->add_node( $node );
 		}
 	}
@@ -373,7 +373,7 @@ class Admin_Actividades {
 			'Enroll/Admin'
 		);
 
-		wp_redirect( admin_url( 'admin.php?page=bde-actividad-editor&id=' . $new_id ) );
+		wp_redirect( admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $new_id ) );
 		exit;
 	}
 }
@@ -447,7 +447,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 	}
 
 	protected function column_titulo( $item ): string {
-		$edit  = admin_url( 'admin.php?page=bde-actividad-editor&id=' . $item->ID );
+		$edit  = admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $item->ID );
 		$lugg  = get_post_meta( $item->ID, '_conv_actividad_lugg', true );
 		$badge = $lugg === '1' ? ' <span class="convoca-badge convoca-badge--lugg" style="background:#2d5a27;color:#fff;">Centro Social</span>' : '';
 

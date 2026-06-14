@@ -318,7 +318,7 @@ class Admin_Page {
 		$table->prepare_items();
 		echo '<form method="get"><input type="hidden" name="page" value="convoca-enroll">';
 		wp_nonce_field( 'bulk-inscripciones', '_conv_nonce', true, false );
-		$table->search_box( __( 'Buscar', 'convoca-enroll' ), 'bde-search' );
+		$table->search_box( __( 'Buscar', 'convoca-enroll' ), 'convoca-enroll-search' );
 		$table->display();
 		echo '</form></div>';
 	}
