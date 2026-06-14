@@ -28,7 +28,7 @@ class Inscriptions_List extends \WP_List_Table {
 	private $member_cache = array();
 
 	/** Default WhatsApp message template for inscriptions. */
-	private const WA_MSG = 'Hola {nombre}, te escribimos desde Biodevas sobre tu inscripción. ';
+	private const WA_MSG = 'Hola {nombre}, te escribimos desde Convoca sobre tu inscripción. ';
 
 	public function __construct() {
 		parent::__construct(

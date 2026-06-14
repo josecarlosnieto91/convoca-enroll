@@ -234,7 +234,7 @@ class Admin_Settings {
 <p>Las reservas múltiples realizadas por una misma persona podrán ser canceladas por la organización.</p>
 <p><strong>Importante:</strong> La inscripción debe realizarla siempre una persona adulta. En el caso de menores o personas a su cargo, la reserva deberá hacerla su padre, madre, tutor/a o persona responsable.</p>
 <p><strong>Excepción:</strong> Si realizas la inscripción para un menor o una persona a tu cargo, el adulto podrá aparecer asociado a más de una inscripción, ya que actúa como responsable de la reserva.</p>
-<p>Al realizar la inscripción aceptas el tratamiento de tus datos personales para la gestión de la actividad y autorizas la posible toma de contenido gráfico durante el desarrollo de los talleres, destinado a la comunicación y difusión de Biodevas.</p>';
+<p>Al realizar la inscripción aceptas el tratamiento de tus datos personales para la gestión de la actividad y autorizas la posible toma de contenido gráfico durante el desarrollo de los talleres, destinado a la comunicación y difusión de Convoca.</p>';
 
 		$normas = $s['normas_inscripcion'] ?? $default_normas;
 		$intro  = $s['texto_introduccion'] ?? 'Antes de realizar tu inscripción te recomendamos explorar primero todos los talleres disponibles para descubrir las propuestas que más te interesan.';
@@ -532,8 +532,8 @@ class Admin_Settings {
 				<th><label for="google_photos_album_prefix">Prefijo de álbum</label></th>
 				<td>
 					<input type="text" id="google_photos_album_prefix" name="bde[google_photos_album_prefix]"
-						value="<?php echo esc_attr( $s['google_photos_album_prefix'] ?? 'Biodevas - ' ); ?>" class="regular-text">
-					<p class="description">Prefijo que se añadirá al nombre del álbum (ej. "Biodevas - Taller de Bosque").</p>
+						value="<?php echo esc_attr( $s['google_photos_album_prefix'] ?? 'Convoca - ' ); ?>" class="regular-text">
+					<p class="description">Prefijo que se añadirá al nombre del álbum (ej. "Convoca - Taller de Bosque").</p>
 				</td>
 			</tr>
 		</table>
@@ -727,7 +727,7 @@ class Admin_Settings {
 
 		if ( $tab === 'google_photos' ) {
 			$settings['google_photos_refresh_token'] = sanitize_text_field( $bde['google_photos_refresh_token'] ?? '' );
-			$settings['google_photos_album_prefix']  = sanitize_text_field( $bde['google_photos_album_prefix'] ?? 'Biodevas - ' );
+			$settings['google_photos_album_prefix']  = sanitize_text_field( $bde['google_photos_album_prefix'] ?? 'Convoca - ' );
 		}
 
 		if ( $tab === 'google_calendar' ) {
