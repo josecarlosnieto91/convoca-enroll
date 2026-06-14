@@ -79,7 +79,7 @@
                             )
                             : (Placeholder ? el(Placeholder, {
                                 icon: 'clipboard',
-                                label: "Formulario de Inscripción Convoca',
+                                label: 'Formulario de Inscripción Convoca',
                                 instructions: 'Selecciona una actividad:'
                             },
                                 el('select', {

@@ -149,17 +149,17 @@ class Admin_Actividades {
 		<div class="wrap convoca-admin">
 			<h1><?php echo esc_html( $title ); ?></h1>
 
-			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="bdv-form-custom">
+			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="conv-form-custom">
 				<input type="hidden" name="action" value="conv_enroll_save_actividad_admin">
 				<input type="hidden" name="id" value="<?php echo $post_id; ?>">
 				<?php wp_nonce_field( 'conv_enroll_save_actividad_nonce' ); ?>
 
-				<div class="bdv-grid bdv-grid--2">
-					<div class="bdv-card">
-						<div class="bdv-card-header">
+				<div class="conv-grid conv-grid--2">
+					<div class="conv-card">
+						<div class="conv-card-header">
 							<h2><?php _e( 'Información Principal', 'convoca-enroll' ); ?></h2>
 						</div>
-						<div class="bdv-card-body">
+						<div class="conv-card-body">
 							<div class="convoca-field">
 								<label for="title"><?php _e( 'Título de la Actividad', 'convoca-enroll' ); ?> *</label>
 								<input type="text" name="post_title" id="title" value="<?php echo $actividad ? esc_attr( $actividad->post_title ) : ''; ?>" required>
@@ -177,55 +177,55 @@ class Admin_Actividades {
 						</div>
 					</div>
 
-					<div class="bdv-card">
-						<div class="bdv-card-header">
+					<div class="conv-card">
+						<div class="conv-card-header">
 							<h2><?php _e( 'Configuración y Logística', 'convoca-enroll' ); ?></h2>
 						</div>
-						<div class="bdv-card-body">
-							<div class="bdv-grid bdv-grid--2">
-								<div class="bdv-field">
+						<div class="conv-card-body">
+							<div class="conv-grid conv-grid--2">
+								<div class="conv-field">
 									<label for="fecha_inicio"><?php _e( 'Fecha y Hora Inicio', 'convoca-enroll' ); ?> *</label>
 									<input type="datetime-local" name="fecha_inicio" id="fecha_inicio" value="<?php echo esc_attr( str_replace( ' ', 'T', substr( $meta['fecha_inicio'], 0, 16 ) ) ); ?>" required>
 								</div>
-								<div class="bdv-field">
+								<div class="conv-field">
 									<label for="fecha_fin"><?php _e( 'Fecha y Hora Fin', 'convoca-enroll' ); ?></label>
 									<input type="datetime-local" name="fecha_fin" id="fecha_fin" value="<?php echo esc_attr( str_replace( ' ', 'T', substr( $meta['fecha_fin'], 0, 16 ) ) ); ?>">
 								</div>
 							</div>
 
-							<div class="bdv-field">
+							<div class="conv-field">
 								<label for="ubicacion"><?php _e( 'Ubicación / Punto de encuentro', 'convoca-enroll' ); ?></label>
 								<input type="text" name="ubicacion" id="ubicacion" value="<?php echo esc_attr( $meta['ubicacion'] ); ?>" class="widefat">
 							</div>
 
-							<div class="bdv-grid bdv-grid--2">
-								<div class="bdv-field">
+							<div class="conv-grid conv-grid--2">
+								<div class="conv-field">
 									<label for="plazas_totales"><?php _e( 'Plazas Totales', 'convoca-enroll' ); ?></label>
 									<input type="number" name="plazas_totales" id="plazas_totales" value="<?php echo (int) $meta['plazas_totales']; ?>" min="0">
 								</div>
-								<div class="bdv-field">
+								<div class="conv-field">
 									<label for="precio_socio"><?php _e( 'Precio Socio (€)', 'convoca-enroll' ); ?></label>
 									<input type="number" name="precio_socio" id="precio_socio" value="<?php echo esc_attr( $meta['precio_socio'] ); ?>" step="0.01">
 								</div>
 							</div>
 
-							<div class="bdv-field">
+							<div class="conv-field">
 								<label>
 									<input type="checkbox" name="requiere_pago" value="1" <?php checked( $meta['requiere_pago'], '1' ); ?>>
 									<?php _e( 'Requiere pago previo', 'convoca-enroll' ); ?>
 								</label>
 							</div>
 
-							<div class="bdv-field">
+							<div class="conv-field">
 								<label>
 									<input type="checkbox" name="actividad_lugg" value="1" <?php checked( $meta['actividad_lugg'], '1' ); ?>>
 									<?php _e( 'Es una actividad en el centro social', 'convoca-enroll' ); ?>
 								</label>
 							</div>
 
-							<div class="bdv-field">
+							<div class="conv-field">
 								<label for="responsables"><?php _e( 'Monitores / Responsables', 'convoca-enroll' ); ?></label>
-								<div class="bdv-checkbox-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #fff;">
+								<div class="conv-checkbox-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #fff;">
 									<?php
 									$current_resp = is_array( $meta['responsables'] ) ? $meta['responsables'] : explode( ',', (string) $meta['responsables'] );
 									foreach ( $users as $user ) :
@@ -241,7 +241,7 @@ class Admin_Actividades {
 					</div>
 				</div>
 
-				<div class="bdv-form-actions">
+				<div class="conv-form-actions">
 					<?php submit_button( __( 'Guardar Actividad', 'convoca-enroll' ), 'primary', 'submit', false ); ?>
 					<?php if ( $post_id ) : ?>
 						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_duplicate_actividad&id=' . $post_id ), 'conv_enroll_duplicate_' . $post_id ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📋 <?php _e( 'Duplicar', 'convoca-enroll' ); ?></a>

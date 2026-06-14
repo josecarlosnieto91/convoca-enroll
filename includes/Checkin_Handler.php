@@ -425,7 +425,7 @@ class Checkin_Handler {
 					const reg = await navigator.serviceWorker.ready;
 					// Request a sync event.
 					if ('sync' in reg) {
-						await reg.sync.register('bdv-flush-checkins');
+						await reg.sync.register('conv-flush-checkins');
 					}
 				}
 				window.addEventListener('online', syncOfflineQueue);
@@ -442,7 +442,7 @@ class Checkin_Handler {
 				setInterval(async () => {
 					if ('indexedDB' in window) {
 						const db = await new Promise((resolve) => {
-							const req = indexedDB.open('bdv-checkin-queue');
+							const req = indexedDB.open('conv-checkin-queue');
 							req.onsuccess = () => resolve(req.result);
 						});
 						const tx = db.transaction('pending', 'readonly');

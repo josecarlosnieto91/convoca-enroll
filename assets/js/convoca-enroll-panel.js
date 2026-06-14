@@ -5,17 +5,17 @@
 (function (bdv) {
     'use strict';
 
-    const wrapper = bdv.$('.bde-panel-wrapper');
+    const wrapper = conv.$('.bde-panel-wrapper');
     if (!wrapper) return;
 
-    const loginSection = bdv.$('#bde-panel-login', wrapper);
-    const reservasSection = bdv.$('#bde-panel-reservas', wrapper);
-    const loginForm = bdv.$('#bde-panel-login-form', wrapper);
-    const alert = bdv.$('#bde-panel-alert', wrapper);
-    const modal = bdv.$('#bde-panel-modal', wrapper);
-    const listContainer = bdv.$('#bde-panel-list', wrapper);
-    const emptyState = bdv.$('#bde-panel-empty', wrapper);
-    const userEmailEl = bdv.$('#bde-panel-user-email', wrapper);
+    const loginSection = conv.$('#bde-panel-login', wrapper);
+    const reservasSection = conv.$('#bde-panel-reservas', wrapper);
+    const loginForm = conv.$('#bde-panel-login-form', wrapper);
+    const alert = conv.$('#bde-panel-alert', wrapper);
+    const modal = conv.$('#bde-panel-modal', wrapper);
+    const listContainer = conv.$('#bde-panel-list', wrapper);
+    const emptyState = conv.$('#bde-panel-empty', wrapper);
+    const userEmailEl = conv.$('#bde-panel-user-email', wrapper);
 
     let sessionEmail = '';
     let sessionCodigo = '';
@@ -26,17 +26,17 @@
     loginForm.addEventListener('submit', e => {
         e.preventDefault();
 
-        const email = bdv.$('#bde-panel-email', wrapper).value.trim();
-        const codigo = bdv.$('#bde-panel-codigo', wrapper).value.trim().toUpperCase();
+        const email = conv.$('#bde-panel-email', wrapper).value.trim();
+        const codigo = conv.$('#bde-panel-codigo', wrapper).value.trim().toUpperCase();
 
         if (!email || !codigo) {
             showAlert('Introduce tu email y código de reserva.');
             return;
         }
 
-        bdv.hideAlert(alert);
+        conv.hideAlert(alert);
         const btn = loginForm.querySelector('[type="submit"]');
-        bdv.setLoading(btn, true, '🔍 Consultar reservas');
+        conv.setLoading(btn, true, '🔍 Consultar reservas');
 
         const fd = new FormData();
         fd.append('email', email);
@@ -44,16 +44,16 @@
 
         const nonce = window.bdePanel?.nonce || '';
 
-        bdv.ajaxPost('conv_enroll_panel_login', fd, nonce,
+        conv.ajaxPost('conv_enroll_panel_login', fd, nonce,
             (res) => {
                 sessionEmail = email;
                 sessionCodigo = codigo;
                 showReservas(res.data.reservas, email);
-                bdv.setLoading(btn, false, '🔍 Consultar reservas');
+                conv.setLoading(btn, false, '🔍 Consultar reservas');
             },
             (res) => {
                 showAlert(res.data?.message || 'Error desconocido.');
-                bdv.setLoading(btn, false, '🔍 Consultar reservas');
+                conv.setLoading(btn, false, '🔍 Consultar reservas');
             }
         );
     });
@@ -97,11 +97,11 @@
         `).join('');
 
         // Bind cancel buttons.
-        bdv.$$('.bde-cancel-btn', listContainer).forEach(btn => {
+        conv.$$('.bde-cancel-btn', listContainer).forEach(btn => {
             btn.addEventListener('click', () => {
                 cancelTargetId = parseInt(btn.dataset.id, 10);
                 const msg = `¿Estás seguro de que quieres cancelar tu reserva para "${btn.dataset.actividad}"? Se liberará tu plaza.`;
-                bdv.$('#bde-modal-msg', modal).textContent = msg;
+                conv.$('#bde-modal-msg', modal).textContent = msg;
                 modal.style.display = 'flex';
             });
         });
@@ -109,21 +109,21 @@
 
     /* ── Logout ─────────────────────────────────── */
 
-    bdv.$('#bde-panel-logout', wrapper).addEventListener('click', () => {
+    conv.$('#bde-panel-logout', wrapper).addEventListener('click', () => {
         sessionEmail = '';
         sessionCodigo = '';
         cancelTargetId = null;
         reservasSection.style.display = 'none';
         loginSection.style.display = 'block';
         listContainer.innerHTML = '';
-        bdv.hideAlert(alert);
+        conv.hideAlert(alert);
         const btn = loginForm.querySelector('[type="submit"]');
-        bdv.setLoading(btn, false, '🔍 Consultar reservas');
+        conv.setLoading(btn, false, '🔍 Consultar reservas');
     });
 
     /* ── Modal ──────────────────────────────────── */
 
-    bdv.$('#bde-modal-close', wrapper).addEventListener('click', () => {
+    conv.$('#bde-modal-close', wrapper).addEventListener('click', () => {
         modal.style.display = 'none';
         cancelTargetId = null;
     });
@@ -135,11 +135,11 @@
         }
     });
 
-    bdv.$('#bde-modal-confirm', wrapper).addEventListener('click', () => {
+    conv.$('#bde-modal-confirm', wrapper).addEventListener('click', () => {
         if (!cancelTargetId) return;
 
-        const confirmBtn = bdv.$('#bde-modal-confirm', wrapper);
-        bdv.setLoading(confirmBtn, true, 'Sí, cancelar reserva');
+        const confirmBtn = conv.$('#bde-modal-confirm', wrapper);
+        conv.setLoading(confirmBtn, true, 'Sí, cancelar reserva');
 
         const fd = new FormData();
         fd.append('email', sessionEmail);
@@ -148,18 +148,18 @@
 
         const nonce = window.bdePanel?.nonce || '';
 
-        bdv.ajaxPost('conv_enroll_panel_cancelar', fd, nonce,
+        conv.ajaxPost('conv_enroll_panel_cancelar', fd, nonce,
             (res) => {
                 modal.style.display = 'none';
-                bdv.setLoading(confirmBtn, false, 'Sí, cancelar reserva');
+                conv.setLoading(confirmBtn, false, 'Sí, cancelar reserva');
                 
-                bdv.showAlert(alert, res.data.message, 'success');
+                conv.showAlert(alert, res.data.message, 'success');
                 renderList(res.data.reservas);
                 cancelTargetId = null;
             },
             (res) => {
                 modal.style.display = 'none';
-                bdv.setLoading(confirmBtn, false, 'Sí, cancelar reserva');
+                conv.setLoading(confirmBtn, false, 'Sí, cancelar reserva');
                 
                 showAlert(res.data?.message || 'Error al cancelar.');
                 cancelTargetId = null;
@@ -170,7 +170,7 @@
     /* ── Helpers ────────────────────────────────── */
 
     function showAlert(msg) {
-        bdv.showAlert(alert, msg, 'danger');
+        conv.showAlert(alert, msg, 'danger');
     }
 
     function escHtml(str) {

@@ -50,12 +50,12 @@ jQuery(document).ready(function($) {
     });
 
     // Form submission
-    $('#bdv-evaluacion-form').on('submit', function(e) {
+    $('#conv-evaluacion-form').on('submit', function(e) {
         e.preventDefault();
         
         var form = $(this);
         var submitBtn = form.find('button[type="submit"]');
-        var responseDiv = $('#bdv-evaluacion-response');
+        var responseDiv = $('#conv-evaluacion-response');
         
         // Check if all star ratings have a value > 0
         var allRated = true;
@@ -68,7 +68,7 @@ jQuery(document).ready(function($) {
         });
 
         if (!allRated) {
-            responseDiv.html('<div class="bdv-eval-error" style="color:red; margin-top:10px;">Por favor, valora todas las categorías numéricas con al menos 1 estrella.</div>');
+            responseDiv.html('<div class="conv-eval-error" style="color:red; margin-top:10px;">Por favor, valora todas las categorías numéricas con al menos 1 estrella.</div>');
             return;
         }
 
@@ -93,24 +93,24 @@ jQuery(document).ready(function($) {
                         success: function(response) {
                             if (response.success) {
                                 form.slideUp();
-                                responseDiv.html('<div class="bdv-eval-success" style="color:green; font-weight:bold; margin-top:20px; padding:15px; border:1px solid green; border-radius:5px;">' + response.data + '</div>');
+                                responseDiv.html('<div class="conv-eval-success" style="color:green; font-weight:bold; margin-top:20px; padding:15px; border:1px solid green; border-radius:5px;">' + response.data + '</div>');
                             } else {
-                                responseDiv.html('<div class="bdv-eval-error" style="color:red; margin-top:10px;">' + response.data + '</div>');
+                                responseDiv.html('<div class="conv-eval-error" style="color:red; margin-top:10px;">' + response.data + '</div>');
                                 submitBtn.prop('disabled', false).text('Enviar Evaluación');
                             }
                         },
                         error: function() {
-                            responseDiv.html('<div class="bdv-eval-error" style="color:red; margin-top:10px;">Error de conexión. Inténtalo de nuevo.</div>');
+                            responseDiv.html('<div class="conv-eval-error" style="color:red; margin-top:10px;">Error de conexión. Inténtalo de nuevo.</div>');
                             submitBtn.prop('disabled', false).text('Enviar Evaluación');
                         }
                     });
                 } else {
-                    responseDiv.html('<div class="bdv-eval-error" style="color:red; margin-top:10px;">Error de seguridad al refrescar sesión.</div>');
+                    responseDiv.html('<div class="conv-eval-error" style="color:red; margin-top:10px;">Error de seguridad al refrescar sesión.</div>');
                     submitBtn.prop('disabled', false).text('Enviar Evaluación');
                 }
             },
             error: function() {
-                responseDiv.html('<div class="bdv-eval-error" style="color:red; margin-top:10px;">Error al conectar con el servidor.</div>');
+                responseDiv.html('<div class="conv-eval-error" style="color:red; margin-top:10px;">Error al conectar con el servidor.</div>');
                 submitBtn.prop('disabled', false).text('Enviar Evaluación');
             }
         });

@@ -26,11 +26,11 @@ class Formulario_Evaluacion {
 
 	public static function enqueue_assets() {
 		// Enqueued only when shortcode is present, but doing it globally is safer for blocks.
-		wp_register_style( 'bdv-evaluacion-css', plugins_url( 'assets/css/evaluacion.css', __DIR__ ), array(), '1.0.0' );
-		wp_register_script( 'bdv-evaluacion-js', plugins_url( 'assets/js/star-rating.js', __DIR__ ), array( 'jquery' ), '1.0.0', true );
+		wp_register_style( 'conv-evaluacion-css', plugins_url( 'assets/css/evaluacion.css', __DIR__ ), array(), '1.0.0' );
+		wp_register_script( 'conv-evaluacion-js', plugins_url( 'assets/js/star-rating.js', __DIR__ ), array( 'jquery' ), '1.0.0', true );
 
 		wp_localize_script(
-			'bdv-evaluacion-js',
+			'conv-evaluacion-js',
 			'conv_eval_ajax',
 			array(
 				'url'   => admin_url( 'admin-ajax.php' ),
@@ -40,8 +40,8 @@ class Formulario_Evaluacion {
 	}
 
 	public static function render_shortcode( $atts ) {
-		wp_enqueue_style( 'bdv-evaluacion-css' );
-		wp_enqueue_script( 'bdv-evaluacion-js' );
+		wp_enqueue_style( 'conv-evaluacion-css' );
+		wp_enqueue_script( 'conv-evaluacion-js' );
 
 		$atts = shortcode_atts(
 			array(
@@ -86,7 +86,7 @@ class Formulario_Evaluacion {
 		);
 
 		if ( ! empty( $existing ) ) {
-			return '<div class="bdv-eval-notice">' . __( 'Ya has enviado una evaluación para esta actividad. ¡Gracias!', 'convoca-enroll' ) . '</div>';
+			return '<div class="conv-eval-notice">' . __( 'Ya has enviado una evaluación para esta actividad. ¡Gracias!', 'convoca-enroll' ) . '</div>';
 		}
 
 		// 2. Check permissions
@@ -142,14 +142,14 @@ class Formulario_Evaluacion {
 
 		ob_start();
 		?>
-		<div class="bdv-evaluacion-container">
+		<div class="conv-evaluacion-container">
 			<h3><?php printf( __( 'Evaluar Actividad: %s', 'convoca-enroll' ), get_the_title( $actividad_id ) ); ?></h3>
-			<form id="bdv-evaluacion-form" method="post">
+			<form id="conv-evaluacion-form" method="post">
 				<input type="hidden" name="actividad_id" value="<?php echo esc_attr( $actividad_id ); ?>">
 				<input type="hidden" name="action" value="conv_submit_evaluacion">
 				<?php wp_nonce_field( 'conv_evaluacion_nonce', 'security' ); ?>
 
-				<div class="bdv-eval-section">
+				<div class="conv-eval-section">
 					<h4><?php _e( '1. Valoraciones numéricas', 'convoca-enroll' ); ?></h4>
 					<p class="description"><?php _e( 'Valora del 1 al 5 (1 = Muy insatisfecho, 5 = Muy satisfecho)', 'convoca-enroll' ); ?></p>
 					
@@ -159,61 +159,61 @@ class Formulario_Evaluacion {
 					<?php self::render_star_input( 'comunicacion', __( 'Comunicación con el equipo', 'convoca-enroll' ) ); ?>
 				</div>
 
-				<div class="bdv-eval-section">
+				<div class="conv-eval-section">
 					<h4><?php _e( '2. Comentarios y sugerencias', 'convoca-enroll' ); ?></h4>
 					
-					<div class="bdv-form-group">
+					<div class="conv-form-group">
 						<label for="comentarios_gestion"><?php _e( 'Cuéntanos brevemente tu experiencia', 'convoca-enroll' ); ?></label>
 						<textarea id="comentarios_gestion" name="comentarios_gestion" rows="3"></textarea>
 					</div>
 
-					<div class="bdv-form-group">
+					<div class="conv-form-group">
 						<label for="necesidades_no_cubiertas"><?php _e( '¿Has necesitado algo que no te hayan facilitado?', 'convoca-enroll' ); ?></label>
 						<textarea id="necesidades_no_cubiertas" name="necesidades_no_cubiertas" rows="2"></textarea>
 					</div>
 
-					<div class="bdv-form-group">
+					<div class="conv-form-group">
 						<label for="mejoras_gestion"><?php _e( '¿Qué mejorarías en la gestión?', 'convoca-enroll' ); ?></label>
 						<textarea id="mejoras_gestion" name="mejoras_gestion" rows="2"></textarea>
 					</div>
 
-					<div class="bdv-form-group">
+					<div class="conv-form-group">
 						<label for="mejoras_instalaciones"><?php _e( '¿Qué mejorarías del espacio/instalaciones?', 'convoca-enroll' ); ?></label>
 						<textarea id="mejoras_instalaciones" name="mejoras_instalaciones" rows="2"></textarea>
 					</div>
 
-					<div class="bdv-form-group">
+					<div class="conv-form-group">
 						<label for="comentarios_participantes"><?php _e( 'Comentarios sobre el público o dinámica', 'convoca-enroll' ); ?></label>
 						<textarea id="comentarios_participantes" name="comentarios_participantes" rows="2"></textarea>
 					</div>
 
-					<div class="bdv-form-group">
+					<div class="conv-form-group">
 						<label for="aspectos_positivos"><?php _e( 'Aspectos positivos (lo mejor de la actividad)', 'convoca-enroll' ); ?></label>
 						<textarea id="aspectos_positivos" name="aspectos_positivos" rows="2"></textarea>
 					</div>
 
-					<div class="bdv-form-group">
+					<div class="conv-form-group">
 						<label for="aspectos_mejorar"><?php _e( 'Aspectos a mejorar', 'convoca-enroll' ); ?></label>
 						<textarea id="aspectos_mejorar" name="aspectos_mejorar" rows="2"></textarea>
 					</div>
 
-					<div class="bdv-form-group">
+					<div class="conv-form-group">
 						<label for="otros_comentarios"><?php _e( 'Otros comentarios o sugerencias', 'convoca-enroll' ); ?></label>
 						<textarea id="otros_comentarios" name="otros_comentarios" rows="2"></textarea>
 					</div>
 				</div>
 
-				<div class="bdv-eval-section bdv-privacy-section">
+				<div class="conv-eval-section conv-privacy-section">
 					<label>
 						<input type="checkbox" name="privacy_consent" required>
 						<?php printf( __( 'Acepto que mi evaluación sea tratada según la política de privacidad de %%s. Los datos se utilizarán internamente para mejorar las actividades.', 'convoca-enroll' ), esc_html( get_bloginfo( 'name' ) ) ); ?>
 					</label>
 				</div>
 
-				<div class="bdv-form-submit">
+				<div class="conv-form-submit">
 					<button type="submit" class="button button-primary wp-element-button"><?php _e( 'Enviar Evaluación', 'convoca-enroll' ); ?></button>
 				</div>
-				<div id="bdv-evaluacion-response"></div>
+				<div id="conv-evaluacion-response"></div>
 			</form>
 		</div>
 		<?php
@@ -222,7 +222,7 @@ class Formulario_Evaluacion {
 
 	private static function render_star_input( $field_id, $label ) {
 		?>
-		<div class="bdv-star-rating-group">
+		<div class="conv-star-rating-group">
 			<label><?php echo esc_html( $label ); ?></label>
 			<div class="star-rating" data-field="<?php echo esc_attr( $field_id ); ?>">
 				<?php for ( $i = 1; $i <= 5; $i++ ) : ?>

@@ -1,8 +1,8 @@
-const CACHE_NAME = 'bdv-checkin-v1';
+const CACHE_NAME = 'conv-checkin-v1';
 const ASSETS = [
   '/wp-content/plugins/convoca-enroll/public/assets/css/checkin.css',
 ];
-const API_CACHE = 'bdv-api-v1';
+const API_CACHE = 'conv-api-v1';
 
 // Install: cache static assets
 self.addEventListener('install', (event) => {
@@ -68,7 +68,7 @@ async function networkOrQueue(request) {
 }
 
 // ── IndexedDB queue ──────────────────────────────────────
-const DB_NAME = 'bdv-checkin-queue';
+const DB_NAME = 'conv-checkin-queue';
 const STORE_NAME = 'pending';
 const DB_VERSION = 1;
 
@@ -122,7 +122,7 @@ async function removeQueuedRequest(id) {
 
 // When back online, flush the queue
 self.addEventListener('sync', (event) => {
-  if (event.tag === 'bdv-flush-checkins') {
+  if (event.tag === 'conv-flush-checkins') {
     event.waitUntil(flushQueue());
   }
 });

@@ -88,18 +88,18 @@ class Admin_Evaluaciones_Editor {
 		<div class="wrap convoca-admin">
 			<h1><?php echo esc_html( $title ); ?></h1>
 
-			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="bdv-form-custom">
+			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="conv-form-custom">
 				<input type="hidden" name="action" value="conv_enroll_save_evaluacion_admin">
 				<input type="hidden" name="id" value="<?php echo $post_id; ?>">
 				<?php wp_nonce_field( 'conv_enroll_save_evaluacion_nonce' ); ?>
 
-				<div class="bdv-grid bdv-grid--2">
-					<div class="bdv-card">
-						<div class="bdv-card-header">
+				<div class="conv-grid conv-grid--2">
+					<div class="conv-card">
+						<div class="conv-card-header">
 							<h2><?php _e( 'Actividad y Comentarios', 'convoca-enroll' ); ?></h2>
 						</div>
-						<div class="bdv-card-body">
-							<div class="bdv-field">
+						<div class="conv-card-body">
+							<div class="conv-field">
 								<label for="actividad_id"><?php _e( 'Actividad evaluada', 'convoca-enroll' ); ?> *</label>
 								<select name="actividad_id" id="actividad_id" required class="widefat">
 									<option value=""><?php _e( '— Seleccionar actividad —', 'convoca-enroll' ); ?></option>
@@ -111,18 +111,18 @@ class Admin_Evaluaciones_Editor {
 								</select>
 							</div>
 
-							<div class="bdv-field">
+							<div class="conv-field">
 								<label for="post_content"><?php _e( 'Comentarios / Observaciones', 'convoca-enroll' ); ?></label>
 								<textarea name="post_content" id="post_content" rows="10" class="widefat"><?php echo $eval ? esc_textarea( $eval->post_content ) : ''; ?></textarea>
 							</div>
 						</div>
 					</div>
 
-					<div class="bdv-card">
-						<div class="bdv-card-header">
+					<div class="conv-card">
+						<div class="conv-card-header">
 							<h2><?php _e( 'Puntuaciones (1-5)', 'convoca-enroll' ); ?></h2>
 						</div>
-						<div class="bdv-card-body">
+						<div class="conv-card-body">
 							<?php
 							$ratings = array(
 								'gestion'       => __( 'Gestión y coordinación', 'convoca-enroll' ),
@@ -133,13 +133,13 @@ class Admin_Evaluaciones_Editor {
 
 							foreach ( $ratings as $key => $label ) :
 								?>
-								<div class="bdv-field">
+								<div class="conv-field">
 									<label><?php echo esc_html( $label ); ?></label>
 									<div class="convoca-rating-stars" style="display: flex; gap: 10px; font-size: 24px; cursor: pointer;">
 										<?php for ( $i = 1; $i <= 5; $i++ ) : ?>
 											<label style="cursor: pointer;">
 												<input type="radio" name="<?php echo $key; ?>" value="<?php echo $i; ?>" <?php checked( $meta[ $key ], $i ); ?> required style="display: none;">
-												<span class="bdv-star" style="color: <?php echo ( $meta[ $key ] >= $i ) ? '#f59e0b' : '#d1d5db'; ?>;">★</span>
+												<span class="conv-star" style="color: <?php echo ( $meta[ $key ] >= $i ) ? '#f59e0b' : '#d1d5db'; ?>;">★</span>
 											</label>
 										<?php endfor; ?>
 									</div>
@@ -148,7 +148,7 @@ class Admin_Evaluaciones_Editor {
 							
 							<script>
 								document.querySelectorAll('.convoca-rating-stars').forEach(group => {
-									const stars = group.querySelectorAll('.bdv-star');
+									const stars = group.querySelectorAll('.conv-star');
 									const inputs = group.querySelectorAll('input');
 									
 									inputs.forEach((input, idx) => {
@@ -164,15 +164,15 @@ class Admin_Evaluaciones_Editor {
 					</div>
 				</div>
 
-				<div class="bdv-form-actions">
+				<div class="conv-form-actions">
 					<?php submit_button( __( 'Guardar Evaluación', 'convoca-enroll' ), 'primary', 'submit', false ); ?>
 					<a href="<?php echo admin_url( 'edit.php?post_type=conv_evaluacion' ); ?>" class="button"><?php _e( 'Cancelar', 'convoca-enroll' ); ?></a>
 				</div>
 			</form>
 		</div>
 		<style>
-			.convoca-rating-stars label:hover .bdv-star,
-			.convoca-rating-stars label:hover ~ label .bdv-star {
+			.convoca-rating-stars label:hover .conv-star,
+			.convoca-rating-stars label:hover ~ label .conv-star {
 				color: #fbbf24 !important;
 			}
 		</style>

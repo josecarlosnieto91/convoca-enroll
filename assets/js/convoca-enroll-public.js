@@ -6,14 +6,14 @@
     'use strict';
 
     // Hook forms dynamically and standard static ones
-    bdv.observeDynamicForms('.bde-enroll-wrapper', function (form) {
+    conv.observeDynamicForms('.bde-enroll-wrapper', function (form) {
         const wrapper = form.closest('.bde-enroll-wrapper');
-        const alert = bdv.$('#bde-alert', wrapper);
-        const success = bdv.$('#bde-success', wrapper);
+        const alert = conv.$('#bde-alert', wrapper);
+        const success = conv.$('#bde-success', wrapper);
         
-        const socioSelect = bdv.$('#bde-es-socio', wrapper);
-        const tipoInscripcion = bdv.$('#bde-tipo-inscripcion', wrapper);
-        const authBanner = bdv.$('#bde-auth-banner', wrapper);
+        const socioSelect = conv.$('#bde-es-socio', wrapper);
+        const tipoInscripcion = conv.$('#bde-tipo-inscripcion', wrapper);
+        const authBanner = conv.$('#bde-auth-banner', wrapper);
 
         /* RGPD-compliant Auth Load */
         const apiRoot = window.bdeEnroll?.apiRoot || '/wp-json/';
@@ -24,8 +24,8 @@
                     if (socioSelect) socioSelect.value = '0';
                     if (tipoInscripcion) tipoInscripcion.value = 'socio_dia';
                     
-                    const precioS = bdv.$('#bde-precio-socio', wrapper);
-                    const precioSD = bdv.$('#bde-precio-socio-dia', wrapper);
+                    const precioS = conv.$('#bde-precio-socio', wrapper);
+                    const precioSD = conv.$('#bde-precio-socio-dia', wrapper);
                     if (precioS) precioS.classList.remove('bde-price--active');
                     if (precioSD) precioSD.classList.add('bde-price--active');
 
@@ -45,8 +45,8 @@
                         if (socioSelect) socioSelect.value = '1';
                         if (tipoInscripcion) tipoInscripcion.value = 'socio';
                         
-                        const precioS = bdv.$('#bde-precio-socio', wrapper);
-                        const precioSD = bdv.$('#bde-precio-socio-dia', wrapper);
+                        const precioS = conv.$('#bde-precio-socio', wrapper);
+                        const precioSD = conv.$('#bde-precio-socio-dia', wrapper);
                         if (precioS) precioS.classList.add('bde-price--active');
                         if (precioSD) precioSD.classList.remove('bde-price--active');
 
@@ -56,10 +56,10 @@
                         }
 
                         // Pre-fill form (visual only, real validation is in backend)
-                        const n = bdv.$('#bde-nombre', form);
-                        const e = bdv.$('#bde-email', form);
-                        const d = bdv.$('#bde-dni', form);
-                        const t = bdv.$('#bde-telefono', form);
+                        const n = conv.$('#bde-nombre', form);
+                        const e = conv.$('#bde-email', form);
+                        const d = conv.$('#bde-dni', form);
+                        const t = conv.$('#bde-telefono', form);
                         if (n) n.value = member.name || '';
                         if (e) e.value = member.email || '';
                         if (d) {
@@ -73,10 +73,10 @@
             .catch(err => console.error('Error verificando sesión de socio:', err));
 
         /* Minor handling: Toggle fields visibility and required state */
-        const minorToggle = bdv.$('#bde-es-menor', wrapper);
-        const minorFields = bdv.$('#bde-minor-fields', wrapper);
-        const inputNombreParticipante = bdv.$('#bde-nombre-participante', wrapper);
-        const inputEdadParticipante = bdv.$('#bde-edad-participante', wrapper);
+        const minorToggle = conv.$('#bde-es-menor', wrapper);
+        const minorFields = conv.$('#bde-minor-fields', wrapper);
+        const inputNombreParticipante = conv.$('#bde-nombre-participante', wrapper);
+        const inputEdadParticipante = conv.$('#bde-edad-participante', wrapper);
 
         if (minorToggle && minorFields) {
             const updateMinorFields = () => {
@@ -98,28 +98,28 @@
             e.preventDefault();
 
             // Native shared validation
-            const ok = bdv.form.validate(form);
+            const ok = conv.form.validate(form);
             
-            const consentimiento = bdv.$('#bde-consentimiento', form) || bdv.$('#bde-consentimiento', wrapper);
+            const consentimiento = conv.$('#bde-consentimiento', form) || conv.$('#bde-consentimiento', wrapper);
             if (consentimiento && !consentimiento.checked) {
-                bdv.showAlert(alert, 'Debes aceptar la política de privacidad.', 'danger');
+                conv.showAlert(alert, 'Debes aceptar la política de privacidad.', 'danger');
                 return;
             }
 
             if (!ok) {
-                bdv.showAlert(alert, 'Rellena todos los campos obligatorios.', 'danger');
+                conv.showAlert(alert, 'Rellena todos los campos obligatorios.', 'danger');
                 return;
             }
 
-            bdv.hideAlert(alert);
+            conv.hideAlert(alert);
 
             const btn = form.querySelector('[type="submit"]');
-            bdv.setLoading(btn, true, '✔ Inscribirme');
+            conv.setLoading(btn, true, '✔ Inscribirme');
 
             const fd = new FormData(form);
             const nonce = window.bdeEnroll?.nonce || '';
 
-            bdv.ajaxPost('conv_enroll_inscribir', fd, nonce, 
+            conv.ajaxPost('conv_enroll_inscribir', fd, nonce, 
                 /* On Success */
                 (res) => {
                     // Redirect directly without showing success pane if gateway rules
@@ -131,9 +131,9 @@
                     form.style.display = 'none';
                     success.style.display = 'block';
 
-                    const icon = bdv.$('#bde-success-icon', wrapper);
-                    const title = bdv.$('#bde-success-title', wrapper);
-                    const msg = bdv.$('#bde-success-msg', wrapper);
+                    const icon = conv.$('#bde-success-icon', wrapper);
+                    const title = conv.$('#bde-success-title', wrapper);
+                    const msg = conv.$('#bde-success-msg', wrapper);
 
                     if (res.data.gateway_error) {
                         if (icon) icon.textContent = '⚠️';
@@ -154,7 +154,7 @@
                     }
 
                     // Update plazas badge if present.
-                    const badge = bdv.$('#bde-plazas-badge', wrapper);
+                    const badge = conv.$('#bde-plazas-badge', wrapper);
                     if (badge && typeof res.data.plazas === 'number') {
                         const totalMatch = badge.textContent.match(/\/(\d+)/);
                         const t = totalMatch ? totalMatch[1] : '?';
@@ -169,8 +169,8 @@
                 /* On Error */
                 (res) => {
                     const msgs = res.data?.errors ? res.data.errors.join('<br>') : (res.data?.message || 'Error desconocido.');
-                    bdv.showAlert(alert, msgs, 'danger');
-                    bdv.setLoading(btn, false, '✔ Inscribirme');
+                    conv.showAlert(alert, msgs, 'danger');
+                    conv.setLoading(btn, false, '✔ Inscribirme');
                 }
             );
         });

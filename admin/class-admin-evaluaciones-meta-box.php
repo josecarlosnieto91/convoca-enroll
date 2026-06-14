@@ -60,7 +60,7 @@ class Admin_Evaluaciones_Meta_Box {
 		$overall_avg = round( ( $avg_gestion + $avg_instalaciones + $avg_participantes + $avg_comunicacion ) / 4, 1 );
 
 		?>
-		<div class="bdv-eval-summary">
+		<div class="conv-eval-summary">
 			<p><strong><?php printf( __( 'Total evaluaciones: %d', 'convoca-enroll' ), $total_evals ); ?></strong></p>
 			<p><strong><?php _e( 'Media Global:', 'convoca-enroll' ); ?></strong> <?php self::render_stars( $overall_avg ); ?> (<?php echo $overall_avg; ?>/5)</p>
 			
