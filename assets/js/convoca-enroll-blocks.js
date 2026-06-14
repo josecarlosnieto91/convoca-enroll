@@ -157,7 +157,7 @@
                     )
                 ),
                 el('div', { style: { padding: '20px', border: '1px dashed #ccc', background: '#f9f9f9' } },
-                    el('h3', {}, 'Formulario de Evaluación (Biodevas)'),
+                    el('h3', {}, 'Formulario de Evaluación (Convoca)'),
                     attributes.actividadId ?
                         el('p', {},
                             'Mostrando evaluación para la actividad ID: ',

@@ -206,7 +206,7 @@ class Formulario_Evaluacion {
 				<div class="bdv-eval-section bdv-privacy-section">
 					<label>
 						<input type="checkbox" name="privacy_consent" required>
-						<?php _e( 'Acepto que mi evaluación sea tratada según la política de privacidad de Biodevas. Los datos se utilizarán internamente para mejorar las actividades.', 'convoca-enroll' ); ?>
+						<?php printf( __( 'Acepto que mi evaluación sea tratada según la política de privacidad de %%s. Los datos se utilizarán internamente para mejorar las actividades.', 'convoca-enroll' ), esc_html( get_bloginfo( 'name' ) ) ); ?>
 					</label>
 				</div>
 

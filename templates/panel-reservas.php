@@ -2,7 +2,7 @@
 /**
  * Template: Panel de reservas — login + listado + cancelar.
  *
- * Aligned with Biodevas Theme v2.
+ * Aligned with Convoca Theme v2.
  *
  * @package Convoca\Enroll
  */

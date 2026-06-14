@@ -68,7 +68,7 @@ class Checkin_PWA {
 			array(
 				'name'             => __( 'Check-in Convoca', 'convoca-enroll' ),
 				'short_name'       => __( 'Check-in', 'convoca-enroll' ),
-				'description'      => __( 'Escáner QR de asistencia para monitores de Biodevas', 'convoca-enroll' ),
+				'description'      => __( 'Escáner QR de asistencia para monitores de Convoca', 'convoca-enroll' ),
 				'start_url'        => home_url( '/checkin/' ),
 				'scope'            => '/checkin/',
 				'display'          => 'standalone',

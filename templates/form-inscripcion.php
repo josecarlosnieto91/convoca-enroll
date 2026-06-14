@@ -3,7 +3,7 @@
  * Template: Inscription form for an activity v3 — with intro, normas, and minor support.
  *
  * Variables available: $actividad (WP_Post), $meta (array), $attrs (array)
- * Aligned with Biodevas Theme v2.
+ * Aligned with Convoca Theme v2.
  *
  * @package Convoca\Enroll
  */

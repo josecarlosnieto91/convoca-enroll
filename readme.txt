@@ -25,6 +25,20 @@ Plugin de gestión de inscripciones a actividades para asociaciones y organizaci
 * Shortcodes: [convoca_inscripcion_page], [convoca_form_inscripcion], [convoca_panel_reservas], [convoca_boton_apuntarse], [convoca_evaluacion]
 * Multisite-ready: Network Plugin con configuración independiente por sitio
 
+= Privacidad =
+
+Este plugin recoge y almacena datos personales de los usuarios que se inscriben en actividades: nombre, apellidos, correo electrónico, teléfono y cualquier información adicional incluida en los formularios de inscripción. Estos datos se almacenan en la base de datos local de WordPress (tablas wp_convoca_inscripciones y metadatos de posts).
+
+Los datos se utilizan exclusivamente para gestionar la inscripción, comunicación sobre la actividad, control de plazas y lista de espera, y generación de certificados de participación. El plugin envía correos electrónicos automáticos de confirmación, recordatorios y solicitudes de feedback a los inscritos.
+
+Si se configura la integración opcional con Google Calendar, el título y fecha de la actividad se envían a Google. Si se configura Google Photos, las imágenes compartidas se gestionan a través de la API de Google. No se comparten datos personales con terceros sin consentimiento explícito.
+
+Los usuarios tienen derecho a:
+* Solicitar acceso a sus datos almacenados
+* Solicitar la exportación de sus datos en formato estructurado
+* Solicitar la eliminación de sus datos (con la limitación de registros necesarios para obligaciones legales)
+Para ejercer estos derechos, contacte con el administrador del sitio.
+
 == Installation ==
 
 1. Asegúrate de que Convoca Core está activo

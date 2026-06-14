@@ -1534,7 +1534,7 @@ msgid "Asistencia confirmada"
 msgstr ""
 
 #: convoca-enroll/includes/Checkin_PWA.php:71
-msgid "Escáner QR de asistencia para monitores de Biodevas"
+msgid "Escáner QR de asistencia para monitores de Convoca"
 msgstr ""
 
 #: convoca-enroll/includes/Checkin_PWA.php:82
@@ -1782,7 +1782,7 @@ msgstr ""
 #: convoca-enroll/public/class-formulario-evaluacion.php:209
 msgid ""
 "Acepto que mi evaluación sea tratada según la política de privacidad de "
-"Biodevas. Los datos se utilizarán internamente para mejorar las actividades."
+"Convoca. Los datos se utilizarán internamente para mejorar las actividades."
 msgstr ""
 
 #: convoca-enroll/public/class-formulario-evaluacion.php:214

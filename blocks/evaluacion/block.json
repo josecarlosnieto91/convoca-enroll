@@ -2,7 +2,7 @@
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
     "name": "convoca-enroll/evaluacion",
-    "title": "Biodevas: Formulario de Evaluaci\u00f3n",
+    "title": "Convoca: Formulario de Evaluaci\u00f3n",
     "category": "convoca-enroll",
     "icon": "star-filled",
     "description": "Muestra un formulario de evaluaci\u00f3n para una actividad finalizada.",
@@ -12,5 +12,5 @@
             "default": 0
         }
     },
-    "editorScript": "biodevas-enroll-blocks"
+    "editorScript": "convoca-enroll-blocks"
 }

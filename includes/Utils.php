@@ -1,6 +1,6 @@
 <?php
 /**
- * Utility functions for Biodevas Enroll.
+ * Utility functions for Convoca Enroll.
  *
  * @package Convoca\Enroll
  */

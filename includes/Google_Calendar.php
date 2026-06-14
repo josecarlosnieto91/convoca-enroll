@@ -1,6 +1,6 @@
 <?php
 /**
- * Google Calendar integration and ICS generation for Biodevas Enroll.
+ * Google Calendar integration and ICS generation for Convoca Enroll.
  *
  * @package Convoca\Enroll
  */
@@ -246,7 +246,7 @@ class Google_Calendar {
 
 			return true;
 		} catch ( \Exception $e ) {
-			error_log( 'Biodevas Enroll: Error syncing with Google Calendar: ' . $e->getMessage() );
+			error_log( 'Convoca Enroll: Error syncing with Google Calendar: ' . $e->getMessage() );
 			return false;
 		}
 	}

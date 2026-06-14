@@ -2,7 +2,7 @@
 /**
  * Email automation: 4 triggers + cron for reminders and feedback.
  *
- * All emails use the premium Biodevas HTML layout
+ * All emails use the premium Convoca HTML layout
  * (orange #FF8700 + violet #320028) from Common\Email_Layout.
  *
  * @package Convoca\Enroll
@@ -331,14 +331,14 @@ class Email_Automation {
 					. '<p>¡Gracias por participar! 🌿</p>',
 			),
 			'google_photos_album_creado'     => array(
-				'subject' => 'Álbum de fotos para "{actividad}" — Biodevas',
+				'subject' => 'Álbum de fotos para "{actividad}" — ' . get_bloginfo('name'),
 				'body'    => '<h1>Nuevo álbum disponible</h1>'
 					. '<p>Se ha creado un álbum de Google Photos para la actividad <strong>{actividad}</strong>.</p>'
 					. Email_Layout::button_html( '{album_url}', 'Subir fotos' )
 					. '<p>Una vez el evento haya terminado, puedes compartir el álbum con los participantes.</p>',
 			),
 			'google_photos_album_compartido' => array(
-				'subject' => 'Fotos de "{actividad}" — Biodevas',
+				'subject' => 'Fotos de "{actividad}" — ' . get_bloginfo('name'),
 				'body'    => '<h1>¡Ya puedes ver las fotos! 🎉</h1>'
 					. '<p>Ya están disponibles las fotos de la actividad <strong>{actividad}</strong>.</p>'
 					. '<p>Hemos subido un álbum con los mejores momentos.</p>'
@@ -549,7 +549,7 @@ class Email_Automation {
 		$subject = str_replace( array_keys( $vars ), array_values( $vars ), $tpl['subject'] );
 		$body    = str_replace( array_keys( $vars ), array_values( $vars ), $tpl['body'] );
 
-		// Wrap in premium Biodevas HTML layout.
+		// Wrap in premium Convoca HTML layout.
 		$html_body = Email_Layout::render(
 			$body,
 			$subject,
@@ -747,7 +747,7 @@ class Email_Automation {
 			'{actividad}'      => 'Taller de Bosque Comestible',
 			'{fecha}'          => '15 de Mayo, 10:00h',
 			'{hora}'           => '10:00',
-			'{ubicacion}'      => 'Vivero Biodevas',
+			'{ubicacion}'      => get_bloginfo('name') . ' - Vivero',
 			'{notas}'          => 'Alguna nota de ejemplo.',
 			'{url_cancelar}'   => '#',
 			'{url_panel}'      => '#',
@@ -798,7 +798,7 @@ class Email_Automation {
 			</div>
 			<?php echo wp_kses_post( $body ); ?>
 			<div class="footer">
-				&copy; <?php echo wp_date( 'Y' ); ?> Biodevas. Este es un email automático de prueba.
+				&copy; <?php echo esc_html(get_bloginfo('name')); ?>. Este es un email automático de prueba.
 			</div>
 		</body>
 

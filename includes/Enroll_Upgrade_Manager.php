@@ -1,6 +1,6 @@
 <?php
 /**
- * Upgrade Manager for Biodevas Enroll.
+ * Upgrade Manager for Convoca Enroll.
  *
  * Handles database structure upgrades for the enroll plugin.
  *
