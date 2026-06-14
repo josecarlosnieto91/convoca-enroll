@@ -1,4 +1,4 @@
-# Changelog - Biodevas Enroll
+# Changelog - Convoca Enroll
 
 ## 2.6.0
 - **Fix:** readme.txt actualizado (renombrado a Convoca Enroll).
@@ -38,7 +38,7 @@
 - **Mejora:** Integración mejorada con Google Photos.
 
 ## 1.4.0
-- **Nuevo:** Bloques de Gutenberg nativos para `[biodevas_inscripcion]`, `[biodevas_panel_reservas]` y `[biodevas_listado_actividades]`.
+- **Nuevo:** Bloques de Gutenberg nativos para `[convoca_form_inscripcion]`, `[convoca_panel_reservas]` y `[convoca_inscripcion_page]`.
 - **Nuevo:** Informe de Memoria de Actividades (resumen anual con participantes, socios, responsables y ubicación).
 - **Nuevo:** Selector de responsables por nombre (en vez de IDs manuales) en el editor de actividad.
 - **Nuevo:** Validación de fecha fin ≥ fecha inicio en actividades.

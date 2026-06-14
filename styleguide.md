@@ -1,6 +1,6 @@
-# Guía de Estilo y Desarrollo - Biodevas Enroll
+# Guía de Estilo y Desarrollo - Convoca Enroll
 
-Este documento detalla las normas de desarrollo, terminología y uso de librerías comunes dentro del plugin Biodevas Enroll.
+Este documento detalla las normas de desarrollo, terminología y uso de librerías comunes dentro del plugin Convoca Enroll.
 
 ---
 
@@ -11,30 +11,30 @@ Por razones estratégicas y fiscales, **no se debe usar la palabra "Precio"** en
 
 - **Uso correcto (PHP):**
   ```php
-  use Biodevas\Enroll\Utils;
+  use Convoca\Enroll\Utils;
   echo Utils::get_aportacion_label('socio'); // "Aportación socio"
   ```
 - **Uso correcto (CSS):**
   Usar clases como `.bde-contribution` o `.bde-amount` en lugar de `.bde-price`.
 
 ### Prefijos
-- **PHP:** Namespace `Biodevas\Enroll`, clases `CamelCase`.
+- **PHP:** Namespace `Convoca\Enroll`, clases `CamelCase`.
 - **Database/Meta:** Prefijo `_bde_` para todos los metadatos de actidivades e inscripciones.
-- **Hooks:** Prefijo `biodevas_enroll_` para acciones y filtros.
+- **Hooks:** Prefijo `convoca_enroll_` para acciones y filtros.
 
 ---
 
-## 2. JavaScript Común (`biodevas-common`)
+## 2. JavaScript Común (`convoca-core`)
 
-El plugin depende de `biodevas-common.js`. Siempre debe encolarse como dependencia.
+El plugin depende de `convoca-core.js`. Siempre debe encolarse como dependencia.
 
 ### Funciones sugeridas
-- **Alertas:** `biodevas.showAlert('Mensaje', 'success')`
+- **Alertas:** `convoca.showAlert('Mensaje', 'success')`
 - **Peticiones AJAX:** 
   ```javascript
-  biodevas.ajaxPost(ajaxurl, data).then(res => ...);
+  convoca.ajaxPost(ajaxurl, data).then(res => ...);
   ```
-- **Validación de Email:** `biodevas.validateEmail(email)`
+- **Validación de Email:** `convoca.validateEmail(email)`
 
 ---
 
@@ -52,7 +52,7 @@ bdeSyncCalendar(activityId);
 ### Archivos de Calendario (.ics)
 Para ofrecer la descarga de un evento en el frontend:
 ```html
-<a href="/wp-json/biodevas-enroll/v1/ics?id={ID}&token={TOKEN}">Añadir al Calendario</a>
+<a href="/wp-json/convoca-enroll/v1/ics?id={ID}&token={TOKEN}">Añadir al Calendario</a>
 ```
 *Nota: El token es obligatorio para evitar descargas masivas o descubrir IDs de inscripción.*
 

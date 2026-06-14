@@ -1,12 +1,12 @@
-# Biodevas Enroll
+# Convoca Enroll
 
-Gestión de inscripciones a actividades para la Asociación Biodevas.
+Gestión de inscripciones a actividades para la Asociación Convoca.
 
 ## Requirements
 
 - WordPress 6.4+
 - PHP 8.1+
-- biodevas-common plugin active
+- convoca-core plugin active
 
 ## Main Features
 
@@ -23,7 +23,7 @@ Gestión de inscripciones a actividades para la Asociación Biodevas.
 
 ## Dependencies
 
-biodevas-common, WordPress 6.4+, PHP 8.1+
+convoca-core, WordPress 6.4+, PHP 8.1+
 
 ## Version
 
