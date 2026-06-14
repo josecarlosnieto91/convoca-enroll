@@ -2,7 +2,7 @@
  * Convoca Enroll — Public JS
  * Form validation, socio toggle, AJAX submission using convoca namespaces.
  */
-(function (bdv) {
+(function (conv) {
     'use strict';
 
     // Hook forms dynamically and standard static ones

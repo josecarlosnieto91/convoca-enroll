@@ -2,7 +2,7 @@
  * Convoca Enroll — Panel de Reservas JS
  * Login via email+code, display reservations, cancel with confirmation.
  */
-(function (bdv) {
+(function (conv) {
     'use strict';
 
     const wrapper = conv.$('.bde-panel-wrapper');
