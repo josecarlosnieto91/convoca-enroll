@@ -7,3 +7,7 @@
 auth.json
 tests/results/
 
+
+# Translation files (user-generated)
+*.po
+*.mo

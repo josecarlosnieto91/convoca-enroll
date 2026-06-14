@@ -311,6 +311,11 @@ class CPT_Actividad {
 			update_post_meta( $post_id, '_conv_plazas_disponibles', $totales );
 		}
 
+		// Auto-set plazas_totales if empty and plazas_disponibles is set (defensive).
+		if ( empty( $totales ) && ! empty( $disponibles ) ) {
+			update_post_meta( $post_id, '_conv_plazas_totales', $disponibles );
+		}
+
 		// Validate: plazas_disponibles cannot exceed plazas_totales.
 		$disponibles = get_post_meta( $post_id, '_conv_plazas_disponibles', true );
 		$totales     = get_post_meta( $post_id, '_conv_plazas_totales', true );

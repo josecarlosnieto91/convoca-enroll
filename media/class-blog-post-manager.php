@@ -271,7 +271,7 @@ class Blog_Post_Manager {
 	 */
 	private static function get_tags( int $actividad_id ): array {
 		$tags = array( 'actividad', 'convoca' );
-		$tipo = get_post_meta( $actividad_id, 'conv_tipo_actividad', true );
+		$tipo = get_post_meta( $actividad_id, '_conv_tipo_actividad', true );
 		if ( $tipo ) {
 			$tags[] = $tipo;
 		}

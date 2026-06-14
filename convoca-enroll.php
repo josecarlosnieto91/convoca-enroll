@@ -6,6 +6,7 @@
  * Version: 2.6.0
  * Requires at least: 6.4
  * Requires PHP:      8.1
+ * Tested up to:      7.0
  * Author:            Jose Carlos Nieto Ramos
  * Author URI:        https://josecarlosnietoramos.wordpress.com.
  * License:           GPL-2.0-or-later
@@ -16,16 +17,15 @@
  * Network:           true
  */
 
+// Load translations.
+add_action(
+	'init',
+	function () {
+		load_plugin_textdomain( 'convoca-enroll', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	}
+);
+
 if ( ! defined( 'ABSPATH' ) ) {
-
-	// Load translations.
-	add_action(
-		'init',
-		function () {
-			load_plugin_textdomain( 'convoca-enroll', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-		} 
-	);
-
 	exit;
 }
 
@@ -108,9 +108,16 @@ spl_autoload_register(
 );
 
 /* ── Activation ───────────────────────────────────────────── */
+/**
+ * Check convoca-core is active at activation.
+ */
 register_activation_hook(
 	__FILE__,
 	function (): void {
+		if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
+			deactivate_plugins( plugin_basename( __FILE__ ) );
+			wp_die( 'Convoca Enroll requires Convoca Core to be active. Please activate Convoca Core first.' );
+		}
 		Convoca\Enroll\CPT_Actividad::register();
 		Convoca\Enroll\CPT_Inscripcion::register();
 		flush_rewrite_rules();

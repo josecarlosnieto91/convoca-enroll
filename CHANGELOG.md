@@ -1,5 +1,8 @@
 # Changelog - Biodevas Enroll
 
+## 2.6.0
+- **Fix:** readme.txt actualizado (renombrado a Convoca Enroll).
+
 ## 2.5.1
 - **Fix:** Inscripciones públicas no consumían plazas (condición `in_array` no entraba para estado_forzado=null).
 - **Fix:** Consentimiento RGPD no se transmitía al motor (AJAX validaba pero no enviaba `\$datos['rgpd']`).

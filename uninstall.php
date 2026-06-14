@@ -1,6 +1,6 @@
 <?php
 /**
- * Uninstall: clean up options, CPTs, and cron.
+ * Uninstall handler for Convoca Enroll.
  *
  * @package Convoca\Enroll
  */
@@ -9,9 +9,18 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
+// ─── Keep data mode ───
+// Define CONVOCA_KEEP_DATA_ON_UNINSTALL in wp-config.php to preserve all data
+// when uninstalling. Useful for temporary deactivation + reactivation.
+if ( defined( 'CONVOCA_KEEP_DATA_ON_UNINSTALL' ) && CONVOCA_KEEP_DATA_ON_UNINSTALL ) {
+	return;
+}
+
 // Delete options.
 delete_option( 'conv_enroll_settings' );
 delete_option( 'conv_enroll_email_templates' );
+delete_option( 'conv_enroll_db_version' );
+delete_option( 'conv_media_db_version' );
 
 // Delete inscripcion posts.
 $posts = get_posts(
