@@ -2,7 +2,7 @@
  * Convoca Enroll — CRM Monitor JS
  * Vanilla JS refactor
  */
-(function (bdvAdmin) {
+(function (convAdmin) {
     'use strict';
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -46,7 +46,7 @@
                     var nonce = window.bdeCrm ? window.bdeCrm.nonce : '';
                     var action = currentBtn.classList.contains('mark-attendance') ? 'conv_enroll_mark_attendance' : 'conv_enroll_crm_update_attendance';
 
-                    bdvAdmin.ajaxPost(action, fd, nonce,
+                    convAdmin.ajaxPost(action, fd, nonce,
                         (res) => {
                             currentBtn.disabled = false;
                             currentBtn.style.opacity = '1';

@@ -508,9 +508,9 @@ class Admin_Actividades_List extends \WP_List_Table {
 
 	protected function column_acciones( $item ): string {
 		$actions   = array();
-		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=bde-checkin&actividad_id=' . $item->ID ) ), 'Check-in' );
+		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=conv-checkin&actividad_id=' . $item->ID ) ), 'Check-in' );
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_duplicate_actividad&id=' . $item->ID ), 'conv_enroll_duplicate_' . $item->ID ) ), 'Duplicar' );
-		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=bde-inscripciones&actividad_id=' . $item->ID ) ), 'Inscripciones' );
+		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=conv-inscripciones&actividad_id=' . $item->ID ) ), 'Inscripciones' );
 
 		return implode( ' | ', $actions );
 	}

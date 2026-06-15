@@ -60,7 +60,7 @@ class Google_Photos
 
         $this->client = new \Google\Client();
         $this->client->setClientId($client_id);
-        $this->client->setRedirectUri(admin_url('admin.php?page=bde-ajustes&tab=google_photos'));
+        $this->client->setRedirectUri(admin_url('admin.php?page=conv-ajustes&tab=google_photos'));
         $this->client->addScope([
             'https://www.googleapis.com/auth/photoslibrary.appendonly',
             'https://www.googleapis.com/auth/photoslibrary.sharing',
@@ -96,7 +96,7 @@ class Google_Photos
         $client = new \Google\Client();
         $client->setClientId($client_id);
         $client->setClientSecret($client_secret);
-        $client->setRedirectUri(admin_url('admin.php?page=bde-ajustes&tab=google_photos'));
+        $client->setRedirectUri(admin_url('admin.php?page=conv-ajustes&tab=google_photos'));
 
         $token = $client->fetchAccessTokenWithAuthCode($code);
 

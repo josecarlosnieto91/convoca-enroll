@@ -6,14 +6,14 @@
     'use strict';
 
     // Hook forms dynamically and standard static ones
-    conv.observeDynamicForms('.bde-enroll-wrapper', function (form) {
-        const wrapper = form.closest('.bde-enroll-wrapper');
-        const alert = conv.$('#bde-alert', wrapper);
-        const success = conv.$('#bde-success', wrapper);
+    conv.observeDynamicForms('.conv-enroll-wrapper', function (form) {
+        const wrapper = form.closest('.conv-enroll-wrapper');
+        const alert = conv.$('#conv-alert', wrapper);
+        const success = conv.$('#conv-success', wrapper);
         
-        const socioSelect = conv.$('#bde-es-socio', wrapper);
-        const tipoInscripcion = conv.$('#bde-tipo-inscripcion', wrapper);
-        const authBanner = conv.$('#bde-auth-banner', wrapper);
+        const socioSelect = conv.$('#conv-es-socio', wrapper);
+        const tipoInscripcion = conv.$('#conv-tipo-inscripcion', wrapper);
+        const authBanner = conv.$('#conv-auth-banner', wrapper);
 
         /* RGPD-compliant Auth Load */
         const apiRoot = window.bdeEnroll?.apiRoot || '/wp-json/';
@@ -24,10 +24,10 @@
                     if (socioSelect) socioSelect.value = '0';
                     if (tipoInscripcion) tipoInscripcion.value = 'socio_dia';
                     
-                    const precioS = conv.$('#bde-precio-socio', wrapper);
-                    const precioSD = conv.$('#bde-precio-socio-dia', wrapper);
-                    if (precioS) precioS.classList.remove('bde-price--active');
-                    if (precioSD) precioSD.classList.add('bde-price--active');
+                    const precioS = conv.$('#conv-precio-socio', wrapper);
+                    const precioSD = conv.$('#conv-precio-socio-dia', wrapper);
+                    if (precioS) precioS.classList.remove('conv-price--active');
+                    if (precioSD) precioSD.classList.add('conv-price--active');
 
                     if (authBanner) {
                         authBanner.innerHTML = `Identifícate <strong><a href="/acceder/" style="text-decoration:underline;">como socio/a</a></strong> para autocompletar tus datos y aplicar tu aportación reducida. (De lo contrario, se aplica aportación Trasgu).`;
@@ -45,10 +45,10 @@
                         if (socioSelect) socioSelect.value = '1';
                         if (tipoInscripcion) tipoInscripcion.value = 'socio';
                         
-                        const precioS = conv.$('#bde-precio-socio', wrapper);
-                        const precioSD = conv.$('#bde-precio-socio-dia', wrapper);
-                        if (precioS) precioS.classList.add('bde-price--active');
-                        if (precioSD) precioSD.classList.remove('bde-price--active');
+                        const precioS = conv.$('#conv-precio-socio', wrapper);
+                        const precioSD = conv.$('#conv-precio-socio-dia', wrapper);
+                        if (precioS) precioS.classList.add('conv-price--active');
+                        if (precioSD) precioSD.classList.remove('conv-price--active');
 
                         if (authBanner) {
                             authBanner.innerHTML = `<strong>Autenticado como socio/a:</strong> ${member.name}. Tienes aplicada la aportación de socio. Opcionalmente puedes <a href="/acceder/?action=logout" style="text-decoration:underline;">cerrar sesión</a>.`;
@@ -56,10 +56,10 @@
                         }
 
                         // Pre-fill form (visual only, real validation is in backend)
-                        const n = conv.$('#bde-nombre', form);
-                        const e = conv.$('#bde-email', form);
-                        const d = conv.$('#bde-dni', form);
-                        const t = conv.$('#bde-telefono', form);
+                        const n = conv.$('#conv-nombre', form);
+                        const e = conv.$('#conv-email', form);
+                        const d = conv.$('#conv-dni', form);
+                        const t = conv.$('#conv-telefono', form);
                         if (n) n.value = member.name || '';
                         if (e) e.value = member.email || '';
                         if (d) {
@@ -73,10 +73,10 @@
             .catch(err => console.error('Error verificando sesión de socio:', err));
 
         /* Minor handling: Toggle fields visibility and required state */
-        const minorToggle = conv.$('#bde-es-menor', wrapper);
-        const minorFields = conv.$('#bde-minor-fields', wrapper);
-        const inputNombreParticipante = conv.$('#bde-nombre-participante', wrapper);
-        const inputEdadParticipante = conv.$('#bde-edad-participante', wrapper);
+        const minorToggle = conv.$('#conv-es-menor', wrapper);
+        const minorFields = conv.$('#conv-minor-fields', wrapper);
+        const inputNombreParticipante = conv.$('#conv-nombre-participante', wrapper);
+        const inputEdadParticipante = conv.$('#conv-edad-participante', wrapper);
 
         if (minorToggle && minorFields) {
             const updateMinorFields = () => {
@@ -100,7 +100,7 @@
             // Native shared validation
             const ok = conv.form.validate(form);
             
-            const consentimiento = conv.$('#bde-consentimiento', form) || conv.$('#bde-consentimiento', wrapper);
+            const consentimiento = conv.$('#conv-consentimiento', form) || conv.$('#conv-consentimiento', wrapper);
             if (consentimiento && !consentimiento.checked) {
                 conv.showAlert(alert, 'Debes aceptar la política de privacidad.', 'danger');
                 return;
@@ -131,9 +131,9 @@
                     form.style.display = 'none';
                     success.style.display = 'block';
 
-                    const icon = conv.$('#bde-success-icon', wrapper);
-                    const title = conv.$('#bde-success-title', wrapper);
-                    const msg = conv.$('#bde-success-msg', wrapper);
+                    const icon = conv.$('#conv-success-icon', wrapper);
+                    const title = conv.$('#conv-success-title', wrapper);
+                    const msg = conv.$('#conv-success-msg', wrapper);
 
                     if (res.data.gateway_error) {
                         if (icon) icon.textContent = '⚠️';
@@ -154,13 +154,13 @@
                     }
 
                     // Update plazas badge if present.
-                    const badge = conv.$('#bde-plazas-badge', wrapper);
+                    const badge = conv.$('#conv-plazas-badge', wrapper);
                     if (badge && typeof res.data.plazas === 'number') {
                         const totalMatch = badge.textContent.match(/\/(\d+)/);
                         const t = totalMatch ? totalMatch[1] : '?';
                         if (res.data.plazas <= 0) {
                             badge.textContent = '🎟 Plazas agotadas';
-                            badge.className = 'bde-plazas--agotada';
+                            badge.className = 'conv-plazas--agotada';
                         } else {
                             badge.textContent = '🎟 ' + res.data.plazas + '/' + t + ' plazas';
                         }

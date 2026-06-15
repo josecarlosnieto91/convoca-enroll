@@ -2,17 +2,17 @@
  * Convoca Enroll — Admin JS
  * State change, check-in toggles, and email resends using convocaAdmin.
  */
-(function (bdvAdmin) {
+(function (convAdmin) {
     'use strict';
 
-    if (!bdvAdmin) return;
+    if (!convAdmin) return;
 
     // Fast helpers
-    const $ = bdvAdmin.$;
-    const $$ = bdvAdmin.$$;
+    const $ = convAdmin.$;
+    const $$ = convAdmin.$$;
 
     // Handle Quick State Change Form
-    const stateForm = document.getElementById('bde-state-form');
+    const stateForm = document.getElementById('conv-state-form');
     if (stateForm) {
         stateForm.addEventListener('submit', function (e) {
             e.preventDefault();
@@ -26,7 +26,7 @@
             const fd = new FormData(stateForm);
             const nonce = window.bdeAdmin?.nonce || '';
 
-            bdvAdmin.ajaxPost('conv_enroll_change_state', fd, nonce,
+            convAdmin.ajaxPost('conv_enroll_change_state', fd, nonce,
                 (res) => { location.reload(); },
                 (res) => {
                     alert(res.data?.message || res.data || 'Error al cambiar el estado.');
@@ -40,7 +40,7 @@
     }
 
     // Check-in toggle
-    $$('.bde-toggle-checkin').forEach(btn => {
+    $$('.conv-toggle-checkin').forEach(btn => {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             const id = this.dataset.id;
@@ -51,7 +51,7 @@
             const nonce = window.bdeAdmin?.nonce || '';
             const payload = { inscripcion_id: id };
 
-            bdvAdmin.ajaxPost('conv_enroll_toggle_checkin', payload, nonce,
+            convAdmin.ajaxPost('conv_enroll_toggle_checkin', payload, nonce,
                 (res) => {
                     this.disabled = false;
                     this.style.opacity = '1';
@@ -75,7 +75,7 @@
 
     // Resend email
     document.addEventListener('click', function(e) {
-        const btn = e.target.closest('.bde-resend-email') || e.target.closest('#bde-resend-email');
+        const btn = e.target.closest('.conv-resend-email') || e.target.closest('#conv-resend-email');
         if (!btn) return;
 
         e.preventDefault();
@@ -94,7 +94,7 @@
         const nonce = window.bdeAdmin?.nonce || '';
         const payload = { inscripcion_id: id };
 
-        bdvAdmin.ajaxPost('conv_enroll_resend_email', payload, nonce,
+        convAdmin.ajaxPost('conv_enroll_resend_email', payload, nonce,
             (res) => {
                 btn.disabled = false;
                 btn.style.opacity = '1';

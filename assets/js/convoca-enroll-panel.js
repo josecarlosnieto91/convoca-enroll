@@ -5,17 +5,17 @@
 (function (conv) {
     'use strict';
 
-    const wrapper = conv.$('.bde-panel-wrapper');
+    const wrapper = conv.$('.conv-panel-wrapper');
     if (!wrapper) return;
 
-    const loginSection = conv.$('#bde-panel-login', wrapper);
-    const reservasSection = conv.$('#bde-panel-reservas', wrapper);
-    const loginForm = conv.$('#bde-panel-login-form', wrapper);
-    const alert = conv.$('#bde-panel-alert', wrapper);
-    const modal = conv.$('#bde-panel-modal', wrapper);
-    const listContainer = conv.$('#bde-panel-list', wrapper);
-    const emptyState = conv.$('#bde-panel-empty', wrapper);
-    const userEmailEl = conv.$('#bde-panel-user-email', wrapper);
+    const loginSection = conv.$('#conv-panel-login', wrapper);
+    const reservasSection = conv.$('#conv-panel-reservas', wrapper);
+    const loginForm = conv.$('#conv-panel-login-form', wrapper);
+    const alert = conv.$('#conv-panel-alert', wrapper);
+    const modal = conv.$('#conv-panel-modal', wrapper);
+    const listContainer = conv.$('#conv-panel-list', wrapper);
+    const emptyState = conv.$('#conv-panel-empty', wrapper);
+    const userEmailEl = conv.$('#conv-panel-user-email', wrapper);
 
     let sessionEmail = '';
     let sessionCodigo = '';
@@ -26,8 +26,8 @@
     loginForm.addEventListener('submit', e => {
         e.preventDefault();
 
-        const email = conv.$('#bde-panel-email', wrapper).value.trim();
-        const codigo = conv.$('#bde-panel-codigo', wrapper).value.trim().toUpperCase();
+        const email = conv.$('#conv-panel-email', wrapper).value.trim();
+        const codigo = conv.$('#conv-panel-codigo', wrapper).value.trim().toUpperCase();
 
         if (!email || !codigo) {
             showAlert('Introduce tu email y código de reserva.');
@@ -77,31 +77,31 @@
 
     function renderList(reservas) {
         listContainer.innerHTML = reservas.map(r => `
-            <div class="bde-panel-card convoca-card ${r.estado === 'cancelada' ? 'bde-panel-card--cancelled' : ''}" data-id="${r.id}">
-                <div class="bde-panel-card-header">
-                    <h4 class="bde-panel-card-title">${escHtml(r.actividad)}</h4>
+            <div class="conv-panel-card convoca-card ${r.estado === 'cancelada' ? 'conv-panel-card--cancelled' : ''}" data-id="${r.id}">
+                <div class="conv-panel-card-header">
+                    <h4 class="conv-panel-card-title">${escHtml(r.actividad)}</h4>
                     <span class="${escHtml(r.estado_class)}">${escHtml(r.estado_label)}</span>
                 </div>
-                <div class="bde-panel-card-meta">
-                    ${r.es_menor ? `<span class="bde-panel-tag">👶 ${escHtml(r.participante)}</span>` : ''}
+                <div class="conv-panel-card-meta">
+                    ${r.es_menor ? `<span class="conv-panel-tag">👶 ${escHtml(r.participante)}</span>` : ''}
                     <span>📅 ${escHtml(r.fecha)}</span>
                     <span>🕐 ${escHtml(r.hora)}</span>
                     <span>📍 ${escHtml(r.ubicacion)}</span>
                 </div>
-                <div class="bde-panel-card-footer">
-                    <span class="bde-panel-code">🔑 ${escHtml(r.codigo)}</span>
-                    <span class="bde-small">Inscripción: ${escHtml(r.fecha_inscripcion)}</span>
-                    ${r.cancelable ? `<button class="btn btn-danger btn-sm bde-cancel-btn" data-id="${r.id}" data-actividad="${escHtml(r.actividad)}">✖ Cancelar</button>` : ''}
+                <div class="conv-panel-card-footer">
+                    <span class="conv-panel-code">🔑 ${escHtml(r.codigo)}</span>
+                    <span class="conv-small">Inscripción: ${escHtml(r.fecha_inscripcion)}</span>
+                    ${r.cancelable ? `<button class="btn btn-danger btn-sm conv-cancel-btn" data-id="${r.id}" data-actividad="${escHtml(r.actividad)}">✖ Cancelar</button>` : ''}
                 </div>
             </div>
         `).join('');
 
         // Bind cancel buttons.
-        conv.$$('.bde-cancel-btn', listContainer).forEach(btn => {
+        conv.$$('.conv-cancel-btn', listContainer).forEach(btn => {
             btn.addEventListener('click', () => {
                 cancelTargetId = parseInt(btn.dataset.id, 10);
                 const msg = `¿Estás seguro de que quieres cancelar tu reserva para "${btn.dataset.actividad}"? Se liberará tu plaza.`;
-                conv.$('#bde-modal-msg', modal).textContent = msg;
+                conv.$('#conv-modal-msg', modal).textContent = msg;
                 modal.style.display = 'flex';
             });
         });
@@ -109,7 +109,7 @@
 
     /* ── Logout ─────────────────────────────────── */
 
-    conv.$('#bde-panel-logout', wrapper).addEventListener('click', () => {
+    conv.$('#conv-panel-logout', wrapper).addEventListener('click', () => {
         sessionEmail = '';
         sessionCodigo = '';
         cancelTargetId = null;
@@ -123,7 +123,7 @@
 
     /* ── Modal ──────────────────────────────────── */
 
-    conv.$('#bde-modal-close', wrapper).addEventListener('click', () => {
+    conv.$('#conv-modal-close', wrapper).addEventListener('click', () => {
         modal.style.display = 'none';
         cancelTargetId = null;
     });
@@ -135,10 +135,10 @@
         }
     });
 
-    conv.$('#bde-modal-confirm', wrapper).addEventListener('click', () => {
+    conv.$('#conv-modal-confirm', wrapper).addEventListener('click', () => {
         if (!cancelTargetId) return;
 
-        const confirmBtn = conv.$('#bde-modal-confirm', wrapper);
+        const confirmBtn = conv.$('#conv-modal-confirm', wrapper);
         conv.setLoading(confirmBtn, true, 'Sí, cancelar reserva');
 
         const fd = new FormData();

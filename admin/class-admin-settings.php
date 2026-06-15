@@ -48,8 +48,8 @@ class Admin_Settings {
 			'status'          => __( 'Estado', 'convoca-enroll' ),
 		);
 		?>
-		<div class="wrap bde-settings-wrap">
-			<div class="bde-admin-header" style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+		<div class="wrap conv-settings-wrap">
+			<div class="conv-admin-header" style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
 				<img src="<?php echo esc_url( CONVOCA_IMAGES_URL . 'logo.png' ); ?>" alt="Convoca Enroll" style="width: 80px; height: 80px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
 				<div>
 					<h1 style="margin: 0; padding: 0;"><?php esc_html_e( 'Ajustes de Inscripciones', 'convoca-enroll' ); ?></h1>
@@ -59,7 +59,7 @@ class Admin_Settings {
 
 			<h2 class="nav-tab-wrapper">
 				<?php foreach ( $tabs as $slug => $label ) : ?>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=bde-ajustes&tab=' . $slug ) ); ?>"
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=conv-ajustes&tab=' . $slug ) ); ?>"
 						class="nav-tab <?php echo $tab === $slug ? 'nav-tab-active' : ''; ?>">
 						<?php echo esc_html( $label ); ?>
 					</a>
@@ -101,47 +101,47 @@ class Admin_Settings {
 
 		<div class="convoca-field">
 			<label for="admin_email"><?php esc_html_e( 'Email del administrador', 'convoca-enroll' ); ?></label>
-			<input type="email" id="admin_email" name="bde[admin_email]"
+			<input type="email" id="admin_email" name="conv[admin_email]"
 				value="<?php echo esc_attr( $s['admin_email'] ?? '' ); ?>">
 		</div>
 
 		<div class="convoca-field">
 			<label for="rgpd_version"><?php esc_html_e( 'Versión RGPD', 'convoca-enroll' ); ?></label>
-			<input type="text" id="rgpd_version" name="bde[rgpd_version]"
+			<input type="text" id="rgpd_version" name="conv[rgpd_version]"
 				value="<?php echo esc_attr( $s['rgpd_version'] ?? '1.0' ); ?>">
 		</div>
 
 		<div class="convoca-field">
 			<div class="convoca-check-group">
-				<input type="checkbox" id="limite_una_reserva" name="bde[limite_una_reserva]" value="1" <?php checked( ! empty( $s['limite_una_reserva'] ) ); ?>>
+				<input type="checkbox" id="limite_una_reserva" name="conv[limite_una_reserva]" value="1" <?php checked( ! empty( $s['limite_una_reserva'] ) ); ?>>
 				<label for="limite_una_reserva"><?php esc_html_e( 'Cada persona adulta solo puede hacer una reserva de taller', 'convoca-enroll' ); ?></label>
 			</div>
 		</div>
 
 		<div class="convoca-field">
 			<div class="convoca-check-group">
-				<input type="checkbox" id="permitir_menores" name="bde[permitir_menores]" value="1" <?php checked( $s['permitir_menores'] ?? true ); ?>>
+				<input type="checkbox" id="permitir_menores" name="conv[permitir_menores]" value="1" <?php checked( $s['permitir_menores'] ?? true ); ?>>
 				<label for="permitir_menores"><?php esc_html_e( 'Permitir que un adulto inscriba a menores o personas a su cargo', 'convoca-enroll' ); ?></label>
 			</div>
 		</div>
 
 		<div class="convoca-field">
 			<div class="convoca-check-group">
-				<input type="checkbox" id="bloquear_dni_duplicado" name="bde[bloquear_dni_duplicado]" value="1" <?php checked( ( $s['bloquear_dni_duplicado'] ?? '1' ) === '1' ); ?>>
+				<input type="checkbox" id="bloquear_dni_duplicado" name="conv[bloquear_dni_duplicado]" value="1" <?php checked( ( $s['bloquear_dni_duplicado'] ?? '1' ) === '1' ); ?>>
 				<label for="bloquear_dni_duplicado"><?php esc_html_e( 'Evitar que se inscriba el mismo DNI más de una vez en la misma actividad', 'convoca-enroll' ); ?></label>
 			</div>
 		</div>
 
 		<div class="convoca-field">
 			<label for="plazas_por_defecto"><?php esc_html_e( 'Plazas por defecto', 'convoca-enroll' ); ?></label>
-			<input type="number" id="plazas_por_defecto" name="bde[plazas_por_defecto]" min="0"
+			<input type="number" id="plazas_por_defecto" name="conv[plazas_por_defecto]" min="0"
 				value="<?php echo esc_attr( $s['plazas_por_defecto'] ?? '20' ); ?>">
 			<small class="convoca-small"><?php esc_html_e( 'Plazas que se asignarán por defecto al crear una nueva actividad.', 'convoca-enroll' ); ?></small>
 		</div>
 
 		<div class="convoca-field">
 			<label for="url_panel_reservas"><?php esc_html_e( 'URL Panel de Reservas', 'convoca-enroll' ); ?></label>
-			<input type="url" id="url_panel_reservas" name="bde[url_panel_reservas]"
+			<input type="url" id="url_panel_reservas" name="conv[url_panel_reservas]"
 				value="<?php echo esc_attr( $s['url_panel_reservas'] ?? home_url( '/panel-de-reservas/' ) ); ?>">
 			<small class="convoca-small"><?php esc_html_e( 'Enlace a la página donde está incrustado el shortcode [convoca_panel_reservas].', 'convoca-enroll' ); ?></small>
 		</div>
@@ -150,14 +150,14 @@ class Admin_Settings {
 
 		<div class="convoca-field">
 			<label for="webhook_url"><?php esc_html_e( 'URL del Webhook', 'convoca-enroll' ); ?></label>
-			<input type="url" id="webhook_url" name="bde[webhook_url]"
+			<input type="url" id="webhook_url" name="conv[webhook_url]"
 				value="<?php echo esc_attr( $s['webhook_url'] ?? '' ); ?>">
 			<small class="convoca-small"><?php esc_html_e( 'URL a la que se enviarán peticiones POST (make.com, zapier, etc.) al cambiar el estado de las inscripciones.', 'convoca-enroll' ); ?></small>
 		</div>
 
 		<div class="convoca-field">
 			<label for="webhook_secret"><?php esc_html_e( 'Secreto del Webhook', 'convoca-enroll' ); ?></label>
-			<input type="text" id="webhook_secret" name="bde[webhook_secret]"
+			<input type="text" id="webhook_secret" name="conv[webhook_secret]"
 				value="<?php echo esc_attr( $s['webhook_secret'] ?? '' ); ?>">
 			<small class="convoca-small"><?php esc_html_e( 'Firma opcional que se enviará en la cabecera X-Assoc-Signature con el hash SHA-256 del payload crudo.', 'convoca-enroll' ); ?></small>
 		</div>
@@ -166,7 +166,7 @@ class Admin_Settings {
 
 		<div class="convoca-field">
 			<label for="sheets_enabled"><?php esc_html_e( 'Activar sincronización', 'convoca-enroll' ); ?></label>
-			<select id="sheets_enabled" name="bde[sheets_enabled]">
+			<select id="sheets_enabled" name="conv[sheets_enabled]">
 				<option value="0" <?php selected( $s['sheets_enabled'] ?? '', '0' ); ?>><?php esc_html_e( 'Desactivado', 'convoca-enroll' ); ?></option>
 				<option value="1" <?php selected( $s['sheets_enabled'] ?? '', '1' ); ?>><?php esc_html_e( 'Activado', 'convoca-enroll' ); ?></option>
 			</select>
@@ -178,7 +178,7 @@ class Admin_Settings {
 			$has_constant = defined( 'CONV_ENROLL_GOOGLE_SHEETS_API_KEY' );
 			$display_val  = $has_constant ? '****************' . substr( CONV_ENROLL_GOOGLE_SHEETS_API_KEY, -4 ) : ( $s['sheets_api_key'] ?? '' );
 			?>
-			<input type="text" id="sheets_api_key" name="bde[sheets_api_key]"
+			<input type="text" id="sheets_api_key" name="conv[sheets_api_key]"
 				value="<?php echo esc_attr( $display_val ); ?>" <?php echo $has_constant ? 'disabled' : ''; ?>>
 			<?php if ( $has_constant ) : ?>
 				<small class="convoca-small" style="color:green;">✓ <?php esc_html_e( 'Definida vía constante en wp-config.php.', 'convoca-enroll' ); ?></small>
@@ -192,7 +192,7 @@ class Admin_Settings {
 
 		<div class="convoca-field">
 			<label for="log_retention_days"><?php esc_html_e( 'Retención de logs (días)', 'convoca-enroll' ); ?></label>
-			<input type="number" id="log_retention_days" name="bde[log_retention_days]" min="1" max="365"
+			<input type="number" id="log_retention_days" name="conv[log_retention_days]" min="1" max="365"
 				value="<?php echo esc_attr( $s['log_retention_days'] ?? '30' ); ?>">
 			<small class="convoca-small"><?php esc_html_e( 'Días que se conservarán los logs antes de ser eliminados automáticamente.', 'convoca-enroll' ); ?></small>
 		</div>
@@ -241,7 +241,7 @@ class Admin_Settings {
 		?>
 		<h2>Texto de introducción</h2>
 		<p class="description">Se muestra antes del formulario de inscripción.</p>
-		<textarea name="bde[texto_introduccion]" rows="3" class="large-text"><?php echo esc_textarea( $intro ); ?></textarea>
+		<textarea name="conv[texto_introduccion]" rows="3" class="large-text"><?php echo esc_textarea( $intro ); ?></textarea>
 
 		<h2>Normas de inscripción</h2>
 		<p class="description">Contenido que se muestra como normas en la página de inscripción. Puedes usar HTML.</p>
@@ -250,7 +250,7 @@ class Admin_Settings {
 			$normas,
 			'conv_enroll_normas_inscripcion',
 			array(
-				'textarea_name' => 'bde[normas_inscripcion]',
+				'textarea_name' => 'conv[normas_inscripcion]',
 				'textarea_rows' => 12,
 				'media_buttons' => false,
 				'teeny'         => false,
@@ -264,21 +264,21 @@ class Admin_Settings {
 		?>
 		<div class="convoca-field">
 			<label for="url_privacidad"><?php esc_html_e( 'URL Política de Privacidad', 'convoca-enroll' ); ?></label>
-			<input type="url" id="url_privacidad" name="bde[url_privacidad]"
+			<input type="url" id="url_privacidad" name="conv[url_privacidad]"
 				value="<?php echo esc_attr( $s['url_privacidad'] ?? home_url( '/politica-de-privacidad/' ) ); ?>">
 			<small class="convoca-small"><?php esc_html_e( 'Enlace a la página de política de privacidad.', 'convoca-enroll' ); ?></small>
 		</div>
 
 		<div class="convoca-field">
 			<label for="url_imagenes"><?php esc_html_e( 'URL Uso de Imágenes', 'convoca-enroll' ); ?></label>
-			<input type="url" id="url_imagenes" name="bde[url_imagenes]"
+			<input type="url" id="url_imagenes" name="conv[url_imagenes]"
 				value="<?php echo esc_attr( $s['url_imagenes'] ?? '' ); ?>">
 			<small class="convoca-small"><?php esc_html_e( 'Enlace a la información de uso de imágenes/contenido gráfico.', 'convoca-enroll' ); ?></small>
 		</div>
 
 		<div class="convoca-field">
 			<label for="url_proteccion_datos"><?php esc_html_e( 'Enlace «aquí» (protección de datos)', 'convoca-enroll' ); ?></label>
-			<input type="url" id="url_proteccion_datos" name="bde[url_proteccion_datos]"
+			<input type="url" id="url_proteccion_datos" name="conv[url_proteccion_datos]"
 				value="<?php echo esc_attr( $s['url_proteccion_datos'] ?? '' ); ?>">
 			<small class="convoca-small"><?php esc_html_e( 'URL a la que apunta «aquí» en la frase «Puedes consultar la información completa sobre protección de datos y uso de imágenes aquí.»', 'convoca-enroll' ); ?></small>
 		</div>
@@ -312,10 +312,10 @@ class Admin_Settings {
 			$attachment_id  = $tpl['attachment_id'] ?? '';
 			$attachment_url = $attachment_id ? wp_get_attachment_url( $attachment_id ) : '';
 			?>
-			<div class="bde-template-card" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; background: #fff;">
+			<div class="conv-template-card" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; background: #fff;">
 				<div style="display: flex; justify-content: space-between; align-items: flex-start;">
 					<h3><?php echo esc_html( $labels[ $slug ] ?? $slug ); ?></h3>
-					<button type="button" class="button bde-preview-email" data-slug="<?php echo esc_attr( $slug ); ?>">
+					<button type="button" class="button conv-preview-email" data-slug="<?php echo esc_attr( $slug ); ?>">
 						👁️ Previsualizar
 					</button>
 				</div>
@@ -331,12 +331,12 @@ class Admin_Settings {
 						class="large-text"><?php echo esc_textarea( $tpl['body'] ); ?></textarea>
 				</p>
 
-				<div class="bde-attachment-row" style="margin-top: 10px;">
+				<div class="conv-attachment-row" style="margin-top: 10px;">
 					<label><strong>Adjunto</strong></label><br>
 					<div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
 						<input type="hidden" name="tpl[<?php echo $slug; ?>][attachment_id]" value="<?php echo esc_attr( $attachment_id ); ?>" class="conv_enroll_attachment_id">
-						<button type="button" class="convoca-btn convoca-btn-outline bde-upload-attachment"><?php echo esc_html__( 'Seleccionar archivo', 'convoca-enroll' ); ?></button>
-						<button type="button" class="convoca-btn convoca-btn-outline convoca-btn--danger bde-remove-attachment" <?php echo ! $attachment_id ? 'style="display:none"' : ''; ?>><?php echo esc_html__( 'Quitar', 'convoca-enroll' ); ?></button>
+						<button type="button" class="convoca-btn convoca-btn-outline conv-upload-attachment"><?php echo esc_html__( 'Seleccionar archivo', 'convoca-enroll' ); ?></button>
+						<button type="button" class="convoca-btn convoca-btn-outline convoca-btn--danger conv-remove-attachment" <?php echo ! $attachment_id ? 'style="display:none"' : ''; ?>><?php echo esc_html__( 'Quitar', 'convoca-enroll' ); ?></button>
 						<span class="convoca-badge convoca-badge--info conv_enroll_attachment_name"><?php echo $attachment_url ? esc_html( basename( $attachment_url ) ) : esc_html__( 'Ninguno', 'convoca-enroll' ); ?></span>
 					</div>
 				</div>
@@ -349,7 +349,7 @@ class Admin_Settings {
 			<tr>
 				<th><label for="email_batch_size">Número de correos por lote</label></th>
 				<td>
-					<input type="number" id="email_batch_size" name="bde[email_batch_size]" min="1" max="100"
+					<input type="number" id="email_batch_size" name="conv[email_batch_size]" min="1" max="100"
 						value="<?php echo esc_attr( $settings['email_batch_size'] ?? '20' ); ?>" class="small-text">
 					<p class="description">Número máximo de correos a enviar en cada ejecución del cron (cada minuto).</p>
 				</td>
@@ -357,7 +357,7 @@ class Admin_Settings {
 			<tr>
 				<th><label for="email_max_retries">Reintentos máximos</label></th>
 				<td>
-					<input type="number" id="email_max_retries" name="bde[email_max_retries]" min="0" max="10"
+					<input type="number" id="email_max_retries" name="conv[email_max_retries]" min="0" max="10"
 						value="<?php echo esc_attr( $settings['email_max_retries'] ?? '3' ); ?>" class="small-text">
 					<p class="description">Número de veces que se intentará reenviar un correo si falla antes de marcarlo como fallido.</p>
 				</td>
@@ -366,14 +366,14 @@ class Admin_Settings {
 
 <script>
 			document.addEventListener('DOMContentLoaded', function() {
-				window._bdvActiveUploadRow = null;
+				window._convActiveUploadRow = null;
 
 				// WP Media Upload.
 				let frame;
-				document.querySelectorAll('.bde-upload-attachment').forEach(function(btn) {
+				document.querySelectorAll('.conv-upload-attachment').forEach(function(btn) {
 					btn.addEventListener('click', function(e) {
 						e.preventDefault();
-						const row = this.closest('.bde-attachment-row');
+						const row = this.closest('.conv-attachment-row');
 						
 						if (!frame) {
 							frame = wp.media({
@@ -382,24 +382,24 @@ class Admin_Settings {
 							});
 							frame.on('select', function() {
 								const attachment = frame.state().get('selection').first().toJSON();
-								if (window._bdvActiveUploadRow) {
-									window._bdvActiveUploadRow.querySelector('.conv_enroll_attachment_id').value = attachment.id;
-									window._bdvActiveUploadRow.querySelector('.conv_enroll_attachment_name').textContent = attachment.filename;
-									window._bdvActiveUploadRow.querySelector('.bde-remove-attachment').style.display = 'inline-block';
+								if (window._convActiveUploadRow) {
+									window._convActiveUploadRow.querySelector('.conv_enroll_attachment_id').value = attachment.id;
+									window._convActiveUploadRow.querySelector('.conv_enroll_attachment_name').textContent = attachment.filename;
+									window._convActiveUploadRow.querySelector('.conv-remove-attachment').style.display = 'inline-block';
 								}
 								// Cleanup active row reference after selection.
-								window._bdvActiveUploadRow = null;
+								window._convActiveUploadRow = null;
 							});
 						}
-						window._bdvActiveUploadRow = row;
+						window._convActiveUploadRow = row;
 						frame.open();
 					});
 				});
 
 				// Remove Attachment.
-				document.querySelectorAll('.bde-remove-attachment').forEach(function(btn) {
+				document.querySelectorAll('.conv-remove-attachment').forEach(function(btn) {
 					btn.addEventListener('click', function() {
-						const row = this.closest('.bde-attachment-row');
+						const row = this.closest('.conv-attachment-row');
 						row.querySelector('.conv_enroll_attachment_id').value = '';
 						row.querySelector('.conv_enroll_attachment_name').textContent = 'Ningún archivo seleccionado';
 						this.style.display = 'none';
@@ -434,7 +434,7 @@ class Admin_Settings {
 				<th><label for="eval_reminder_active">Activar recordatorios</label></th>
 				<td>
 					<label>
-						<input type="checkbox" id="eval_reminder_active" name="bde[eval_reminder][active]" value="1" <?php checked( $is_active ); ?>>
+						<input type="checkbox" id="eval_reminder_active" name="conv[eval_reminder][active]" value="1" <?php checked( $is_active ); ?>>
 						Enviar emails automáticamente
 					</label>
 					<p class="description">Próxima ejecución del cron: <strong><?php echo esc_html( $next_run_text ); ?></strong></p>
@@ -443,20 +443,20 @@ class Admin_Settings {
 			<tr>
 				<th><label for="eval_reminder_days">Días después de finalizar</label></th>
 				<td>
-					<input type="number" id="eval_reminder_days" name="bde[eval_reminder][days]" min="0" value="<?php echo esc_attr( $days ); ?>" class="small-text"> días
+					<input type="number" id="eval_reminder_days" name="conv[eval_reminder][days]" min="0" value="<?php echo esc_attr( $days ); ?>" class="small-text"> días
 					<p class="description">Ej: 3 significa que se enviará 3 días después de la fecha de fin de la actividad.</p>
 				</td>
 			</tr>
 			<tr>
 				<th><label for="eval_reminder_subject">Asunto del email</label></th>
 				<td>
-					<input type="text" id="eval_reminder_subject" name="bde[eval_reminder][subject]" value="<?php echo esc_attr( $subject ); ?>" class="large-text">
+					<input type="text" id="eval_reminder_subject" name="conv[eval_reminder][subject]" value="<?php echo esc_attr( $subject ); ?>" class="large-text">
 				</td>
 			</tr>
 			<tr>
 				<th><label for="eval_reminder_body">Cuerpo del email</label></th>
 				<td>
-					<textarea id="eval_reminder_body" name="bde[eval_reminder][body]" rows="8" class="large-text"><?php echo esc_textarea( $body ); ?></textarea>
+					<textarea id="eval_reminder_body" name="conv[eval_reminder][body]" rows="8" class="large-text"><?php echo esc_textarea( $body ); ?></textarea>
 					<p class="description">
 						Variables permitidas:<br>
 						<code>{nombre_actividad}</code>, <code>{fecha_actividad}</code>, <code>{evaluador_nombre}</code>, <code>{link_evaluacion}</code>
@@ -466,14 +466,14 @@ class Admin_Settings {
 			<tr>
 				<th><label for="eval_reminder_cc">Correo de copia (CC)</label></th>
 				<td>
-					<input type="email" id="eval_reminder_cc" name="bde[eval_reminder][cc]" value="<?php echo esc_attr( $cc ); ?>" class="regular-text">
+					<input type="email" id="eval_reminder_cc" name="conv[eval_reminder][cc]" value="<?php echo esc_attr( $cc ); ?>" class="regular-text">
 					<p class="description">Opcional. Recibirá una copia de cada recordatorio enviado.</p>
 				</td>
 			</tr>
 			<tr>
 				<th><label for="eval_reminder_link_base">URL base para el formulario</label></th>
 				<td>
-					<input type="url" id="eval_reminder_link_base" name="bde[eval_reminder][link_base]" value="<?php echo esc_attr( $link_base ); ?>" class="regular-text">
+					<input type="url" id="eval_reminder_link_base" name="conv[eval_reminder][link_base]" value="<?php echo esc_attr( $link_base ); ?>" class="regular-text">
 					<p class="description">Página donde has colocado el shortcode <code>[formulario_evaluacion]</code>. Si lo dejas en blanco, se usará el enlace de la propia actividad más el parámetro <code>?evaluar=1</code>.</p>
 				</td>
 			</tr>
@@ -497,7 +497,7 @@ class Admin_Settings {
 			<tr>
 				<th><label for="google_photos_enabled">Activar Google Photos</label></th>
 				<td>
-					<select id="google_photos_enabled" name="bde[google_photos_enabled]">
+					<select id="google_photos_enabled" name="conv[google_photos_enabled]">
 						<option value="0" <?php selected( $s['google_photos_enabled'] ?? '', '0' ); ?>>Desactivado</option>
 						<option value="1" <?php selected( $s['google_photos_enabled'] ?? '', '1' ); ?>>Activado</option>
 					</select>
@@ -507,7 +507,7 @@ class Admin_Settings {
 			<tr>
 				<th><label for="google_photos_client_id">Client ID (OAuth 2.0)</label></th>
 				<td>
-					<input type="text" id="google_photos_client_id" name="bde[google_photos_client_id]"
+					<input type="text" id="google_photos_client_id" name="conv[google_photos_client_id]"
 						value="<?php echo esc_attr( $s['google_photos_client_id'] ?? '' ); ?>" class="regular-text">
 					<p class="description">ID de cliente de OAuth 2.0 de Google Cloud Console.</p>
 				</td>
@@ -515,7 +515,7 @@ class Admin_Settings {
 			<tr>
 				<th><label for="google_photos_client_secret">Client Secret</label></th>
 				<td>
-					<input type="password" id="google_photos_client_secret" name="bde[google_photos_client_secret]"
+					<input type="password" id="google_photos_client_secret" name="conv[google_photos_client_secret]"
 						value="<?php echo esc_attr( $s['google_photos_client_secret'] ?? '' ); ?>" class="regular-text">
 					<p class="description">Secreto de cliente de OAuth 2.0.</p>
 				</td>
@@ -523,7 +523,7 @@ class Admin_Settings {
 			<tr>
 				<th><label for="google_photos_refresh_token">Refresh Token</label></th>
 				<td>
-					<input type="password" id="google_photos_refresh_token" name="bde[google_photos_refresh_token]"
+					<input type="password" id="google_photos_refresh_token" name="conv[google_photos_refresh_token]"
 						value="<?php echo esc_attr( $s['google_photos_refresh_token'] ?? '' ); ?>" class="regular-text">
 					<p class="description">Token de acceso automático. Obtén uno autenticándote abaixo.</p>
 				</td>
@@ -531,7 +531,7 @@ class Admin_Settings {
 			<tr>
 				<th><label for="google_photos_album_prefix">Prefijo de álbum</label></th>
 				<td>
-					<input type="text" id="google_photos_album_prefix" name="bde[google_photos_album_prefix]"
+					<input type="text" id="google_photos_album_prefix" name="conv[google_photos_album_prefix]"
 						value="<?php echo esc_attr( $s['google_photos_album_prefix'] ?? 'Convoca - ' ); ?>" class="regular-text">
 					<p class="description">Prefijo que se añadirá al nombre del álbum (ej. "Convoca - Taller de Bosque").</p>
 				</td>
@@ -576,7 +576,7 @@ class Admin_Settings {
 
 		<p class="description" style="margin-top: 20px;">
 			<strong>URI de redirección autorizada:</strong><br>
-			<code><?php echo esc_html( admin_url( 'admin.php?page=bde-ajustes&tab=google_photos' ) ); ?></code>
+			<code><?php echo esc_html( admin_url( 'admin.php?page=conv-ajustes&tab=google_photos' ) ); ?></code>
 		</p>
 		<?php
 	}
@@ -598,7 +598,7 @@ class Admin_Settings {
 				<th><label for="google_calendar_auto_sync">Sincronización automática</label></th>
 				<td>
 					<label>
-						<input type="checkbox" id="google_calendar_auto_sync" name="bde[google_calendar_auto_sync]" value="1"
+						<input type="checkbox" id="google_calendar_auto_sync" name="conv[google_calendar_auto_sync]" value="1"
 							<?php checked( ! empty( $s['google_calendar_auto_sync'] ) ); ?>>
 						Crear y actualizar eventos automáticamente en Google Calendar al guardar una actividad.
 					</label>
@@ -607,7 +607,7 @@ class Admin_Settings {
 			<tr>
 				<th><label for="google_calendar_id">ID del Calendario</label></th>
 				<td>
-					<input type="text" id="google_calendar_id" name="bde[google_calendar_id]"
+					<input type="text" id="google_calendar_id" name="conv[google_calendar_id]"
 						value="<?php echo esc_attr( $s['google_calendar_id'] ?? 'primary' ); ?>" class="regular-text">
 					<p class="description">Usa <code>primary</code> para el calendario principal o el ID de un calendario específico.</p>
 				</td>
@@ -615,21 +615,21 @@ class Admin_Settings {
 			<tr>
 				<th><label for="google_calendar_client_id">Client ID (OAuth 2.0)</label></th>
 				<td>
-					<input type="text" id="google_calendar_client_id" name="bde[google_calendar_client_id]"
+					<input type="text" id="google_calendar_client_id" name="conv[google_calendar_client_id]"
 						value="<?php echo esc_attr( $s['google_calendar_client_id'] ?? $s['google_photos_client_id'] ?? '' ); ?>" class="regular-text">
 				</td>
 			</tr>
 			<tr>
 				<th><label for="google_calendar_client_secret">Client Secret</label></th>
 				<td>
-					<input type="password" id="google_calendar_client_secret" name="bde[google_calendar_client_secret]"
+					<input type="password" id="google_calendar_client_secret" name="conv[google_calendar_client_secret]"
 						value="<?php echo esc_attr( $s['google_calendar_client_secret'] ?? $s['google_photos_client_secret'] ?? '' ); ?>" class="regular-text">
 				</td>
 			</tr>
 			<tr>
 				<th><label for="google_calendar_refresh_token">Refresh Token</label></th>
 				<td>
-					<input type="password" id="google_calendar_refresh_token" name="bde[google_calendar_refresh_token]"
+					<input type="password" id="google_calendar_refresh_token" name="conv[google_calendar_refresh_token]"
 						value="<?php echo esc_attr( $s['google_calendar_refresh_token'] ?? '' ); ?>" class="regular-text">
 				</td>
 			</tr>
@@ -661,7 +661,7 @@ class Admin_Settings {
 
 		<p class="description" style="margin-top: 20px;">
 			<strong>URI de redirección autorizada:</strong><br>
-			<code><?php echo esc_html( admin_url( 'admin.php?page=bde-ajustes&tab=google_calendar' ) ); ?></code>
+			<code><?php echo esc_html( admin_url( 'admin.php?page=conv-ajustes&tab=google_calendar' ) ); ?></code>
 		</p>
 		<?php
 	}
@@ -685,61 +685,61 @@ class Admin_Settings {
 		// Load existing settings to merge.
 		$settings = get_option( self::OPTION, array() );
 
-		$bde = $_POST['bde'] ?? array();
+		$conv = $_POST['conv'] ?? array();
 
 		if ( $tab === 'general' ) {
-			$settings['admin_email']            = sanitize_email( $bde['admin_email'] ?? '' );
-			$settings['rgpd_version']           = sanitize_text_field( $bde['rgpd_version'] ?? '1.0' );
-			$settings['limite_una_reserva']     = ! empty( $bde['limite_una_reserva'] ) ? 1 : 0;
-			$settings['permitir_menores']       = ! empty( $bde['permitir_menores'] ) ? 1 : 0;
-			$settings['bloquear_dni_duplicado'] = ! empty( $bde['bloquear_dni_duplicado'] ) ? '1' : '0';
-			$settings['plazas_por_defecto']     = absint( $bde['plazas_por_defecto'] ?? 20 );
-			$settings['url_panel_reservas']     = esc_url_raw( $bde['url_panel_reservas'] ?? '' );
-			$settings['sheets_enabled']         = absint( $bde['sheets_enabled'] ?? 0 );
+			$settings['admin_email']            = sanitize_email( $conv['admin_email'] ?? '' );
+			$settings['rgpd_version']           = sanitize_text_field( $conv['rgpd_version'] ?? '1.0' );
+			$settings['limite_una_reserva']     = ! empty( $conv['limite_una_reserva'] ) ? 1 : 0;
+			$settings['permitir_menores']       = ! empty( $conv['permitir_menores'] ) ? 1 : 0;
+			$settings['bloquear_dni_duplicado'] = ! empty( $conv['bloquear_dni_duplicado'] ) ? '1' : '0';
+			$settings['plazas_por_defecto']     = absint( $conv['plazas_por_defecto'] ?? 20 );
+			$settings['url_panel_reservas']     = esc_url_raw( $conv['url_panel_reservas'] ?? '' );
+			$settings['sheets_enabled']         = absint( $conv['sheets_enabled'] ?? 0 );
 			if ( ! defined( 'CONV_ENROLL_GOOGLE_SHEETS_API_KEY' ) ) {
-				$settings['sheets_api_key'] = sanitize_text_field( $bde['sheets_api_key'] ?? '' );
+				$settings['sheets_api_key'] = sanitize_text_field( $conv['sheets_api_key'] ?? '' );
 			}
-			$settings['log_retention_days'] = absint( $bde['log_retention_days'] ?? 30 );
-			$settings['webhook_url']        = esc_url_raw( $bde['webhook_url'] ?? '' );
-			$settings['webhook_secret']     = sanitize_text_field( $bde['webhook_secret'] ?? '' );
+			$settings['log_retention_days'] = absint( $conv['log_retention_days'] ?? 30 );
+			$settings['webhook_url']        = esc_url_raw( $conv['webhook_url'] ?? '' );
+			$settings['webhook_secret']     = sanitize_text_field( $conv['webhook_secret'] ?? '' );
 
 			if ( isset( $_POST['conv_enroll_run_maintenance'] ) ) {
 				if ( $_POST['conv_enroll_run_maintenance'] === 'repair' ) {
 					Maintenance::reparar_integridad();
 					\Convoca\Core\Utils::set_admin_notice( 'Integridad reparada.', 'success' );
 				} else {
-					wp_redirect( admin_url( 'admin.php?page=bde-ajustes&tab=general&maint_res=1' ) );
+					wp_redirect( admin_url( 'admin.php?page=conv-ajustes&tab=general&maint_res=1' ) );
 					exit;
 				}
 			}
 		}
 
 		if ( $tab === 'normas' ) {
-			$settings['texto_introduccion'] = sanitize_textarea_field( $bde['texto_introduccion'] ?? '' );
-			$settings['normas_inscripcion'] = wp_kses_post( $bde['normas_inscripcion'] ?? '' );
+			$settings['texto_introduccion'] = sanitize_textarea_field( $conv['texto_introduccion'] ?? '' );
+			$settings['normas_inscripcion'] = wp_kses_post( $conv['normas_inscripcion'] ?? '' );
 		}
 
 		if ( $tab === 'rgpd' ) {
-			$settings['url_privacidad']       = esc_url_raw( $bde['url_privacidad'] ?? '' );
-			$settings['url_imagenes']         = esc_url_raw( $bde['url_imagenes'] ?? '' );
-			$settings['url_proteccion_datos'] = esc_url_raw( $bde['url_proteccion_datos'] ?? '' );
+			$settings['url_privacidad']       = esc_url_raw( $conv['url_privacidad'] ?? '' );
+			$settings['url_imagenes']         = esc_url_raw( $conv['url_imagenes'] ?? '' );
+			$settings['url_proteccion_datos'] = esc_url_raw( $conv['url_proteccion_datos'] ?? '' );
 		}
 
 		if ( $tab === 'google_photos' ) {
-			$settings['google_photos_refresh_token'] = sanitize_text_field( $bde['google_photos_refresh_token'] ?? '' );
-			$settings['google_photos_album_prefix']  = sanitize_text_field( $bde['google_photos_album_prefix'] ?? 'Convoca - ' );
+			$settings['google_photos_refresh_token'] = sanitize_text_field( $conv['google_photos_refresh_token'] ?? '' );
+			$settings['google_photos_album_prefix']  = sanitize_text_field( $conv['google_photos_album_prefix'] ?? 'Convoca - ' );
 		}
 
 		if ( $tab === 'google_calendar' ) {
-			$settings['google_calendar_auto_sync']     = ! empty( $bde['google_calendar_auto_sync'] ) ? 1 : 0;
-			$settings['google_calendar_id']            = sanitize_text_field( $bde['google_calendar_id'] ?? 'primary' );
-			$settings['google_calendar_client_id']     = sanitize_text_field( $bde['google_calendar_client_id'] ?? '' );
-			$settings['google_calendar_client_secret'] = sanitize_text_field( $bde['google_calendar_client_secret'] ?? '' );
-			$settings['google_calendar_refresh_token'] = sanitize_text_field( $bde['google_calendar_refresh_token'] ?? '' );
+			$settings['google_calendar_auto_sync']     = ! empty( $conv['google_calendar_auto_sync'] ) ? 1 : 0;
+			$settings['google_calendar_id']            = sanitize_text_field( $conv['google_calendar_id'] ?? 'primary' );
+			$settings['google_calendar_client_id']     = sanitize_text_field( $conv['google_calendar_client_id'] ?? '' );
+			$settings['google_calendar_client_secret'] = sanitize_text_field( $conv['google_calendar_client_secret'] ?? '' );
+			$settings['google_calendar_refresh_token'] = sanitize_text_field( $conv['google_calendar_refresh_token'] ?? '' );
 		}
 
 		if ( $tab === 'eval_reminders' ) {
-			$eval                      = $bde['eval_reminder'] ?? array();
+			$eval                      = $conv['eval_reminder'] ?? array();
 			$settings['eval_reminder'] = array(
 				'active'    => ! empty( $eval['active'] ),
 				'days'      => absint( $eval['days'] ?? 3 ),
@@ -764,8 +764,8 @@ class Admin_Settings {
 
 		// Templates (only on emails tab).
 		if ( $tab === 'emails' ) {
-			$settings['email_batch_size']  = absint( $bde['email_batch_size'] ?? 20 );
-			$settings['email_max_retries'] = absint( $bde['email_max_retries'] ?? 3 );
+			$settings['email_batch_size']  = absint( $conv['email_batch_size'] ?? 20 );
+			$settings['email_max_retries'] = absint( $conv['email_max_retries'] ?? 3 );
 
 			$tpl_raw   = $_POST['tpl'] ?? array();
 			$templates = array();
@@ -826,7 +826,7 @@ class Admin_Settings {
 			\Convoca\Core\Utils::set_admin_notice( 'Error en la autenticación con Google. Verifica las credenciales.', 'danger' );
 		}
 
-		wp_redirect( admin_url( 'admin.php?page=bde-ajustes&tab=' . $redirect_tab ) );
+		wp_redirect( admin_url( 'admin.php?page=conv-ajustes&tab=' . $redirect_tab ) );
 		exit;
 	}
 

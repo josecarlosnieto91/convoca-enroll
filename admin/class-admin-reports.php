@@ -38,46 +38,46 @@ class Admin_Reports {
 		$instance->current_tab = isset( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $instance->tabs ) ? sanitize_text_field( $_GET['tab'] ) : 'ocupacion';
 
 		?>
-		<div class="wrap bde-reports-page">
+		<div class="wrap conv-reports-page">
 			<style>
-				.bde-reports-content { margin-top: 20px; }
-				.bde-report-filters { 
+				.conv-reports-content { margin-top: 20px; }
+				.conv-report-filters { 
 					background: #fff; 
 					padding: 20px; 
 					border-radius: 8px; 
 					box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
 					margin-bottom: 20px; 
 				}
-				.bde-filter-form { 
+				.conv-filter-form { 
 					display: flex; 
 					flex-wrap: wrap; 
 					align-items: flex-end; 
 					gap: 15px; 
 				}
-				.bde-filter-group { display: flex; flex-direction: column; gap: 5px; }
-				.bde-filter-group label { font-weight: 600; font-size: 13px; color: #555; }
-				.bde-filter-group input, .bde-filter-group select { min-width: 150px; }
+				.conv-filter-group { display: flex; flex-direction: column; gap: 5px; }
+				.conv-filter-group label { font-weight: 600; font-size: 13px; color: #555; }
+				.conv-filter-group input, .conv-filter-group select { min-width: 150px; }
 				
-				.bde-charts-grid { 
+				.conv-charts-grid { 
 					display: grid; 
 					grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
 					gap: 20px; 
 					margin-top: 20px; 
 				}
-				.bde-card { 
+				.conv-card { 
 					background: #fff; 
 					padding: 20px; 
 					border-radius: 8px; 
 					box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
 				}
-				.bde-card h3 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+				.conv-card h3 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
 				
 				.table-success { background-color: #f0fdf4 !important; }
 				.table-warning { background-color: #fffbeb !important; }
 
 				/* Spacing utilities */
-				.bde-mb-4 { margin-bottom: 1rem; }
-				.bde-mt-4 { margin-top: 1rem; }
+				.conv-mb-4 { margin-bottom: 1rem; }
+				.conv-mt-4 { margin-top: 1rem; }
 			</style>
 			<h1><?php esc_html_e( 'Informes de Inscripciones', 'convoca-enroll' ); ?></h1>
 
@@ -85,7 +85,7 @@ class Admin_Reports {
 				<?php
 				foreach ( $instance->tabs as $id => $label ) :
 					$active = ( $instance->current_tab === $id ) ? 'nav-tab-active' : '';
-					$url    = add_query_arg( array( 'tab' => $id ), admin_url( 'admin.php?page=bde-informes' ) );
+					$url    = add_query_arg( array( 'tab' => $id ), admin_url( 'admin.php?page=conv-informes' ) );
 					?>
 					<a href="<?php echo esc_url( $url ); ?>" class="nav-tab <?php echo $active; ?>">
 						<?php echo esc_html( $label ); ?>
@@ -93,7 +93,7 @@ class Admin_Reports {
 				<?php endforeach; ?>
 			</nav>
 
-			<div class="bde-reports-content" style="margin-top: 20px;">
+			<div class="conv-reports-content" style="margin-top: 20px;">
 				<?php $instance->render_tab_content(); ?>
 			</div>
 		</div>
@@ -138,20 +138,20 @@ class Admin_Reports {
 
 		$activities = $this->get_occupancy_data( $start_date, $end_date, $status );
 		?>
-		<div class="bde-report-filters">
-			<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>" class="bde-filter-form">
-				<input type="hidden" name="page" value="bde-informes">
+		<div class="conv-report-filters">
+			<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>" class="conv-filter-form">
+				<input type="hidden" name="page" value="conv-informes">
 				<input type="hidden" name="tab" value="ocupacion">
 				
-				<div class="bde-filter-group">
+				<div class="conv-filter-group">
 					<label>Desde</label>
 					<input type="date" name="start_date" value="<?php echo esc_attr( $start_date ); ?>">
 				</div>
-				<div class="bde-filter-group">
+				<div class="conv-filter-group">
 					<label>Hasta</label>
 					<input type="date" name="end_date" value="<?php echo esc_attr( $end_date ); ?>">
 				</div>
-				<div class="bde-filter-group">
+				<div class="conv-filter-group">
 					<label>Estado</label>
 					<select name="status">
 						<option value="todas" <?php selected( $status, 'todas' ); ?>>Todas</option>
@@ -159,7 +159,7 @@ class Admin_Reports {
 						<option value="pasadas" <?php selected( $status, 'pasadas' ); ?>>Pasadas</option>
 					</select>
 				</div>
-				<div class="bde-filter-actions">
+				<div class="conv-filter-actions">
 					<button type="submit" class="button button-primary">Filtrar</button>
 					<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'ocupacion' ), 'conv_enroll_export_csv' ) ); ?>" class="button">Exportar CSV</a>
 				</div>
@@ -194,7 +194,7 @@ class Admin_Reports {
 						<td><?php echo (int) $act['confirmadas']; ?></td>
 						<td><?php echo (int) $act['plazas_disponibles']; ?></td>
 						<td>
-							<div class="bde-progress-bar" style="width: 100px; background: #eee; height: 10px; border-radius: 5px; position: relative;">
+							<div class="conv-progress-bar" style="width: 100px; background: #eee; height: 10px; border-radius: 5px; position: relative;">
 								<div style="width: <?php echo min( 100, $pct ); ?>%; background: <?php echo $pct >= 90 ? '#4caf50' : ( $pct < 30 ? '#ff9800' : '#2196f3' ); ?>; height: 100%; border-radius: 5px;"></div>
 								<span style="font-size: 10px; position: absolute; right: -35px; top: -3px;"><?php echo $pct; ?>%</span>
 							</div>
@@ -283,18 +283,18 @@ endif;
 		$bar_data = $this->get_top_demanded_activities();
 
 		?>
-		<div class="bde-charts-grid">
-			<div class="bde-card">
+		<div class="conv-charts-grid">
+			<div class="conv-card">
 				<h3>Tendencia de Inscripciones (últimos 6 meses)</h3>
 				<canvas id="bdeChartTrends"></canvas>
 			</div>
-			<div class="bde-card">
+			<div class="conv-card">
 				<h3>Distribución por Estado</h3>
 				<div style="height: 300px; display: flex; justify-content: center;">
 					<canvas id="bdeChartStates"></canvas>
 				</div>
 			</div>
-			<div class="bde-card" style="grid-column: 1 / -1;">
+			<div class="conv-card" style="grid-column: 1 / -1;">
 				<h3>Actividades con mayor demanda</h3>
 				<canvas id="bdeChartDemand"></canvas>
 			</div>
@@ -428,7 +428,7 @@ endif;
 	private function tab_espera(): void {
 		$activities = $this->get_waitlist_data();
 		?>
-		<div class="bde-mb-4">
+		<div class="conv-mb-4">
 			<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'espera' ), 'conv_enroll_export_csv' ) ); ?>" class="button">Exportar CSV</a>
 		</div>
 		<table class="wp-list-table widefat fixed striped">
@@ -459,7 +459,7 @@ endif;
 				?>
 			</tbody>
 		</table>
-		<p class="description bde-mt-4">El ratio de promoción indica el porcentaje de personas que pasaron de lista de espera a confirmadas.</p>
+		<p class="description conv-mt-4">El ratio de promoción indica el porcentaje de personas que pasaron de lista de espera a confirmadas.</p>
 		<?php
 	}
 
@@ -508,7 +508,7 @@ endif;
 	private function tab_financiero(): void {
 		$financials = $this->get_financial_data();
 		?>
-		<div class="bde-mb-4">
+		<div class="conv-mb-4">
 			<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'financiero' ), 'conv_enroll_export_csv' ) ); ?>" class="button">Exportar CSV</a>
 		</div>
 		<table class="wp-list-table widefat fixed striped">
@@ -657,7 +657,7 @@ endif;
 				?>
 			</tbody>
 		</table>
-		<p class="description bde-mt-4">Este informe se basa en los últimos 20 eventos registrados en los logs de cada actividad/inscripción.</p>
+		<p class="description conv-mt-4">Este informe se basa en los últimos 20 eventos registrados en los logs de cada actividad/inscripción.</p>
 		<?php
 	}
 
@@ -725,13 +725,13 @@ endif;
 		$year    = isset( $_GET['year'] ) ? (int) $_GET['year'] : (int) wp_date( 'Y' );
 		$memoria = $this->get_memoria_data( $year );
 		?>
-		<div class="bde-report-filters">
-			<form method="get" action="" class="bde-filter-form">
+		<div class="conv-report-filters">
+			<form method="get" action="" class="conv-filter-form">
 				<input type="hidden" name="post_type" value="actividad">
-				<input type="hidden" name="page" value="bde-informes">
+				<input type="hidden" name="page" value="conv-informes">
 				<input type="hidden" name="tab" value="memoria">
 				
-				<div class="bde-filter-group">
+				<div class="conv-filter-group">
 					<label>Año</label>
 					<select name="year">
 						<?php for ( $y = wp_date( 'Y' ); $y >= 2024; $y-- ) : ?>
@@ -739,7 +739,7 @@ endif;
 						<?php endfor; ?>
 					</select>
 				</div>
-				<div class="bde-filter-actions">
+				<div class="conv-filter-actions">
 					<button type="submit" class="button button-primary">Ver Memoria</button>
 					<a href="
 					<?php
@@ -750,7 +750,7 @@ endif;
 									'export' => 'memoria',
 									'year'   => $year,
 								),
-								admin_url( 'admin.php?page=bde-informes&tab=memoria' )
+								admin_url( 'admin.php?page=conv-informes&tab=memoria' )
 							),
 							'conv_enroll_export_csv'
 						)
@@ -879,9 +879,9 @@ endif;
 			)
 		);
 		?>
-		<div class="bde-mb-4" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+		<div class="conv-mb-4" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
 			<form method="get" action="" style="display:flex;gap:8px;align-items:center;">
-				<input type="hidden" name="page" value="bde-informes">
+				<input type="hidden" name="page" value="conv-informes">
 				<input type="hidden" name="tab" value="evaluaciones">
 				<label for="filter_actividad"><?php esc_html_e( 'Actividad:', 'convoca-enroll' ); ?></label>
 				<select name="filter_actividad" id="filter_actividad">

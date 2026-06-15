@@ -80,7 +80,7 @@ class Google_Calendar {
 
 		$client = new Client();
 		$client->setClientId( $client_id );
-		$client->setRedirectUri( admin_url( 'admin.php?page=bde-ajustes&tab=google_calendar' ) );
+		$client->setRedirectUri( admin_url( 'admin.php?page=conv-ajustes&tab=google_calendar' ) );
 		$client->addScope(
 			array(
 				'https://www.googleapis.com/auth/calendar',
@@ -118,7 +118,7 @@ class Google_Calendar {
 			$client = new Client();
 			$client->setClientId( $client_id );
 			$client->setClientSecret( $client_secret );
-			$client->setRedirectUri( admin_url( 'admin.php?page=bde-ajustes&tab=google_calendar' ) );
+			$client->setRedirectUri( admin_url( 'admin.php?page=conv-ajustes&tab=google_calendar' ) );
 
 			$token = $client->fetchAccessTokenWithAuthCode( $code );
 

@@ -66,8 +66,8 @@
                     loading
                         ? (Placeholder ? el(Placeholder, { icon: 'clipboard', label: 'Cargando actividades…' }, Spinner ? el(Spinner) : null) : el('p', null, 'Cargando…'))
                         : actividadId && selected
-                            ? el('div', { className: 'bde-block-preview' },
-                                el('div', { className: 'bde-block-preview__header' },
+                            ? el('div', { className: 'conv-block-preview' },
+                                el('div', { className: 'conv-block-preview__header' },
                                     el('strong', null, '📋 Formulario de Inscripción'),
                                     el('br'),
                                     el('span', null, selected.titulo),
@@ -107,7 +107,7 @@
         category: 'convoca-enroll',
         edit: function () {
             const blockProps = useBlockProps();
-            return el('div', { ...blockProps, className: blockProps.className + ' bde-block-preview', style: { ...blockProps.style, padding: '20px', background: '#f0fdf4', border: '2px dashed #059669', borderRadius: '8px', textAlign: 'center' } },
+            return el('div', { ...blockProps, className: blockProps.className + ' conv-block-preview', style: { ...blockProps.style, padding: '20px', background: '#f0fdf4', border: '2px dashed #059669', borderRadius: '8px', textAlign: 'center' } },
                 el('span', { className: 'dashicons dashicons-tickets-alt', style: { fontSize: '36px', color: '#059669' } } ),
                 el('p', { style: { fontWeight: 600, marginTop: '10px' } }, 'Panel de Reservas'),
                 el('p', { style: { fontSize: '12px', color: '#6b7280' } }, 'Los usuarios podrán consultar y cancelar reservas con su email y código.')

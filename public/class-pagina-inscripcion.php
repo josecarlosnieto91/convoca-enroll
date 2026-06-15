@@ -25,24 +25,24 @@ class Pagina_Inscripcion {
 		// Query upcoming activities.
 		$actividades = CPT_Actividad::get_upcoming( 100 );
 
-		wp_enqueue_style( 'bde-public', CONV_ENROLL_URL . 'assets/css/convoca-enroll-public.css', array(), CONV_ENROLL_VERSION );
+		wp_enqueue_style( 'conv-public', CONV_ENROLL_URL . 'assets/css/convoca-enroll-public.css', array(), CONV_ENROLL_VERSION );
 
 		ob_start();
 		?>
-		<div class="bde-pagina-inscripcion">
+		<div class="conv-pagina-inscripcion">
 			<?php if ( ! empty( $intro ) ) : ?>
-				<div class="bde-intro" style="margin-bottom: 2rem;">
+				<div class="conv-intro" style="margin-bottom: 2rem;">
 					<?php echo wpautop( $intro ); ?>
 				</div>
 			<?php endif; ?>
 
-			<div class="bde-panel-link-wrapper" style="margin-bottom: 2rem;">
-				<a href="<?php echo $url_panel; ?>" class="bde-btn bde-btn--secondary">
+			<div class="conv-panel-link-wrapper" style="margin-bottom: 2rem;">
+				<a href="<?php echo $url_panel; ?>" class="conv-btn conv-btn--secondary">
 					<?php esc_html_e( 'Ir a mi Panel de Reservas', 'convoca-enroll' ); ?>
 				</a>
 			</div>
 
-			<h2 class="bde-titulo-actividades"><?php esc_html_e( 'Actividades Disponibles', 'convoca-enroll' ); ?></h2>
+			<h2 class="conv-titulo-actividades"><?php esc_html_e( 'Actividades Disponibles', 'convoca-enroll' ); ?></h2>
 
 			<?php
 			// Use the theme's custom pattern for upcoming activities.

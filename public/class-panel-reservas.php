@@ -27,10 +27,10 @@ class Panel_Reservas {
 	/* ── Shortcode ─────────────────────────────── */
 
 	public function shortcode( $atts ): string {
-		wp_enqueue_style( 'bde-panel', CONV_ENROLL_URL . 'assets/css/convoca-enroll-panel.css', array(), CONV_ENROLL_VERSION );
-		wp_enqueue_script( 'bde-panel', CONV_ENROLL_URL . 'assets/js/convoca-enroll-panel.js', array( 'convoca-common-js' ), CONV_ENROLL_VERSION, true );
+		wp_enqueue_style( 'conv-panel', CONV_ENROLL_URL . 'assets/css/convoca-enroll-panel.css', array(), CONV_ENROLL_VERSION );
+		wp_enqueue_script( 'conv-panel', CONV_ENROLL_URL . 'assets/js/convoca-enroll-panel.js', array( 'convoca-common-js' ), CONV_ENROLL_VERSION, true );
 		wp_localize_script(
-			'bde-panel',
+			'conv-panel',
 			'bdePanel',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),

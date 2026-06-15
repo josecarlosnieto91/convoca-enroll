@@ -55,19 +55,19 @@ class Admin_Inscripcion_Form {
 		<div class="wrap" style="max-width: 900px; margin: 20px auto;">
 			<h1><?php esc_html_e( 'Añadir inscripción', 'convoca-enroll' ); ?></h1>
 
-			<div id="bde-admin-alert" class="convoca-alert" style="display:none"></div>
+			<div id="conv-admin-alert" class="convoca-alert" style="display:none"></div>
 
 			<div class="convoca-box" style="background: #fff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 40px; margin-top: 20px;">
 				<div style="margin-bottom: 30px; border-bottom: 1px solid #f0f0f0; padding-bottom: 20px;">
 					<h2 style="margin: 0; color: #1d2327; font-size: 1.5em;"><?php esc_html_e( 'Nueva Inscripción Manual', 'convoca-enroll' ); ?></h2>
 				</div>
 
-				<form id="bde-admin-inscripcion-form">
+				<form id="conv-admin-inscripcion-form">
 					<div class="convoca-grid-2">
 						<!-- Activity Selection -->
 						<div class="convoca-field" style="grid-column: 1 / -1;">
-							<label for="bde-admin-actividad">Actividad</label>
-							<select id="bde-admin-actividad" name="actividad_id" required>
+							<label for="conv-admin-actividad">Actividad</label>
+							<select id="conv-admin-actividad" name="actividad_id" required>
 								<option value="">— Seleccionar actividad —</option>
 								<?php foreach ( $actividades as $act ) : ?>
 									<?php
@@ -85,34 +85,34 @@ class Admin_Inscripcion_Form {
 
 						<!-- Name -->
 						<div class="convoca-field">
-							<label for="bde-admin-nombre">Nombre completo</label>
-							<input type="text" id="bde-admin-nombre" name="nombre" required>
+							<label for="conv-admin-nombre">Nombre completo</label>
+							<input type="text" id="conv-admin-nombre" name="nombre" required>
 						</div>
 
 						<!-- Email -->
 						<div class="convoca-field">
-							<label for="bde-admin-email">Email</label>
-							<input type="email" id="bde-admin-email" name="email" required>
+							<label for="conv-admin-email">Email</label>
+							<input type="email" id="conv-admin-email" name="email" required>
 						</div>
 
 						<!-- Phone -->
 						<div class="convoca-field">
-							<label for="bde-admin-telefono">Teléfono</label>
-							<input type="tel" id="bde-admin-telefono" name="telefono">
+							<label for="conv-admin-telefono">Teléfono</label>
+							<input type="tel" id="conv-admin-telefono" name="telefono">
 						</div>
 
 						<!-- DNI -->
 						<div class="convoca-field">
-							<label for="bde-admin-dni">DNI/NIE</label>
-							<input type="text" id="bde-admin-dni" name="dni">
+							<label for="conv-admin-dni">DNI/NIE</label>
+							<input type="text" id="conv-admin-dni" name="dni">
 						</div>
 
 						<h3 style="grid-column: 1 / -1; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e0e0e0; color: #646970; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Configuración de Inscripción</h3>
 
 						<!-- Type -->
 						<div class="convoca-field">
-							<label for="bde-admin-tipo">Tipo inscripción</label>
-							<select id="bde-admin-tipo" name="tipo_inscripcion">
+							<label for="conv-admin-tipo">Tipo inscripción</label>
+							<select id="conv-admin-tipo" name="tipo_inscripcion">
 								<option value="socio">Socio/a</option>
 								<option value="socio_dia">Socio de día</option>
 								<option value="general">General</option>
@@ -121,8 +121,8 @@ class Admin_Inscripcion_Form {
 
 						<!-- Status -->
 						<div class="convoca-field">
-							<label for="bde-admin-estado">Estado</label>
-							<select id="bde-admin-estado" name="estado">
+							<label for="conv-admin-estado">Estado</label>
+							<select id="conv-admin-estado" name="estado">
 								<?php foreach ( CPT_Inscripcion::LABELS as $key => $label ) : ?>
 									<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, 'confirmada' ); ?>>
 										<?php echo esc_html( $label ); ?>
@@ -133,8 +133,8 @@ class Admin_Inscripcion_Form {
 
 						<!-- WhatsApp -->
 						<div class="convoca-field">
-							<label for="bde-admin-whatsapp">WhatsApp</label>
-							<select id="bde-admin-whatsapp" name="whatsapp">
+							<label for="conv-admin-whatsapp">WhatsApp</label>
+							<select id="conv-admin-whatsapp" name="whatsapp">
 								<option value="si">Sí</option>
 								<option value="no">No</option>
 							</select>
@@ -143,15 +143,15 @@ class Admin_Inscripcion_Form {
 						<!-- Payment -->
 						<div class="convoca-field" style="display: flex; align-items: flex-end; padding-bottom: 10px;">
 							<label style="font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-								<input type="checkbox" id="bde-admin-pagado" name="pagado" value="1" style="margin: 0; transform: scale(1.2);">
+								<input type="checkbox" id="conv-admin-pagado" name="pagado" value="1" style="margin: 0; transform: scale(1.2);">
 								Marcado como pagado
 							</label>
 						</div>
 
 						<!-- Notes -->
 						<div class="convoca-field" style="grid-column: 1 / -1;">
-							<label for="bde-admin-notas">Notas</label>
-							<textarea id="bde-admin-notas" name="notas" rows="3" style="height: auto;"></textarea>
+							<label for="conv-admin-notas">Notas</label>
+							<textarea id="conv-admin-notas" name="notas" rows="3" style="height: auto;"></textarea>
 						</div>
 					</div>
 
@@ -169,8 +169,8 @@ class Admin_Inscripcion_Form {
 
 		<script>
 			(function () {
-				const form = document.getElementById('bde-admin-inscripcion-form');
-				const alert = document.getElementById('bde-admin-alert');
+				const form = document.getElementById('conv-admin-inscripcion-form');
+				const alert = document.getElementById('conv-admin-alert');
 				if (!form) return;
 
 				form.addEventListener('submit', function (e) {

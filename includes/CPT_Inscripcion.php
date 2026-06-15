@@ -109,7 +109,7 @@ class CPT_Inscripcion {
 			if ( $post_id > 0 ) {
 				wp_safe_redirect( admin_url( 'admin.php?page=convoca-core-enroll&inscripcion_id=' . $post_id ) );
 			} else {
-				wp_safe_redirect( admin_url( 'admin.php?page=bde-nueva-inscripcion' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=conv-nueva-inscripcion' ) );
 			}
 			exit;
 		}

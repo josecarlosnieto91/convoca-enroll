@@ -16,6 +16,8 @@
  * Requires Plugins:  convoca-core
  * Network:           true
  */
+namespace Convoca\Enroll;
+
 
 // Load translations.
 add_action(
@@ -118,18 +120,18 @@ register_activation_hook(
 			deactivate_plugins( plugin_basename( __FILE__ ) );
 			wp_die( 'Convoca Enroll requires Convoca Core to be active. Please activate Convoca Core first.' );
 		}
-		Convoca\Enroll\CPT_Actividad::register();
-		Convoca\Enroll\CPT_Inscripcion::register();
+		CPT_Actividad::register();
+		CPT_Inscripcion::register();
 		flush_rewrite_rules();
 
-		Convoca\Enroll\Email_Automation::install_defaults();
-		Convoca\Enroll\Email_Queue::create_table();
-		Convoca\Enroll\Webhook_Dispatcher::create_table();
-		Convoca\Enroll\Motor_Inscripcion::create_reservation_codes_table();
+		Email_Automation::install_defaults();
+		Email_Queue::create_table();
+		Webhook_Dispatcher::create_table();
+		Motor_Inscripcion::create_reservation_codes_table();
 
 		// Media & Social Suite tables.
-		Convoca\Enroll\Media\Media_Installer::install();
-		Convoca\Enroll\Media\Media_Capabilities::ensure();
+		Media\Media_Installer::install();
+		Media\Media_Capabilities::ensure();
 		if ( false === get_option( 'conv_enroll_settings' ) ) {
 			update_option(
 				'conv_enroll_settings',
@@ -245,33 +247,33 @@ add_action(
 
 		// Core.
 		
-		new Convoca\Enroll\CPT_Actividad();
-		new Convoca\Enroll\CPT_Inscripcion();
-		new Convoca\Enroll\Motor_Inscripcion();
-		new Convoca\Enroll\Email_Automation();
-		new Convoca\Enroll\Google_Photos();
-		new Convoca\Enroll\Google_Calendar();
-		new Convoca\Enroll\Rest_API();
-		new Convoca\Enroll\Block_Inscripcion();
-		new Convoca\Enroll\Google_Sheets();
-		new Convoca\Enroll\Payment_Listener();
-		new Convoca\Enroll\Webhook_Dispatcher();
-		Convoca\Enroll\Volunteer_Hour_Tracker::init();
-		Convoca\Enroll\CPT_Evaluacion::init();
-		Convoca\Enroll\Eval_Reminder_Cron::init();
-		Convoca\Enroll\PDF_Compromiso::init();
+		new CPT_Actividad();
+		new CPT_Inscripcion();
+		new Motor_Inscripcion();
+		new Email_Automation();
+		new Google_Photos();
+		new Google_Calendar();
+		new Rest_API();
+		new Block_Inscripcion();
+		new Google_Sheets();
+		new Payment_Listener();
+		new Webhook_Dispatcher();
+		Volunteer_Hour_Tracker::init();
+		CPT_Evaluacion::init();
+		Eval_Reminder_Cron::init();
+		PDF_Compromiso::init();
 
 		// Upgrade Manager (checks for DB version upgrades on admin_init).
-		new Convoca\Enroll\Enroll_Upgrade_Manager();
+		new Enroll_Upgrade_Manager();
 
 		// Media & Social Suite.
-		new Convoca\Enroll\Media\Media_Upgrade_Manager();
-		new Convoca\Enroll\Media\Media_Rest_API();
-		Convoca\Enroll\Social\Social_OAuth::class;
-		new Convoca\Enroll\Social\Social_Rest_API();
-		Convoca\Enroll\Social\Social_Healthcheck::init();
+		new Media\Media_Upgrade_Manager();
+		new Media\Media_Rest_API();
+		Social\Social_OAuth::class;
+		new Social\Social_Rest_API();
+		Social\Social_Healthcheck::init();
 
-		if ( ! function_exists( 'conv_ensure_enroll_capabilities' ) ) {
+		if ( ! function_exists( 'Convoca\Enroll\conv_ensure_enroll_capabilities' ) ) {
 			/**
 			 * Ensure all necessary roles and capabilities are present.
 			 * Called on init to prevent race conditions or missing caps after updates.
@@ -345,7 +347,7 @@ add_action(
 				}
 			}
 		}
-		add_action( 'init', 'conv_ensure_enroll_capabilities', 1 );
+		add_action( 'init', 'Convoca\Enroll\conv_ensure_enroll_capabilities', 1 );
 
 		/**
 		 * Only run ensure_capabilities if the version hash has changed
@@ -356,7 +358,7 @@ add_action(
 			function () {
 				$version_hash = md5( CONV_ENROLL_VERSION . '_caps_v2' );
 				if ( get_option( 'conv_enroll_caps_hash' ) !== $version_hash ) {
-					if ( function_exists( 'conv_ensure_enroll_capabilities' ) ) {
+					if ( function_exists( 'Convoca\Enroll\conv_ensure_enroll_capabilities' ) ) {
 						conv_ensure_enroll_capabilities();
 					}
 					update_option( 'conv_enroll_caps_hash', $version_hash, false );
@@ -376,30 +378,30 @@ add_action(
 			add_action(
 				'init',
 				function () {
-					new Convoca\Enroll\Admin_Page();
-					new Convoca\Enroll\Admin_Settings();
-					new Convoca\Enroll\Admin_Inscripcion_Form();
-					new Convoca\Enroll\CSV_Exporter();
-					new Convoca\Enroll\Admin_Monitor_CRM();
-					new Convoca\Enroll\Admin_Reports();
-					new Convoca\Enroll\Admin_Actividades();
-					new Convoca\Enroll\Admin_Evaluaciones_Editor();
-					Convoca\Enroll\Admin_Evaluaciones_List::init();
-					Convoca\Enroll\Admin_Evaluaciones_Meta_Box::init();
-					Convoca\Enroll\Admin_Evaluacion_Fields::init();
+					new Admin_Page();
+					new Admin_Settings();
+					new Admin_Inscripcion_Form();
+					new CSV_Exporter();
+					new Admin_Monitor_CRM();
+					new Admin_Reports();
+					new Admin_Actividades();
+					new Admin_Evaluaciones_Editor();
+					Admin_Evaluaciones_List::init();
+					Admin_Evaluaciones_Meta_Box::init();
+					Admin_Evaluacion_Fields::init();
 				}
 			);
 		}
 
 		// Public.
-		new Convoca\Enroll\Form_Inscripcion();
-		new Convoca\Enroll\Panel_Reservas();
-		new Convoca\Enroll\Pagina_Inscripcion();
-		new Convoca\Enroll\Checkin_Handler();
-		Convoca\Enroll\Checkin_PWA::init();
-		new Convoca\Enroll\Maintenance();
-		new Convoca\Enroll\Email_Queue();
-		Convoca\Enroll\Formulario_Evaluacion::init();
+		new Form_Inscripcion();
+		new Panel_Reservas();
+		new Pagina_Inscripcion();
+		new Checkin_Handler();
+		Checkin_PWA::init();
+		new Maintenance();
+		new Email_Queue();
+		Formulario_Evaluacion::init();
 
 		// Clean up orphan reservation codes daily.
 		add_action(
@@ -415,7 +417,7 @@ add_action(
 add_action(
 	'convoca_social_publish',
 	function ( $queue_id ) {
-		Convoca\Enroll\Social\Social_Scheduler::process( $queue_id );
+		Social\Social_Scheduler::process( $queue_id );
 	} 
 );
 

@@ -52,10 +52,10 @@ class Form_Inscripcion {
 
 		$meta = CPT_Actividad::get_meta( $actividad_id );
 
-		wp_enqueue_style( 'bde-public', CONV_ENROLL_URL . 'assets/css/convoca-enroll-public.css', array(), CONV_ENROLL_VERSION );
-		wp_enqueue_script( 'bde-public', CONV_ENROLL_URL . 'assets/js/convoca-enroll-public.js', array( 'convoca-common-js' ), CONV_ENROLL_VERSION, true );
+		wp_enqueue_style( 'conv-public', CONV_ENROLL_URL . 'assets/css/convoca-enroll-public.css', array(), CONV_ENROLL_VERSION );
+		wp_enqueue_script( 'conv-public', CONV_ENROLL_URL . 'assets/js/convoca-enroll-public.js', array( 'convoca-common-js' ), CONV_ENROLL_VERSION, true );
 		wp_localize_script(
-			'bde-public',
+			'conv-public',
 			'bdeEnroll',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),

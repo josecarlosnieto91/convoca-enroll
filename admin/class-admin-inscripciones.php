@@ -36,7 +36,7 @@ class Inscriptions_List extends \WP_List_Table {
 				'singular' => 'inscripcion',
 				'plural'   => 'inscripciones',
 				'ajax'     => false,
-				'screen'   => 'bde-inscripciones',
+				'screen'   => 'conv-inscripciones',
 			)
 		);
 	}

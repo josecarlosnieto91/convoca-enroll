@@ -26,7 +26,7 @@ class Admin_Evaluaciones_Editor {
 			__( 'Añadir evaluación', 'convoca-enroll' ),
 			__( 'Añadir evaluación', 'convoca-enroll' ),
 			'edit_posts',
-			'bde-evaluacion-editor',
+			'conv-evaluacion-editor',
 			array( $this, 'render_editor' )
 		);
 	}
@@ -43,12 +43,12 @@ class Admin_Evaluaciones_Editor {
 
 		if ( ( $screen && $screen->id === 'conv_evaluacion' ) || $post_type === 'conv_evaluacion' ) {
 			if ( isset( $screen->action ) && $screen->action === 'add' || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
-				wp_redirect( admin_url( 'admin.php?page=bde-evaluacion-editor' ) );
+				wp_redirect( admin_url( 'admin.php?page=conv-evaluacion-editor' ) );
 				exit;
 			} else {
 				$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
 				if ( $post_id && strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false ) {
-					wp_redirect( admin_url( 'admin.php?page=bde-evaluacion-editor&id=' . $post_id ) );
+					wp_redirect( admin_url( 'admin.php?page=conv-evaluacion-editor&id=' . $post_id ) );
 					exit;
 				}
 			}

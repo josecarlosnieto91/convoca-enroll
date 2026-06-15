@@ -16,7 +16,7 @@ class Email_Queue_List extends \WP_List_Table {
 				'singular' => 'email',
 				'plural'   => 'emails',
 				'ajax'     => false,
-				'screen'   => 'bde-email-queue',
+				'screen'   => 'conv-email-queue',
 
 			)
 		);

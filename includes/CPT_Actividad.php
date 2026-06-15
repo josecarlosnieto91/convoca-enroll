@@ -180,7 +180,7 @@ class CPT_Actividad {
 					<label for="conv_enroll_actividad_lugg"><?php esc_html_e( 'Es una actividad en el centro social', 'convoca-enroll' ); ?></label>
 				</div>
 			</div>
-			<div class="convoca-field" style="grid-column: 1 / -1; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--bde-border, #ddd);">
+			<div class="convoca-field" style="grid-column: 1 / -1; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--conv-border, #ddd);">
 				<label for="conv_enroll_responsables" style="font-weight:600;">
 					<?php esc_html_e( 'Monitores / Responsables', 'convoca-enroll' ); ?>
 				</label>
@@ -636,7 +636,7 @@ class CPT_Actividad {
 
 		$google_photos = new Google_Photos();
 		if ( ! $google_photos->is_configured() ) {
-			echo '<p>Google Photos no está configurado. <a href="' . esc_url( admin_url( 'admin.php?page=bde-ajustes&tab=google_photos' ) ) . '">Configurar</a></p>';
+			echo '<p>Google Photos no está configurado. <a href="' . esc_url( admin_url( 'admin.php?page=conv-ajustes&tab=google_photos' ) ) . '">Configurar</a></p>';
 			return;
 		}
 

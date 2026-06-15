@@ -47,7 +47,7 @@ class Admin_Checkin {
 			if ( ! in_array( $actividad_id, $allowed_ids ?: array(), true ) ) {
 				wp_die(
 					'<p>' . esc_html__( 'No tienes permiso para ver inscripciones de esta actividad.', 'convoca-enroll' ) . '</p>' .
-					'<p><a href="' . esc_url( admin_url( 'admin.php?page=bde-checkin' ) ) . '">' .
+					'<p><a href="' . esc_url( admin_url( 'admin.php?page=conv-checkin' ) ) . '">' .
 					esc_html__( 'Volver al listado', 'convoca-enroll' ) . '</a></p>',
 					esc_html__( 'Acceso denegado', 'convoca-enroll' ),
 					array( 'response' => 403 )
@@ -100,12 +100,12 @@ class Admin_Checkin {
 		}
 
 		?>
-		<div class="wrap bde-admin">
+		<div class="wrap conv-admin">
 			<h1><?php _e( 'Check-in de Actividades', 'convoca-enroll' ); ?></h1>
 
-			<div class="bde-checkin-filters">
+			<div class="conv-checkin-filters">
 				<form method="get" action="">
-					<input type="hidden" name="page" value="bde-checkin">
+					<input type="hidden" name="page" value="conv-checkin">
 					
 					<label for="actividad_id"><?php _e( 'Seleccionar actividad:', 'convoca-enroll' ); ?></label>
 					<select name="actividad_id" id="actividad_id" onchange="this.form.submit()">
@@ -127,7 +127,7 @@ class Admin_Checkin {
 			</div>
 
 			<?php if ( $actividad_id ) : ?>
-				<div class="bde-checkin-stats">
+				<div class="conv-checkin-stats">
 					<?php
 					$total     = count( $inscripciones );
 					$presentes = 0;
@@ -140,7 +140,7 @@ class Admin_Checkin {
 					?>
 					<p>
 						<strong><?php _e( 'Asistencia:', 'convoca-enroll' ); ?></strong> 
-						<span id="bde-present-count"><?php echo $presentes; ?></span> / <?php echo $total; ?>
+						<span id="conv-present-count"><?php echo $presentes; ?></span> / <?php echo $total; ?>
 					</p>
 				</div>
 
@@ -178,7 +178,7 @@ class Admin_Checkin {
 										</div>
 									</td>
 									<td>
-										<span class="bde-badge bde-badge-<?php echo esc_attr( $estado ); ?>">
+										<span class="conv-badge conv-badge-<?php echo esc_attr( $estado ); ?>">
 											<?php echo esc_html( ucfirst( str_replace( '_', ' ', $estado ) ) ); ?>
 										</span>
 									</td>
@@ -191,7 +191,7 @@ class Admin_Checkin {
 									</td>
 									<td>
 										<button type="button" 
-												class="button bde-toggle-checkin <?php echo ( $asistencia === 'si' ) ? 'button-primary' : ''; ?>" 
+												class="button conv-toggle-checkin <?php echo ( $asistencia === 'si' ) ? 'button-primary' : ''; ?>" 
 												data-id="<?php echo $id; ?>">
 											<?php echo ( $asistencia === 'si' ) ? __( 'Registrado', 'convoca-enroll' ) : __( 'Pendiente', 'convoca-enroll' ); ?>
 										</button>

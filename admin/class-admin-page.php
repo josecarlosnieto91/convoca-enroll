@@ -46,7 +46,7 @@ class Admin_Page {
 	public function fix_submenu_highlight( $submenu_file ) {
 		global $current_screen;
 		if ( $current_screen->post_type === 'conv_evaluacion' ) {
-			return 'bde-evaluaciones';
+			return 'conv-evaluaciones';
 		}
 		return $submenu_file;
 	}
@@ -118,7 +118,7 @@ class Admin_Page {
 			__( 'Añadir inscripción', 'convoca-enroll' ),
 			__( 'Añadir inscripción', 'convoca-enroll' ),
 			$cap,
-			'bde-nueva-inscripcion',
+			'conv-nueva-inscripcion',
 			array( Admin_Inscripcion_Form::class, 'render' )
 		);
 
@@ -127,7 +127,7 @@ class Admin_Page {
 			__( 'Check-in', 'convoca-enroll' ),
 			__( 'Check-in', 'convoca-enroll' ),
 			$cap,
-			'bde-checkin',
+			'conv-checkin',
 			array( Admin_Checkin::class, 'render' )
 		);
 
@@ -136,7 +136,7 @@ class Admin_Page {
 			__( 'Evaluaciones', 'convoca-enroll' ),
 			__( 'Evaluaciones', 'convoca-enroll' ),
 			$cap,
-			'bde-evaluaciones',
+			'conv-evaluaciones',
 			array( $this, 'render_evaluaciones' )
 		);
 
@@ -148,7 +148,7 @@ class Admin_Page {
 			__( 'Informes', 'convoca-enroll' ),
 			__( 'Informes', 'convoca-enroll' ),
 			'conv_view_reports',
-			'bde-informes',
+			'conv-informes',
 			array( Admin_Reports::class, 'render' )
 		);
 
@@ -157,7 +157,7 @@ class Admin_Page {
 			__( 'Ajustes', 'convoca-enroll' ),
 			__( 'Configuración', 'convoca-enroll' ),
 			'manage_options',
-			'bde-ajustes',
+			'conv-ajustes',
 			array( Admin_Settings::class, 'render' )
 		);
 
@@ -175,7 +175,7 @@ class Admin_Page {
 			__( 'Cola de Correos', 'convoca-enroll' ),
 			__( 'Cola de Correos', 'convoca-enroll' ),
 			'manage_options',
-			'bde-email-queue',
+			'conv-email-queue',
 			array( $this, 'render_email_queue' )
 		);
 	}
@@ -183,13 +183,13 @@ class Admin_Page {
 	/* ── Assets ────────────────────────────────── */
 
 	public function assets( string $hook ): void {
-		if ( strpos( $hook, 'bde-' ) === false && strpos( $hook, 'page_bde' ) === false ) {
+		if ( strpos( $hook, 'conv-' ) === false && strpos( $hook, 'page_conv' ) === false ) {
 			return;
 		}
-		wp_enqueue_style( 'bde-admin', CONV_ENROLL_URL . 'assets/css/convoca-enroll-admin.css', array(), CONV_ENROLL_VERSION );
-		wp_enqueue_script( 'bde-admin', CONV_ENROLL_URL . 'assets/js/convoca-enroll-admin.js', array( 'convoca-common-admin-js' ), CONV_ENROLL_VERSION, true );
+		wp_enqueue_style( 'conv-admin', CONV_ENROLL_URL . 'assets/css/convoca-enroll-admin.css', array(), CONV_ENROLL_VERSION );
+		wp_enqueue_script( 'conv-admin', CONV_ENROLL_URL . 'assets/js/convoca-enroll-admin.js', array( 'convoca-common-admin-js' ), CONV_ENROLL_VERSION, true );
 		wp_localize_script(
-			'bde-admin',
+			'conv-admin',
 			'bdeAdmin',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
@@ -197,22 +197,22 @@ class Admin_Page {
 			)
 		);
 
-		if ( strpos( $hook, 'bde-ajustes' ) !== false ) {
+		if ( strpos( $hook, 'conv-ajustes' ) !== false ) {
 			wp_enqueue_media();
 		}
 
 		if ( isset( $_GET['page'] ) && $_GET['page'] === 'convoca-enroll' ) {
-			wp_enqueue_script( 'bde-admin-js', CONV_ENROLL_URL . 'assets/js/convoca-enroll-admin.js', array( 'convoca-common-admin-js' ), CONV_ENROLL_VERSION, true );
+			wp_enqueue_script( 'conv-admin-js', CONV_ENROLL_URL . 'assets/js/convoca-enroll-admin.js', array( 'convoca-common-admin-js' ), CONV_ENROLL_VERSION, true );
 		}
 
-		if ( isset( $_GET['page'] ) && $_GET['page'] === 'bde-informes' ) {
+		if ( isset( $_GET['page'] ) && $_GET['page'] === 'conv-informes' ) {
 			wp_enqueue_script( 'chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '4.4.1', true );
 		}
 
-		if ( $hook === 'actividad_page_bde-monitor-crm' ) {
-			wp_enqueue_script( 'bde-crm', CONV_ENROLL_URL . 'assets/js/convoca-enroll-crm.js', array( 'convoca-common-admin-js' ), CONV_ENROLL_VERSION, true );
+		if ( $hook === 'actividad_page_conv-monitor-crm' ) {
+			wp_enqueue_script( 'conv-crm', CONV_ENROLL_URL . 'assets/js/convoca-enroll-crm.js', array( 'convoca-common-admin-js' ), CONV_ENROLL_VERSION, true );
 			wp_localize_script(
-				'bde-crm',
+				'conv-crm',
 				'bdeCrm',
 				array(
 					'ajaxUrl' => admin_url( 'admin-ajax.php' ),
@@ -260,27 +260,27 @@ class Admin_Page {
 
 		$upcoming = count( CPT_Actividad::get_upcoming( 50 ) );
 		?>
-		<div class="bde-stats-bar">
-			<div class="bde-stat">
-				<span class="bde-stat-num">
+		<div class="conv-stats-bar">
+			<div class="conv-stat">
+				<span class="conv-stat-num">
 					<?php echo (int) $published; ?>
 				</span>
 				Total inscripciones
 			</div>
-			<div class="bde-stat">
-				<span class="bde-stat-num">
+			<div class="conv-stat">
+				<span class="conv-stat-num">
 					<?php echo $confirmed; ?>
 				</span>
 				Confirmadas
 			</div>
-			<div class="bde-stat">
-				<span class="bde-stat-num">
+			<div class="conv-stat">
+				<span class="conv-stat-num">
 					<?php echo $waiting; ?>
 				</span>
 				En espera
 			</div>
-			<div class="bde-stat">
-				<span class="bde-stat-num">
+			<div class="conv-stat">
+				<span class="conv-stat-num">
 					<?php echo $upcoming; ?>
 				</span>
 				Actividades próximas
@@ -309,7 +309,7 @@ class Admin_Page {
 		}
 
 		echo '<div class="wrap"><h1>' . esc_html__( 'Inscripciones', 'convoca-enroll' ) . '</h1>';
-		echo '<a href="' . esc_url( admin_url( 'admin.php?page=bde-nueva-inscripcion' ) ) . '" class="page-title-action">' . esc_html__( '+ Nueva inscripción', 'convoca-enroll' ) . '</a>';
+		echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-nueva-inscripcion' ) ) . '" class="page-title-action">' . esc_html__( '+ Nueva inscripción', 'convoca-enroll' ) . '</a>';
 		echo '<a href="' . esc_url( admin_url( 'admin-ajax.php?action=conv_enroll_export_csv&nonce=' . wp_create_nonce( 'conv_enroll_export_csv' ) ) ) . '" class="page-title-action">' . esc_html__( 'Exportar CSV', 'convoca-enroll' ) . '</a>';
 		echo '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_export_inscripciones_pdf' ), 'conv_enroll_export_inscripciones_pdf' ) ) . '" class="page-title-action">' . esc_html__( 'Exportar PDF', 'convoca-enroll' ) . '</a>';
 
@@ -484,8 +484,8 @@ class Admin_Page {
 			<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-core-enroll' ) ); ?>">&larr; Volver al listado</a>
 			</p>
 
-			<div class="bde-detail-grid">
-				<div class="bde-detail-card">
+			<div class="conv-detail-grid">
+				<div class="conv-detail-card">
 					<h3>Datos personales</h3>
 					<table class="widefat">
 						<tr>
@@ -521,7 +521,7 @@ class Admin_Page {
 					</table>
 				</div>
 
-				<div class="bde-detail-card">
+				<div class="conv-detail-card">
 					<h3>Actividad</h3>
 					<table class="widefat">
 						<tr>
@@ -560,9 +560,9 @@ class Admin_Page {
 			</div>
 
 			<!-- Quick state change -->
-			<div class="bde-detail-card" style="margin-top:1.5rem">
+			<div class="conv-detail-card" style="margin-top:1.5rem">
 				<h3>Estado y Pago</h3>
-				<form id="bde-state-form">
+				<form id="conv-state-form">
 					<input type="hidden" name="inscripcion_id" value="<?php echo $id; ?>">
 					
 					<p>
@@ -587,7 +587,7 @@ class Admin_Page {
 				</form>
 
 				<div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
-					<button type="button" id="bde-resend-email" class="button" data-id="<?php echo $id; ?>">
+					<button type="button" id="conv-resend-email" class="button" data-id="<?php echo $id; ?>">
 						✉️ Reenviar email de confirmación
 					</button>
 					<span class="spinner"></span>
@@ -595,19 +595,19 @@ class Admin_Page {
 			</div>
 
 			<!-- Internal notes -->
-			<div class="bde-detail-card" style="margin-top:1.5rem">
+			<div class="conv-detail-card" style="margin-top:1.5rem">
 				<h3>📝 <?php esc_html_e( 'Notas internas', 'convoca-enroll' ); ?></h3>
-				<textarea id="bde-internal-notes" rows="4" style="width:100%;"><?php echo esc_textarea( get_post_meta( $id, '_conv_notas', true ) ); ?></textarea>
+				<textarea id="conv-internal-notes" rows="4" style="width:100%;"><?php echo esc_textarea( get_post_meta( $id, '_conv_notas', true ) ); ?></textarea>
 				<div style="margin-top:8px;display:flex;gap:10px;align-items:center;">
-					<button type="button" id="bde-save-notes" class="convoca-btn convoca-btn-outline" data-id="<?php echo $id; ?>"><?php esc_html_e( 'Guardar nota', 'convoca-enroll' ); ?></button>
-					<span id="bde-notes-status" style="font-size:12px;color:#999;"></span>
+					<button type="button" id="conv-save-notes" class="convoca-btn convoca-btn-outline" data-id="<?php echo $id; ?>"><?php esc_html_e( 'Guardar nota', 'convoca-enroll' ); ?></button>
+					<span id="conv-notes-status" style="font-size:12px;color:#999;"></span>
 				</div>
 			</div>
 			<script>
 			(function(){
-				var btn = document.getElementById('bde-save-notes');
-				var ta = document.getElementById('bde-internal-notes');
-				var st = document.getElementById('bde-notes-status');
+				var btn = document.getElementById('conv-save-notes');
+				var ta = document.getElementById('conv-internal-notes');
+				var st = document.getElementById('conv-notes-status');
 				if (!btn || !ta) return;
 				function save() {
 					var fd = new FormData();
@@ -779,7 +779,7 @@ class Admin_Page {
 		<div class="wrap">
 			<h1>📧 <?php esc_html_e( 'Cola de Correos', 'convoca-enroll' ); ?></h1>
 			<form method="get">
-				<input type="hidden" name="page" value="bde-email-queue">
+				<input type="hidden" name="page" value="conv-email-queue">
 				<?php $table->search_box( __( 'Buscar', 'convoca-enroll' ), 'email_search' ); ?>
 				<?php $table->display(); ?>
 			</form>
@@ -808,7 +808,7 @@ class Admin_Page {
 			array( 'id' => $id )
 		);
 
-		wp_safe_redirect( admin_url( 'admin.php?page=bde-email-queue' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-email-queue' ) );
 		exit;
 	}
 

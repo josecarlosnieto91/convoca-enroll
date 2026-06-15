@@ -65,8 +65,8 @@
                     loading
                         ? el(Placeholder, { icon: 'clipboard', label: 'Cargando actividades…' }, el(Spinner))
                         : actividadId && selected
-                            ? el('div', { className: 'bde-block-preview' },
-                                el('div', { className: 'bde-block-preview__header' },
+                            ? el('div', { className: 'conv-block-preview' },
+                                el('div', { className: 'conv-block-preview__header' },
                                     el('strong', null, '📋 Formulario de Inscripción'),
                                     el('br'),
                                     el('span', null, selected.titulo),

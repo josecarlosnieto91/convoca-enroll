@@ -24,7 +24,7 @@ class Admin_Monitor_CRM {
 			__( 'Mis actividades', 'convoca-enroll' ),
 			__( 'Mis actividades', 'convoca-enroll' ),
 			'manage_inscripciones',
-			'bde-monitor-crm',
+			'conv-monitor-crm',
 			array( $this, 'render_page' )
 		);
 	}
@@ -33,7 +33,7 @@ class Admin_Monitor_CRM {
 	 * Handle quick actions (confirm/cancel).
 	 */
 	public function handle_actions(): void {
-		if ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'bde-monitor-crm' || ! isset( $_GET['action'] ) ) {
+		if ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'conv-monitor-crm' || ! isset( $_GET['action'] ) ) {
 			return;
 		}
 
@@ -84,7 +84,7 @@ class Admin_Monitor_CRM {
 		wp_redirect(
 			add_query_arg(
 				array(
-					'page'         => 'bde-monitor-crm',
+					'page'         => 'conv-monitor-crm',
 					'actividad_id' => $actividad_id,
 				),
 				admin_url( 'admin.php' )
@@ -97,7 +97,7 @@ class Admin_Monitor_CRM {
 	 * Handle CSV exports.
 	 */
 	public function handle_exports(): void {
-		if ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'bde-monitor-crm' || ! isset( $_GET['export'] ) ) {
+		if ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'conv-monitor-crm' || ! isset( $_GET['export'] ) ) {
 			return;
 		}
 
@@ -232,7 +232,7 @@ class Admin_Monitor_CRM {
 	public function render_page(): void {
 		$actividad_id = isset( $_GET['actividad_id'] ) ? (int) $_GET['actividad_id'] : 0;
 
-		echo '<div class="wrap bde-crm-wrap">';
+		echo '<div class="wrap conv-crm-wrap">';
 
 		if ( $actividad_id ) {
 			$this->render_activity_panel( $actividad_id );
@@ -250,10 +250,10 @@ class Admin_Monitor_CRM {
 	private function render_activities_list(): void {
 		global $wpdb;
 
-		echo '<div class="bde-crm-header-main">';
+		echo '<div class="conv-crm-header-main">';
 		echo '<h1>' . esc_html__( 'Panel de Control - Monitores', 'convoca-enroll' ) . '</h1>';
 		echo '<div class="header-actions">';
-		echo '<a href="' . home_url( '/checkin/' ) . '" target="_blank" class="bde-btn-premium bde-btn-qr">';
+		echo '<a href="' . home_url( '/checkin/' ) . '" target="_blank" class="conv-btn-premium conv-btn-qr">';
 		echo '<span class="dashicons dashicons-qrcode"></span>';
 		echo esc_html__( 'Escáner QR Móvil', 'convoca-enroll' );
 		echo '</a>';
@@ -274,14 +274,14 @@ class Admin_Monitor_CRM {
 		$activities = get_posts( $args );
 
 		if ( empty( $activities ) ) {
-			echo '<div class="bde-empty-state">';
+			echo '<div class="conv-empty-state">';
 			echo '<span class="dashicons dashicons-calendar-alt"></span>';
 			echo '<p>' . esc_html__( 'No tienes actividades asignadas actualmente.', 'convoca-enroll' ) . '</p>';
 			echo '</div>';
 			return;
 		}
 
-		echo '<div class="bde-activity-grid">';
+		echo '<div class="conv-activity-grid">';
 		foreach ( $activities as $act ) {
 			$fecha       = get_post_meta( $act->ID, '_conv_fecha', true );
 			$total       = (int) get_post_meta( $act->ID, '_conv_plazas_totales', true );
@@ -325,7 +325,7 @@ class Admin_Monitor_CRM {
 			echo '</div>';
 			echo '</div>';
 			echo '<div class="card-footer">';
-			echo '<a href="' . esc_url( add_query_arg( 'actividad_id', $act->ID ) ) . '" class="bde-btn-premium bde-btn-block">' . esc_html__( 'Gestionar Actividad', 'convoca-enroll' ) . '</a>';
+			echo '<a href="' . esc_url( add_query_arg( 'actividad_id', $act->ID ) ) . '" class="conv-btn-premium conv-btn-block">' . esc_html__( 'Gestionar Actividad', 'convoca-enroll' ) . '</a>';
 			echo '</div>';
 			echo '</div>';
 		}
@@ -338,13 +338,13 @@ class Admin_Monitor_CRM {
 	private function render_activity_panel( int $actividad_id ): void {
 		$act = get_post( $actividad_id );
 		if ( ! $act || $act->post_type !== 'actividad' ) {
-			echo '<div class="bde-empty-state"><p>' . esc_html__( 'Actividad no encontrada.', 'convoca-enroll' ) . '</p></div>';
+			echo '<div class="conv-empty-state"><p>' . esc_html__( 'Actividad no encontrada.', 'convoca-enroll' ) . '</p></div>';
 			return;
 		}
 
 		// Security check.
 		if ( ! CPT_Actividad::is_user_responsible( get_current_user_id(), $actividad_id ) ) {
-			echo '<div class="bde-empty-state"><p>' . esc_html__( 'No tienes permiso para ver esta actividad.', 'convoca-enroll' ) . '</p></div>';
+			echo '<div class="conv-empty-state"><p>' . esc_html__( 'No tienes permiso para ver esta actividad.', 'convoca-enroll' ) . '</p></div>';
 			return;
 		}
 
@@ -355,22 +355,22 @@ class Admin_Monitor_CRM {
 
 		// Nav.
 		echo '<div style="margin-bottom: 20px; display: flex; gap: 10px;">';
-		echo '<a href="' . esc_url( remove_query_arg( array( 'actividad_id', 'checkin' ) ) ) . '" class="bde-btn-premium" style="background: #fff; border: 1px solid var(--bde-border); color: var(--bde-text);">&larr; ' . esc_html__( 'Volver', 'convoca-enroll' ) . '</a>';
+		echo '<a href="' . esc_url( remove_query_arg( array( 'actividad_id', 'checkin' ) ) ) . '" class="conv-btn-premium" style="background: #fff; border: 1px solid var(--conv-border); color: var(--conv-text);">&larr; ' . esc_html__( 'Volver', 'convoca-enroll' ) . '</a>';
 		if ( $checkin_mode ) {
-			echo '<a href="' . esc_url( remove_query_arg( 'checkin' ) ) . '" class="bde-btn-premium" style="background: #fff; border: 1px solid var(--bde-border); color: var(--bde-text);">' . esc_html__( 'Panel normal', 'convoca-enroll' ) . '</a>';
+			echo '<a href="' . esc_url( remove_query_arg( 'checkin' ) ) . '" class="conv-btn-premium" style="background: #fff; border: 1px solid var(--conv-border); color: var(--conv-text);">' . esc_html__( 'Panel normal', 'convoca-enroll' ) . '</a>';
 		} else {
-			echo '<a href="' . esc_url( add_query_arg( 'checkin', 1 ) ) . '" class="bde-btn-premium bde-btn-qr">' . esc_html__( 'Modo Check-in Rápido', 'convoca-enroll' ) . '</a>';
+			echo '<a href="' . esc_url( add_query_arg( 'checkin', 1 ) ) . '" class="conv-btn-premium conv-btn-qr">' . esc_html__( 'Modo Check-in Rápido', 'convoca-enroll' ) . '</a>';
 		}
 		echo '</div>';
 
 		// Header Card.
-		echo '<div class="bde-activity-header">';
+		echo '<div class="conv-activity-header">';
 		echo '<h1>' . esc_html( $act->post_title ) . '</h1>';
-		echo '<div class="bde-activity-info">';
+		echo '<div class="conv-activity-info">';
 		echo '<div class="info-item"><span class="dashicons dashicons-calendar-alt"></span> ' . esc_html( $fecha ) . '</div>';
 		echo '<div class="info-item"><span class="dashicons dashicons-groups"></span> ' . $total . ' ' . esc_html__( 'plazas', 'convoca-enroll' ) . '</div>';
 		echo '</div>';
-		echo '<div class="bde-crm-buttons">';
+		echo '<div class="conv-crm-buttons">';
 		$export_all   = wp_nonce_url(
 			add_query_arg(
 				array(
@@ -389,8 +389,8 @@ class Admin_Monitor_CRM {
 			),
 			'conv_enroll_export_csv'
 		);
-		echo '<a href="' . esc_url( $export_asist ) . '" class="bde-btn-premium" style="background: #f1f5f9; color: #475569;">' . esc_html__( 'Exportar Asistentes', 'convoca-enroll' ) . '</a> ';
-		echo '<a href="' . esc_url( $export_all ) . '" class="bde-btn-premium" style="background: #f1f5f9; color: #475569;">' . esc_html__( 'Exportar Todas', 'convoca-enroll' ) . '</a>';
+		echo '<a href="' . esc_url( $export_asist ) . '" class="conv-btn-premium" style="background: #f1f5f9; color: #475569;">' . esc_html__( 'Exportar Asistentes', 'convoca-enroll' ) . '</a> ';
+		echo '<a href="' . esc_url( $export_all ) . '" class="conv-btn-premium" style="background: #f1f5f9; color: #475569;">' . esc_html__( 'Exportar Todas', 'convoca-enroll' ) . '</a>';
 		echo '</div>';
 		echo '</div>';
 
@@ -442,7 +442,7 @@ class Admin_Monitor_CRM {
 			}
 		}
 
-		echo '<div class="bde-crm-stats">';
+		echo '<div class="conv-crm-stats">';
 		echo '<div class="stat-box"><span>' . $confirmadas . '</span>' . esc_html__( 'Confirmados', 'convoca-enroll' ) . '</div>';
 		echo '<div class="stat-box green"><span>' . $asistieron . '</span>' . esc_html__( 'Asistieron', 'convoca-enroll' ) . '</div>';
 		echo '<div class="stat-box red"><span>' . $faltaron . '</span>' . esc_html__( 'Faltaron', 'convoca-enroll' ) . '</div>';
@@ -462,7 +462,7 @@ class Admin_Monitor_CRM {
 					echo '<div class="checkin-row ' . $row_class . '" data-id="' . $ins->ID . '">';
 					echo '<div class="checkin-name">' . esc_html( $nombre ) . '</div>';
 					echo '<div class="checkin-actions">';
-					echo '<button class="bde-btn-premium bde-btn-qr mark-attendance" data-status="1" style="font-size:16px;">' . esc_html__( 'Confirmar', 'convoca-enroll' ) . ' ✅</button>';
+					echo '<button class="conv-btn-premium conv-btn-qr mark-attendance" data-status="1" style="font-size:16px;">' . esc_html__( 'Confirmar', 'convoca-enroll' ) . ' ✅</button>';
 					echo '</div>';
 					echo '</div>';
 				}
@@ -470,7 +470,7 @@ class Admin_Monitor_CRM {
 			echo '</div>';
 		} else {
 			// Table: Participants.
-			echo '<div class="bde-section">';
+			echo '<div class="conv-section">';
 			echo '<h2>' . esc_html__( 'Listado de Inscripciones', 'convoca-enroll' ) . '</h2>';
 			$this->render_summary( array_merge( $list_p, $list_c ) );
 			$this->render_table( array_merge( $list_p, $list_c ), $actividad_id, false );
@@ -478,7 +478,7 @@ class Admin_Monitor_CRM {
 
 			// Table: Waitlist.
 			if ( ! empty( $list_e ) ) {
-				echo '<div class="bde-section" style="margin-top:50px;">';
+				echo '<div class="conv-section" style="margin-top:50px;">';
 				echo '<h2>' . esc_html__( 'Lista de Espera', 'convoca-enroll' ) . '</h2>';
 				$this->render_summary( $list_e );
 				$this->render_table( $list_e, $actividad_id, true );
@@ -498,7 +498,7 @@ class Admin_Monitor_CRM {
 			return;
 		}
 
-		echo '<div class="bde-table-container">';
+		echo '<div class="conv-table-container">';
 		echo '<table class="wp-list-table widefat fixed striped">';
 		echo '<thead><tr>';
 		echo '<th style="width: 25%;">' . esc_html__( 'Participante', 'convoca-enroll' ) . '</th>';
@@ -525,19 +525,19 @@ class Admin_Monitor_CRM {
 
 			echo '<tr>';
 			echo '<td><div style="font-weight:700; font-size:14px;">' . esc_html( $fullName ) . '</div></td>';
-			echo '<td><div style="font-size:12px; color:var(--bde-text-light);">';
+			echo '<td><div style="font-size:12px; color:var(--conv-text-light);">';
 			if ( $email ) {
-				echo '<a href="mailto:' . esc_attr( $email ) . '" style="color:var(--bde-primary);text-decoration:underline;">' . esc_html( $email ) . '</a>';
+				echo '<a href="mailto:' . esc_attr( $email ) . '" style="color:var(--conv-primary);text-decoration:underline;">' . esc_html( $email ) . '</a>';
 			}
 			echo '</div><div style="font-weight:600; font-size:12px;">';
 			if ( $tel ) {
-				echo '<a href="tel:' . esc_attr( $tel ) . '" style="color:var(--bde-text);text-decoration:none;">' . esc_html( $tel ) . '</a>';
+				echo '<a href="tel:' . esc_attr( $tel ) . '" style="color:var(--conv-text);text-decoration:none;">' . esc_html( $tel ) . '</a>';
 			}
 			echo '</div></td>';
 			echo '<td><span class="status-badge status-' . $estado . '">' . esc_html( $estado ) . '</span></td>';
 
 			if ( $is_waitlist ) {
-				echo '<td><span style="font-weight:700; color:var(--bde-waiting);">#' . ( $pos++ ) . '</span></td>';
+				echo '<td><span style="font-weight:700; color:var(--conv-waiting);">#' . ( $pos++ ) . '</span></td>';
 			}
 
 			if ( ! $is_waitlist ) {
@@ -568,7 +568,7 @@ class Admin_Monitor_CRM {
 					),
 					'conv_enroll_crm_' . $confirm_action . '_' . $item->ID
 				);
-				echo '<a href="' . esc_url( $confirm_url ) . '" class="bde-btn-premium" style="background:var(--bde-success); color:white; padding:5px 10px; font-size:12px;">' . ( $is_waitlist ? esc_html__( 'Promover', 'convoca-enroll' ) : esc_html__( 'Validar', 'convoca-enroll' ) ) . '</a>';
+				echo '<a href="' . esc_url( $confirm_url ) . '" class="conv-btn-premium" style="background:var(--conv-success); color:white; padding:5px 10px; font-size:12px;">' . ( $is_waitlist ? esc_html__( 'Promover', 'convoca-enroll' ) : esc_html__( 'Validar', 'convoca-enroll' ) ) . '</a>';
 			}
 			echo '</td>';
 			echo '</tr>';
@@ -603,7 +603,7 @@ class Admin_Monitor_CRM {
 
 		$no_responden = $confirmadas - $asistieron - $faltaron;
 
-		echo '<div class="bde-summary-bar" style="display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap;">';
+		echo '<div class="conv-summary-bar" style="display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap;">';
 		echo '<span style="background:#e2e8f0;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;">📋 ' . $total . ' total</span>';
 		echo '<span style="background:#d1fae5;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;color:#065f46;">✅ ' . $asistieron . ' asistieron</span>';
 		echo '<span style="background:#fef2f2;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;color:#991b1b;">❌ ' . $faltaron . ' faltaron</span>';
@@ -623,37 +623,37 @@ class Admin_Monitor_CRM {
 		?>
 		<style>
 			:root {
-				--bde-primary: #10b981;
-				--bde-primary-dark: #059669;
-				--bde-secondary: #0ea5e9;
-				--bde-danger: #ef4444;
-				--bde-warning: #f59e0b;
-				--bde-success: #10b981;
-				--bde-border: #e2e8f0;
-				--bde-text: #1e293b;
-				--bde-text-light: #64748b;
-				--bde-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+				--conv-primary: #10b981;
+				--conv-primary-dark: #059669;
+				--conv-secondary: #0ea5e9;
+				--conv-danger: #ef4444;
+				--conv-warning: #f59e0b;
+				--conv-success: #10b981;
+				--conv-border: #e2e8f0;
+				--conv-text: #1e293b;
+				--conv-text-light: #64748b;
+				--conv-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 			}
 
-			.bde-crm-wrap {
+			.conv-crm-wrap {
 				max-width: 1200px;
 				margin: 20px auto;
 				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 			}
 
-			.bde-crm-header-main {
+			.conv-crm-header-main {
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
 				margin-bottom: 30px;
 			}
 
-			.bde-btn-premium {
+			.conv-btn-premium {
 				display: inline-flex;
 				align-items: center;
 				padding: 10px 20px;
 				border-radius: 10px;
-				background: var(--bde-primary);
+				background: var(--conv-primary);
 				color: white;
 				text-decoration: none;
 				font-weight: 600;
@@ -662,35 +662,35 @@ class Admin_Monitor_CRM {
 				cursor: pointer;
 			}
 
-			.bde-btn-premium:hover {
+			.conv-btn-premium:hover {
 				transform: translateY(-1px);
 				box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 				color: white;
 			}
 
-			.bde-btn-qr {
-				background: var(--bde-text);
+			.conv-btn-qr {
+				background: var(--conv-text);
 			}
 
-			.bde-btn-qr .dashicons { margin-right: 8px; }
+			.conv-btn-qr .dashicons { margin-right: 8px; }
 
-			.bde-activity-header {
+			.conv-activity-header {
 				background: white;
 				padding: 30px;
 				border-radius: 16px;
-				box-shadow: var(--bde-shadow);
+				box-shadow: var(--conv-shadow);
 				margin-bottom: 30px;
-				border: 1px solid var(--bde-border);
+				border: 1px solid var(--conv-border);
 			}
 
-			.bde-activity-header h1 {
+			.conv-activity-header h1 {
 				margin: 0 0 15px 0;
 				font-size: 28px;
 				font-weight: 800;
-				color: var(--bde-text);
+				color: var(--conv-text);
 			}
 
-			.bde-activity-info {
+			.conv-activity-info {
 				display: flex;
 				gap: 20px;
 				margin-bottom: 20px;
@@ -699,15 +699,15 @@ class Admin_Monitor_CRM {
 			.info-item {
 				display: flex;
 				align-items: center;
-				color: var(--bde-text-light);
+				color: var(--conv-text-light);
 			}
 
 			.info-item .dashicons {
 				margin-right: 5px;
-				color: var(--bde-primary);
+				color: var(--conv-primary);
 			}
 
-			.bde-activity-grid {
+			.conv-activity-grid {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
 				gap: 25px;
@@ -717,10 +717,10 @@ class Admin_Monitor_CRM {
 				background: white;
 				border-radius: 16px;
 				overflow: hidden;
-				box-shadow: var(--bde-shadow);
+				box-shadow: var(--conv-shadow);
 				display: flex;
 				flex-direction: column;
-				border: 1px solid var(--bde-border);
+				border: 1px solid var(--conv-border);
 				transition: transform 0.2s;
 			}
 
@@ -737,7 +737,7 @@ class Admin_Monitor_CRM {
 			.card-header h3 {
 				margin: 0 0 10px 0;
 				font-size: 18px;
-				color: var(--bde-text);
+				color: var(--conv-text);
 			}
 
 			.card-header .badge {
@@ -745,7 +745,7 @@ class Admin_Monitor_CRM {
 				padding: 4px 10px;
 				border-radius: 20px;
 				font-size: 12px;
-				color: var(--bde-text-light);
+				color: var(--conv-text-light);
 				font-weight: 600;
 			}
 
@@ -761,8 +761,8 @@ class Admin_Monitor_CRM {
 				font-size: 14px;
 			}
 
-			.stat-row .label { color: var(--bde-text-light); }
-			.stat-row .value { font-weight: 700; color: var(--bde-text); }
+			.stat-row .label { color: var(--conv-text-light); }
+			.stat-row .value { font-weight: 700; color: var(--conv-text); }
 
 			.progress-bar {
 				height: 8px;
@@ -774,12 +774,12 @@ class Admin_Monitor_CRM {
 
 			.progress {
 				height: 100%;
-				background: var(--bde-primary);
+				background: var(--conv-primary);
 				border-radius: 4px;
 			}
 
-			.status-warning .progress { background: var(--bde-warning); }
-			.status-full .progress { background: var(--bde-danger); }
+			.status-warning .progress { background: var(--conv-warning); }
+			.status-full .progress { background: var(--conv-danger); }
 
 			.card-footer {
 				padding: 15px 20px;
@@ -788,7 +788,7 @@ class Admin_Monitor_CRM {
 			}
 
 			/* Stats Boxes */
-			.bde-crm-stats {
+			.conv-crm-stats {
 				display: grid;
 				grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 				gap: 20px;
@@ -800,8 +800,8 @@ class Admin_Monitor_CRM {
 				padding: 25px;
 				border-radius: 16px;
 				text-align: center;
-				box-shadow: var(--bde-shadow);
-				border: 1px solid var(--bde-border);
+				box-shadow: var(--conv-shadow);
+				border: 1px solid var(--conv-border);
 			}
 
 			.stat-box span {
@@ -809,12 +809,12 @@ class Admin_Monitor_CRM {
 				font-size: 32px;
 				font-weight: 800;
 				margin-bottom: 5px;
-				color: var(--bde-text);
+				color: var(--conv-text);
 			}
 
-			.stat-box.green span { color: var(--bde-success); }
-			.stat-box.red span { color: var(--bde-danger); }
-			.stat-box.warning span { color: var(--bde-warning); }
+			.stat-box.green span { color: var(--conv-success); }
+			.stat-box.red span { color: var(--conv-danger); }
+			.stat-box.warning span { color: var(--conv-warning); }
 
 			/* Status Badges */
 			.status-badge {
@@ -832,21 +832,21 @@ class Admin_Monitor_CRM {
 			.status-cancelada { background: #fee2e2; color: #991b1b; }
 
 			/* Grid Table Look */
-			.bde-table-container {
+			.conv-table-container {
 				background: white;
 				border-radius: 16px;
 				overflow: hidden;
-				box-shadow: var(--bde-shadow);
+				box-shadow: var(--conv-shadow);
 				margin-top: 20px;
 			}
 
-			.bde-table-container table {
+			.conv-table-container table {
 				border: none;
 			}
 
-			.bde-table-container thead th {
+			.conv-table-container thead th {
 				background: #f8fafc;
-				color: var(--bde-text-light);
+				color: var(--conv-text-light);
 				font-weight: 600;
 				padding: 15px 20px;
 				text-transform: uppercase;
@@ -854,7 +854,7 @@ class Admin_Monitor_CRM {
 				letter-spacing: 1px;
 			}
 
-			.bde-table-container tbody td {
+			.conv-table-container tbody td {
 				padding: 15px 20px;
 				border-bottom: 1px solid #f1f5f9;
 			}
@@ -872,7 +872,7 @@ class Admin_Monitor_CRM {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				border: 1px solid var(--bde-border);
+				border: 1px solid var(--conv-border);
 				background: white;
 				cursor: pointer;
 				transition: all 0.2s;
@@ -884,15 +884,15 @@ class Admin_Monitor_CRM {
 			}
 
 			.attendance-btn.active[data-status="1"] {
-				background: var(--bde-success);
+				background: var(--conv-success);
 				color: white;
-				border-color: var(--bde-success);
+				border-color: var(--conv-success);
 			}
 
 			.attendance-btn.active[data-status="0"] {
-				background: var(--bde-danger);
+				background: var(--conv-danger);
 				color: white;
-				border-color: var(--bde-danger);
+				border-color: var(--conv-danger);
 			}
 
 			/* Check-in Quick List */
@@ -910,30 +910,30 @@ class Admin_Monitor_CRM {
 
 			.checkin-row.checked-in {
 				background: #ecfdf5;
-				border-left: 6px solid var(--bde-success);
+				border-left: 6px solid var(--conv-success);
 			}
 
 			.checkin-row.absent {
 				background: #fef2f2;
-				border-left: 6px solid var(--bde-danger);
+				border-left: 6px solid var(--conv-danger);
 			}
 
 			.checkin-name {
 				font-size: 18px;
 				font-weight: 600;
-				color: var(--bde-text);
+				color: var(--conv-text);
 			}
 
 			/* Empty State */
-			.bde-empty-state {
+			.conv-empty-state {
 				text-align: center;
 				padding: 100px 20px;
 				background: white;
 				border-radius: 16px;
-				box-shadow: var(--bde-shadow);
+				box-shadow: var(--conv-shadow);
 			}
 
-			.bde-empty-state .dashicons {
+			.conv-empty-state .dashicons {
 				font-size: 64px;
 				width: 64px;
 				height: 64px;
@@ -941,9 +941,9 @@ class Admin_Monitor_CRM {
 				margin-bottom: 20px;
 			}
 
-			.bde-empty-state p {
+			.conv-empty-state p {
 				font-size: 18px;
-				color: var(--bde-text-light);
+				color: var(--conv-text-light);
 			}
 		</style>
 		<?php
