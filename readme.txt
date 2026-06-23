@@ -4,7 +4,7 @@ Tags: inscripciones, actividades, events, enrollment, convoca
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 2.6.0
+Stable tag: 2.6.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,10 @@ Sí, para la integración con Google Photos API.
 
 == Changelog ==
 
+
+= 2.6.1 =
+* Added: MANUAL_USUARIO.md with complete admin guide
+* Dev: Added phpstan.neon for static analysis
 = 2.6.0 =
 * Fix: Inscripciones públicas consumiendo plazas correctamente
 * Fix: Consentimiento RGPD transmitido al motor
