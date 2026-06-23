@@ -29,6 +29,10 @@ convoca-core, WordPress 6.4+, PHP 8.1+
 
 2.5.0
 
+### 2.6.1
+- docs: add MANUAL_USUARIO.md with 12-section admin guide
+- dev: add phpstan.neon (level 5) for static analysis
+
 ### 2.5.0
 - Seguridad: FOR UPDATE reemplazado por Utils::acquire_lock (compatible MyISAM)
 - Transacciones SQL eliminadas de registrar_inscripcion
