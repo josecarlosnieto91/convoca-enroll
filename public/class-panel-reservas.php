@@ -18,10 +18,10 @@ class Panel_Reservas {
 
 	public function __construct() {
 		add_shortcode( 'convoca_panel_reservas', array( $this, 'shortcode' ) );
-		add_action( 'wp_ajax_conv_panel_login', array( $this, 'ajax_login' ) );
-		add_action( 'wp_ajax_nopriv_conv_panel_login', array( $this, 'ajax_login' ) );
-		add_action( 'wp_ajax_conv_panel_cancelar', array( $this, 'ajax_cancelar' ) );
-		add_action( 'wp_ajax_nopriv_conv_panel_cancelar', array( $this, 'ajax_cancelar' ) );
+		add_action( 'wp_ajax_convoca_panel_login', array( $this, 'ajax_login' ) );
+		add_action( 'wp_ajax_nopriv_convoca_panel_login', array( $this, 'ajax_login' ) );
+		add_action( 'wp_ajax_convoca_panel_cancelar', array( $this, 'ajax_cancelar' ) );
+		add_action( 'wp_ajax_nopriv_convoca_panel_cancelar', array( $this, 'ajax_cancelar' ) );
 	}
 
 	/* ── Shortcode ─────────────────────────────── */

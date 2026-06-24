@@ -45,7 +45,7 @@ class WP_CLI_Migration extends \WP_CLI_Command {
 
 		\WP_CLI::success( sprintf( 'Inscripciones migradas: %d', $updated_inscriptions ) );
 
-		// 2. Migrar Actividades: Si no tienen _conv_precio_socio_dia pero sí _conv_precio_general, copiar valor
+		// 2. Migrar Actividades: Si no tienen _convoca_precio_socio_dia pero sí _convoca_precio_general, copiar valor
 		$activities = get_posts(
 			array(
 				'post_type'      => 'actividad',
@@ -67,7 +67,7 @@ class WP_CLI_Migration extends \WP_CLI_Command {
 
 		\WP_CLI::success( sprintf( 'Actividades migradas (precios copiados): %d', $migrated_activities ) );
 
-		// 3. Eliminar _conv_precio_general de la base de datos para limpiar el CPT
+		// 3. Eliminar _convoca_precio_general de la base de datos para limpiar el CPT
 		$deleted_meta = $wpdb->query(
 			$wpdb->prepare(
 				"

@@ -10,11 +10,11 @@ class Formulario_Evaluacion {
 	public static function init() {
 		add_shortcode( 'convoca_evaluacion', array( __CLASS__, 'render_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
-		add_action( 'wp_ajax_conv_submit_evaluacion', array( __CLASS__, 'handle_submission' ) );
-		add_action( 'wp_ajax_nopriv_conv_submit_evaluacion', array( __CLASS__, 'handle_submission' ) );
+		add_action( 'wp_ajax_convoca_submit_evaluacion', array( __CLASS__, 'handle_submission' ) );
+		add_action( 'wp_ajax_nopriv_convoca_submit_evaluacion', array( __CLASS__, 'handle_submission' ) );
 
-		add_action( 'wp_ajax_conv_eval_get_nonce', array( __CLASS__, 'get_nonce' ) );
-		add_action( 'wp_ajax_nopriv_conv_eval_get_nonce', array( __CLASS__, 'get_nonce' ) );
+		add_action( 'wp_ajax_convoca_eval_get_nonce', array( __CLASS__, 'get_nonce' ) );
+		add_action( 'wp_ajax_nopriv_convoca_eval_get_nonce', array( __CLASS__, 'get_nonce' ) );
 	}
 
 	public static function get_nonce() {
@@ -146,7 +146,7 @@ class Formulario_Evaluacion {
 			<h3><?php printf( __( 'Evaluar Actividad: %s', 'convoca-enroll' ), get_the_title( $actividad_id ) ); ?></h3>
 			<form id="conv-evaluacion-form" method="post">
 				<input type="hidden" name="actividad_id" value="<?php echo esc_attr( $actividad_id ); ?>">
-				<input type="hidden" name="action" value="conv_submit_evaluacion">
+				<input type="hidden" name="action" value="convoca_submit_evaluacion">
 				<?php wp_nonce_field( 'convoca_evaluacion_nonce', 'security' ); ?>
 
 				<div class="conv-eval-section">

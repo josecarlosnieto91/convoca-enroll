@@ -12,7 +12,7 @@ class Admin_Monitor_CRM {
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_init', array( $this, 'handle_actions' ) );
 		add_action( 'admin_init', array( $this, 'handle_exports' ) );
-		add_action( 'wp_ajax_conv_mark_attendance', array( $this, 'ajax_mark_attendance' ) );
+		add_action( 'wp_ajax_convoca_mark_attendance', array( $this, 'ajax_mark_attendance' ) );
 	}
 
 	/**

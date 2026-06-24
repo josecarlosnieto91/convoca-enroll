@@ -16,8 +16,8 @@ class Form_Inscripcion {
 
 	public function __construct() {
 		add_shortcode( 'convoca_form_inscripcion', array( $this, 'shortcode' ) );
-		add_action( 'wp_ajax_conv_inscribir', array( $this, 'handle_ajax' ) );
-		add_action( 'wp_ajax_nopriv_conv_inscribir', array( $this, 'handle_ajax' ) );
+		add_action( 'wp_ajax_convoca_inscribir', array( $this, 'handle_ajax' ) );
+		add_action( 'wp_ajax_nopriv_convoca_inscribir', array( $this, 'handle_ajax' ) );
 	}
 
 	/**

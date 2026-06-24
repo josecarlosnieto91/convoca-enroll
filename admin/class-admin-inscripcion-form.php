@@ -15,7 +15,7 @@ class Admin_Inscripcion_Form {
 
 
 	public function __construct() {
-		add_action( 'wp_ajax_conv_admin_inscribir', array( $this, 'handle_submit' ) );
+		add_action( 'wp_ajax_convoca_admin_inscribir', array( $this, 'handle_submit' ) );
 	}
 
 	/**

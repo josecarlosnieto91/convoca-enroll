@@ -18,15 +18,15 @@ class Admin_Page {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 		add_action( 'wp_dashboard_setup', array( $this, 'dashboard_widget' ) );
-		add_action( 'wp_ajax_conv_change_state', array( $this, 'ajax_change_state' ) );
-		add_action( 'wp_ajax_conv_toggle_checkin', array( $this, 'ajax_toggle_checkin' ) );
-		add_action( 'wp_ajax_conv_resend_email', array( $this, 'ajax_resend_email' ) );
+		add_action( 'wp_ajax_convoca_change_state', array( $this, 'ajax_change_state' ) );
+		add_action( 'wp_ajax_convoca_toggle_checkin', array( $this, 'ajax_toggle_checkin' ) );
+		add_action( 'wp_ajax_convoca_resend_email', array( $this, 'ajax_resend_email' ) );
 		add_action( 'admin_notices', array( $this, 'notices' ) );
 		add_filter( 'parent_file', array( $this, 'fix_menu_highlight' ) );
 		add_filter( 'submenu_file', array( $this, 'fix_submenu_highlight' ) );
-		add_action( 'admin_post_conv_export_inscripciones_pdf', array( $this, 'handle_export_inscripciones_pdf' ) );
-		add_action( 'admin_post_conv_retry_email', array( $this, 'handle_retry_email' ) );
-		add_action( 'wp_ajax_conv_save_nota', array( $this, 'ajax_save_nota' ) );
+		add_action( 'admin_post_convoca_export_inscripciones_pdf', array( $this, 'handle_export_inscripciones_pdf' ) );
+		add_action( 'admin_post_convoca_retry_email', array( $this, 'handle_retry_email' ) );
+		add_action( 'wp_ajax_convoca_save_nota', array( $this, 'ajax_save_nota' ) );
 	}
 
 	/**
@@ -310,8 +310,8 @@ class Admin_Page {
 
 		echo '<div class="wrap"><h1>' . esc_html__( 'Inscripciones', 'convoca-enroll' ) . '</h1>';
 		echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-nueva-inscripcion' ) ) . '" class="page-title-action">' . esc_html__( '+ Nueva inscripción', 'convoca-enroll' ) . '</a>';
-		echo '<a href="' . esc_url( admin_url( 'admin-ajax.php?action=conv_enroll_export_csv&nonce=' . wp_create_nonce( 'convoca_enroll_export_csv' ) ) ) . '" class="page-title-action">' . esc_html__( 'Exportar CSV', 'convoca-enroll' ) . '</a>';
-		echo '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_export_inscripciones_pdf' ), 'convoca_enroll_export_inscripciones_pdf' ) ) . '" class="page-title-action">' . esc_html__( 'Exportar PDF', 'convoca-enroll' ) . '</a>';
+		echo '<a href="' . esc_url( admin_url( 'admin-ajax.php?action=convoca_enroll_export_csv&nonce=' . wp_create_nonce( 'convoca_enroll_export_csv' ) ) ) . '" class="page-title-action">' . esc_html__( 'Exportar CSV', 'convoca-enroll' ) . '</a>';
+		echo '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_export_inscripciones_pdf' ), 'convoca_enroll_export_inscripciones_pdf' ) ) . '" class="page-title-action">' . esc_html__( 'Exportar PDF', 'convoca-enroll' ) . '</a>';
 
 		require_once CONVOCA_ENROLL_DIR . 'admin/class-admin-inscripciones.php';
 		$table = new Inscriptions_List();

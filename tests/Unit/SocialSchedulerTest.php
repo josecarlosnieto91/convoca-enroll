@@ -18,7 +18,7 @@ class SocialSchedulerTest extends \WP_UnitTestCase {
 		$queue_id = Social_Scheduler::queue( $act_id, array(), 'Test message' );
 		$this->assertGreaterThan( 0, $queue_id );
 
-		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}conv_social_queue WHERE id = %d", $queue_id ) );
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}convoca_social_queue WHERE id = %d", $queue_id ) );
 		$this->assertEquals( 'draft', $row->status );
 	}
 

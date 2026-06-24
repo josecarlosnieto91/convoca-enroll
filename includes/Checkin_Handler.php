@@ -11,7 +11,7 @@ class Checkin_Handler {
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_rewrite_rules' ) );
 		add_action( 'template_redirect', array( $this, 'handle_checkin_page' ) );
-		add_action( 'wp_ajax_conv_qr_checkin', array( $this, 'ajax_qr_checkin' ) );
+		add_action( 'wp_ajax_convoca_qr_checkin', array( $this, 'ajax_qr_checkin' ) );
 	}
 
 	/**

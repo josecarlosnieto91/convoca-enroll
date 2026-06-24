@@ -19,7 +19,7 @@ class Admin_Settings {
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'maybe_save' ) );
 		add_action( 'admin_init', array( $this, 'handle_oauth_callback' ) );
-		add_action( 'wp_ajax_conv_preview_email', array( $this, 'ajax_preview' ) );
+		add_action( 'wp_ajax_convoca_preview_email', array( $this, 'ajax_preview' ) );
 	}
 
 	/* ── Render ────────────────────────────────── */
@@ -878,23 +878,23 @@ class Admin_Settings {
 		$required_pages = array(
 			'convoca_calendario'        => array(
 				'title'     => __( 'Página: Calendario de Actividades', 'convoca-enroll' ),
-				'shortcode' => '[conv_calendario]',
-				'fix'       => __( 'Crea una página con el shortcode [conv_calendario] para mostrar el listado de actividades.', 'convoca-enroll' ),
+				'shortcode' => '[convoca_calendario]',
+				'fix'       => __( 'Crea una página con el shortcode [convoca_calendario] para mostrar el listado de actividades.', 'convoca-enroll' ),
 			),
 			'convoca_mis_inscripciones' => array(
 				'title'     => __( 'Página: Mis Inscripciones', 'convoca-enroll' ),
-				'shortcode' => '[conv_mis_inscripciones]',
-				'fix'       => __( 'Crea una página con el shortcode [conv_mis_inscripciones] para que los usuarios vean sus reservas.', 'convoca-enroll' ),
+				'shortcode' => '[convoca_mis_inscripciones]',
+				'fix'       => __( 'Crea una página con el shortcode [convoca_mis_inscripciones] para que los usuarios vean sus reservas.', 'convoca-enroll' ),
 			),
 			'convoca_checkin'           => array(
 				'title'     => __( 'Página: Control de Asistencia (Check-in)', 'convoca-enroll' ),
-				'shortcode' => '[conv_checkin]',
-				'fix'       => __( 'Crea una página con el shortcode [conv_checkin] para que los monitores registren la asistencia.', 'convoca-enroll' ),
+				'shortcode' => '[convoca_checkin]',
+				'fix'       => __( 'Crea una página con el shortcode [convoca_checkin] para que los monitores registren la asistencia.', 'convoca-enroll' ),
 			),
 			'convoca_pago_actividad'    => array(
 				'title'     => __( 'Página: Pago de Actividad', 'convoca-enroll' ),
-				'shortcode' => '[conv_pago_actividad]',
-				'fix'       => __( 'Crea una página con el shortcode [conv_pago_actividad] para procesar los pagos de inscripción.', 'convoca-enroll' ),
+				'shortcode' => '[convoca_pago_actividad]',
+				'fix'       => __( 'Crea una página con el shortcode [convoca_pago_actividad] para procesar los pagos de inscripción.', 'convoca-enroll' ),
 			),
 			'formulario_evaluacion'  => array(
 				'title'     => __( 'Página: Formulario de Evaluación', 'convoca-enroll' ),

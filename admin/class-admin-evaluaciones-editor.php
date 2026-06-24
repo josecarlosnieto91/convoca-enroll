@@ -15,7 +15,7 @@ class Admin_Evaluaciones_Editor {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
-		add_action( 'admin_post_conv_save_evaluacion_admin', array( $this, 'handle_save_admin' ) );
+		add_action( 'admin_post_convoca_save_evaluacion_admin', array( $this, 'handle_save_admin' ) );
 		add_action( 'load-post-new.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'load-post.php', array( $this, 'redirect_to_custom_editor' ) );
 	}

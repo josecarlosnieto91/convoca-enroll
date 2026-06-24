@@ -56,7 +56,7 @@ class Social_Scheduler {
 		global $wpdb;
 
 		$item = $wpdb->get_row( $wpdb->prepare(
-			"SELECT * FROM {$wpdb->prefix}conv_social_queue WHERE id = %d",
+			"SELECT * FROM {$wpdb->prefix}convoca_social_queue WHERE id = %d",
 			$queue_id
 		), ARRAY_A );
 
@@ -131,7 +131,7 @@ class Social_Scheduler {
 	private static function get_network_for_account( int $account_id ): string {
 		global $wpdb;
 		$network = $wpdb->get_var( $wpdb->prepare(
-			"SELECT network FROM {$wpdb->prefix}conv_social_accounts WHERE id = %d",
+			"SELECT network FROM {$wpdb->prefix}convoca_social_accounts WHERE id = %d",
 			$account_id
 		) );
 		return $network ?: 'unknown';

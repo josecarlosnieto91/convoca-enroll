@@ -552,7 +552,7 @@ endif;
 		global $wpdb;
 		$data = array();
 
-		// NOTE: _conv_importe_pagado is ALWAYS stored in cents (integer).
+		// NOTE: _convoca_importe_pagado is ALWAYS stored in cents (integer).
 		// If a row has values < 100, it might be in euros by mistake.
 		// The normalization below tries to detect this.
 
@@ -589,7 +589,7 @@ endif;
 				'bizum'   => 0,
 			);
 			foreach ( $ingresos as $row ) {
-				// _conv_importe_pagado is ALWAYS stored in cents (integer).
+				// _convoca_importe_pagado is ALWAYS stored in cents (integer).
 				// If raw values are suspiciously small (< 100 per row), they may be stored in euros.
 				$raw           = (float) $row->total;
 				$v             = $raw / 100;

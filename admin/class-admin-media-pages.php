@@ -25,7 +25,7 @@ class Admin_Media_Subpages {
 
 	public function render_queue(): void {
 		global $wpdb;
-		$items = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}conv_social_queue ORDER BY created_at DESC LIMIT 50", ARRAY_A );
+		$items = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}convoca_social_queue ORDER BY created_at DESC LIMIT 50", ARRAY_A );
 		?>
 		<div class="wrap">
 			<h1>📋 <?php esc_html_e( 'Cola de publicaciones', 'convoca-enroll' ); ?></h1>
@@ -111,7 +111,7 @@ class Admin_Media_Subpages {
 
 	public function render_logs(): void {
 		global $wpdb;
-		$logs = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}conv_media_logs ORDER BY created_at DESC LIMIT 100", ARRAY_A );
+		$logs = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}convoca_media_logs ORDER BY created_at DESC LIMIT 100", ARRAY_A );
 		?>
 		<div class="wrap">
 			<h1>📊 <?php esc_html_e( 'Registro de operaciones', 'convoca-enroll' ); ?></h1>

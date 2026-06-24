@@ -244,7 +244,7 @@ add_action(
 			 * Ensure all necessary roles and capabilities are present.
 			 * Called on init to prevent race conditions or missing caps after updates.
 			 */
-			function conv_ensure_enroll_capabilities() {
+			function convoca_ensure_enroll_capabilities() {
 				// 1. Ensure Roles exist
 				if ( ! get_role( 'monitor_actividad' ) ) {
 					add_role(

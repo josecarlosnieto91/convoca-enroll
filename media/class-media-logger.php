@@ -57,7 +57,7 @@ class Media_Logger {
 
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}conv_media_logs
+				"SELECT * FROM {$wpdb->prefix}convoca_media_logs
 			WHERE object_type = %s AND object_id = %d
 			ORDER BY created_at DESC
 			LIMIT %d",
@@ -78,7 +78,7 @@ class Media_Logger {
 		global $wpdb;
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$wpdb->prefix}conv_media_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)",
+				"DELETE FROM {$wpdb->prefix}convoca_media_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)",
 				$days
 			) 
 		);

@@ -52,10 +52,10 @@ class CPT_Actividad {
 		add_action( 'save_post_actividad', array( $this, 'save_metabox' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_google_photos_metabox' ) );
 		add_action( 'save_post_actividad', array( $this, 'maybe_create_google_album' ) );
-		add_action( 'wp_ajax_conv_google_photos_share', array( $this, 'ajax_share_google_album' ) );
-		add_action( 'wp_ajax_conv_google_calendar_sync', array( $this, 'ajax_sync_google_calendar' ) );
-		add_action( 'wp_ajax_conv_google_calendar_delete', array( $this, 'ajax_delete_google_calendar' ) );
-		add_action( 'wp_ajax_conv_google_photos_create', array( $this, 'ajax_create_google_album' ) );
+		add_action( 'wp_ajax_convoca_google_photos_share', array( $this, 'ajax_share_google_album' ) );
+		add_action( 'wp_ajax_convoca_google_calendar_sync', array( $this, 'ajax_sync_google_calendar' ) );
+		add_action( 'wp_ajax_convoca_google_calendar_delete', array( $this, 'ajax_delete_google_calendar' ) );
+		add_action( 'wp_ajax_convoca_google_photos_create', array( $this, 'ajax_create_google_album' ) );
 		add_filter( 'map_meta_cap', array( $this, 'map_monitor_caps' ), 10, 4 );
 		add_filter( 'manage_actividad_posts_columns', array( $this, 'list_columns' ) );
 		add_action( 'manage_actividad_posts_custom_column', array( $this, 'list_custom_column' ), 10, 2 );

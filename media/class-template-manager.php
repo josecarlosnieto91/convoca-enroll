@@ -18,7 +18,7 @@ class Template_Manager {
 		$orderby = in_array( $orderby, array( 'name', 'slug', 'created_at' ), true ) ? $orderby : 'name';
 		$rows    = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}conv_media_templates ORDER BY is_system DESC, %s ASC",
+				"SELECT * FROM {$wpdb->prefix}convoca_media_templates ORDER BY is_system DESC, %s ASC",
 				$orderby
 			),
 			ARRAY_A

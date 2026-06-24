@@ -86,7 +86,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 
 	/**
 	 * Migration: Unify attendance values.
-	 * Converts '1' -> 'si' and '0' -> 'no' in _conv_asistencia meta.
+	 * Converts '1' -> 'si' and '0' -> 'no' in _convoca_asistencia meta.
 	 */
 	protected function upgrade_to_1_2_0(): void {
 		global $wpdb;

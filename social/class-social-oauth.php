@@ -51,7 +51,7 @@ class Social_OAuth {
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}conv_social_accounts WHERE id = %d AND is_active = 1",
+				"SELECT * FROM {$wpdb->prefix}convoca_social_accounts WHERE id = %d AND is_active = 1",
 				$account_id
 			),
 			ARRAY_A 
@@ -89,7 +89,7 @@ class Social_OAuth {
 	public static function get_accounts( string $network = '' ): array {
 		global $wpdb;
 		$where = $network ? $wpdb->prepare( 'WHERE network = %s AND is_active = 1', $network ) : 'WHERE is_active = 1';
-		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}conv_social_accounts {$where} ORDER BY network, account_name", ARRAY_A );
+		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}convoca_social_accounts {$where} ORDER BY network, account_name", ARRAY_A );
 	}
 
 	/**

@@ -326,7 +326,7 @@ class Inscriptions_List extends \WP_List_Table {
 		}
 
 		if ( $member_id ) {
-			$actions['card'] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_pdf_card&member_id=' . $member_id ), 'convoca_pdf_card_' . $member_id ) ) . '" target="_blank">🪪 ' . esc_html__( 'Tarjeta Socio', 'convoca-enroll' ) . '</a>';
+			$actions['card'] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_pdf_card&member_id=' . $member_id ), 'convoca_pdf_card_' . $member_id ) ) . '" target="_blank">🪪 ' . esc_html__( 'Tarjeta Socio', 'convoca-enroll' ) . '</a>';
 		}
 
 		return $link . $this->row_actions( $actions );

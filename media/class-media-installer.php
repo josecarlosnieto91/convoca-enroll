@@ -38,7 +38,7 @@ class Media_Installer {
 		$tables = array();
 
 		// ── Media templates ──
-		$tables[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}conv_media_templates (
+		$tables[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}convoca_media_templates (
 			id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 			name VARCHAR(255) NOT NULL,
 			slug VARCHAR(255) NOT NULL UNIQUE,
@@ -53,7 +53,7 @@ class Media_Installer {
 		) $charset;";
 
 		// ── Social accounts ──
-		$tables[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}conv_social_accounts (
+		$tables[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}convoca_social_accounts (
 			id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 			network VARCHAR(50) NOT NULL,
 			label VARCHAR(255) NOT NULL,
@@ -73,7 +73,7 @@ class Media_Installer {
 		) $charset;";
 
 		// ── Social publish queue ──
-		$tables[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}conv_social_queue (
+		$tables[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}convoca_social_queue (
 			id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 			actividad_id BIGINT UNSIGNED NOT NULL,
 			post_id BIGINT UNSIGNED DEFAULT NULL,
@@ -95,7 +95,7 @@ class Media_Installer {
 		) $charset;";
 
 		// ── Media & social logs ──
-		$tables[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}conv_media_logs (
+		$tables[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}convoca_media_logs (
 			id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 			object_type VARCHAR(50) NOT NULL,
 			object_id BIGINT UNSIGNED DEFAULT NULL,
@@ -123,7 +123,7 @@ class Media_Installer {
 	private static function seed_default_templates(): void {
 		global $wpdb;
 
-		$existing = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}conv_media_templates WHERE is_system = 1" );
+		$existing = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}convoca_media_templates WHERE is_system = 1" );
 		if ( $existing > 0 ) {
 			return;
 		}

@@ -24,12 +24,12 @@ class Admin_Actividades {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
-		add_action( 'admin_post_conv_save_actividad_admin', array( $this, 'handle_save_admin' ) );
+		add_action( 'admin_post_convoca_save_actividad_admin', array( $this, 'handle_save_admin' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'load-post-new.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'load-post.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'admin_bar_menu', array( $this, 'customize_admin_bar' ), 80 );
-		add_action( 'admin_post_conv_duplicate_actividad', array( $this, 'handle_duplicate' ) );
+		add_action( 'admin_post_convoca_duplicate_actividad', array( $this, 'handle_duplicate' ) );
 	}
 
 	public function add_menu() {
@@ -244,7 +244,7 @@ class Admin_Actividades {
 				<div class="conv-form-actions">
 					<?php submit_button( __( 'Guardar Actividad', 'convoca-enroll' ), 'primary', 'submit', false ); ?>
 					<?php if ( $post_id ) : ?>
-						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_duplicate_actividad&id=' . $post_id ), 'convoca_enroll_duplicate_' . $post_id ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📋 <?php _e( 'Duplicar', 'convoca-enroll' ); ?></a>
+						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_duplicate_actividad&id=' . $post_id ), 'convoca_enroll_duplicate_' . $post_id ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📋 <?php _e( 'Duplicar', 'convoca-enroll' ); ?></a>
 					<?php endif; ?>
 					<a href="<?php echo admin_url( 'admin.php?page=convoca-core-enroll' ); ?>" class="convoca-btn convoca-btn-outline"><?php _e( 'Cancelar', 'convoca-enroll' ); ?></a>
 				</div>
@@ -509,7 +509,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 	protected function column_acciones( $item ): string {
 		$actions   = array();
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=conv-checkin&actividad_id=' . $item->ID ) ), 'Check-in' );
-		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_duplicate_actividad&id=' . $item->ID ), 'convoca_enroll_duplicate_' . $item->ID ) ), 'Duplicar' );
+		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_duplicate_actividad&id=' . $item->ID ), 'convoca_enroll_duplicate_' . $item->ID ) ), 'Duplicar' );
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=conv-inscripciones&actividad_id=' . $item->ID ) ), 'Inscripciones' );
 
 		return implode( ' | ', $actions );

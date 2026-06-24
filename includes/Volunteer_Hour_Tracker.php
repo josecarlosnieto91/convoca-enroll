@@ -212,7 +212,7 @@ class Volunteer_Hour_Tracker {
 				);
 
 				if ( ! empty( $members ) ) {
-					update_post_meta( $log_id, ' _conv_miembro_id', $members[0] );
+					update_post_meta( $log_id, ' _convoca_miembro_id', $members[0] );
 				}
 
 				update_post_meta( $log_id, '_convoca_usuario_id', $user->ID );
