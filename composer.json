@@ -14,7 +14,8 @@
         "classmap": [
             "admin/",
             "media/",
-            "social/"
+            "social/",
+            "public/"
         ]
     },
     "config": {
