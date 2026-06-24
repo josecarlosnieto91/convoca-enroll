@@ -51,7 +51,7 @@ class Blog_Post_Manager {
 			return new \WP_Error( 'invalid_activity', __( 'Actividad no encontrada.', 'convoca-enroll' ) );
 		}
 
-		$meta_prefix     = 'conv_';
+		$meta_prefix     = 'convoca_';
 		$fecha_inicio    = get_post_meta( $actividad_id, $meta_prefix . 'fecha_inicio', true );
 		$fecha_fin       = get_post_meta( $actividad_id, $meta_prefix . 'fecha_fin', true );
 		$ubicacion       = get_post_meta( $actividad_id, $meta_prefix . 'ubicacion', true );
@@ -116,7 +116,7 @@ class Blog_Post_Manager {
 			return $post_id;
 		}
 
-		$meta_prefix     = 'conv_';
+		$meta_prefix     = 'convoca_';
 		$fecha_inicio    = get_post_meta( $actividad_id, $meta_prefix . 'fecha_inicio', true );
 		$fecha_fin       = get_post_meta( $actividad_id, $meta_prefix . 'fecha_fin', true );
 		$ubicacion       = get_post_meta( $actividad_id, $meta_prefix . 'ubicacion', true );

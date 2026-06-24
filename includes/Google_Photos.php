@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 
 class Google_Photos
 {
-    private const OPTION = 'conv_enroll_settings';
+    private const OPTION = 'convoca_enroll_settings';
 
     private $client  = null;
     private $service = null;
@@ -69,7 +69,7 @@ class Google_Photos
         $this->client->setPrompt('consent');
 
         $state = wp_generate_password(32, false);
-        set_transient('conv_enroll_oauth_state_' . get_current_user_id(), $state, HOUR_IN_SECONDS);
+        set_transient('convoca_enroll_oauth_state_' . get_current_user_id(), $state, HOUR_IN_SECONDS);
         $this->client->setState($state);
 
         return $this->client->createAuthUrl();
@@ -85,8 +85,8 @@ class Google_Photos
             return false;
         }
 
-        $expected_state = get_transient('conv_enroll_oauth_state_' . get_current_user_id());
-        delete_transient('conv_enroll_oauth_state_' . get_current_user_id());
+        $expected_state = get_transient('convoca_enroll_oauth_state_' . get_current_user_id());
+        delete_transient('convoca_enroll_oauth_state_' . get_current_user_id());
 
         if (empty($expected_state) || !hash_equals($expected_state, $received_state)) {
             error_log('[Google Photos] OAuth State mismatch or expired.');

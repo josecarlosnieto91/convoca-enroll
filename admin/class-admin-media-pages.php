@@ -18,9 +18,9 @@ class Admin_Media_Subpages {
 	}
 
 	public function register_pages(): void {
-		add_submenu_page( 'convoca-media', 'Cola de publicaciones', '📋 Cola', 'conv_manage_media', 'convoca-media-queue', array( $this, 'render_queue' ) );
-		add_submenu_page( 'convoca-media', 'Redes sociales', '🔗 Redes', 'conv_manage_social', 'convoca-media-accounts', array( $this, 'render_accounts' ) );
-		add_submenu_page( 'convoca-media', 'Logs', '📊 Logs', 'conv_view_media_logs', 'convoca-media-logs', array( $this, 'render_logs' ) );
+		add_submenu_page( 'convoca-media', 'Cola de publicaciones', '📋 Cola', 'convoca_manage_media', 'convoca-media-queue', array( $this, 'render_queue' ) );
+		add_submenu_page( 'convoca-media', 'Redes sociales', '🔗 Redes', 'convoca_manage_social', 'convoca-media-accounts', array( $this, 'render_accounts' ) );
+		add_submenu_page( 'convoca-media', 'Logs', '📊 Logs', 'convoca_view_media_logs', 'convoca-media-logs', array( $this, 'render_logs' ) );
 	}
 
 	public function render_queue(): void {

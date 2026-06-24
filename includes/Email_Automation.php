@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Email_Automation {
 
 
-	private const OPTION = 'conv_enroll_email_templates';
+	private const OPTION = 'convoca_enroll_email_templates';
 
 	public const TEMPLATES = array(
 		'recepcion',
@@ -88,7 +88,7 @@ class Email_Automation {
 	 */
 	public function clear_panel_cache( int|array $meta_id, int $post_id, string $meta_key ): void {
 		if ( $meta_key === '_conv_panel_page' ) {
-			delete_option( 'conv_enroll_panel_reservas_page_id' );
+			delete_option( 'convoca_enroll_panel_reservas_page_id' );
 		}
 	}
 
@@ -587,7 +587,7 @@ class Email_Automation {
 		);
 
 		// Notify admin in queue too.
-		$settings    = get_option( 'conv_enroll_settings', array() );
+		$settings    = get_option( 'convoca_enroll_settings', array() );
 		$admin_email = $settings['admin_email'] ?? get_option( 'admin_email' );
 		if ( $admin_email !== $email ) {
 			Email_Queue::enqueue(
@@ -657,7 +657,7 @@ class Email_Automation {
 		$hora      = $fecha_raw ? \Convoca\Core\Utils::format_date( $fecha_raw, 'H:i' ) : '—';
 
 		// Build panel URL using cached page ID or fallback.
-		$panel_page_id = (int) get_option( 'conv_enroll_panel_reservas_page_id' );
+		$panel_page_id = (int) get_option( 'convoca_enroll_panel_reservas_page_id' );
 		if ( ! $panel_page_id ) {
 			$panel_page = get_pages(
 				array(
@@ -668,7 +668,7 @@ class Email_Automation {
 			);
 			if ( ! empty( $panel_page ) ) {
 				$panel_page_id = $panel_page[0]->ID;
-				update_option( 'conv_enroll_panel_reservas_page_id', $panel_page_id );
+				update_option( 'convoca_enroll_panel_reservas_page_id', $panel_page_id );
 			}
 		}
 		$panel_url = $panel_page_id ? get_permalink( $panel_page_id ) : home_url( '/panel-reservas/' );

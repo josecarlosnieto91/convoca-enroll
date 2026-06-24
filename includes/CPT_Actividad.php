@@ -120,7 +120,7 @@ class CPT_Actividad {
 
 	public function add_metabox(): void {
 		add_meta_box(
-			'conv_enroll_actividad_datos',
+			'convoca_enroll_actividad_datos',
 			__( 'Datos de la actividad', 'convoca-enroll' ),
 			array( $this, 'render_metabox' ),
 			'actividad',
@@ -130,7 +130,7 @@ class CPT_Actividad {
 	}
 
 	public function render_metabox( \WP_Post $post ): void {
-		wp_nonce_field( 'conv_enroll_actividad_meta', 'conv_enroll_actividad_nonce' );
+		wp_nonce_field( 'convoca_enroll_actividad_meta', 'convoca_enroll_actividad_nonce' );
 		$m = fn( string $key ) => get_post_meta( $post->ID, '_conv_' . $key, true );
 		?>
 		<div class="convoca-grid-2">
@@ -215,8 +215,8 @@ class CPT_Actividad {
 		$is_running = true;
 
 		if (
-			! isset( $_POST['conv_enroll_actividad_nonce'] ) ||
-			! wp_verify_nonce( $_POST['conv_enroll_actividad_nonce'], 'conv_enroll_actividad_meta' )
+			! isset( $_POST['convoca_enroll_actividad_nonce'] ) ||
+			! wp_verify_nonce( $_POST['convoca_enroll_actividad_nonce'], 'convoca_enroll_actividad_meta' )
 		) {
 			$is_running = false;
 			return;
@@ -256,7 +256,7 @@ class CPT_Actividad {
 		);
 
 		foreach ( $fields as $key => $sanitizer ) {
-			$raw = $_POST[ 'conv_enroll_' . $key ] ?? '';
+			$raw = $_POST[ 'convoca_enroll_' . $key ] ?? '';
 			$val = is_callable( $sanitizer ) ? $sanitizer( $raw ) : $raw;
 			update_post_meta( $post_id, '_conv_' . $key, $val );
 		}
@@ -269,21 +269,21 @@ class CPT_Actividad {
 			add_filter(
 				'redirect_post_location',
 				function ( $location ) {
-					return add_query_arg( 'message', 'conv_enroll_date_error', $location );
+					return add_query_arg( 'message', 'convoca_enroll_date_error', $location );
 				}
 			);
 		}
 
 		// Validate Google Photos configuration if enabled.
 		if ( get_post_meta( $post_id, '_conv_google_create_album', true ) === '1' ) {
-			$settings      = get_option( 'conv_enroll_settings', array() );
+			$settings      = get_option( 'convoca_enroll_settings', array() );
 			$google_photos = new Google_Photos();
 			if ( empty( $settings['google_photos_enabled'] ) || ! $google_photos->is_configured() ) {
 				update_post_meta( $post_id, '_conv_google_create_album', '0' );
 				add_filter(
 					'redirect_post_location',
 					function ( $location ) {
-						return add_query_arg( 'message', 'conv_enroll_google_photos_error', $location );
+						return add_query_arg( 'message', 'convoca_enroll_google_photos_error', $location );
 					}
 				);
 			}
@@ -291,14 +291,14 @@ class CPT_Actividad {
 
 		// Validate Google Calendar configuration if enabled.
 		if ( get_post_meta( $post_id, '_conv_google_calendar_sync', true ) === '1' ) {
-			$settings = get_option( 'conv_enroll_settings', array() );
+			$settings = get_option( 'convoca_enroll_settings', array() );
 			$calendar = new Google_Calendar();
 			if ( empty( $settings['google_calendar_enabled'] ) || ! $calendar->is_configured() ) {
 				update_post_meta( $post_id, '_conv_google_calendar_sync', '0' );
 				add_filter(
 					'redirect_post_location',
 					function ( $location ) {
-						return add_query_arg( 'message', 'conv_enroll_google_calendar_error', $location );
+						return add_query_arg( 'message', 'convoca_enroll_google_calendar_error', $location );
 					}
 				);
 			}
@@ -324,7 +324,7 @@ class CPT_Actividad {
 			add_filter(
 				'redirect_post_location',
 				function ( $location ) {
-					return add_query_arg( 'message', 'conv_enroll_plazas_adjusted', $location );
+					return add_query_arg( 'message', 'convoca_enroll_plazas_adjusted', $location );
 				}
 			);
 		}
@@ -437,7 +437,7 @@ class CPT_Actividad {
 		}
 
 		$user_id     = (string) get_current_user_id();
-		$assignments = (array) get_option( 'conv_enroll_delegados_actividades', array() );
+		$assignments = (array) get_option( 'convoca_enroll_delegados_actividades', array() );
 		$ids         = (array) ( $assignments[ $user_id ] ?? array() );
 
 		// Also check for activity meta just in case it was set manually.
@@ -618,7 +618,7 @@ class CPT_Actividad {
 		}
 
 		add_meta_box(
-			'conv_enroll_google_photos_status',
+			'convoca_enroll_google_photos_status',
 			__( 'Google Photos', 'convoca-enroll' ),
 			array( $this, 'render_google_photos_metabox' ),
 			'actividad',
@@ -628,7 +628,7 @@ class CPT_Actividad {
 	}
 
 	public function render_google_photos_metabox( \WP_Post $post ): void {
-		$settings = get_option( 'conv_enroll_settings', array() );
+		$settings = get_option( 'convoca_enroll_settings', array() );
 		if ( empty( $settings['google_photos_enabled'] ) ) {
 			echo '<p>La integración con Google Photos está desactivada.</p>';
 			return;
@@ -662,9 +662,9 @@ class CPT_Actividad {
 		<script>
 		function bdeCreateAlbum(activityId) {
 			const fd = new FormData();
-			fd.append('action', 'conv_enroll_google_photos_create');
+			fd.append('action', 'convoca_enroll_google_photos_create');
 			fd.append('activity_id', activityId);
-			fd.append('nonce', '<?php echo esc_attr( wp_create_nonce( 'conv_enroll_google_photos_nonce' ) ); ?>');
+			fd.append('nonce', '<?php echo esc_attr( wp_create_nonce( 'convoca_enroll_google_photos_nonce' ) ); ?>');
 
 			fetch(ajaxurl, { method: 'POST', body: fd })
 			.then(res => res.json())
@@ -682,9 +682,9 @@ class CPT_Actividad {
 			if (!confirm('¿Compartir el álbum con todos los participantes confirmados?')) return;
 			
 			const fd = new FormData();
-			fd.append('action', 'conv_enroll_google_photos_share');
+			fd.append('action', 'convoca_enroll_google_photos_share');
 			fd.append('activity_id', activityId);
-			fd.append('nonce', '<?php echo esc_attr( wp_create_nonce( 'conv_enroll_google_photos_nonce' ) ); ?>');
+			fd.append('nonce', '<?php echo esc_attr( wp_create_nonce( 'convoca_enroll_google_photos_nonce' ) ); ?>');
 
 			fetch(ajaxurl, { method: 'POST', body: fd })
 			.then(res => res.json())
@@ -713,7 +713,7 @@ class CPT_Actividad {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
-		if ( ! isset( $_POST['conv_enroll_actividad_metabox_nonce'] ) || ! wp_verify_nonce( $_POST['conv_enroll_actividad_metabox_nonce'], 'conv_enroll_actividad_metabox' ) ) {
+		if ( ! isset( $_POST['convoca_enroll_actividad_metabox_nonce'] ) || ! wp_verify_nonce( $_POST['convoca_enroll_actividad_metabox_nonce'], 'convoca_enroll_actividad_metabox' ) ) {
 			return;
 		}
 
@@ -727,7 +727,7 @@ class CPT_Actividad {
 			return;
 		}
 
-		$settings = get_option( 'conv_enroll_settings', array() );
+		$settings = get_option( 'convoca_enroll_settings', array() );
 		if ( empty( $settings['google_photos_enabled'] ) ) {
 			return;
 		}
@@ -741,7 +741,7 @@ class CPT_Actividad {
 	}
 
 	public function ajax_share_google_album(): void {
-		check_ajax_referer( 'conv_enroll_google_photos_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_enroll_google_photos_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'edit_post', $_POST['activity_id'] ) ) {
 			wp_send_json_error( 'Sin permisos' );
@@ -766,7 +766,7 @@ class CPT_Actividad {
 	}
 
 	public function ajax_create_google_album(): void {
-		check_ajax_referer( 'conv_enroll_google_photos_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_enroll_google_photos_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'edit_post', $_POST['activity_id'] ) ) {
 			wp_send_json_error( 'Sin permisos' );
@@ -794,7 +794,7 @@ class CPT_Actividad {
 	 * AJAX: Sync activity with Google Calendar.
 	 */
 	public function ajax_sync_google_calendar(): void {
-		check_ajax_referer( 'conv_enroll_calendar_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_enroll_calendar_nonce', 'nonce' );
 
 		$activity_id = absint( $_POST['activity_id'] ?? 0 );
 		if ( ! current_user_can( 'edit_post', $activity_id ) ) {
@@ -819,7 +819,7 @@ class CPT_Actividad {
 	 * AJAX: Delete event from Google Calendar.
 	 */
 	public function ajax_delete_google_calendar(): void {
-		check_ajax_referer( 'conv_enroll_calendar_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_enroll_calendar_nonce', 'nonce' );
 
 		$activity_id = absint( $_POST['activity_id'] ?? 0 );
 		if ( ! current_user_can( 'edit_post', $activity_id ) ) {
@@ -836,7 +836,7 @@ class CPT_Actividad {
 			wp_send_json_error( __( 'No hay un evento asociado a esta actividad.', 'convoca-enroll' ) );
 		}
 
-		$settings    = get_option( 'conv_enroll_settings', array() );
+		$settings    = get_option( 'convoca_enroll_settings', array() );
 		$calendar_id = $settings['google_calendar_id'] ?? 'primary';
 
 		try {

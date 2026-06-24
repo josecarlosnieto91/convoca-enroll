@@ -13,8 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Settings {
 
-	private const CACHE_KEY = 'conv_enroll_diagnostic_cache';
-	private const OPTION    = 'conv_enroll_settings';
+	private const CACHE_KEY = 'convoca_enroll_diagnostic_cache';
+	private const OPTION    = 'convoca_enroll_settings';
 
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'maybe_save' ) );
@@ -69,7 +69,7 @@ class Admin_Settings {
 			<?php \Convoca\Core\Utils::render_stored_notices(); ?>
 
 			<form method="post">
-				<?php wp_nonce_field( 'conv_enroll_settings_save', 'conv_enroll_settings_nonce' ); ?>
+				<?php wp_nonce_field( 'convoca_enroll_settings_save', 'convoca_enroll_settings_nonce' ); ?>
 				<input type="hidden" name="conv_enroll_active_tab" value="<?php echo esc_attr( $tab ); ?>">
 
 				<?php
@@ -248,7 +248,7 @@ class Admin_Settings {
 		<?php
 		wp_editor(
 			$normas,
-			'conv_enroll_normas_inscripcion',
+			'convoca_enroll_normas_inscripcion',
 			array(
 				'textarea_name' => 'conv[normas_inscripcion]',
 				'textarea_rows' => 12,
@@ -670,8 +670,8 @@ class Admin_Settings {
 
 	public function maybe_save(): void {
 		if (
-			! isset( $_POST['conv_enroll_settings_nonce'] ) ||
-			! wp_verify_nonce( $_POST['conv_enroll_settings_nonce'], 'conv_enroll_settings_save' )
+			! isset( $_POST['convoca_enroll_settings_nonce'] ) ||
+			! wp_verify_nonce( $_POST['convoca_enroll_settings_nonce'], 'convoca_enroll_settings_save' )
 		) {
 			return;
 		}
@@ -680,7 +680,7 @@ class Admin_Settings {
 			return;
 		}
 
-		$tab = sanitize_text_field( $_POST['conv_enroll_active_tab'] ?? 'general' );
+		$tab = sanitize_text_field( $_POST['convoca_enroll_active_tab'] ?? 'general' );
 
 		// Load existing settings to merge.
 		$settings = get_option( self::OPTION, array() );
@@ -703,8 +703,8 @@ class Admin_Settings {
 			$settings['webhook_url']        = esc_url_raw( $conv['webhook_url'] ?? '' );
 			$settings['webhook_secret']     = sanitize_text_field( $conv['webhook_secret'] ?? '' );
 
-			if ( isset( $_POST['conv_enroll_run_maintenance'] ) ) {
-				if ( $_POST['conv_enroll_run_maintenance'] === 'repair' ) {
+			if ( isset( $_POST['convoca_enroll_run_maintenance'] ) ) {
+				if ( $_POST['convoca_enroll_run_maintenance'] === 'repair' ) {
 					Maintenance::reparar_integridad();
 					\Convoca\Core\Utils::set_admin_notice( 'Integridad reparada.', 'success' );
 				} else {
@@ -784,7 +784,7 @@ class Admin_Settings {
 	}
 
 	public function ajax_preview(): void {
-		check_ajax_referer( 'conv_enroll_preview_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_enroll_preview_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( __( 'No tienes permisos.', 'convoca-enroll' ) );
@@ -876,22 +876,22 @@ class Admin_Settings {
 
 		// 2. Pages
 		$required_pages = array(
-			'conv_calendario'        => array(
+			'convoca_calendario'        => array(
 				'title'     => __( 'Página: Calendario de Actividades', 'convoca-enroll' ),
 				'shortcode' => '[conv_calendario]',
 				'fix'       => __( 'Crea una página con el shortcode [conv_calendario] para mostrar el listado de actividades.', 'convoca-enroll' ),
 			),
-			'conv_mis_inscripciones' => array(
+			'convoca_mis_inscripciones' => array(
 				'title'     => __( 'Página: Mis Inscripciones', 'convoca-enroll' ),
 				'shortcode' => '[conv_mis_inscripciones]',
 				'fix'       => __( 'Crea una página con el shortcode [conv_mis_inscripciones] para que los usuarios vean sus reservas.', 'convoca-enroll' ),
 			),
-			'conv_checkin'           => array(
+			'convoca_checkin'           => array(
 				'title'     => __( 'Página: Control de Asistencia (Check-in)', 'convoca-enroll' ),
 				'shortcode' => '[conv_checkin]',
 				'fix'       => __( 'Crea una página con el shortcode [conv_checkin] para que los monitores registren la asistencia.', 'convoca-enroll' ),
 			),
-			'conv_pago_actividad'    => array(
+			'convoca_pago_actividad'    => array(
 				'title'     => __( 'Página: Pago de Actividad', 'convoca-enroll' ),
 				'shortcode' => '[conv_pago_actividad]',
 				'fix'       => __( 'Crea una página con el shortcode [conv_pago_actividad] para procesar los pagos de inscripción.', 'convoca-enroll' ),

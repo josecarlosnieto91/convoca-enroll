@@ -18,10 +18,10 @@ class Formulario_Evaluacion {
 	}
 
 	public static function get_nonce() {
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'conv_eval_get_nonce', 30, 3600 ) ) {
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'convoca_eval_get_nonce', 30, 3600 ) ) {
 			wp_send_json_error( array( 'message' => __( 'Demasiadas peticiones.', 'convoca-enroll' ) ), 429 );
 		}
-		wp_send_json_success( wp_create_nonce( 'conv_evaluacion_nonce' ) );
+		wp_send_json_success( wp_create_nonce( 'convoca_evaluacion_nonce' ) );
 	}
 
 	public static function enqueue_assets() {
@@ -31,10 +31,10 @@ class Formulario_Evaluacion {
 
 		wp_localize_script(
 			'conv-evaluacion-js',
-			'conv_eval_ajax',
+			'convoca_eval_ajax',
 			array(
 				'url'   => admin_url( 'admin-ajax.php' ),
-				'nonce' => wp_create_nonce( 'conv_evaluacion_nonce' ),
+				'nonce' => wp_create_nonce( 'convoca_evaluacion_nonce' ),
 			)
 		);
 	}
@@ -70,7 +70,7 @@ class Formulario_Evaluacion {
 		// 1. Check if user already evaluated
 		$existing = get_posts(
 			array(
-				'post_type'      => 'conv_evaluacion',
+				'post_type'      => 'convoca_evaluacion',
 				'meta_query'     => array(
 					array(
 						'key'   => '_conv_eval_actividad_id',
@@ -92,7 +92,7 @@ class Formulario_Evaluacion {
 		// 2. Check permissions
 		$can_evaluate = false;
 
-		if ( current_user_can( 'manage_options' ) || current_user_can( 'conv_manage_evaluations' ) ) {
+		if ( current_user_can( 'manage_options' ) || current_user_can( 'convoca_manage_evaluations' ) ) {
 			$can_evaluate = true;
 		} else {
 			// Is monitor?
@@ -147,7 +147,7 @@ class Formulario_Evaluacion {
 			<form id="conv-evaluacion-form" method="post">
 				<input type="hidden" name="actividad_id" value="<?php echo esc_attr( $actividad_id ); ?>">
 				<input type="hidden" name="action" value="conv_submit_evaluacion">
-				<?php wp_nonce_field( 'conv_evaluacion_nonce', 'security' ); ?>
+				<?php wp_nonce_field( 'convoca_evaluacion_nonce', 'security' ); ?>
 
 				<div class="conv-eval-section">
 					<h4><?php _e( '1. Valoraciones numéricas', 'convoca-enroll' ); ?></h4>
@@ -235,9 +235,9 @@ class Formulario_Evaluacion {
 	}
 
 	public static function handle_submission() {
-		check_ajax_referer( 'conv_evaluacion_nonce', 'security' );
+		check_ajax_referer( 'convoca_evaluacion_nonce', 'security' );
 
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'conv_submit_evaluacion', 10, 3600 ) ) {
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'convoca_submit_evaluacion', 10, 3600 ) ) {
 			wp_send_json_error( __( 'Demasiados intentos. Inténtalo de nuevo más tarde.', 'convoca-enroll' ), 429 );
 		}
 
@@ -265,7 +265,7 @@ class Formulario_Evaluacion {
 		// Check if already evaluated.
 		$existing = get_posts(
 			array(
-				'post_type'      => 'conv_evaluacion',
+				'post_type'      => 'convoca_evaluacion',
 				'meta_query'     => array(
 					array(
 						'key'   => '_conv_eval_actividad_id',
@@ -285,7 +285,7 @@ class Formulario_Evaluacion {
 		}
 
 		// Lock to prevent race conditions.
-		$lock_key = 'conv_eval_lock_' . $user->ID . '_' . $actividad_id;
+		$lock_key = 'convoca_eval_lock_' . $user->ID . '_' . $actividad_id;
 		if ( get_transient( $lock_key ) ) {
 			wp_send_json_error( __( 'Estamos procesando tu solicitud, por favor espera.', 'convoca-enroll' ) );
 		}
@@ -307,7 +307,7 @@ class Formulario_Evaluacion {
 		$post_data = array(
 			'post_title'  => wp_strip_all_tags( $title ),
 			'post_status' => 'publish',
-			'post_type'   => 'conv_evaluacion',
+			'post_type'   => 'convoca_evaluacion',
 		);
 
 		$eval_id = wp_insert_post( $post_data );
@@ -342,7 +342,7 @@ class Formulario_Evaluacion {
 		}
 
 		// Hook for integrations.
-		do_action( 'conv_evaluacion_completada', $eval_id, $actividad_id, $user->ID );
+		do_action( 'convoca_evaluacion_completada', $eval_id, $actividad_id, $user->ID );
 
 		wp_send_json_success( __( 'Evaluación enviada con éxito. ¡Gracias por tu colaboración!', 'convoca-enroll' ) );
 	}

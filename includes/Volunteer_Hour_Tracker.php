@@ -236,7 +236,7 @@ class Volunteer_Hour_Tracker {
 			$inscripcion_id
 		);
 
-		\Convoca\Core\Utils::do_action( 'conv_after_horas_voluntario_actualizadas', 'conv_horas_voluntario_actualizadas', $user->ID, $hours );
+		\Convoca\Core\Utils::do_action( 'convoca_after_horas_voluntario_actualizadas', 'convoca_horas_voluntario_actualizadas', $user->ID, $hours );
 	}
 
 	/**

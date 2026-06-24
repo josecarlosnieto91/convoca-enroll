@@ -44,6 +44,6 @@ class CPT_Evaluacion {
 			'show_in_rest'       => false,
 		);
 
-		register_post_type( 'conv_evaluacion', $args );
+		register_post_type( 'convoca_evaluacion', $args );
 	}
 }

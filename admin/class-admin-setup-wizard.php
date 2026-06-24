@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Admin_Setup_Wizard {
 
-	const COMPLETED_OPTION = 'conv_media_wizard_completed';
+	const COMPLETED_OPTION = 'convoca_media_wizard_completed';
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'register_page' ) );
@@ -44,7 +44,7 @@ class Admin_Setup_Wizard {
 			4 => 'Probar cartel',
 			5 => '¡Listo!',
 		);
-		$settings = get_option( 'conv_enroll_settings', array() );
+		$settings = get_option( 'convoca_enroll_settings', array() );
 		?>
 		<div class="wrap" style="max-width:800px;margin:40px auto;">
 			<h1>🚀 <?php esc_html_e( 'Asistente de configuración', 'convoca-enroll' ); ?></h1>
@@ -170,7 +170,7 @@ class Admin_Setup_Wizard {
 		if ( ! isset( $_POST['convoca_wizard_nonce'] ) || ! wp_verify_nonce( $_POST['convoca_wizard_nonce'], 'convoca_wizard' ) ) {
 			return;
 		}
-		$settings = get_option( 'conv_enroll_settings', array() );
+		$settings = get_option( 'convoca_enroll_settings', array() );
 		if ( isset( $_POST['poster_logo_id'] ) ) {
 			$settings['poster_logo_id'] = (int) $_POST['poster_logo_id'];
 		}
@@ -180,7 +180,7 @@ class Admin_Setup_Wizard {
 		if ( isset( $_POST['default_template'] ) ) {
 			$settings['default_template'] = sanitize_text_field( $_POST['default_template'] );
 		}
-		update_option( 'conv_enroll_settings', $settings );
+		update_option( 'convoca_enroll_settings', $settings );
 		$next = min( 5, (int) ( $_POST['step'] ?? 1 ) + 1 );
 		wp_redirect( add_query_arg( 'step', $next, admin_url( 'admin.php?page=convoca-media-wizard' ) ) );
 		exit;

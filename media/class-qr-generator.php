@@ -112,7 +112,7 @@ class QR_Generator {
 			return $landing;
 		}
 
-		$settings = get_option( 'conv_enroll_settings', array() );
+		$settings = get_option( 'convoca_enroll_settings', array() );
 		if ( ! empty( $settings['inscripcion_url'] ) ) {
 			return $settings['inscripcion_url'];
 		}

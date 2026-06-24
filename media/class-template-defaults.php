@@ -24,7 +24,7 @@ class Template_Defaults {
 
 	public static function seed(): void {
 		global $wpdb;
-		$table = $wpdb->prefix . 'conv_media_templates';
+		$table = $wpdb->prefix . 'convoca_media_templates';
 
 		// Only seed if no system templates exist
 		$existing = $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE is_system = 1" );

@@ -30,7 +30,7 @@ class Media_Logger {
 		global $wpdb;
 
 		$wpdb->insert(
-			$wpdb->prefix . 'conv_media_logs',
+			$wpdb->prefix . 'convoca_media_logs',
 			array(
 				'object_type' => $object_type,
 				'object_id'   => $object_id,

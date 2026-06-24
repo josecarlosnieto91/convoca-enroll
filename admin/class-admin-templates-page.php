@@ -25,14 +25,14 @@ class Admin_Templates_Page {
 			'convoca-media',
 			__( 'Plantillas', 'convoca-enroll' ),
 			__( 'Plantillas', 'convoca-enroll' ),
-			'conv_manage_media',
+			'convoca_manage_media',
 			'convoca-media-templates',
 			array( $this, 'render_page' )
 		);
 	}
 
 	public function render_page(): void {
-		if ( ! current_user_can( 'conv_manage_media' ) ) {
+		if ( ! current_user_can( 'convoca_manage_media' ) ) {
 			wp_die( __( 'No tienes permisos.', 'convoca-enroll' ) );
 		}
 

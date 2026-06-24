@@ -176,7 +176,7 @@ class Admin_Inscripcion_Form {
 				form.addEventListener('submit', function (e) {
 					e.preventDefault();
 					const fd = new FormData(form);
-					fd.append('action', 'conv_enroll_admin_inscribir');
+					fd.append('action', 'convoca_enroll_admin_inscribir');
 					fd.append('nonce', window.bdeAdmin?.nonce || '');
 
 					const btn = form.querySelector('[type="submit"]');
@@ -219,7 +219,7 @@ class Admin_Inscripcion_Form {
 	 * AJAX handler for admin inscription creation.
 	 */
 	public function handle_submit(): void {
-		check_ajax_referer( 'conv_enroll_admin_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_enroll_admin_nonce', 'nonce' );
 
 		$data         = wp_unslash( $_POST );
 		$actividad_id = (int) ( $data['actividad_id'] ?? 0 );

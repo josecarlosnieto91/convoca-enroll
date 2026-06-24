@@ -19,7 +19,7 @@ class CSV_Exporter {
 	}
 
 	public function export(): void {
-		check_ajax_referer( 'conv_enroll_export_csv', 'nonce' );
+		check_ajax_referer( 'convoca_enroll_export_csv', 'nonce' );
 
 		if ( ! current_user_can( 'manage_inscripciones' ) ) {
 			wp_die(

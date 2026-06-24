@@ -31,7 +31,7 @@ class Template_Manager {
 
 	public static function get( $slug_or_id ): ?array {
 		global $wpdb;
-		$table = $wpdb->prefix . 'conv_media_templates';
+		$table = $wpdb->prefix . 'convoca_media_templates';
 
 		if ( is_numeric( $slug_or_id ) ) {
 			$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $slug_or_id ), ARRAY_A );
@@ -49,7 +49,7 @@ class Template_Manager {
 
 	public static function save( array $data ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'conv_media_templates';
+		$table = $wpdb->prefix . 'convoca_media_templates';
 
 		$config = isset( $data['config'] ) && is_array( $data['config'] )
 			? wp_json_encode( $data['config'], JSON_UNESCAPED_UNICODE )
@@ -81,7 +81,7 @@ class Template_Manager {
 			return false;
 		}
 		return (bool) $wpdb->delete(
-			$wpdb->prefix . 'conv_media_templates',
+			$wpdb->prefix . 'convoca_media_templates',
 			array( 'id' => $id ),
 			array( '%d' )
 		);

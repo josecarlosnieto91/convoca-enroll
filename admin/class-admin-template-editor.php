@@ -28,8 +28,8 @@ class Admin_Template_Editor {
 		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_script( 'wp-color-picker' );
 		wp_enqueue_script( 'jquery-ui-sortable' );
-		wp_enqueue_style( 'convoca-media-admin', CONV_ENROLL_URL . 'assets/css/media-admin.css', array(), CONV_ENROLL_VERSION );
-		wp_enqueue_script( 'convoca-editor', CONV_ENROLL_URL . 'assets/js/convoca-editor.js', array( 'jquery', 'jquery-ui-sortable', 'wp-color-picker' ), CONV_ENROLL_VERSION, true );
+		wp_enqueue_style( 'convoca-media-admin', CONVOCA_ENROLL_URL . 'assets/css/media-admin.css', array(), CONVOCA_ENROLL_VERSION );
+		wp_enqueue_script( 'convoca-editor', CONVOCA_ENROLL_URL . 'assets/js/convoca-editor.js', array( 'jquery', 'jquery-ui-sortable', 'wp-color-picker' ), CONVOCA_ENROLL_VERSION, true );
 		wp_localize_script( 'convoca-editor', 'convocaEditor', array(
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
 			'nonce'    => wp_create_nonce( 'convoca_editor' ),
@@ -41,7 +41,7 @@ class Admin_Template_Editor {
 			'convoca-media',
 			'Editor de plantillas',
 			'✏️ Editor',
-			'conv_manage_media',
+			'convoca_manage_media',
 			'convoca-media-editor',
 			array( $this, 'render' )
 		);
@@ -129,7 +129,7 @@ class Admin_Template_Editor {
 
 	public function ajax_save(): void {
 		check_ajax_referer( 'convoca_editor', 'nonce' );
-		if ( ! current_user_can( 'conv_manage_media' ) ) {
+		if ( ! current_user_can( 'convoca_manage_media' ) ) {
 			wp_send_json_error( array( 'message' => 'Sin permisos.' ) );
 		}
 
@@ -157,7 +157,7 @@ class Admin_Template_Editor {
 
 	public function ajax_export(): void {
 		check_ajax_referer( 'convoca_editor', 'nonce' );
-		if ( ! current_user_can( 'conv_manage_media' ) ) {
+		if ( ! current_user_can( 'convoca_manage_media' ) ) {
 			wp_send_json_error( array( 'message' => 'Sin permisos.' ) );
 		}
 		$slug = sanitize_text_field( $_POST['slug'] ?? '' );
@@ -170,7 +170,7 @@ class Admin_Template_Editor {
 
 	public function ajax_import(): void {
 		check_ajax_referer( 'convoca_editor', 'nonce' );
-		if ( ! current_user_can( 'conv_manage_media' ) ) {
+		if ( ! current_user_can( 'convoca_manage_media' ) ) {
 			wp_send_json_error( array( 'message' => 'Sin permisos.' ) );
 		}
 

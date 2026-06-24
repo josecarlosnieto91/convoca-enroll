@@ -41,7 +41,7 @@ class Admin_Evaluaciones_Editor {
 			$post_type = get_post_type( $_GET['post'] );
 		}
 
-		if ( ( $screen && $screen->id === 'conv_evaluacion' ) || $post_type === 'conv_evaluacion' ) {
+		if ( ( $screen && $screen->id === 'convoca_evaluacion' ) || $post_type === 'convoca_evaluacion' ) {
 			if ( isset( $screen->action ) && $screen->action === 'add' || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
 				wp_redirect( admin_url( 'admin.php?page=conv-evaluacion-editor' ) );
 				exit;
@@ -91,7 +91,7 @@ class Admin_Evaluaciones_Editor {
 			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="conv-form-custom">
 				<input type="hidden" name="action" value="conv_enroll_save_evaluacion_admin">
 				<input type="hidden" name="id" value="<?php echo $post_id; ?>">
-				<?php wp_nonce_field( 'conv_enroll_save_evaluacion_nonce' ); ?>
+				<?php wp_nonce_field( 'convoca_enroll_save_evaluacion_nonce' ); ?>
 
 				<div class="conv-grid conv-grid--2">
 					<div class="conv-card">
@@ -183,7 +183,7 @@ class Admin_Evaluaciones_Editor {
 	 * Handle save from admin form.
 	 */
 	public function handle_save_admin() {
-		check_admin_referer( 'conv_enroll_save_evaluacion_nonce' );
+		check_admin_referer( 'convoca_enroll_save_evaluacion_nonce' );
 
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_die( __( 'No tienes permisos para realizar esta acción.', 'convoca-enroll' ) );
@@ -195,7 +195,7 @@ class Admin_Evaluaciones_Editor {
 		$actividad_title = get_the_title( $actividad_id );
 
 		$post_data = array(
-			'post_type'    => 'conv_evaluacion',
+			'post_type'    => 'convoca_evaluacion',
 			'post_title'   => 'Evaluación: ' . $actividad_title,
 			'post_content' => $content,
 			'post_status'  => 'publish',

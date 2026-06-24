@@ -5,7 +5,7 @@
  * Handles database structure upgrades for the enroll plugin.
  *
  * To add a new upgrade:
- * 1. Increment CONV_ENROLL_DB_VERSION in convoca-enroll.php
+ * 1. Increment CONVOCA_ENROLL_DB_VERSION in convoca-enroll.php
  * 2. Add a callback: '1.1.0' => [$this, 'upgrade_to_1_1_0']
  * 3. Implement the private method with idempotent logic.
  *
@@ -35,11 +35,11 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 	}
 
 	protected function get_db_version(): string {
-		return defined( 'CONV_ENROLL_DB_VERSION' ) ? CONV_ENROLL_DB_VERSION : '0.0.0';
+		return defined( 'CONVOCA_ENROLL_DB_VERSION' ) ? CONVOCA_ENROLL_DB_VERSION : '0.0.0';
 	}
 
 	protected function get_option_name(): string {
-		return 'conv_enroll_db_version';
+		return 'convoca_enroll_db_version';
 	}
 
 	protected function get_transient_prefix(): string {

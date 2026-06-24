@@ -36,7 +36,7 @@ class Social_Healthcheck {
 	}
 
 	public static function admin_warning(): void {
-		if ( ! current_user_can( 'conv_manage_social' ) ) {
+		if ( ! current_user_can( 'convoca_manage_social' ) ) {
 			return;
 		}
 		$accounts = Social_OAuth::get_accounts();

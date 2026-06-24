@@ -46,7 +46,7 @@ class Admin_Monitor_CRM {
 		$actividad_id = isset( $_GET['actividad_id'] ) ? (int) $_GET['actividad_id'] : 0;
 
 		// Verify nonce.
-		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'conv_enroll_crm_' . $action . '_' . $id ) ) {
+		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'convoca_enroll_crm_' . $action . '_' . $id ) ) {
 			wp_die( __( 'Nonce inválido.', 'convoca-enroll' ) );
 		}
 
@@ -105,7 +105,7 @@ class Admin_Monitor_CRM {
 			wp_die( __( 'No tienes permisos.', 'convoca-enroll' ) );
 		}
 
-		check_admin_referer( 'conv_enroll_export_csv' );
+		check_admin_referer( 'convoca_enroll_export_csv' );
 
 		$actividad_id = (int) $_GET['actividad_id'];
 		$type         = sanitize_text_field( $_GET['export'] );
@@ -199,7 +199,7 @@ class Admin_Monitor_CRM {
 	 * AJAX mark attendance.
 	 */
 	public function ajax_mark_attendance(): void {
-		check_ajax_referer( 'conv_enroll_attendance_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_enroll_attendance_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_inscripciones' ) ) {
 			wp_send_json_error( __( 'Permission denied', 'convoca-enroll' ) );
@@ -378,7 +378,7 @@ class Admin_Monitor_CRM {
 					'actividad_id' => $actividad_id,
 				)
 			),
-			'conv_enroll_export_csv'
+			'convoca_enroll_export_csv'
 		);
 		$export_asist = wp_nonce_url(
 			add_query_arg(
@@ -387,7 +387,7 @@ class Admin_Monitor_CRM {
 					'actividad_id' => $actividad_id,
 				)
 			),
-			'conv_enroll_export_csv'
+			'convoca_enroll_export_csv'
 		);
 		echo '<a href="' . esc_url( $export_asist ) . '" class="conv-btn-premium" style="background: #f1f5f9; color: #475569;">' . esc_html__( 'Exportar Asistentes', 'convoca-enroll' ) . '</a> ';
 		echo '<a href="' . esc_url( $export_all ) . '" class="conv-btn-premium" style="background: #f1f5f9; color: #475569;">' . esc_html__( 'Exportar Todas', 'convoca-enroll' ) . '</a>';
@@ -566,7 +566,7 @@ class Admin_Monitor_CRM {
 							'actividad_id' => $actividad_id,
 						)
 					),
-					'conv_enroll_crm_' . $confirm_action . '_' . $item->ID
+					'convoca_enroll_crm_' . $confirm_action . '_' . $item->ID
 				);
 				echo '<a href="' . esc_url( $confirm_url ) . '" class="conv-btn-premium" style="background:var(--conv-success); color:white; padding:5px 10px; font-size:12px;">' . ( $is_waitlist ? esc_html__( 'Promover', 'convoca-enroll' ) : esc_html__( 'Validar', 'convoca-enroll' ) ) . '</a>';
 			}

@@ -28,7 +28,7 @@ class Social_OAuth {
 		$refresh   = $refresh_token ? self::encrypt( $refresh_token ) : null;
 
 		$wpdb->replace(
-			$wpdb->prefix . 'conv_social_accounts',
+			$wpdb->prefix . 'convoca_social_accounts',
 			array(
 				'network'          => $network,
 				'account_id'       => $account_id,
@@ -78,7 +78,7 @@ class Social_OAuth {
 	public static function update_token_status( int $account_id, string $status, string $error = '' ): void {
 		global $wpdb;
 		$wpdb->update(
-			$wpdb->prefix . 'conv_social_accounts',
+			$wpdb->prefix . 'convoca_social_accounts',
 			array(
 				'is_active' => ( $status === 'active' ? 1 : 0 ), 'last_error' => $error
 			),

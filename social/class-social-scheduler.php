@@ -22,7 +22,7 @@ class Social_Scheduler {
 	public static function queue( int $actividad_id, array $account_ids, string $message, string $image_url = '', ?int $timestamp = null ): int {
 		global $wpdb;
 
-		$wpdb->insert( $wpdb->prefix . 'conv_social_queue', array(
+		$wpdb->insert( $wpdb->prefix . 'convoca_social_queue', array(
 			'actividad_id' => $actividad_id,
 			'status'       => $timestamp ? 'scheduled' : 'draft',
 			'content'      => wp_json_encode( array(
@@ -65,7 +65,7 @@ class Social_Scheduler {
 		}
 
 		$wpdb->update(
-			$wpdb->prefix . 'conv_social_queue',
+			$wpdb->prefix . 'convoca_social_queue',
 			array( 'status' => 'publishing' ),
 			array( 'id' => $queue_id )
 		);
@@ -98,7 +98,7 @@ class Social_Scheduler {
 
 		if ( $success_count === count( $accounts ) ) {
 			$wpdb->update(
-				$wpdb->prefix . 'conv_social_queue',
+				$wpdb->prefix . 'convoca_social_queue',
 				array(
 					'status'       => 'published',
 					'published_at' => current_time( 'mysql' ),
@@ -109,7 +109,7 @@ class Social_Scheduler {
 		} else {
 			$attempts = (int) $item['attempts'] + 1;
 			$wpdb->update(
-				$wpdb->prefix . 'conv_social_queue',
+				$wpdb->prefix . 'convoca_social_queue',
 				array(
 					'status'     => $attempts >= 3 ? 'failed' : 'scheduled',
 					'last_error' => implode( '; ', $errors ),

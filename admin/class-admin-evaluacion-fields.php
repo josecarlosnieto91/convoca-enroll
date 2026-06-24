@@ -14,17 +14,17 @@ class Admin_Evaluacion_Fields {
 
 	public static function add_meta_boxes() {
 		add_meta_box(
-			'conv_evaluacion_details',
+			'convoca_evaluacion_details',
 			__( 'Detalles de la Evaluación', 'convoca-enroll' ),
 			array( __CLASS__, 'render_meta_box' ),
-			'conv_evaluacion',
+			'convoca_evaluacion',
 			'normal',
 			'high'
 		);
 	}
 
 	public static function render_meta_box( $post ) {
-		wp_nonce_field( 'conv_evaluacion_fields', 'conv_evaluacion_fields_nonce' );
+		wp_nonce_field( 'convoca_evaluacion_fields', 'convoca_evaluacion_fields_nonce' );
 
 		$actividad_id  = get_post_meta( $post->ID, '_conv_eval_actividad_id', true );
 		$gestion       = get_post_meta( $post->ID, '_conv_eval_gestion', true );
@@ -80,11 +80,11 @@ class Admin_Evaluacion_Fields {
 	}
 
 	public static function save_meta_box( $post_id ) {
-		if ( ! isset( $_POST['conv_evaluacion_fields_nonce'] ) ) {
+		if ( ! isset( $_POST['convoca_evaluacion_fields_nonce'] ) ) {
 			return;
 		}
 
-		if ( ! wp_verify_nonce( $_POST['conv_evaluacion_fields_nonce'], 'conv_evaluacion_fields' ) ) {
+		if ( ! wp_verify_nonce( $_POST['convoca_evaluacion_fields_nonce'], 'convoca_evaluacion_fields' ) ) {
 			return;
 		}
 
@@ -105,7 +105,7 @@ class Admin_Evaluacion_Fields {
 		);
 
 		foreach ( $fields as $field ) {
-			$key = 'conv_eval_' . $field;
+			$key = 'convoca_eval_' . $field;
 			if ( isset( $_POST[ $key ] ) ) {
 				update_post_meta( $post_id, '_' . $key, sanitize_text_field( $_POST[ $key ] ) );
 			}

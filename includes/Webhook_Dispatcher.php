@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Webhook_Dispatcher {
 
-	private const TABLE_NAME = 'conv_enroll_webhook_queue';
+	private const TABLE_NAME = 'convoca_enroll_webhook_queue';
 
 	public function __construct() {
 		// Add action for processing the queue via Cron.
@@ -62,7 +62,7 @@ class Webhook_Dispatcher {
 	public static function enqueue( string $event_type, array $payload, ?int $inscripcion_id = null ): int|bool {
 		// Try to use Webhook_Manager from Common if available.
 		if ( class_exists( 'Convoca\Core\Webhook_Manager' ) ) {
-			$settings    = get_option( 'conv_enroll_settings', array() );
+			$settings    = get_option( 'convoca_enroll_settings', array() );
 			$webhook_url = $settings['webhook_url'] ?? '';
 
 			if ( ! empty( $webhook_url ) && filter_var( $webhook_url, FILTER_VALIDATE_URL ) ) {
@@ -109,7 +109,7 @@ class Webhook_Dispatcher {
 	 * Legacy queue implementation (fallback when Webhook_Manager unavailable).
 	 */
 	private static function enqueue_legacy( string $event_type, array $payload, ?int $inscripcion_id = null ): bool {
-		$settings    = get_option( 'conv_enroll_settings', array() );
+		$settings    = get_option( 'convoca_enroll_settings', array() );
 		$webhook_url = $settings['webhook_url'] ?? '';
 
 		if ( empty( $webhook_url ) || ! filter_var( $webhook_url, FILTER_VALIDATE_URL ) ) {
@@ -172,7 +172,7 @@ class Webhook_Dispatcher {
 
 	public function process_queue(): void {
 		// 0. Acquire lock to prevent concurrent runs
-		if ( ! \Convoca\Core\Utils::acquire_lock( 'conv_enroll_webhook_queue_lock', 300 ) ) {
+		if ( ! \Convoca\Core\Utils::acquire_lock( 'convoca_enroll_webhook_queue_lock', 300 ) ) {
 			return;
 		}
 
@@ -180,7 +180,7 @@ class Webhook_Dispatcher {
 			global $wpdb;
 			$table_name = self::get_table_name();
 
-			$settings = get_option( 'conv_enroll_settings', array() );
+			$settings = get_option( 'convoca_enroll_settings', array() );
 			$secret   = $settings['webhook_secret'] ?? '';
 
 			$batch_size  = 20;
@@ -272,7 +272,7 @@ class Webhook_Dispatcher {
 				}
 			}
 		} finally {
-			\Convoca\Core\Utils::release_lock( 'conv_enroll_webhook_queue_lock' );
+			\Convoca\Core\Utils::release_lock( 'convoca_enroll_webhook_queue_lock' );
 		}
 	}
 }

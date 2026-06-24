@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class PDF_Compromiso {
 
-	private const ERROR_TRANSIENT = 'conv_enroll_pdf_error_';
+	private const ERROR_TRANSIENT = 'convoca_enroll_pdf_error_';
 
 	public static $last_error = '';
 
@@ -56,7 +56,7 @@ class PDF_Compromiso {
 				"SELECT p.ID FROM {$wpdb->posts} p 
              INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id 
              INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id 
-             WHERE p.post_type = 'conv_documento' 
+             WHERE p.post_type = 'convoca_documento' 
              AND pm1.meta_key = '_conv_usuario_id' AND pm1.meta_value = %d 
              AND pm2.meta_key = '_conv_actividad_id' AND pm2.meta_value = %d 
              AND p.post_status = 'publish' LIMIT 1",
@@ -78,7 +78,7 @@ class PDF_Compromiso {
 		$nombre_voluntario = $user->first_name ?: $user->display_name;
 		$temp_post_id      = wp_insert_post(
 			array(
-				'post_type'   => 'conv_documento',
+				'post_type'   => 'convoca_documento',
 				'post_title'  => 'Compromiso - ' . $actividad->post_title . ' - ' . $nombre_voluntario,
 				'post_status' => 'draft',
 				'post_author' => 1,
@@ -98,7 +98,7 @@ class PDF_Compromiso {
 					"SELECT p.ID FROM {$wpdb->posts} p 
                  INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id 
                  INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id 
-                 WHERE p.post_type = 'conv_documento' 
+                 WHERE p.post_type = 'convoca_documento' 
                  AND pm1.meta_key = '_conv_usuario_id' AND pm1.meta_value = %d 
                  AND pm2.meta_key = '_conv_actividad_id' AND pm2.meta_value = %d 
                  AND p.post_status = 'publish' 
@@ -143,7 +143,7 @@ class PDF_Compromiso {
 
 			$content_for_hash = $user_id . $actividad_id . $ip . $timestamp;
 
-			$templates     = get_option( 'conv_pdf_templates', array() );
+			$templates     = get_option( 'convoca_pdf_templates', array() );
 			$template_html = isset( $templates['anexo_voluntariado'] ) ? $templates['anexo_voluntariado']['content'] : '<h1>Anexo de Voluntariado</h1><p>Nombre: {{nombre}}</p><p>DNI: {{dni}}</p><p>Actividad: {{actividad}}</p>';
 
 			$stamp_html = $signature->get_acceptance_stamp_html( $nombre_voluntario, $ip, $timestamp, $content_for_hash );

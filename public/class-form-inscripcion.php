@@ -52,20 +52,20 @@ class Form_Inscripcion {
 
 		$meta = CPT_Actividad::get_meta( $actividad_id );
 
-		wp_enqueue_style( 'conv-public', CONV_ENROLL_URL . 'assets/css/convoca-enroll-public.css', array(), CONV_ENROLL_VERSION );
-		wp_enqueue_script( 'conv-public', CONV_ENROLL_URL . 'assets/js/convoca-enroll-public.js', array( 'convoca-common-js' ), CONV_ENROLL_VERSION, true );
+		wp_enqueue_style( 'conv-public', CONVOCA_ENROLL_URL . 'assets/css/convoca-enroll-public.css', array(), CONVOCA_ENROLL_VERSION );
+		wp_enqueue_script( 'conv-public', CONVOCA_ENROLL_URL . 'assets/js/convoca-enroll-public.js', array( 'convoca-common-js' ), CONVOCA_ENROLL_VERSION, true );
 		wp_localize_script(
 			'conv-public',
 			'bdeEnroll',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 				'apiRoot' => esc_url_raw( rest_url() ),
-				'nonce'   => wp_create_nonce( 'conv_enroll_inscribir_nonce' ),
+				'nonce'   => wp_create_nonce( 'convoca_enroll_inscribir_nonce' ),
 			)
 		);
 
 		ob_start();
-		include CONV_ENROLL_DIR . 'templates/form-inscripcion.php';
+		include CONVOCA_ENROLL_DIR . 'templates/form-inscripcion.php';
 		return ob_get_clean();
 	}
 
@@ -73,7 +73,7 @@ class Form_Inscripcion {
 	 * AJAX handler.
 	 */
 	public function handle_ajax(): void {
-		check_ajax_referer( 'conv_enroll_inscribir_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_enroll_inscribir_nonce', 'nonce' );
 
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'inscribir', 5, 3600 ) ) {
 			wp_send_json_error( array( 'errors' => array( 'Demasiados intentos de inscripción. Inténtalo de nuevo en una hora.' ) ), 429 );
@@ -172,7 +172,7 @@ class Form_Inscripcion {
 			$actividad = get_post( $actividad_id );
 
 			// 1. Prevenir doble creación de pago por race condition (doble clic)
-			$lock_key = 'conv_enroll_payment_creating_' . $result;
+			$lock_key = 'convoca_enroll_payment_creating_' . $result;
 			if ( get_transient( $lock_key ) ) {
 				wp_send_json_error( array( 'errors' => array( 'Ya hay un proceso de pago en curso para esta inscripción. Por favor, espera un momento.' ) ), 429 );
 				return;

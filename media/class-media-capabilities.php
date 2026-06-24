@@ -17,10 +17,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Media_Capabilities {
 
 	const CAPS = array(
-		'conv_manage_media'    => array( 'administrator' ),
-		'conv_publish_social'  => array( 'administrator', 'monitor_actividad' ),
-		'conv_manage_social'   => array( 'administrator' ),
-		'conv_view_media_logs' => array( 'administrator', 'monitor_actividad' ),
+		'convoca_manage_media'    => array( 'administrator' ),
+		'convoca_publish_social'  => array( 'administrator', 'monitor_actividad' ),
+		'convoca_manage_social'   => array( 'administrator' ),
+		'convoca_view_media_logs' => array( 'administrator', 'monitor_actividad' ),
 	);
 
 	/**

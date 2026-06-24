@@ -17,10 +17,10 @@ if ( defined( 'CONVOCA_KEEP_DATA_ON_UNINSTALL' ) && CONVOCA_KEEP_DATA_ON_UNINSTA
 }
 
 // Delete options.
-delete_option( 'conv_enroll_settings' );
-delete_option( 'conv_enroll_email_templates' );
-delete_option( 'conv_enroll_db_version' );
-delete_option( 'conv_media_db_version' );
+delete_option( 'convoca_enroll_settings' );
+delete_option( 'convoca_enroll_email_templates' );
+delete_option( 'convoca_enroll_db_version' );
+delete_option( 'convoca_media_db_version' );
 
 // Delete inscripcion posts.
 $posts = get_posts(

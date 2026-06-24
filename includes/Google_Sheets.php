@@ -15,7 +15,7 @@ class Google_Sheets {
 
 
 	public function __construct() {
-		$settings = get_option( 'conv_enroll_settings', array() );
+		$settings = get_option( 'convoca_enroll_settings', array() );
 		if ( empty( $settings['sheets_enabled'] ) ) {
 			return;
 		}
@@ -74,7 +74,7 @@ class Google_Sheets {
 	 * Append a row to Google Sheets via API v4.
 	 */
 	private function append_row( string $sheet_id, array $row ): void {
-		$settings = get_option( 'conv_enroll_settings', array() );
+		$settings = get_option( 'convoca_enroll_settings', array() );
 		$api_key  = defined( 'CONV_ENROLL_GOOGLE_SHEETS_API_KEY' ) ? CONV_ENROLL_GOOGLE_SHEETS_API_KEY : ( $settings['sheets_api_key'] ?? '' );
 
 		if ( empty( $api_key ) ) {

@@ -112,7 +112,7 @@ class Motor_Inscripcion {
 		}
 
 		// Check global one-reservation-per-person rule.
-		$settings      = get_option( 'conv_enroll_settings', array() );
+		$settings      = get_option( 'convoca_enroll_settings', array() );
 		$limite_activo = ! empty( $settings['limite_una_reserva'] );
 
 		if ( $limite_activo && ! $es_menor ) {

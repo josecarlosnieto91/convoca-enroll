@@ -27,26 +27,26 @@ class Panel_Reservas {
 	/* ── Shortcode ─────────────────────────────── */
 
 	public function shortcode( $atts ): string {
-		wp_enqueue_style( 'conv-panel', CONV_ENROLL_URL . 'assets/css/convoca-enroll-panel.css', array(), CONV_ENROLL_VERSION );
-		wp_enqueue_script( 'conv-panel', CONV_ENROLL_URL . 'assets/js/convoca-enroll-panel.js', array( 'convoca-common-js' ), CONV_ENROLL_VERSION, true );
+		wp_enqueue_style( 'conv-panel', CONVOCA_ENROLL_URL . 'assets/css/convoca-enroll-panel.css', array(), CONVOCA_ENROLL_VERSION );
+		wp_enqueue_script( 'conv-panel', CONVOCA_ENROLL_URL . 'assets/js/convoca-enroll-panel.js', array( 'convoca-common-js' ), CONVOCA_ENROLL_VERSION, true );
 		wp_localize_script(
 			'conv-panel',
 			'bdePanel',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'conv_enroll_panel_nonce' ),
+				'nonce'   => wp_create_nonce( 'convoca_enroll_panel_nonce' ),
 			)
 		);
 
 		ob_start();
-		include CONV_ENROLL_DIR . 'templates/panel-reservas.php';
+		include CONVOCA_ENROLL_DIR . 'templates/panel-reservas.php';
 		return ob_get_clean();
 	}
 
 	/* ── AJAX: Login (email + code) ────────────── */
 
 	public function ajax_login(): void {
-		check_ajax_referer( 'conv_enroll_panel_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_enroll_panel_nonce', 'nonce' );
 
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'panel_login', 10, 600 ) ) {
 			wp_send_json_error( array( 'message' => __( 'Demasiados intentos. Inténtalo de nuevo en 10 minutos.', 'convoca-enroll' ) ), 429 );
@@ -83,7 +83,7 @@ class Panel_Reservas {
 	/* ── AJAX: Cancel reservation ─────────────── */
 
 	public function ajax_cancelar(): void {
-		check_ajax_referer( 'conv_enroll_panel_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_enroll_panel_nonce', 'nonce' );
 
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'panel_cancelar', 5, 3600 ) ) {
 			wp_send_json_error( array( 'message' => __( 'Demasiados intentos de cancelación. Inténtalo de nuevo en una hora.', 'convoca-enroll' ) ), 429 );

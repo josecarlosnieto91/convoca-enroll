@@ -56,20 +56,20 @@ if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
 }
 
 /* ── Constants ────────────────────────────────────────────── */
-if ( ! defined( 'CONV_ENROLL_VERSION' ) ) {
-	define( 'CONV_ENROLL_VERSION', '2.5.1' );
+if ( ! defined( 'CONVOCA_ENROLL_VERSION' ) ) {
+	define( 'CONVOCA_ENROLL_VERSION', '2.5.1' );
 }
-if ( ! defined( 'CONV_ENROLL_DB_VERSION' ) ) {
-	define( 'CONV_ENROLL_DB_VERSION', '1.3.0' );
+if ( ! defined( 'CONVOCA_ENROLL_DB_VERSION' ) ) {
+	define( 'CONVOCA_ENROLL_DB_VERSION', '1.3.0' );
 }
-if ( ! defined( 'CONV_ENROLL_FILE' ) ) {
-	define( 'CONV_ENROLL_FILE', __FILE__ );
+if ( ! defined( 'CONVOCA_ENROLL_FILE' ) ) {
+	define( 'CONVOCA_ENROLL_FILE', __FILE__ );
 }
-if ( ! defined( 'CONV_ENROLL_DIR' ) ) {
-	define( 'CONV_ENROLL_DIR', plugin_dir_path( __FILE__ ) );
+if ( ! defined( 'CONVOCA_ENROLL_DIR' ) ) {
+	define( 'CONVOCA_ENROLL_DIR', plugin_dir_path( __FILE__ ) );
 }
-if ( ! defined( 'CONV_ENROLL_URL' ) ) {
-	define( 'CONV_ENROLL_URL', plugin_dir_url( __FILE__ ) );
+if ( ! defined( 'CONVOCA_ENROLL_URL' ) ) {
+	define( 'CONVOCA_ENROLL_URL', plugin_dir_url( __FILE__ ) );
 }
 
 /* ── Autoloader ───────────────────────────────────────────── */
@@ -98,9 +98,9 @@ register_activation_hook(
 		// Media & Social Suite tables.
 		Media\Media_Installer::install();
 		Media\Media_Capabilities::ensure();
-		if ( false === get_option( 'conv_enroll_settings' ) ) {
+		if ( false === get_option( 'convoca_enroll_settings' ) ) {
 			update_option(
-				'conv_enroll_settings',
+				'convoca_enroll_settings',
 				array(
 					'admin_email'    => get_option( 'admin_email' ),
 					'rgpd_version'   => '1.0',
@@ -111,7 +111,7 @@ register_activation_hook(
 		}
 
 		// Auto-create "Panel de reservas" page if it doesn't exist.
-		if ( ! get_option( 'conv_enroll_panel_page_id' ) ) {
+		if ( ! get_option( 'convoca_enroll_panel_page_id' ) ) {
 			$page_id = wp_insert_post(
 				array(
 					'post_title'   => 'Panel de reservas',
@@ -122,7 +122,7 @@ register_activation_hook(
 				)
 			);
 			if ( $page_id && ! is_wp_error( $page_id ) ) {
-				update_option( 'conv_enroll_panel_page_id', $page_id );
+				update_option( 'convoca_enroll_panel_page_id', $page_id );
 				update_post_meta( $page_id, '_conv_panel_page', '1' );
 			}
 		}
@@ -146,7 +146,7 @@ register_activation_hook(
 
 		// Schedule cron events with appropriate intervals.
 		if ( ! wp_next_scheduled( 'convoca_enroll_reminder_7dias' ) ) {
-			wp_schedule_event( time(), 'conv_weekly', 'convoca_enroll_reminder_7dias' );
+			wp_schedule_event( time(), 'convoca_weekly', 'convoca_enroll_reminder_7dias' );
 		}
 		if ( ! wp_next_scheduled( 'convoca_enroll_reminder_24h' ) ) {
 			wp_schedule_event( time(), 'daily', 'convoca_enroll_reminder_24h' );
@@ -177,7 +177,7 @@ register_activation_hook(
 		}
 
 		// Save initial DB version.
-		add_option( 'conv_enroll_db_version', CONV_ENROLL_DB_VERSION, '', false );
+		add_option( 'convoca_enroll_db_version', CONVOCA_ENROLL_DB_VERSION, '', false );
 	}
 );
 
@@ -196,7 +196,7 @@ register_deactivation_hook(
 		wp_clear_scheduled_hook( 'convoca_enroll_process_email_queue' );
 		wp_clear_scheduled_hook( 'convoca_enroll_process_webhook_queue' );
 		wp_clear_scheduled_hook( 'convoca_enroll_eval_reminder' );
-		wp_clear_scheduled_hook( 'conv_enroll_daily_maintenance' );
+		wp_clear_scheduled_hook( 'convoca_enroll_daily_maintenance' );
 		flush_rewrite_rules();
 	}
 );
@@ -207,8 +207,8 @@ add_action(
 	function (): void {
 
 		// External dependencies.
-		if ( file_exists( CONV_ENROLL_DIR . 'vendor/autoload.php' ) ) {
-			require_once CONV_ENROLL_DIR . 'vendor/autoload.php';
+		if ( file_exists( CONVOCA_ENROLL_DIR . 'vendor/autoload.php' ) ) {
+			require_once CONVOCA_ENROLL_DIR . 'vendor/autoload.php';
 		}
 
 		// Core.
@@ -273,14 +273,14 @@ add_action(
 						'convoca_shifts_manage_turnos',
 						'convoca_shifts_view_stats',
 						'convoca_shifts_audit_hours',
-						'conv_manage_checkin',
-						'conv_manage_evaluations',
-						'conv_view_reports',
-						'conv_manage_hours',
-						'conv_export_members',
-						'conv_manage_webhooks',
-						'conv_view_payments',
-						'conv_manage_payments',
+						'convoca_manage_checkin',
+						'convoca_manage_evaluations',
+						'convoca_view_reports',
+						'convoca_manage_hours',
+						'convoca_export_members',
+						'convoca_manage_webhooks',
+						'convoca_view_payments',
+						'convoca_manage_payments',
 						'common_view_logs',
 						'common_manage_backup',
 					),
@@ -292,10 +292,10 @@ add_action(
 						'convoca_shifts_manage_turnos',
 						'convoca_shifts_view_stats',
 						'convoca_shifts_audit_hours',
-						'conv_manage_checkin',
-						'conv_manage_evaluations',
-						'conv_view_reports',
-						'conv_manage_hours',
+						'convoca_manage_checkin',
+						'convoca_manage_evaluations',
+						'convoca_view_reports',
+						'convoca_manage_hours',
 					),
 				);
 
@@ -322,12 +322,12 @@ add_action(
 		add_action(
 			'init',
 			function () {
-				$version_hash = md5( CONV_ENROLL_VERSION . '_caps_v2' );
-				if ( get_option( 'conv_enroll_caps_hash' ) !== $version_hash ) {
+				$version_hash = md5( CONVOCA_ENROLL_VERSION . '_caps_v2' );
+				if ( get_option( 'convoca_enroll_caps_hash' ) !== $version_hash ) {
 					if ( function_exists( 'Convoca\Enroll\conv_ensure_enroll_capabilities' ) ) {
 						conv_ensure_enroll_capabilities();
 					}
-					update_option( 'conv_enroll_caps_hash', $version_hash, false );
+					update_option( 'convoca_enroll_caps_hash', $version_hash, false );
 				}
 			},
 			0
@@ -397,8 +397,8 @@ add_filter(
 				'display'  => __( 'Cada minuto', 'convoca-enroll' ),
 			);
 		}
-		if ( ! isset( $schedules['conv_weekly'] ) ) {
-			$schedules['conv_weekly'] = array(
+		if ( ! isset( $schedules['convoca_weekly'] ) ) {
+			$schedules['convoca_weekly'] = array(
 				'interval' => 7 * DAY_IN_SECONDS,
 				'display'  => __( 'Cada 7 días', 'convoca-enroll' ),
 			);

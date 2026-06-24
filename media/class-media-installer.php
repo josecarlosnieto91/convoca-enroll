@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Media_Installer {
 
-	const DB_VERSION_OPTION = 'conv_media_db_version';
+	const DB_VERSION_OPTION = 'convoca_media_db_version';
 	const DB_VERSION        = '1.0.0';
 
 	/**

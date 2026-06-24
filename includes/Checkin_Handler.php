@@ -24,8 +24,8 @@ class Checkin_Handler {
 		add_filter(
 			'query_vars',
 			function ( $vars ) {
-				$vars[] = 'conv_enroll_checkin';
-				$vars[] = 'conv_enroll_checkin_page';
+				$vars[] = 'convoca_enroll_checkin';
+				$vars[] = 'convoca_enroll_checkin_page';
 				return $vars;
 			}
 		);
@@ -35,8 +35,8 @@ class Checkin_Handler {
 	 * Handle the check-in page or direct check-in link.
 	 */
 	public function handle_checkin_page(): void {
-		$checkin_token   = get_query_var( 'conv_enroll_checkin' );
-		$is_scanner_page = get_query_var( 'conv_enroll_checkin_page' );
+		$checkin_token   = get_query_var( 'convoca_enroll_checkin' );
+		$is_scanner_page = get_query_var( 'convoca_enroll_checkin_page' );
 
 		if ( ! $checkin_token && ! $is_scanner_page ) {
 			return;
@@ -272,13 +272,13 @@ class Checkin_Handler {
 					let token = decodedText;
 					if (token.includes('token=')) {
 						token = token.split('token=')[1].split('&')[0];
-					} else if (token.includes('conv_enroll_token=')) {
-						token = token.split('conv_enroll_token=')[1].split('&')[0];
+					} else if (token.includes('convoca_enroll_token=')) {
+						token = token.split('convoca_enroll_token=')[1].split('&')[0];
 					}
 
 					const formData = new URLSearchParams();
-					formData.append('action', 'conv_enroll_qr_checkin');
-					formData.append('nonce', '<?php echo wp_create_nonce( 'conv_enroll_qr_checkin' ); ?>');
+					formData.append('action', 'convoca_enroll_qr_checkin');
+					formData.append('nonce', '<?php echo wp_create_nonce( 'convoca_enroll_qr_checkin' ); ?>');
 					formData.append('id', token);
 
 					try {
@@ -573,7 +573,7 @@ class Checkin_Handler {
 	 * AJAX handler for scanner check-in.
 	 */
 	public function ajax_qr_checkin(): void {
-		check_ajax_referer( 'conv_enroll_qr_checkin', 'nonce' );
+		check_ajax_referer( 'convoca_enroll_qr_checkin', 'nonce' );
 
 		$user_id = get_current_user_id();
 		if ( ! current_user_can( 'manage_inscripciones' ) && ! in_array( 'voluntario_aprobado', (array) wp_get_current_user()->roles, true ) ) {

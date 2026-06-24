@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$settings         = get_option( 'conv_enroll_settings', array() );
+$settings         = get_option( 'convoca_enroll_settings', array() );
 $show_plazas      = $attrs['mostrar_plazas'] ?? true;
 $show_precios     = $attrs['mostrar_precios'] ?? true;
 $plazas           = (int) ( $meta['plazas_disponibles'] ?? 0 );

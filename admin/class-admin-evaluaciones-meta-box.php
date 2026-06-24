@@ -13,7 +13,7 @@ class Admin_Evaluaciones_Meta_Box {
 
 	public static function add_meta_box() {
 		add_meta_box(
-			'conv_evaluaciones_summary',
+			'convoca_evaluaciones_summary',
 			__( 'Evaluaciones de la Actividad', 'convoca-enroll' ),
 			array( __CLASS__, 'render_meta_box' ),
 			'actividad',
@@ -25,7 +25,7 @@ class Admin_Evaluaciones_Meta_Box {
 	public static function render_meta_box( $post ) {
 		$evaluaciones = get_posts(
 			array(
-				'post_type'      => 'conv_evaluacion',
+				'post_type'      => 'convoca_evaluacion',
 				'posts_per_page' => -1,
 				'meta_key'       => '_conv_eval_actividad_id',
 				'meta_value'     => $post->ID,

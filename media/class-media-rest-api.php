@@ -141,7 +141,7 @@ class Media_Rest_API {
 	}
 
 	public function can_manage_media(): bool {
-		return current_user_can( 'conv_manage_media' ) || current_user_can( 'manage_options' );
+		return current_user_can( 'convoca_manage_media' ) || current_user_can( 'manage_options' );
 	}
 
 	private function poster_args(): array {

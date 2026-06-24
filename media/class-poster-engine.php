@@ -649,7 +649,7 @@ class Poster_Engine {
 			self::FONT_MONTSERRAT => 'assets/fonts/Montserrat.ttf',
 			self::FONT_PLAYFAIR   => 'assets/fonts/PlayfairDisplay.ttf',
 		);
-		$path  = CONV_ENROLL_DIR . ( $files[ $name ] ?? '' );
+		$path  = CONVOCA_ENROLL_DIR . ( $files[ $name ] ?? '' );
 		return file_exists( $path ) ? $path : '';
 	}
 

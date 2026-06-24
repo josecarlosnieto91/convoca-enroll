@@ -161,7 +161,7 @@ class Admin_Reports {
 				</div>
 				<div class="conv-filter-actions">
 					<button type="submit" class="button button-primary">Filtrar</button>
-					<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'ocupacion' ), 'conv_enroll_export_csv' ) ); ?>" class="button">Exportar CSV</a>
+					<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'ocupacion' ), 'convoca_enroll_export_csv' ) ); ?>" class="button">Exportar CSV</a>
 				</div>
 			</form>
 		</div>
@@ -429,7 +429,7 @@ endif;
 		$activities = $this->get_waitlist_data();
 		?>
 		<div class="conv-mb-4">
-			<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'espera' ), 'conv_enroll_export_csv' ) ); ?>" class="button">Exportar CSV</a>
+			<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'espera' ), 'convoca_enroll_export_csv' ) ); ?>" class="button">Exportar CSV</a>
 		</div>
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
@@ -509,7 +509,7 @@ endif;
 		$financials = $this->get_financial_data();
 		?>
 		<div class="conv-mb-4">
-			<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'financiero' ), 'conv_enroll_export_csv' ) ); ?>" class="button">Exportar CSV</a>
+			<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'export', 'financiero' ), 'convoca_enroll_export_csv' ) ); ?>" class="button">Exportar CSV</a>
 		</div>
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
@@ -752,7 +752,7 @@ endif;
 								),
 								admin_url( 'admin.php?page=conv-informes&tab=memoria' )
 							),
-							'conv_enroll_export_csv'
+							'convoca_enroll_export_csv'
 						)
 					);
 					?>
@@ -904,7 +904,7 @@ endif;
 							'filter_actividad' => $filter_actividad ?: '',
 						)
 					),
-					'conv_enroll_export_csv'
+					'convoca_enroll_export_csv'
 				)
 			);
 			?>
@@ -972,7 +972,7 @@ endif;
             LEFT JOIN {$wpdb->postmeta} pm_instalaciones ON p.ID = pm_instalaciones.post_id AND pm_instalaciones.meta_key = '_conv_eval_instalaciones'
             LEFT JOIN {$wpdb->postmeta} pm_participantes ON p.ID = pm_participantes.post_id AND pm_participantes.meta_key = '_conv_eval_participantes'
             LEFT JOIN {$wpdb->postmeta} pm_comunicacion ON p.ID = pm_comunicacion.post_id AND pm_comunicacion.meta_key = '_conv_eval_comunicacion'
-            WHERE p.post_type = 'conv_evaluacion' AND p.post_status = 'publish' $where_extra
+            WHERE p.post_type = 'convoca_evaluacion' AND p.post_status = 'publish' $where_extra
             GROUP BY pm_act.meta_value, p.post_title
             ORDER BY count DESC
             LIMIT 100",
@@ -1020,12 +1020,12 @@ endif;
 	public function handle_export(): void {
 		global $wpdb;
 
-		if ( empty( $_GET['export'] ) || ! current_user_can( 'conv_view_reports' ) ) {
+		if ( empty( $_GET['export'] ) || ! current_user_can( 'convoca_view_reports' ) ) {
 			return;
 		}
 
 		// CSRF Protection.
-		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'conv_enroll_export_csv' ) ) {
+		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'convoca_enroll_export_csv' ) ) {
 			wp_die( __( 'Enlace de exportación inválido o caducado.', 'convoca-enroll' ) );
 		}
 
@@ -1086,7 +1086,7 @@ endif;
 						$wpdb->prepare(
 							"SELECT p.ID FROM {$wpdb->posts} p
                          JOIN {$wpdb->postmeta} pm_act ON p.ID = pm_act.post_id AND $meta_where
-                         WHERE p.post_type = 'conv_evaluacion' AND p.post_status = 'publish'
+                         WHERE p.post_type = 'convoca_evaluacion' AND p.post_status = 'publish'
                          ORDER BY p.ID ASC LIMIT %d OFFSET %d",
 							array_merge( $meta_args, array( $per_batch, $batch * $per_batch ) )
 						)

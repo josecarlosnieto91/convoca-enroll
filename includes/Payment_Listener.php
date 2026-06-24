@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Payment_Listener {
 
 
-	private const TRANSIENT_KEY = 'conv_enroll_payment_processed_';
+	private const TRANSIENT_KEY = 'convoca_enroll_payment_processed_';
 
 	public function __construct() {
 		// Only listen to the new unified hook to avoid duplication.

@@ -83,7 +83,7 @@ class Social_Rest_API {
 	}
 
 	public function can_manage_social(): bool {
-		return current_user_can( 'conv_manage_social' ) || current_user_can( 'manage_options' );
+		return current_user_can( 'convoca_manage_social' ) || current_user_can( 'manage_options' );
 	}
 
 	// ─── META OAUTH ─────────────────────────────────
@@ -278,7 +278,7 @@ class Social_Rest_API {
 	public function delete_account( \WP_REST_Request $request ): \WP_REST_Response {
 		global $wpdb;
 		$id = (int) $request->get_param( 'id' );
-		$wpdb->delete( $wpdb->prefix . 'conv_social_accounts', array( 'id' => $id ) );
+		$wpdb->delete( $wpdb->prefix . 'convoca_social_accounts', array( 'id' => $id ) );
 		return new \WP_REST_Response( array( 'success' => true ), 200 );
 	}
 }

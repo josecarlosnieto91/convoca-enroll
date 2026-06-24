@@ -36,7 +36,7 @@ class GBP_Provider implements Social_Provider_Interface {
 	 * Publish a Local Post to Google Business Profile.
 	 */
 	public function publish( string $message, string $image_url = '', string $link_url = '' ): array {
-		$lock_key = 'conv_lock_' . md5( $message . $image_url . 'gbp' );
+		$lock_key = 'convoca_lock_' . md5( $message . $image_url . 'gbp' );
 		if ( get_transient( $lock_key ) ) {
 			return array( 'success' => false, 'message' => 'Lock activo para este contenido en GBP.' );
 		}

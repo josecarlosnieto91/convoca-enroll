@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Eval_Reminder_Cron {
 
-	private const OPTION = 'conv_enroll_settings';
+	private const OPTION = 'convoca_enroll_settings';
 
 	public static function init(): void {
 		add_action( 'convoca_enroll_eval_reminder', array( self::class, 'run' ) );
@@ -164,7 +164,7 @@ class Eval_Reminder_Cron {
 		global $wpdb;
 		$eval_id = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'conv_evaluacion' AND post_author = %d AND ID IN (
+				"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'convoca_evaluacion' AND post_author = %d AND ID IN (
                 SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_conv_eval_actividad_id' AND meta_value = %d
             )",
 				$user_id,

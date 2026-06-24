@@ -28,7 +28,7 @@ class Admin_Logs {
 
 		// Handle delete action.
 		if ( isset( $_GET['action'] ) && $_GET['action'] === 'clear' && current_user_can( 'manage_options' ) ) {
-			check_admin_referer( 'conv_enroll_clear_logs' );
+			check_admin_referer( 'convoca_enroll_clear_logs' );
 			$wpdb->query( $wpdb->prepare( "DELETE FROM $table_name WHERE context LIKE %s", '%Enroll%' ) );
 			echo '<div class="updated"><p>Logs de Enroll borrados.</p></div>';
 		}
@@ -65,7 +65,7 @@ class Admin_Logs {
 			<h1>Logs del Sistema</h1>
 
 			<p>
-				<a href="<?php echo wp_nonce_url( admin_url( 'edit.php?post_type=actividad&page=conv_enroll-logs&action=clear' ), 'conv_enroll_clear_logs' ); ?>"
+				<a href="<?php echo wp_nonce_url( admin_url( 'edit.php?post_type=actividad&page=conv_enroll-logs&action=clear' ), 'convoca_enroll_clear_logs' ); ?>"
 					class="button button-secondary"
 					onclick="return confirm('¿Estás seguro de que quieres borrar todos los logs de Enroll?');">
 					Borrar logs de Enroll

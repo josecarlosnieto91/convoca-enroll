@@ -43,7 +43,7 @@ class Meta_Provider implements Social_Provider_Interface {
 	 */
 	public function publish( string $message, string $poster_url = '', string $link_url = '' ): array {
 		// Idempotency lock: prevent concurrent duplicate publishing.
-		$lock_key = 'conv_lock_' . md5( $message . $poster_url . 'meta' );
+		$lock_key = 'convoca_lock_' . md5( $message . $poster_url . 'meta' );
 		if ( get_transient( $lock_key ) ) {
 			return array( 'success' => false, 'message' => 'Ya hay una publicación en curso para este contenido (lock activo).' );
 		}

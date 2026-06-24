@@ -31,8 +31,8 @@ class Admin_Media_Dashboard {
 			return;
 		}
 		wp_enqueue_media();
-		wp_enqueue_style( 'convoca-media-admin', CONV_ENROLL_URL . 'assets/css/media-admin.css', array(), CONV_ENROLL_VERSION );
-		wp_enqueue_script( 'convoca-media-admin', CONV_ENROLL_URL . 'assets/js/media-admin.js', array( 'jquery' ), CONV_ENROLL_VERSION, true );
+		wp_enqueue_style( 'convoca-media-admin', CONVOCA_ENROLL_URL . 'assets/css/media-admin.css', array(), CONVOCA_ENROLL_VERSION );
+		wp_enqueue_script( 'convoca-media-admin', CONVOCA_ENROLL_URL . 'assets/js/media-admin.js', array( 'jquery' ), CONVOCA_ENROLL_VERSION, true );
 		wp_localize_script( 'convoca-media-admin', 'convocaMedia', array(
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
 			'nonce'    => wp_create_nonce( 'convoca_media_nonce' ),
@@ -185,7 +185,7 @@ class Admin_Media_Dashboard {
 			'convoca-core',
 			__( 'Media & Social', 'convoca-enroll' ),
 			__( '📸 Media', 'convoca-enroll' ),
-			'conv_manage_media',
+			'convoca_manage_media',
 			'convoca-media',
 			array( $this, 'render_dashboard' )
 		);
@@ -195,7 +195,7 @@ class Admin_Media_Dashboard {
 	 * Render the main Media dashboard.
 	 */
 	public function render_dashboard(): void {
-		if ( ! current_user_can( 'conv_manage_media' ) ) {
+		if ( ! current_user_can( 'convoca_manage_media' ) ) {
 			wp_die( __( 'No tienes permisos.', 'convoca-enroll' ) );
 		}
 		?>
@@ -236,7 +236,7 @@ class Admin_Media_Dashboard {
 		check_ajax_referer( 'convoca_media_nonce', 'nonce' );
 		$post_id  = (int) ( $_POST['post_id'] ?? 0 );
 		$network  = sanitize_text_field( $_POST['network'] ?? '' );
-		if ( ! current_user_can( 'conv_manage_media' ) || ! $post_id || ! $network ) {
+		if ( ! current_user_can( 'convoca_manage_media' ) || ! $post_id || ! $network ) {
 			wp_send_json_error( array( 'message' => 'Permiso denegado' ) );
 		}
 
@@ -267,7 +267,7 @@ class Admin_Media_Dashboard {
 		$post_id = (int) ( $_POST['post_id'] ?? 0 );
 		$status  = sanitize_text_field( $_POST['status'] ?? 'draft' );
 
-		if ( ! current_user_can( 'conv_manage_media' ) || ! $post_id ) {
+		if ( ! current_user_can( 'convoca_manage_media' ) || ! $post_id ) {
 			wp_send_json_error( array( 'message' => 'Permiso denegado' ) );
 		}
 
@@ -357,7 +357,7 @@ class Admin_Media_Dashboard {
 		$format      = sanitize_text_field( $_POST['format'] ?? 'square' );
 		$image_id    = absint( $_POST['image_id'] ?? 0 );
 
-		if ( ! current_user_can( 'conv_manage_media' ) || ! $post_id ) {
+		if ( ! current_user_can( 'convoca_manage_media' ) || ! $post_id ) {
 			wp_send_json_error( array( 'message' => 'Permiso denegado' ) );
 		}
 

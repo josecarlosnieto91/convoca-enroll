@@ -165,7 +165,7 @@ class Rest_API {
 	/* ── Public endpoints ──────────────────────── */
 
 	public function list_activities( \WP_REST_Request $request ): \WP_REST_Response {
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'conv_enroll_list_activities', 30, 60 ) ) {
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'convoca_enroll_list_activities', 30, 60 ) ) {
 			return new \WP_REST_Response( array( 'error' => __( 'Demasiadas peticiones.', 'convoca-enroll' ) ), 429 );
 		}
 
@@ -194,7 +194,7 @@ class Rest_API {
 	}
 
 	public function get_activity( \WP_REST_Request $req ): \WP_REST_Response|\WP_Error {
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'conv_enroll_get_activity', 30, 60 ) ) {
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'convoca_enroll_get_activity', 30, 60 ) ) {
 			return new \WP_REST_Response( array( 'error' => __( 'Demasiadas peticiones.', 'convoca-enroll' ) ), 429 );
 		}
 		$id   = (int) $req['id'];

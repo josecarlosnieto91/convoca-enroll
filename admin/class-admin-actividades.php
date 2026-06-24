@@ -84,7 +84,7 @@ class Admin_Actividades {
 	 */
 	public function enqueue_assets( $hook ) {
 		if ( strpos( $hook, 'convoca-enroll-actividad-editor' ) !== false ) {
-			wp_enqueue_style( 'convoca-core', CONV_COMMON_URL . 'assets/css/convoca-common.css', array(), CONV_COMMON_VERSION );
+			wp_enqueue_style( 'convoca-core', CONVOCA_COMMON_URL . 'assets/css/convoca-common.css', array(), CONVOCA_COMMON_VERSION );
 		}
 	}
 
@@ -152,7 +152,7 @@ class Admin_Actividades {
 			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="conv-form-custom">
 				<input type="hidden" name="action" value="conv_enroll_save_actividad_admin">
 				<input type="hidden" name="id" value="<?php echo $post_id; ?>">
-				<?php wp_nonce_field( 'conv_enroll_save_actividad_nonce' ); ?>
+				<?php wp_nonce_field( 'convoca_enroll_save_actividad_nonce' ); ?>
 
 				<div class="conv-grid conv-grid--2">
 					<div class="conv-card">
@@ -244,7 +244,7 @@ class Admin_Actividades {
 				<div class="conv-form-actions">
 					<?php submit_button( __( 'Guardar Actividad', 'convoca-enroll' ), 'primary', 'submit', false ); ?>
 					<?php if ( $post_id ) : ?>
-						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_duplicate_actividad&id=' . $post_id ), 'conv_enroll_duplicate_' . $post_id ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📋 <?php _e( 'Duplicar', 'convoca-enroll' ); ?></a>
+						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_duplicate_actividad&id=' . $post_id ), 'convoca_enroll_duplicate_' . $post_id ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📋 <?php _e( 'Duplicar', 'convoca-enroll' ); ?></a>
 					<?php endif; ?>
 					<a href="<?php echo admin_url( 'admin.php?page=convoca-core-enroll' ); ?>" class="convoca-btn convoca-btn-outline"><?php _e( 'Cancelar', 'convoca-enroll' ); ?></a>
 				</div>
@@ -257,7 +257,7 @@ class Admin_Actividades {
 	 * Handle save from admin form.
 	 */
 	public function handle_save_admin() {
-		check_admin_referer( 'conv_enroll_save_actividad_nonce' );
+		check_admin_referer( 'convoca_enroll_save_actividad_nonce' );
 
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_die( __( 'No tienes permisos para realizar esta acción.', 'convoca-enroll' ) );
@@ -319,7 +319,7 @@ class Admin_Actividades {
 	 */
 	public function handle_duplicate(): void {
 		$orig_id = (int) ( $_GET['id'] ?? 0 );
-		if ( ! $orig_id || ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'conv_enroll_duplicate_' . $orig_id ) ) {
+		if ( ! $orig_id || ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'convoca_enroll_duplicate_' . $orig_id ) ) {
 			wp_die( __( 'Nonce inválido.', 'convoca-enroll' ) );
 		}
 		if ( ! current_user_can( 'edit_posts' ) ) {
@@ -509,7 +509,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 	protected function column_acciones( $item ): string {
 		$actions   = array();
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=conv-checkin&actividad_id=' . $item->ID ) ), 'Check-in' );
-		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_duplicate_actividad&id=' . $item->ID ), 'conv_enroll_duplicate_' . $item->ID ) ), 'Duplicar' );
+		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_enroll_duplicate_actividad&id=' . $item->ID ), 'convoca_enroll_duplicate_' . $item->ID ) ), 'Duplicar' );
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=conv-inscripciones&actividad_id=' . $item->ID ) ), 'Inscripciones' );
 
 		return implode( ' | ', $actions );
