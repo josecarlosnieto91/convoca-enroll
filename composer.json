@@ -9,13 +9,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Convoca\\Enroll\\": [
-                "includes/",
-                "admin/",
-                "media/",
-                "social/"
-            ]
-        }
+            "Convoca\\Enroll\\": "includes/"
+        },
+        "classmap": [
+            "admin/",
+            "media/",
+            "social/"
+        ]
     },
     "config": {
         "allow-plugins": {
