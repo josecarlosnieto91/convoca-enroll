@@ -136,12 +136,12 @@ class Admin_Template_Editor {
 		$slug  = sanitize_text_field( $_POST['slug'] ?? '' );
 		$layers_data = json_decode( stripslashes( $_POST['layers'] ?? '[]' ), true );
 		if ( ! $slug || ! is_array( $layers_data ) ) {
-			wp_send_json_error( array( 'message' => 'Datos inválidos.' ) );
+			wp_send_json_error( array( 'message' => __( 'Datos inválidos.', 'convoca-enroll' ) ) );
 		}
 
 		$tpl = Template_Manager::get( $slug );
 		if ( ! $tpl ) {
-			wp_send_json_error( array( 'message' => 'Plantilla no encontrada.' ) );
+			wp_send_json_error( array( 'message' => __( 'Plantilla no encontrada.', 'convoca-enroll' ) ) );
 		}
 
 		$config = $tpl['config'];
@@ -150,9 +150,9 @@ class Admin_Template_Editor {
 
 		$result = Template_Manager::save( $tpl );
 		if ( ! $result ) {
-			wp_send_json_error( array( 'message' => 'Error al guardar.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error al guardar.', 'convoca-enroll' ) ) );
 		}
-		wp_send_json_success( array( 'message' => 'Plantilla guardada.' ) );
+		wp_send_json_success( array( 'message' => __( 'Plantilla guardada.', 'convoca-enroll' ) ) );
 	}
 
 	public function ajax_export(): void {
@@ -175,20 +175,20 @@ class Admin_Template_Editor {
 		}
 
 		if ( empty( $_FILES['json_file'] ) || $_FILES['json_file']['error'] !== UPLOAD_ERR_OK ) {
-			wp_send_json_error( array( 'message' => 'Error al subir el archivo.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error al subir el archivo.', 'convoca-enroll' ) ) );
 		}
 
 		$content = file_get_contents( $_FILES['json_file']['tmp_name'] );
 		$data    = json_decode( $content, true );
 
 		if ( ! $data ) {
-			wp_send_json_error( array( 'message' => 'JSON inválido.' ) );
+			wp_send_json_error( array( 'message' => __( 'JSON inválido.', 'convoca-enroll' ) ) );
 		}
 
 		$result = Template_Manager::import_json( $data );
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
-		wp_send_json_success( array( 'message' => 'Plantilla importada.', 'id' => $result ) );
+		wp_send_json_success( array( 'message' => __( 'Plantilla importada.', 'convoca-enroll' ), 'id' => $result ) );
 	}
 }

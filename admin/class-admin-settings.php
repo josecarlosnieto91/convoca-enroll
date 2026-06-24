@@ -792,7 +792,7 @@ class Admin_Settings {
 
 		$slug = sanitize_text_field( $_POST['slug'] ?? '' );
 		if ( ! in_array( $slug, Email_Automation::TEMPLATES, true ) ) {
-			wp_send_json_error( 'Plantilla no válida.' );
+			wp_send_json_error( __( 'Plantilla no válida.', 'convoca-enroll' ) );
 		}
 
 		$html = Email_Automation::preview_html( $slug );

@@ -189,7 +189,7 @@ class Admin_Setup_Wizard {
 	public function ajax_test_poster(): void {
 		check_ajax_referer( 'convoca_wizard_test', 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => 'Sin permisos.' ) );
+			wp_send_json_error( array( 'message' => __( 'Sin permisos.', 'convoca-enroll' ) ) );
 		}
 		$activities = get_posts(
 			array(
@@ -198,7 +198,7 @@ class Admin_Setup_Wizard {
 		);
 		$act_id     = $activities[0] ?? 0;
 		if ( ! $act_id ) {
-			wp_send_json_error( array( 'message' => 'Crea una actividad primero.' ) );
+			wp_send_json_error( array( 'message' => __( 'Crea una actividad primero.', 'convoca-enroll' ) ) );
 		}
 		$result = Poster_Engine::render( $act_id, 'nature-classic' );
 		if ( is_wp_error( $result ) ) {

@@ -752,7 +752,7 @@ class CPT_Actividad {
 
 		$url = $google_photos->share_album( $actividad_id );
 		if ( ! $url ) {
-			wp_send_json_error( 'No se pudo compartir el álbum' );
+			wp_send_json_error( __( 'No se pudo compartir el álbum', 'convoca-enroll' ) );
 		}
 
 		$count = $google_photos->notify_participants( $actividad_id );
@@ -777,7 +777,7 @@ class CPT_Actividad {
 
 		$result = $google_photos->create_album( $actividad_id );
 		if ( ! $result ) {
-			wp_send_json_error( 'No se pudo crear el álbum' );
+			wp_send_json_error( __( 'No se pudo crear el álbum', 'convoca-enroll' ) );
 		}
 
 		$google_photos->notify_coordinator( $actividad_id );
@@ -811,7 +811,7 @@ class CPT_Actividad {
 		if ( $result ) {
 			wp_send_json_success( array( 'id' => $result ) );
 		} else {
-			wp_send_json_error( 'Error al sincronizar con Google Calendar.' );
+			wp_send_json_error( __( 'Error al sincronizar con Google Calendar.', 'convoca-enroll' ) );
 		}
 	}
 
@@ -833,7 +833,7 @@ class CPT_Actividad {
 
 		$event_id = get_post_meta( $activity_id, '_conv_google_event_id', true );
 		if ( ! $event_id ) {
-			wp_send_json_error( 'No hay un evento asociado a esta actividad.' );
+			wp_send_json_error( __( 'No hay un evento asociado a esta actividad.', 'convoca-enroll' ) );
 		}
 
 		$settings    = get_option( 'conv_enroll_settings', array() );
@@ -845,7 +845,7 @@ class CPT_Actividad {
 			delete_post_meta( $activity_id, '_conv_google_event_link' );
 			wp_send_json_success();
 		} catch ( \Exception $e ) {
-			wp_send_json_error( 'Error al eliminar el evento: ' . $e->getMessage() );
+			wp_send_json_error( __( 'Error al eliminar el evento: ', 'convoca-enroll' ) . $e->getMessage() );
 		}
 	}
 }

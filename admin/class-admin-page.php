@@ -644,7 +644,7 @@ class Admin_Page {
 			$inscripcion_act_id = (int) CPT_Inscripcion::get_meta( $id, 'actividad_id' );
 
 			if ( null === $allowed_ids || ! in_array( $inscripcion_act_id, $allowed_ids, true ) ) {
-				wp_send_json_error( 'Sin permisos para esta inscripción.' );
+				wp_send_json_error( __( 'Sin permisos para esta inscripción.', 'convoca-enroll' ) );
 			}
 		}
 
@@ -652,7 +652,7 @@ class Admin_Page {
 		$pagado = isset( $_POST['pagado'] ) ? '1' : '0';
 
 		if ( ! in_array( $estado, CPT_Inscripcion::STATES, true ) ) {
-			wp_send_json_error( 'Estado no válido.' );
+			wp_send_json_error( __( 'Estado no válido.', 'convoca-enroll' ) );
 		}
 
 		CPT_Inscripcion::update_meta( $id, 'pagado', $pagado );
@@ -735,7 +735,7 @@ class Admin_Page {
 		if ( $res ) {
 			wp_send_json_success( 'Email enviado correctamente.' );
 		} else {
-			wp_send_json_error( 'Error al enviar el email.' );
+			wp_send_json_error( __( 'Error al enviar el email.', 'convoca-enroll' ) );
 		}
 	}
 

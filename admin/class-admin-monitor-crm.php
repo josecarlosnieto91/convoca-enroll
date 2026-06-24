@@ -202,7 +202,7 @@ class Admin_Monitor_CRM {
 		check_ajax_referer( 'conv_enroll_attendance_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_inscripciones' ) ) {
-			wp_send_json_error( 'Permission denied' );
+			wp_send_json_error( __( 'Permission denied', 'convoca-enroll' ) );
 		}
 
 		$id           = (int) $_POST['id'];
@@ -211,7 +211,7 @@ class Admin_Monitor_CRM {
 
 		// Security check.
 		if ( ! CPT_Actividad::is_user_responsible( get_current_user_id(), $actividad_id ) ) {
-			wp_send_json_error( 'No responsable' );
+			wp_send_json_error( __( 'No responsable', 'convoca-enroll' ) );
 		}
 
 		CPT_Inscripcion::update_meta( $id, 'asistencia', $status );

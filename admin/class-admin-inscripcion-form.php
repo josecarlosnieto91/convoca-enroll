@@ -226,13 +226,13 @@ class Admin_Inscripcion_Form {
 
 		// Use fine-grained capability: monitors can create inscriptions for their activities.
 		if ( ! current_user_can( 'manage_inscripciones' ) ) {
-			wp_send_json_error( 'Sin permisos.' );
+			wp_send_json_error( __( 'Sin permisos.', 'convoca-enroll' ) );
 		}
 
 		// Non-admin users must be responsible for the activity.
 		if ( ! current_user_can( 'manage_options' ) && $actividad_id > 0 ) {
 			if ( ! CPT_Actividad::is_user_responsible( get_current_user_id(), $actividad_id ) ) {
-				wp_send_json_error( 'No eres responsable de esta actividad.' );
+				wp_send_json_error( __( 'No eres responsable de esta actividad.', 'convoca-enroll' ) );
 			}
 		}
 
