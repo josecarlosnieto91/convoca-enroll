@@ -237,7 +237,7 @@ class Webhook_Dispatcher {
 				);
 
 				if ( $secret ) {
-					$args['headers']['X-Assoc-Signature'] = hash_hmac( 'sha256', $item->payload, $secret );
+					$args['headers']['X-Convoca-Signature'] = hash_hmac( 'sha256', $item->payload, $secret );
 				}
 
 				$response = wp_remote_post( $item->url, $args );

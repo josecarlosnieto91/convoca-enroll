@@ -159,7 +159,7 @@ class Admin_Settings {
 			<label for="webhook_secret"><?php esc_html_e( 'Secreto del Webhook', 'convoca-enroll' ); ?></label>
 			<input type="text" id="webhook_secret" name="conv[webhook_secret]"
 				value="<?php echo esc_attr( $s['webhook_secret'] ?? '' ); ?>">
-			<small class="convoca-small"><?php esc_html_e( 'Firma opcional que se enviará en la cabecera X-Assoc-Signature con el hash SHA-256 del payload crudo.', 'convoca-enroll' ); ?></small>
+			<small class="convoca-small"><?php esc_html_e( 'Firma opcional que se enviará en la cabecera X-Convoca-Signature con el hash SHA-256 del payload crudo.', 'convoca-enroll' ); ?></small>
 		</div>
 
 		<h2><?php esc_html_e( 'Google Sheets', 'convoca-enroll' ); ?></h2>
