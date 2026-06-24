@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the convoca-enroll package.
+# This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: convoca-enroll 1.0\n"
-"Report-Msgid-Bugs-To: dev@getconvoca.app\n"
-"POT-Creation-Date: 2026-06-14 13:31+0200\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-24 07:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,314 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: convoca-enroll/admin/class-admin-evaluacion-fields.php:18
+msgid "Detalles de la Evaluación"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluacion-fields.php:45
+#: convoca-enroll/admin/class-admin-evaluaciones-editor.php:103
+msgid "Actividad evaluada"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluacion-fields.php:47
+#: convoca-enroll/admin/class-admin-evaluaciones-editor.php:105
+msgid "— Seleccionar actividad —"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluacion-fields.php:58
+#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:72
+#: convoca-enroll/admin/class-admin-evaluaciones-editor.php:128
+#: convoca-enroll/public/class-formulario-evaluacion.php:156
+msgid "Gestión y coordinación"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluacion-fields.php:59
+#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:76
+#: convoca-enroll/admin/class-admin-evaluaciones-editor.php:129
+#: convoca-enroll/public/class-formulario-evaluacion.php:157
+msgid "Instalaciones / Espacio"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluacion-fields.php:60
+#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:80
+#: convoca-enroll/admin/class-admin-evaluaciones-editor.php:130
+#: convoca-enroll/admin/class-admin-reports.php:921
+msgid "Participantes"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluacion-fields.php:61
+#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:84
+#: convoca-enroll/admin/class-admin-evaluaciones-editor.php:131
+#: convoca-enroll/admin/class-admin-reports.php:922
+msgid "Comunicación"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluaciones-list.php:21
+msgid "Título"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluaciones-list.php:22
+#: convoca-enroll/admin/class-admin-monitor-crm.php:138
+#: convoca-enroll/admin/class-admin-page.php:758
+#: convoca-enroll/admin/class-admin-reports.php:916
+#: convoca-enroll/includes/CPT_Actividad.php:73
+#: convoca-enroll/media/class-poster-engine.php:306
+#: convoca-enroll/media/class-poster-engine.php:477
+msgid "Actividad"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluaciones-list.php:23
+msgid "Evaluador"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluaciones-list.php:24
+msgid "Puntuación Media"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluaciones-list.php:25
+#: convoca-enroll/admin/class-admin-monitor-crm.php:139
+#: convoca-enroll/media/class-poster-engine.php:485
+#: convoca-enroll/media/class-blog-post-manager.php:184
+msgid "Fecha"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluaciones-list.php:50
+msgid "Usuario eliminado"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluaciones-list.php:111
+#: convoca-enroll/admin/class-admin-reports.php:888
+msgid "Todas las actividades"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:17
+msgid "Evaluaciones de la Actividad"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:39
+msgid "No hay evaluaciones para esta actividad todavía."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:64
+#, php-format
+msgid "Total evaluaciones: %d"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:65
+msgid "Media Global:"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:92
+msgid "Ver todas las evaluaciones"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-pages.php:31
+msgid "Cola de publicaciones"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-pages.php:48
+msgid "No hay publicaciones en la cola."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-pages.php:73
+msgid "Redes sociales"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-pages.php:91
+msgid "Cuentas conectadas"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-pages.php:117
+msgid "Registro de operaciones"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-pages.php:133
+msgid "No hay logs todavía. Genera un cartel para ver registros."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:30
+#: convoca-enroll/admin/class-admin-setup-wizard.php:50
+msgid "Asistente de configuración"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:31
+msgid "🚀 Asistente"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:66
+msgid "Sube el logo de tu organización y configura los colores principales."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:68
+msgid "Logo"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:70
+msgid "Seleccionar imagen"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:71
+msgid ""
+"Logo que aparecerá en los carteles. Recomendado: PNG transparente, 500x500px."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:74
+msgid "Color principal"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:80
+msgid "Elige la plantilla que se usará por defecto al generar carteles."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:90
+msgid ""
+"Conecta tus redes sociales para publicar automáticamente. Puedes saltarte "
+"este paso y configurarlo después."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:110
+msgid "Genera un cartel de prueba para verificar que todo funciona."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:114
+msgid "Generar cartel de prueba"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:120
+msgid "El módulo Media & Social Suite está configurado."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:121
+msgid "Ahora puedes:"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:129
+msgid "Ir a actividades"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-setup-wizard.php:130
+msgid "Panel Media"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-templates-page.php:26
+#: convoca-enroll/admin/class-admin-templates-page.php:27
+msgid "Plantillas"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-templates-page.php:36
+#: convoca-enroll/admin/class-admin-media-dashboard.php:199
+#: convoca-enroll/admin/class-admin-actividades.php:326
+#: convoca-enroll/admin/class-admin-monitor-crm.php:105
+#: convoca-enroll/admin/class-admin-page.php:747
+#: convoca-enroll/admin/class-admin-page.php:796
+#: convoca-enroll/admin/class-admin-page.php:819
+#: convoca-enroll/admin/class-admin-settings.php:790
+msgid "No tienes permisos."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-templates-page.php:42
+msgid "Plantillas de carteles"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-templates-page.php:44
+msgid ""
+"Selecciona una plantilla para previsualizar o gestionar sus capas y estilos."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-templates-page.php:53
+msgid "Sistema"
+msgstr ""
+
+#: convoca-enroll/admin/class-csv-exporter.php:26
+msgid "No tienes permisos suficientes para exportar inscripciones."
+msgstr ""
+
+#: convoca-enroll/admin/class-csv-exporter.php:27
+#: convoca-enroll/admin/class-csv-exporter.php:38
+#: convoca-enroll/includes/Checkin_Handler.php:47
+msgid "Acceso Denegado"
+msgstr ""
+
+#: convoca-enroll/admin/class-csv-exporter.php:37
+#: convoca-enroll/admin/class-admin-monitor-crm.php:115
+msgid "No tienes permiso para exportar datos de esta actividad."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:78
+msgid "Plantilla:"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:89
+msgid "Formato:"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:100
+msgid "Imagen del cartel:"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:104
+msgid "Imagen seleccionada"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:106
+msgid "Usará imagen destacada o fondo automático."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:110
+msgid "Elegir imagen"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:111
+#: convoca-enroll/admin/class-admin-settings.php:339
+msgid "Quitar"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:186
+msgid "Media & Social"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:187
+msgid "📸 Media"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:204
+msgid ""
+"Generación automática de carteles, gestión de plantillas y publicación en "
+"redes sociales."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:209
+msgid "Gestiona las plantillas de carteles disponibles."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:210
+msgid "Gestionar"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:214
+msgid "Publicaciones programadas para redes sociales."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:215
+msgid "Ver cola"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:219
+msgid "Conecta y gestiona tus cuentas de redes sociales."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:220
+msgid "Configurar"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:224
+msgid "Registro de operaciones del módulo Media."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-media-dashboard.php:225
+msgid "Ver logs"
+msgstr ""
 
 #: convoca-enroll/admin/class-admin-actividades.php:38
 #: convoca-enroll/admin/class-admin-actividades.php:39
@@ -137,22 +445,11 @@ msgstr ""
 msgid "Nonce inválido."
 msgstr ""
 
-#: convoca-enroll/admin/class-admin-actividades.php:326
-#: convoca-enroll/admin/class-admin-monitor-crm.php:105
-#: convoca-enroll/admin/class-admin-templates-page.php:36
-#: convoca-enroll/admin/class-admin-media-dashboard.php:199
-#: convoca-enroll/admin/class-admin-settings.php:790
-#: convoca-enroll/admin/class-admin-page.php:747
-#: convoca-enroll/admin/class-admin-page.php:796
-#: convoca-enroll/admin/class-admin-page.php:819
-msgid "No tienes permisos."
-msgstr ""
-
 #: convoca-enroll/admin/class-admin-actividades.php:331
 #: convoca-enroll/admin/class-admin-monitor-crm.php:341
-#: convoca-enroll/includes/PDF_Compromiso.php:75
 #: convoca-enroll/includes/Rest_API.php:203
 #: convoca-enroll/includes/Motor_Inscripcion.php:46
+#: convoca-enroll/includes/PDF_Compromiso.php:75
 #: convoca-enroll/media/class-blog-post-manager.php:51
 msgid "Actividad no encontrada."
 msgstr ""
@@ -202,9 +499,9 @@ msgstr ""
 
 #: convoca-enroll/admin/class-admin-checkin.php:151
 #: convoca-enroll/admin/class-admin-monitor-crm.php:506
-#: convoca-enroll/admin/class-email-queue-list.php:30
-#: convoca-enroll/admin/class-admin-settings.php:48
 #: convoca-enroll/admin/class-admin-page.php:758
+#: convoca-enroll/admin/class-admin-settings.php:48
+#: convoca-enroll/admin/class-email-queue-list.php:30
 msgid "Estado"
 msgstr ""
 
@@ -242,48 +539,6 @@ msgstr ""
 msgid "Selecciona una actividad para comenzar el check-in."
 msgstr ""
 
-#: convoca-enroll/admin/class-admin-evaluacion-fields.php:18
-msgid "Detalles de la Evaluación"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluacion-fields.php:45
-#: convoca-enroll/admin/class-admin-evaluaciones-editor.php:103
-msgid "Actividad evaluada"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluacion-fields.php:47
-#: convoca-enroll/admin/class-admin-evaluaciones-editor.php:105
-msgid "— Seleccionar actividad —"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluacion-fields.php:58
-#: convoca-enroll/admin/class-admin-evaluaciones-editor.php:128
-#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:72
-#: convoca-enroll/public/class-formulario-evaluacion.php:156
-msgid "Gestión y coordinación"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluacion-fields.php:59
-#: convoca-enroll/admin/class-admin-evaluaciones-editor.php:129
-#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:76
-#: convoca-enroll/public/class-formulario-evaluacion.php:157
-msgid "Instalaciones / Espacio"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluacion-fields.php:60
-#: convoca-enroll/admin/class-admin-evaluaciones-editor.php:130
-#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:80
-#: convoca-enroll/admin/class-admin-reports.php:921
-msgid "Participantes"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluacion-fields.php:61
-#: convoca-enroll/admin/class-admin-evaluaciones-editor.php:131
-#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:84
-#: convoca-enroll/admin/class-admin-reports.php:922
-msgid "Comunicación"
-msgstr ""
-
 #: convoca-enroll/admin/class-admin-evaluaciones-editor.php:26
 #: convoca-enroll/admin/class-admin-evaluaciones-editor.php:27
 msgid "Añadir evaluación"
@@ -313,65 +568,6 @@ msgstr ""
 msgid "Guardar Evaluación"
 msgstr ""
 
-#: convoca-enroll/admin/class-admin-evaluaciones-list.php:21
-msgid "Título"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluaciones-list.php:22
-#: convoca-enroll/admin/class-admin-monitor-crm.php:138
-#: convoca-enroll/admin/class-admin-reports.php:916
-#: convoca-enroll/admin/class-admin-page.php:758
-#: convoca-enroll/includes/CPT_Actividad.php:73
-#: convoca-enroll/media/class-poster-engine.php:306
-#: convoca-enroll/media/class-poster-engine.php:477
-msgid "Actividad"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluaciones-list.php:23
-msgid "Evaluador"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluaciones-list.php:24
-msgid "Puntuación Media"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluaciones-list.php:25
-#: convoca-enroll/admin/class-admin-monitor-crm.php:139
-#: convoca-enroll/media/class-poster-engine.php:485
-#: convoca-enroll/media/class-blog-post-manager.php:184
-msgid "Fecha"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluaciones-list.php:50
-msgid "Usuario eliminado"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluaciones-list.php:111
-#: convoca-enroll/admin/class-admin-reports.php:888
-msgid "Todas las actividades"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:17
-msgid "Evaluaciones de la Actividad"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:39
-msgid "No hay evaluaciones para esta actividad todavía."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:64
-#, php-format
-msgid "Total evaluaciones: %d"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:65
-msgid "Media Global:"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-evaluaciones-meta-box.php:92
-msgid "Ver todas las evaluaciones"
-msgstr ""
-
 #: convoca-enroll/admin/class-admin-inscripcion-form.php:56
 #: convoca-enroll/admin/class-admin-page.php:118
 #: convoca-enroll/admin/class-admin-page.php:119
@@ -394,30 +590,6 @@ msgstr ""
 msgid "Tarjeta Socio"
 msgstr ""
 
-#: convoca-enroll/admin/class-admin-media-pages.php:31
-msgid "Cola de publicaciones"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-pages.php:48
-msgid "No hay publicaciones en la cola."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-pages.php:73
-msgid "Redes sociales"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-pages.php:91
-msgid "Cuentas conectadas"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-pages.php:117
-msgid "Registro de operaciones"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-pages.php:133
-msgid "No hay logs todavía. Genera un cartel para ver registros."
-msgstr ""
-
 #: convoca-enroll/admin/class-admin-monitor-crm.php:24
 #: convoca-enroll/admin/class-admin-monitor-crm.php:25
 msgid "Mis actividades"
@@ -433,11 +605,6 @@ msgstr ""
 
 #: convoca-enroll/admin/class-admin-monitor-crm.php:72
 msgid "Cancelada desde el panel de monitor."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-monitor-crm.php:115
-#: convoca-enroll/admin/class-csv-exporter.php:37
-msgid "No tienes permiso para exportar datos de esta actividad."
 msgstr ""
 
 #: convoca-enroll/admin/class-admin-monitor-crm.php:140
@@ -580,6 +747,152 @@ msgstr ""
 msgid "Validar"
 msgstr ""
 
+#: convoca-enroll/admin/class-admin-page.php:62
+msgid ""
+"Error: La fecha de fin no puede ser anterior a la de inicio. Se ha ajustado "
+"automáticamente."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:66
+msgid ""
+"Google Photos: La integración no está configurada o activada. Se ha "
+"desactivado la creación del álbum."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:70
+msgid ""
+"Google Calendar: La integración no está configurada o activada. Se ha "
+"desactivado la sincronización."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:74
+msgid ""
+"Aviso: Las plazas disponibles no pueden superar las totales. Se han ajustado "
+"automáticamente."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:94
+#: convoca-enroll/admin/class-admin-page.php:228
+msgid "Inscripciones Convoca"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:109
+#: convoca-enroll/admin/class-admin-page.php:110
+#: convoca-enroll/admin/class-admin-page.php:311
+#: convoca-enroll/includes/CPT_Inscripcion.php:123
+msgid "Inscripciones"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:136
+#: convoca-enroll/admin/class-admin-page.php:137
+#: convoca-enroll/admin/class-admin-reports.php:27
+#: convoca-enroll/includes/CPT_Evaluacion.php:16
+#: convoca-enroll/includes/CPT_Evaluacion.php:18
+msgid "Evaluaciones"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:148
+#: convoca-enroll/admin/class-admin-page.php:149
+msgid "Informes"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:157
+msgid "Ajustes"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:158
+msgid "Configuración"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:166
+#: convoca-enroll/admin/class-admin-page.php:167
+msgid "Logs"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:175
+#: convoca-enroll/admin/class-admin-page.php:176
+#: convoca-enroll/admin/class-admin-page.php:780
+msgid "Cola de Correos"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:233
+msgid "El sistema de inscripciones no está activo."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:312
+msgid "+ Nueva inscripción"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:313
+#: convoca-enroll/admin/class-admin-reports.php:911
+msgid "Exportar CSV"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:314
+msgid "Exportar PDF"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:321
+#: convoca-enroll/admin/class-admin-page.php:783
+msgid "Buscar"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:330
+msgid ""
+"Usa el menú estándar de WordPress para gestionar las actividades o mira el "
+"resumen aquí."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:358
+msgid "No tienes permisos para acceder a esta página."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:372
+msgid "Configuración de Delegados"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:398
+msgid "Guardar Asignaciones"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:444
+#, php-format
+msgid "%d inscripciones confirmadas."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:450
+#, php-format
+msgid "(%1$d saltadas por falta de aforo, %2$d por estado no confirmable)."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:599
+msgid "Notas internas"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:602
+msgid "Guardar nota"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:618
+msgid "Guardando..."
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:621
+msgid "✓ Guardado"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:621
+msgid "Error"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:622
+msgid "Error de conexión"
+msgstr ""
+
+#: convoca-enroll/admin/class-admin-page.php:824
+msgid "Nota guardada."
+msgstr ""
+
 #: convoca-enroll/admin/class-admin-reports.php:21
 #: convoca-enroll/includes/CPT_Actividad.php:551
 msgid "Ocupación"
@@ -605,25 +918,12 @@ msgstr ""
 msgid "Memoria Actividades"
 msgstr ""
 
-#: convoca-enroll/admin/class-admin-reports.php:27
-#: convoca-enroll/admin/class-admin-page.php:136
-#: convoca-enroll/admin/class-admin-page.php:137
-#: convoca-enroll/includes/CPT_Evaluacion.php:16
-#: convoca-enroll/includes/CPT_Evaluacion.php:18
-msgid "Evaluaciones"
-msgstr ""
-
 #: convoca-enroll/admin/class-admin-reports.php:82
 msgid "Informes de Inscripciones"
 msgstr ""
 
 #: convoca-enroll/admin/class-admin-reports.php:886
 msgid "Actividad:"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-reports.php:911
-#: convoca-enroll/admin/class-admin-page.php:313
-msgid "Exportar CSV"
 msgstr ""
 
 #: convoca-enroll/admin/class-admin-reports.php:917
@@ -648,201 +948,6 @@ msgstr ""
 
 #: convoca-enroll/admin/class-admin-reports.php:1029
 msgid "Enlace de exportación inválido o caducado."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:30
-#: convoca-enroll/admin/class-admin-setup-wizard.php:50
-msgid "Asistente de configuración"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:31
-msgid "🚀 Asistente"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:66
-msgid "Sube el logo de tu organización y configura los colores principales."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:68
-msgid "Logo"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:70
-msgid "Seleccionar imagen"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:71
-msgid ""
-"Logo que aparecerá en los carteles. Recomendado: PNG transparente, 500x500px."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:74
-msgid "Color principal"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:80
-msgid "Elige la plantilla que se usará por defecto al generar carteles."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:90
-msgid ""
-"Conecta tus redes sociales para publicar automáticamente. Puedes saltarte "
-"este paso y configurarlo después."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:110
-msgid "Genera un cartel de prueba para verificar que todo funciona."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:114
-msgid "Generar cartel de prueba"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:120
-msgid "El módulo Media & Social Suite está configurado."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:121
-msgid "Ahora puedes:"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:129
-msgid "Ir a actividades"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-setup-wizard.php:130
-msgid "Panel Media"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-templates-page.php:26
-#: convoca-enroll/admin/class-admin-templates-page.php:27
-msgid "Plantillas"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-templates-page.php:42
-msgid "Plantillas de carteles"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-templates-page.php:44
-msgid ""
-"Selecciona una plantilla para previsualizar o gestionar sus capas y estilos."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-templates-page.php:53
-msgid "Sistema"
-msgstr ""
-
-#: convoca-enroll/admin/class-csv-exporter.php:26
-msgid "No tienes permisos suficientes para exportar inscripciones."
-msgstr ""
-
-#: convoca-enroll/admin/class-csv-exporter.php:27
-#: convoca-enroll/admin/class-csv-exporter.php:38
-#: convoca-enroll/includes/Checkin_Handler.php:47
-msgid "Acceso Denegado"
-msgstr ""
-
-#: convoca-enroll/admin/class-email-queue-list.php:28
-msgid "Destinatario"
-msgstr ""
-
-#: convoca-enroll/admin/class-email-queue-list.php:29
-msgid "Asunto"
-msgstr ""
-
-#: convoca-enroll/admin/class-email-queue-list.php:31
-msgid "Reintentos"
-msgstr ""
-
-#: convoca-enroll/admin/class-email-queue-list.php:32
-msgid "Creado"
-msgstr ""
-
-#: convoca-enroll/admin/class-email-queue-list.php:82
-msgid "Reenviar seleccionados"
-msgstr ""
-
-#: convoca-enroll/admin/class-email-queue-list.php:83
-msgid "Eliminar seleccionados"
-msgstr ""
-
-#: convoca-enroll/admin/class-email-queue-list.php:159
-msgid "Todos"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:78
-msgid "Plantilla:"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:89
-msgid "Formato:"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:100
-msgid "Imagen del cartel:"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:104
-msgid "Imagen seleccionada"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:106
-msgid "Usará imagen destacada o fondo automático."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:110
-msgid "Elegir imagen"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:111
-#: convoca-enroll/admin/class-admin-settings.php:339
-msgid "Quitar"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:186
-msgid "Media & Social"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:187
-msgid "📸 Media"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:204
-msgid ""
-"Generación automática de carteles, gestión de plantillas y publicación en "
-"redes sociales."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:209
-msgid "Gestiona las plantillas de carteles disponibles."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:210
-msgid "Gestionar"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:214
-msgid "Publicaciones programadas para redes sociales."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:215
-msgid "Ver cola"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:219
-msgid "Conecta y gestiona tus cuentas de redes sociales."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:220
-msgid "Configurar"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:224
-msgid "Registro de operaciones del módulo Media."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-media-dashboard.php:225
-msgid "Ver logs"
 msgstr ""
 
 #: convoca-enroll/admin/class-admin-settings.php:30
@@ -1157,137 +1262,32 @@ msgstr ""
 msgid "No se ha encontrado ninguna página con este shortcode."
 msgstr ""
 
-#: convoca-enroll/admin/class-admin-page.php:62
-msgid ""
-"Error: La fecha de fin no puede ser anterior a la de inicio. Se ha ajustado "
-"automáticamente."
+#: convoca-enroll/admin/class-email-queue-list.php:28
+msgid "Destinatario"
 msgstr ""
 
-#: convoca-enroll/admin/class-admin-page.php:66
-msgid ""
-"Google Photos: La integración no está configurada o activada. Se ha "
-"desactivado la creación del álbum."
+#: convoca-enroll/admin/class-email-queue-list.php:29
+msgid "Asunto"
 msgstr ""
 
-#: convoca-enroll/admin/class-admin-page.php:70
-msgid ""
-"Google Calendar: La integración no está configurada o activada. Se ha "
-"desactivado la sincronización."
+#: convoca-enroll/admin/class-email-queue-list.php:31
+msgid "Reintentos"
 msgstr ""
 
-#: convoca-enroll/admin/class-admin-page.php:74
-msgid ""
-"Aviso: Las plazas disponibles no pueden superar las totales. Se han ajustado "
-"automáticamente."
+#: convoca-enroll/admin/class-email-queue-list.php:32
+msgid "Creado"
 msgstr ""
 
-#: convoca-enroll/admin/class-admin-page.php:94
-#: convoca-enroll/admin/class-admin-page.php:228
-msgid "Inscripciones Convoca"
+#: convoca-enroll/admin/class-email-queue-list.php:82
+msgid "Reenviar seleccionados"
 msgstr ""
 
-#: convoca-enroll/admin/class-admin-page.php:109
-#: convoca-enroll/admin/class-admin-page.php:110
-#: convoca-enroll/admin/class-admin-page.php:311
-#: convoca-enroll/includes/CPT_Inscripcion.php:123
-msgid "Inscripciones"
+#: convoca-enroll/admin/class-email-queue-list.php:83
+msgid "Eliminar seleccionados"
 msgstr ""
 
-#: convoca-enroll/admin/class-admin-page.php:148
-#: convoca-enroll/admin/class-admin-page.php:149
-msgid "Informes"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:157
-msgid "Ajustes"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:158
-msgid "Configuración"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:166
-#: convoca-enroll/admin/class-admin-page.php:167
-msgid "Logs"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:175
-#: convoca-enroll/admin/class-admin-page.php:176
-#: convoca-enroll/admin/class-admin-page.php:780
-msgid "Cola de Correos"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:233
-msgid "El sistema de inscripciones no está activo."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:312
-msgid "+ Nueva inscripción"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:314
-msgid "Exportar PDF"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:321
-#: convoca-enroll/admin/class-admin-page.php:783
-msgid "Buscar"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:330
-msgid ""
-"Usa el menú estándar de WordPress para gestionar las actividades o mira el "
-"resumen aquí."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:358
-msgid "No tienes permisos para acceder a esta página."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:372
-msgid "Configuración de Delegados"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:398
-msgid "Guardar Asignaciones"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:444
-#, php-format
-msgid "%d inscripciones confirmadas."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:450
-#, php-format
-msgid "(%1$d saltadas por falta de aforo, %2$d por estado no confirmable)."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:599
-msgid "Notas internas"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:602
-msgid "Guardar nota"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:618
-msgid "Guardando..."
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:621
-msgid "✓ Guardado"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:621
-msgid "Error"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:622
-msgid "Error de conexión"
-msgstr ""
-
-#: convoca-enroll/admin/class-admin-page.php:824
-msgid "Nota guardada."
+#: convoca-enroll/admin/class-email-queue-list.php:159
+msgid "Todos"
 msgstr ""
 
 #: convoca-enroll/includes/Block_Inscripcion.php:104
@@ -1342,50 +1342,10 @@ msgstr ""
 msgid "No se encontraron evaluaciones en la papelera."
 msgstr ""
 
-#: convoca-enroll/includes/CPT_Inscripcion.php:124
-msgid "Inscripción"
-msgstr ""
-
-#: convoca-enroll/includes/PDF_Compromiso.php:34
-msgid "Error en la generación del Compromiso de Acción Voluntaria:"
-msgstr ""
-
-#: convoca-enroll/includes/PDF_Compromiso.php:47
-msgid "Usuario no encontrado."
-msgstr ""
-
-#: convoca-enroll/includes/PDF_Compromiso.php:120
-msgid "La clase de firma digital no se encuentra disponible."
-msgstr ""
-
 #: convoca-enroll/includes/Rest_API.php:169
 #: convoca-enroll/includes/Rest_API.php:198
 #: convoca-enroll/public/class-formulario-evaluacion.php:22
 msgid "Demasiadas peticiones."
-msgstr ""
-
-#: convoca-enroll/includes/Utils.php:23
-msgid "Aportación"
-msgstr ""
-
-#: convoca-enroll/includes/Utils.php:27
-msgid "Aportaciones"
-msgstr ""
-
-#: convoca-enroll/includes/Utils.php:30
-msgid "Aportación socio"
-msgstr ""
-
-#: convoca-enroll/includes/Utils.php:33
-msgid "Aportación Trasgu"
-msgstr ""
-
-#: convoca-enroll/includes/Utils.php:36
-msgid "Aportación sugerida para socios"
-msgstr ""
-
-#: convoca-enroll/includes/Utils.php:39
-msgid "Aportación sugerida para no socios"
 msgstr ""
 
 #: convoca-enroll/includes/Motor_Inscripcion.php:41
@@ -1533,6 +1493,18 @@ msgstr ""
 msgid "Asistencia confirmada"
 msgstr ""
 
+#: convoca-enroll/includes/PDF_Compromiso.php:34
+msgid "Error en la generación del Compromiso de Acción Voluntaria:"
+msgstr ""
+
+#: convoca-enroll/includes/PDF_Compromiso.php:47
+msgid "Usuario no encontrado."
+msgstr ""
+
+#: convoca-enroll/includes/PDF_Compromiso.php:120
+msgid "La clase de firma digital no se encuentra disponible."
+msgstr ""
+
 #: convoca-enroll/includes/Checkin_PWA.php:71
 msgid "Escáner QR de asistencia para monitores de Convoca"
 msgstr ""
@@ -1543,6 +1515,30 @@ msgstr ""
 
 #: convoca-enroll/includes/Checkin_PWA.php:83
 msgid "Escanear"
+msgstr ""
+
+#: convoca-enroll/includes/Utils.php:23
+msgid "Aportación"
+msgstr ""
+
+#: convoca-enroll/includes/Utils.php:27
+msgid "Aportaciones"
+msgstr ""
+
+#: convoca-enroll/includes/Utils.php:30
+msgid "Aportación socio"
+msgstr ""
+
+#: convoca-enroll/includes/Utils.php:33
+msgid "Aportación Trasgu"
+msgstr ""
+
+#: convoca-enroll/includes/Utils.php:36
+msgid "Aportación sugerida para socios"
+msgstr ""
+
+#: convoca-enroll/includes/Utils.php:39
+msgid "Aportación sugerida para no socios"
 msgstr ""
 
 #: convoca-enroll/includes/Email_Automation.php:557
@@ -1586,6 +1582,18 @@ msgstr ""
 #: convoca-enroll/includes/CPT_Actividad.php:550
 #: convoca-enroll/media/class-blog-post-manager.php:190
 msgid "Ubicación"
+msgstr ""
+
+#: convoca-enroll/includes/CPT_Inscripcion.php:124
+msgid "Inscripción"
+msgstr ""
+
+#: convoca-enroll/includes/Google_Photos.php:243
+msgid "Álbum de fotos"
+msgstr ""
+
+#: convoca-enroll/includes/Google_Photos.php:296
+msgid "Fotos de la actividad"
 msgstr ""
 
 #: convoca-enroll/media/class-template-manager.php:98
@@ -1685,20 +1693,6 @@ msgstr ""
 msgid "Inscríbete en esta actividad"
 msgstr ""
 
-#: convoca-enroll/public/class-form-inscripcion.php:228
-#, php-format
-msgid ""
-"La inscripción se ha iniciado, pero hubo un problema al generar el documento "
-"de compromiso: %s. Podrás completarlo más tarde."
-msgstr ""
-
-#: convoca-enroll/public/class-form-inscripcion.php:266
-#, php-format
-msgid ""
-"Inscripción realizada, pero hubo un problema al generar el documento de "
-"compromiso: %s. Por favor, contacta con nosotros si lo necesitas."
-msgstr ""
-
 #: convoca-enroll/public/class-formulario-evaluacion.php:56
 #: convoca-enroll/public/class-formulario-evaluacion.php:257
 msgid "ID de actividad no válido o inexistente."
@@ -1780,9 +1774,10 @@ msgid "Otros comentarios o sugerencias"
 msgstr ""
 
 #: convoca-enroll/public/class-formulario-evaluacion.php:209
+#, php-format
 msgid ""
-"Acepto que mi evaluación sea tratada según la política de privacidad de "
-"Convoca. Los datos se utilizarán internamente para mejorar las actividades."
+"Acepto que mi evaluación sea tratada según la política de privacidad de %%s. "
+"Los datos se utilizarán internamente para mejorar las actividades."
 msgstr ""
 
 #: convoca-enroll/public/class-formulario-evaluacion.php:214
@@ -1816,6 +1811,20 @@ msgstr ""
 
 #: convoca-enroll/public/class-formulario-evaluacion.php:347
 msgid "Evaluación enviada con éxito. ¡Gracias por tu colaboración!"
+msgstr ""
+
+#: convoca-enroll/public/class-form-inscripcion.php:228
+#, php-format
+msgid ""
+"La inscripción se ha iniciado, pero hubo un problema al generar el documento "
+"de compromiso: %s. Podrás completarlo más tarde."
+msgstr ""
+
+#: convoca-enroll/public/class-form-inscripcion.php:266
+#, php-format
+msgid ""
+"Inscripción realizada, pero hubo un problema al generar el documento de "
+"compromiso: %s. Por favor, contacta con nosotros si lo necesitas."
 msgstr ""
 
 #: convoca-enroll/public/class-pagina-inscripcion.php:41
@@ -1938,14 +1947,14 @@ msgstr ""
 msgid "No, mantener"
 msgstr ""
 
-#: convoca-enroll/convoca-enroll.php:170 convoca-enroll/convoca-enroll.php:284
+#: convoca-enroll/convoca-enroll.php:172 convoca-enroll/convoca-enroll.php:286
 msgid "Monitor de Actividad"
 msgstr ""
 
-#: convoca-enroll/convoca-enroll.php:429
+#: convoca-enroll/convoca-enroll.php:431
 msgid "Cada minuto"
 msgstr ""
 
-#: convoca-enroll/convoca-enroll.php:435
+#: convoca-enroll/convoca-enroll.php:437
 msgid "Cada 7 días"
 msgstr ""
