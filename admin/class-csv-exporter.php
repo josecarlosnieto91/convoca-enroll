@@ -57,12 +57,12 @@ class CSV_Exporter {
 
 		if ( ! empty( $_GET['estado'] ) ) {
 			$meta_query[] = array(
-				'key'   => '_conv_estado',
+				'key'   => '_convoca_estado',
 				'value' => sanitize_text_field( $_GET['estado'] ),
 			);
 		} else {
 			$meta_query[] = array(
-				'key'     => '_conv_estado',
+				'key'     => '_convoca_estado',
 				'value'   => array( 'confirmada', 'pendiente' ),
 				'compare' => 'IN',
 			);
@@ -70,7 +70,7 @@ class CSV_Exporter {
 
 		if ( $actividad_id ) {
 			$meta_query[] = array(
-				'key'   => '_conv_actividad_id',
+				'key'   => '_convoca_actividad_id',
 				'value' => $actividad_id,
 			);
 		}
@@ -113,7 +113,7 @@ class CSV_Exporter {
 		);
 
 		foreach ( $posts as $post ) {
-			$m      = fn( $k ) => get_post_meta( $post->ID, '_conv_' . $k, true );
+			$m      = fn( $k ) => get_post_meta( $post->ID, '_convoca_' . $k, true );
 			$act_id = (int) $m( 'actividad_id' );
 
 			fputcsv(

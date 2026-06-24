@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class CPT_Actividad {
 
-	public const META_PREFIX = '_conv_';
+	public const META_PREFIX = '_convoca_';
 
 	public const META_KEYS = array(
 		'fecha_inicio',
@@ -95,7 +95,7 @@ class CPT_Actividad {
 		foreach ( self::META_KEYS as $key ) {
 			register_post_meta(
 				'actividad',
-				'_conv_' . $key,
+				'_convoca_' . $key,
 				array(
 					'show_in_rest' => true,
 					'single'       => true,
@@ -107,7 +107,7 @@ class CPT_Actividad {
 		// Ensure price is registered as number if possible, or just string.
 		register_post_meta(
 			'actividad',
-			'_conv_precio_general',
+			'_convoca_precio_general',
 			array(
 				'show_in_rest' => true,
 				'single'       => true,
@@ -131,7 +131,7 @@ class CPT_Actividad {
 
 	public function render_metabox( \WP_Post $post ): void {
 		wp_nonce_field( 'convoca_enroll_actividad_meta', 'convoca_enroll_actividad_nonce' );
-		$m = fn( string $key ) => get_post_meta( $post->ID, '_conv_' . $key, true );
+		$m = fn( string $key ) => get_post_meta( $post->ID, '_convoca_' . $key, true );
 		?>
 		<div class="convoca-grid-2">
 			<div class="convoca-field">
@@ -258,14 +258,14 @@ class CPT_Actividad {
 		foreach ( $fields as $key => $sanitizer ) {
 			$raw = $_POST[ 'convoca_enroll_' . $key ] ?? '';
 			$val = is_callable( $sanitizer ) ? $sanitizer( $raw ) : $raw;
-			update_post_meta( $post_id, '_conv_' . $key, $val );
+			update_post_meta( $post_id, '_convoca_' . $key, $val );
 		}
 
 		// Validate dates: end cannot be before start.
-		$inicio = get_post_meta( $post_id, '_conv_fecha_inicio', true );
-		$fin    = get_post_meta( $post_id, '_conv_fecha_fin', true );
+		$inicio = get_post_meta( $post_id, '_convoca_fecha_inicio', true );
+		$fin    = get_post_meta( $post_id, '_convoca_fecha_fin', true );
 		if ( $inicio && $fin && strtotime( $fin ) < strtotime( $inicio ) ) {
-			update_post_meta( $post_id, '_conv_fecha_fin', $inicio );
+			update_post_meta( $post_id, '_convoca_fecha_fin', $inicio );
 			add_filter(
 				'redirect_post_location',
 				function ( $location ) {
@@ -275,11 +275,11 @@ class CPT_Actividad {
 		}
 
 		// Validate Google Photos configuration if enabled.
-		if ( get_post_meta( $post_id, '_conv_google_create_album', true ) === '1' ) {
+		if ( get_post_meta( $post_id, '_convoca_google_create_album', true ) === '1' ) {
 			$settings      = get_option( 'convoca_enroll_settings', array() );
 			$google_photos = new Google_Photos();
 			if ( empty( $settings['google_photos_enabled'] ) || ! $google_photos->is_configured() ) {
-				update_post_meta( $post_id, '_conv_google_create_album', '0' );
+				update_post_meta( $post_id, '_convoca_google_create_album', '0' );
 				add_filter(
 					'redirect_post_location',
 					function ( $location ) {
@@ -290,11 +290,11 @@ class CPT_Actividad {
 		}
 
 		// Validate Google Calendar configuration if enabled.
-		if ( get_post_meta( $post_id, '_conv_google_calendar_sync', true ) === '1' ) {
+		if ( get_post_meta( $post_id, '_convoca_google_calendar_sync', true ) === '1' ) {
 			$settings = get_option( 'convoca_enroll_settings', array() );
 			$calendar = new Google_Calendar();
 			if ( empty( $settings['google_calendar_enabled'] ) || ! $calendar->is_configured() ) {
-				update_post_meta( $post_id, '_conv_google_calendar_sync', '0' );
+				update_post_meta( $post_id, '_convoca_google_calendar_sync', '0' );
 				add_filter(
 					'redirect_post_location',
 					function ( $location ) {
@@ -305,22 +305,22 @@ class CPT_Actividad {
 		}
 
 		// Auto-set plazas_disponibles if empty and plazas_totales is set.
-		$disponibles = get_post_meta( $post_id, '_conv_plazas_disponibles', true );
-		$totales     = get_post_meta( $post_id, '_conv_plazas_totales', true );
+		$disponibles = get_post_meta( $post_id, '_convoca_plazas_disponibles', true );
+		$totales     = get_post_meta( $post_id, '_convoca_plazas_totales', true );
 		if ( empty( $disponibles ) && ! empty( $totales ) ) {
-			update_post_meta( $post_id, '_conv_plazas_disponibles', $totales );
+			update_post_meta( $post_id, '_convoca_plazas_disponibles', $totales );
 		}
 
 		// Auto-set plazas_totales if empty and plazas_disponibles is set (defensive).
 		if ( empty( $totales ) && ! empty( $disponibles ) ) {
-			update_post_meta( $post_id, '_conv_plazas_totales', $disponibles );
+			update_post_meta( $post_id, '_convoca_plazas_totales', $disponibles );
 		}
 
 		// Validate: plazas_disponibles cannot exceed plazas_totales.
-		$disponibles = get_post_meta( $post_id, '_conv_plazas_disponibles', true );
-		$totales     = get_post_meta( $post_id, '_conv_plazas_totales', true );
+		$disponibles = get_post_meta( $post_id, '_convoca_plazas_disponibles', true );
+		$totales     = get_post_meta( $post_id, '_convoca_plazas_totales', true );
 		if ( ! empty( $disponibles ) && ! empty( $totales ) && (int) $disponibles > (int) $totales ) {
-			update_post_meta( $post_id, '_conv_plazas_disponibles', $totales );
+			update_post_meta( $post_id, '_convoca_plazas_disponibles', $totales );
 			add_filter(
 				'redirect_post_location',
 				function ( $location ) {
@@ -341,7 +341,7 @@ class CPT_Actividad {
 		}
 
 		// Check if user is in the explicit responsables list.
-		$responsables = get_post_meta( $actividad_id, '_conv_responsables', true );
+		$responsables = get_post_meta( $actividad_id, '_convoca_responsables', true );
 		if ( $responsables ) {
 			$ids = array_map( 'trim', explode( ',', $responsables ) );
 			if ( in_array( (string) $user_id, $ids, true ) ) {
@@ -359,15 +359,15 @@ class CPT_Actividad {
 					'meta_query'     => array(
 						'relation' => 'AND',
 						array(
-							'key'   => '_conv_actividad_id',
+							'key'   => '_convoca_actividad_id',
 							'value' => $actividad_id,
 						),
 						array(
-							'key'   => '_conv_email',
+							'key'   => '_convoca_email',
 							'value' => $user->user_email,
 						),
 						array(
-							'key'   => '_conv_estado',
+							'key'   => '_convoca_estado',
 							'value' => 'confirmada',
 						),
 					),
@@ -411,12 +411,12 @@ class CPT_Actividad {
 				'post_type'      => 'actividad',
 				'posts_per_page' => $limit,
 				'post_status'    => 'publish',
-				'meta_key'       => '_conv_fecha_inicio',
+				'meta_key'       => '_convoca_fecha_inicio',
 				'orderby'        => 'meta_value',
 				'order'          => 'ASC',
 				'meta_query'     => array(
 					array(
-						'key'     => '_conv_fecha_inicio',
+						'key'     => '_convoca_fecha_inicio',
 						'value'   => current_time( 'Y-m-d H:i' ),
 						'compare' => '>=',
 						'type'    => 'DATETIME',
@@ -448,7 +448,7 @@ class CPT_Actividad {
 			'post_status'    => array( 'publish', 'draft', 'private', 'future' ),
 			'meta_query'     => array(
 				array(
-					'key'     => '_conv_responsables',
+					'key'     => '_convoca_responsables',
 					'value'   => '(^|,)' . $user_id . '(,|$)',
 					'compare' => 'REGEXP',
 				),
@@ -469,11 +469,11 @@ class CPT_Actividad {
 				'meta_query'     => array(
 					'relation' => 'AND',
 					array(
-						'key'   => '_conv_email',
+						'key'   => '_convoca_email',
 						'value' => $user->user_email,
 					),
 					array(
-						'key'   => '_conv_estado',
+						'key'   => '_convoca_estado',
 						'value' => 'confirmada',
 					),
 				),
@@ -482,7 +482,7 @@ class CPT_Actividad {
 			if ( ! empty( $v_query->posts ) ) {
 				$act_ids = array();
 				foreach ( $v_query->posts as $ins_id ) {
-					$act_id = (int) get_post_meta( $ins_id, '_conv_actividad_id', true );
+					$act_id = (int) get_post_meta( $ins_id, '_convoca_actividad_id', true );
 					if ( $act_id ) {
 						$act_ids[] = $act_id;
 					}
@@ -516,7 +516,7 @@ class CPT_Actividad {
 		}
 
 		// If it's a monitor, check if they are assigned.
-		$responsables = get_post_meta( $post_id, '_conv_responsables', true );
+		$responsables = get_post_meta( $post_id, '_convoca_responsables', true );
 		$is_assigned  = false;
 
 		if ( $responsables ) {
@@ -558,8 +558,8 @@ class CPT_Actividad {
 	public function list_custom_column( string $column, int $post_id ): void {
 		switch ( $column ) {
 			case 'fecha':
-				$inicio = get_post_meta( $post_id, '_conv_fecha_inicio', true );
-				$fin    = get_post_meta( $post_id, '_conv_fecha_fin', true );
+				$inicio = get_post_meta( $post_id, '_convoca_fecha_inicio', true );
+				$fin    = get_post_meta( $post_id, '_convoca_fecha_fin', true );
 				if ( $inicio ) {
 					echo '<strong>' . esc_html( \Convoca\Core\Utils::format_date( $inicio, 'd/m/Y H:i' ) ) . '</strong>';
 					if ( $fin ) {
@@ -571,7 +571,7 @@ class CPT_Actividad {
 				break;
 
 			case 'responsables':
-				$ids = get_post_meta( $post_id, '_conv_responsables', true );
+				$ids = get_post_meta( $post_id, '_convoca_responsables', true );
 				if ( ! $ids ) {
 					echo '—';
 					break;
@@ -588,12 +588,12 @@ class CPT_Actividad {
 				break;
 
 			case 'ubicacion':
-				echo esc_html( get_post_meta( $post_id, '_conv_ubicacion', true ) ?: '—' );
+				echo esc_html( get_post_meta( $post_id, '_convoca_ubicacion', true ) ?: '—' );
 				break;
 
 			case 'plazas':
-				$total = (int) get_post_meta( $post_id, '_conv_plazas_totales', true );
-				$disp  = (int) get_post_meta( $post_id, '_conv_plazas_disponibles', true );
+				$total = (int) get_post_meta( $post_id, '_convoca_plazas_totales', true );
+				$disp  = (int) get_post_meta( $post_id, '_convoca_plazas_disponibles', true );
 				if ( $total > 0 ) {
 					$ocupadas = $total - $disp;
 					$pct      = round( ( $ocupadas / $total ) * 100 );
@@ -640,10 +640,10 @@ class CPT_Actividad {
 			return;
 		}
 
-		$album_id     = get_post_meta( $post->ID, '_conv_google_album_id', true );
-		$album_url    = get_post_meta( $post->ID, '_conv_google_album_url', true );
-		$album_shared = get_post_meta( $post->ID, '_conv_google_album_shared', true );
-		$create_album = get_post_meta( $post->ID, '_conv_google_create_album', true );
+		$album_id     = get_post_meta( $post->ID, '_convoca_google_album_id', true );
+		$album_url    = get_post_meta( $post->ID, '_convoca_google_album_url', true );
+		$album_shared = get_post_meta( $post->ID, '_convoca_google_album_shared', true );
+		$create_album = get_post_meta( $post->ID, '_convoca_google_create_album', true );
 
 		if ( ! $album_id && $create_album !== '0' ) {
 			echo '<p><button type="button" class="button button-primary" onclick="bdeCreateAlbum(' . esc_attr( $post->ID ) . ')">Crear álbum</button></p>';
@@ -717,12 +717,12 @@ class CPT_Actividad {
 			return;
 		}
 
-		$create_album = get_post_meta( $post_id, '_conv_google_create_album', true );
+		$create_album = get_post_meta( $post_id, '_convoca_google_create_album', true );
 		if ( $create_album !== '1' ) {
 			return;
 		}
 
-		$album_id = get_post_meta( $post_id, '_conv_google_album_id', true );
+		$album_id = get_post_meta( $post_id, '_convoca_google_album_id', true );
 		if ( ! empty( $album_id ) ) {
 			return;
 		}
@@ -831,7 +831,7 @@ class CPT_Actividad {
 			wp_send_json_error( 'La integración con Google Calendar no está configurada.' );
 		}
 
-		$event_id = get_post_meta( $activity_id, '_conv_google_event_id', true );
+		$event_id = get_post_meta( $activity_id, '_convoca_google_event_id', true );
 		if ( ! $event_id ) {
 			wp_send_json_error( __( 'No hay un evento asociado a esta actividad.', 'convoca-enroll' ) );
 		}
@@ -841,8 +841,8 @@ class CPT_Actividad {
 
 		try {
 			$calendar->sync_on_delete( $activity_id, get_post( $activity_id ) );
-			delete_post_meta( $activity_id, '_conv_google_event_id' );
-			delete_post_meta( $activity_id, '_conv_google_event_link' );
+			delete_post_meta( $activity_id, '_convoca_google_event_id' );
+			delete_post_meta( $activity_id, '_convoca_google_event_link' );
 			wp_send_json_success();
 		} catch ( \Exception $e ) {
 			wp_send_json_error( __( 'Error al eliminar el evento: ', 'convoca-enroll' ) . $e->getMessage() );

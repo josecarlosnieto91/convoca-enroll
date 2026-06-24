@@ -42,7 +42,7 @@ class BlogPostManagerTest extends \WP_UnitTestCase {
 
 	public function test_created_post_has_meta_link(): void {
 		$post_id = Blog_Post_Manager::create_or_update( $this->actividad_id );
-		$linked  = get_post_meta( $this->actividad_id, '_conv_media_blog_post_id', true );
+		$linked  = get_post_meta( $this->actividad_id, '_convoca_media_blog_post_id', true );
 		$this->assertEquals( $post_id, $linked );
 	}
 }

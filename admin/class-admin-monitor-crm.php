@@ -173,7 +173,7 @@ class Admin_Monitor_CRM {
 		}
 
 		$inscripciones = get_posts( $args );
-		$fecha_act     = get_post_meta( $actividad_id, '_conv_fecha', true );
+		$fecha_act     = get_post_meta( $actividad_id, '_convoca_fecha', true );
 
 		foreach ( $inscripciones as $ins ) {
 			fputcsv(
@@ -186,7 +186,7 @@ class Admin_Monitor_CRM {
 					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::get_meta( $ins->ID, 'telefono' ) ),
 					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::get_meta( $ins->ID, 'estado' ) ),
 					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::get_meta( $ins->ID, 'asistencia' ) ),
-					\Convoca\Core\Utils::escape_csv_field( get_post_meta( $ins->ID, '_conv_checkin_token', true ) ),
+					\Convoca\Core\Utils::escape_csv_field( get_post_meta( $ins->ID, '_convoca_checkin_token', true ) ),
 				)
 			);
 		}
@@ -283,9 +283,9 @@ class Admin_Monitor_CRM {
 
 		echo '<div class="conv-activity-grid">';
 		foreach ( $activities as $act ) {
-			$fecha       = get_post_meta( $act->ID, '_conv_fecha', true );
-			$total       = (int) get_post_meta( $act->ID, '_conv_plazas_totales', true );
-			$disponibles = (int) get_post_meta( $act->ID, '_conv_plazas_disponibles', true );
+			$fecha       = get_post_meta( $act->ID, '_convoca_fecha', true );
+			$total       = (int) get_post_meta( $act->ID, '_convoca_plazas_totales', true );
+			$disponibles = (int) get_post_meta( $act->ID, '_convoca_plazas_disponibles', true );
 			$ocupadas    = $total - $disponibles;
 
 			// Waitlist count.
@@ -348,8 +348,8 @@ class Admin_Monitor_CRM {
 			return;
 		}
 
-		$fecha = get_post_meta( $actividad_id, '_conv_fecha', true );
-		$total = (int) get_post_meta( $actividad_id, '_conv_plazas_totales', true );
+		$fecha = get_post_meta( $actividad_id, '_convoca_fecha', true );
+		$total = (int) get_post_meta( $actividad_id, '_convoca_plazas_totales', true );
 
 		$checkin_mode = isset( $_GET['checkin'] ) && $_GET['checkin'] == 1;
 

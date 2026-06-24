@@ -50,7 +50,7 @@ class Eval_Reminder_Cron {
 				'post_status'    => 'publish',
 				'meta_query'     => array(
 					array(
-						'key'     => '_conv_fecha_fin',
+						'key'     => '_convoca_fecha_fin',
 						'value'   => array(
 							$target_day . ' 00:00:00',
 							$target_day . ' 23:59:59',
@@ -96,15 +96,15 @@ class Eval_Reminder_Cron {
 				'meta_query'     => array(
 					'relation' => 'AND',
 					array(
-						'key'   => '_conv_actividad_id',
+						'key'   => '_convoca_actividad_id',
 						'value' => $activity_id,
 					),
 					array(
-						'key'   => '_conv_estado',
+						'key'   => '_convoca_estado',
 						'value' => 'confirmada',
 					),
 					array(
-						'key'   => '_conv_asistencia',
+						'key'   => '_convoca_asistencia',
 						'value' => 'si',
 					),
 				),
@@ -115,7 +115,7 @@ class Eval_Reminder_Cron {
 			if ( $enqueued_count >= $limit ) {
 				break;
 			}
-			$user_id = (int) get_post_meta( $insc->ID, '_conv_user_id', true );
+			$user_id = (int) get_post_meta( $insc->ID, '_convoca_user_id', true );
 			if ( ! $user_id ) {
 				continue; // Necesitamos usuario registrado.
 			}
@@ -126,7 +126,7 @@ class Eval_Reminder_Cron {
 			}
 
 			// Filtrar: evitar duplicados.
-			if ( get_post_meta( $insc->ID, '_conv_reminder_eval_sent', true ) ) {
+			if ( get_post_meta( $insc->ID, '_convoca_reminder_eval_sent', true ) ) {
 				continue;
 			}
 
@@ -165,7 +165,7 @@ class Eval_Reminder_Cron {
 		$eval_id = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'convoca_evaluacion' AND post_author = %d AND ID IN (
-                SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_conv_eval_actividad_id' AND meta_value = %d
+                SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_eval_actividad_id' AND meta_value = %d
             )",
 				$user_id,
 				$activity_id
@@ -180,7 +180,7 @@ class Eval_Reminder_Cron {
 		$email               = $user->user_email;
 		$nombre              = $user->display_name;
 		$nombre_actividad    = get_the_title( $activity_id );
-		$fecha_actividad_raw = get_post_meta( $activity_id, '_conv_fecha_fin', true );
+		$fecha_actividad_raw = get_post_meta( $activity_id, '_convoca_fecha_fin', true );
 		$fecha_actividad     = $fecha_actividad_raw ? wp_date( 'd/m/Y', strtotime( $fecha_actividad_raw ) ) : '';
 
 		$url = $link_base;
@@ -225,7 +225,7 @@ class Eval_Reminder_Cron {
 		);
 
 		// Marcar como enviado.
-		update_post_meta( $insc_id, '_conv_reminder_eval_sent', current_time( 'mysql' ) );
+		update_post_meta( $insc_id, '_convoca_reminder_eval_sent', current_time( 'mysql' ) );
 
 		Logger::info(
 			sprintf( 'Recordatorio de evaluación encolado para el usuario ID %d en actividad %d', $user_id, $activity_id ),

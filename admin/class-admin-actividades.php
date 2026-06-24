@@ -130,7 +130,7 @@ class Admin_Actividades {
 
 		$meta = array();
 		foreach ( CPT_Actividad::META_KEYS as $key ) {
-			$meta[ $key ] = $post_id ? get_post_meta( $post_id, '_conv_' . $key, true ) : '';
+			$meta[ $key ] = $post_id ? get_post_meta( $post_id, '_convoca_' . $key, true ) : '';
 		}
 
 		// Defaults for new activity.
@@ -289,26 +289,26 @@ class Admin_Actividades {
 		}
 
 		// Save Meta.
-		update_post_meta( $post_id, '_conv_fecha_inicio', sanitize_text_field( str_replace( 'T', ' ', $_POST['fecha_inicio'] ) ) );
-		update_post_meta( $post_id, '_conv_fecha_fin', sanitize_text_field( str_replace( 'T', ' ', $_POST['fecha_fin'] ) ) );
-		update_post_meta( $post_id, '_conv_ubicacion', sanitize_text_field( $_POST['ubicacion'] ) );
+		update_post_meta( $post_id, '_convoca_fecha_inicio', sanitize_text_field( str_replace( 'T', ' ', $_POST['fecha_inicio'] ) ) );
+		update_post_meta( $post_id, '_convoca_fecha_fin', sanitize_text_field( str_replace( 'T', ' ', $_POST['fecha_fin'] ) ) );
+		update_post_meta( $post_id, '_convoca_ubicacion', sanitize_text_field( $_POST['ubicacion'] ) );
 
-		$old_plazas = (int) get_post_meta( $post_id, '_conv_plazas_totales', true );
+		$old_plazas = (int) get_post_meta( $post_id, '_convoca_plazas_totales', true );
 		$new_plazas = (int) $_POST['plazas_totales'];
-		update_post_meta( $post_id, '_conv_plazas_totales', $new_plazas );
+		update_post_meta( $post_id, '_convoca_plazas_totales', $new_plazas );
 
 		// Update available plazas if total changed.
 		if ( $new_plazas !== $old_plazas ) {
 			$stats = CPT_Inscripcion::count_by_activity( $post_id );
-			update_post_meta( $post_id, '_conv_plazas_disponibles', max( 0, $new_plazas - $stats['confirmada'] ) );
+			update_post_meta( $post_id, '_convoca_plazas_disponibles', max( 0, $new_plazas - $stats['confirmada'] ) );
 		}
 
-		update_post_meta( $post_id, '_conv_precio_socio', sanitize_text_field( $_POST['precio_socio'] ) );
-		update_post_meta( $post_id, '_conv_requiere_pago', isset( $_POST['requiere_pago'] ) ? 1 : 0 );
-		update_post_meta( $post_id, '_conv_actividad_lugg', isset( $_POST['actividad_lugg'] ) ? 1 : 0 );
+		update_post_meta( $post_id, '_convoca_precio_socio', sanitize_text_field( $_POST['precio_socio'] ) );
+		update_post_meta( $post_id, '_convoca_requiere_pago', isset( $_POST['requiere_pago'] ) ? 1 : 0 );
+		update_post_meta( $post_id, '_convoca_actividad_lugg', isset( $_POST['actividad_lugg'] ) ? 1 : 0 );
 
 		$responsables = isset( $_POST['responsables'] ) ? array_map( 'intval', $_POST['responsables'] ) : array();
-		update_post_meta( $post_id, '_conv_responsables', implode( ',', $responsables ) );
+		update_post_meta( $post_id, '_convoca_responsables', implode( ',', $responsables ) );
 
 		wp_redirect( admin_url( 'admin.php?page=convoca-core-enroll&message=saved' ) );
 		exit;
@@ -352,20 +352,20 @@ class Admin_Actividades {
 			if ( in_array( $key, $skip_meta, true ) ) {
 				continue;
 			}
-			$val = get_post_meta( $orig_id, '_conv_' . $key, true );
+			$val = get_post_meta( $orig_id, '_convoca_' . $key, true );
 			if ( $val !== '' ) {
-				update_post_meta( $new_id, '_conv_' . $key, $val );
+				update_post_meta( $new_id, '_convoca_' . $key, $val );
 			}
 		}
 
 		// Shift dates by 7 days.
-		$fecha_ini = get_post_meta( $orig_id, '_conv_fecha_inicio', true );
-		$fecha_fin = get_post_meta( $orig_id, '_conv_fecha_fin', true );
+		$fecha_ini = get_post_meta( $orig_id, '_convoca_fecha_inicio', true );
+		$fecha_fin = get_post_meta( $orig_id, '_convoca_fecha_fin', true );
 		if ( $fecha_ini ) {
-			update_post_meta( $new_id, '_conv_fecha_inicio', wp_date( 'Y-m-d\TH:i', strtotime( $fecha_ini . ' +7 days' ) ) );
+			update_post_meta( $new_id, '_convoca_fecha_inicio', wp_date( 'Y-m-d\TH:i', strtotime( $fecha_ini . ' +7 days' ) ) );
 		}
 		if ( $fecha_fin ) {
-			update_post_meta( $new_id, '_conv_fecha_fin', wp_date( 'Y-m-d\TH:i', strtotime( $fecha_fin . ' +7 days' ) ) );
+			update_post_meta( $new_id, '_convoca_fecha_fin', wp_date( 'Y-m-d\TH:i', strtotime( $fecha_fin . ' +7 days' ) ) );
 		}
 
 		\Convoca\Core\Logger::info(
@@ -425,7 +425,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 			$args['order']   = 'DESC';
 			$args['s']       = $search;
 		} else {
-			$args['meta_key'] = '_conv_fecha_inicio';
+			$args['meta_key'] = '_convoca_fecha_inicio';
 			$args['orderby']  = 'meta_value';
 			$args['order']    = 'DESC';
 		}
@@ -448,7 +448,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 
 	protected function column_titulo( $item ): string {
 		$edit  = admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $item->ID );
-		$lugg  = get_post_meta( $item->ID, '_conv_actividad_lugg', true );
+		$lugg  = get_post_meta( $item->ID, '_convoca_actividad_lugg', true );
 		$badge = $lugg === '1' ? ' <span class="convoca-badge convoca-badge--lugg" style="background:#2d5a27;color:#fff;">Centro Social</span>' : '';
 
 		$status_badge = '';
@@ -462,25 +462,25 @@ class Admin_Actividades_List extends \WP_List_Table {
 	}
 
 	protected function column_fecha( $item ): string {
-		$fecha = get_post_meta( $item->ID, '_conv_fecha_inicio', true );
+		$fecha = get_post_meta( $item->ID, '_convoca_fecha_inicio', true );
 		return $fecha ? esc_html( \Convoca\Core\Utils::format_date( $fecha, 'd/m/Y H:i' ) ) : '—';
 	}
 
 	protected function column_ubicacion( $item ): string {
-		$ubicacion = get_post_meta( $item->ID, '_conv_ubicacion', true );
+		$ubicacion = get_post_meta( $item->ID, '_convoca_ubicacion', true );
 		return $ubicacion ? esc_html( $ubicacion ) : '—';
 	}
 
 	protected function column_plazas( $item ): string {
-		$total = (int) get_post_meta( $item->ID, '_conv_plazas_totales', true );
-		$disp  = (int) get_post_meta( $item->ID, '_conv_plazas_disponibles', true );
+		$total = (int) get_post_meta( $item->ID, '_convoca_plazas_totales', true );
+		$disp  = (int) get_post_meta( $item->ID, '_convoca_plazas_disponibles', true );
 		$used  = $total - $disp;
 		return $used . '/' . $total;
 	}
 
 	protected function column_ocupacion( $item ): string {
 		$stats = CPT_Inscripcion::count_by_activity( $item->ID );
-		$total = (int) get_post_meta( $item->ID, '_conv_plazas_totales', true );
+		$total = (int) get_post_meta( $item->ID, '_convoca_plazas_totales', true );
 		if ( $total <= 0 ) {
 			return '0%';
 		}

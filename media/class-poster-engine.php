@@ -161,22 +161,22 @@ class Poster_Engine {
 			return new \WP_Error( 'invalid_activity', __( 'Actividad no encontrada o tipo incorrecto.', 'convoca-enroll' ) );
 		}
 
-		$start_raw = self::meta_first( $id, array( '_conv_fecha_inicio', 'fecha_inicio', 'fecha' ) );
-		$end_raw   = self::meta_first( $id, array( '_conv_fecha_fin', 'fecha_fin' ) );
-		$time_raw  = self::meta_first( $id, array( 'hora', '_conv_hora' ) );
+		$start_raw = self::meta_first( $id, array( '_convoca_fecha_inicio', 'fecha_inicio', 'fecha' ) );
+		$end_raw   = self::meta_first( $id, array( '_convoca_fecha_fin', 'fecha_fin' ) );
+		$time_raw  = self::meta_first( $id, array( 'hora', '_convoca_hora' ) );
 
 		list( $start_date, $start_time ) = self::split_datetime( $start_raw );
 		list( $end_date, $end_time )     = self::split_datetime( $end_raw );
 		$explicit_time                   = $time_raw ?: $start_time;
 
-		$type_slug = self::meta_first( $id, array( 'tipo_actividad', '_conv_tipo_actividad', 'tipo', '_conv_tipo' ) );
+		$type_slug = self::meta_first( $id, array( 'tipo_actividad', '_convoca_tipo_actividad', 'tipo', '_convoca_tipo' ) );
 		$style     = self::event_style( $type_slug );
 		$image_id  = absint( $overrides['image_id'] ?? 0 );
 
 		if ( $image_id ) {
-			update_post_meta( $id, '_conv_poster_image_id', $image_id );
+			update_post_meta( $id, '_convoca_poster_image_id', $image_id );
 		}
-		$image_id = $image_id ?: absint( get_post_meta( $id, '_conv_poster_image_id', true ) );
+		$image_id = $image_id ?: absint( get_post_meta( $id, '_convoca_poster_image_id', true ) );
 		$image_id = $image_id ?: (int) get_post_thumbnail_id( $id );
 		$image_id = $image_id ?: self::first_image_id( $id );
 
@@ -195,11 +195,11 @@ class Poster_Engine {
 			'subtitle'   => wp_strip_all_tags( $post->post_excerpt ?: self::plain_trim( $post->post_content, 150 ) ),
 			'date'       => self::date_label( $start_date, $end_date ),
 			'time'       => self::time_label( $start_date, $end_date, $explicit_time ),
-			'location'   => wp_strip_all_tags( self::meta_first( $id, array( '_conv_lugar', 'lugar', 'ubicacion', '_conv_ubicacion' ) ) ),
-			'places'     => absint( self::meta_first( $id, array( '_conv_plazas_totales', 'plazas_totales' ) ) ),
+			'location'   => wp_strip_all_tags( self::meta_first( $id, array( '_convoca_lugar', 'lugar', 'ubicacion', '_convoca_ubicacion' ) ) ),
+			'places'     => absint( self::meta_first( $id, array( '_convoca_plazas_totales', 'plazas_totales' ) ) ),
 			'price'      => self::price_label( $id ),
-			'organizer'  => wp_strip_all_tags( self::meta_first( $id, array( '_conv_organizador', 'organizador', 'organiza', '_conv_organiza' ) ) ),
-			'age'        => wp_strip_all_tags( self::meta_first( $id, array( '_conv_edad', 'edad', 'edad_recomendada', '_conv_edad_recomendada' ) ) ),
+			'organizer'  => wp_strip_all_tags( self::meta_first( $id, array( '_convoca_organizador', 'organizador', 'organiza', '_convoca_organiza' ) ) ),
+			'age'        => wp_strip_all_tags( self::meta_first( $id, array( '_convoca_edad', 'edad', 'edad_recomendada', '_convoca_edad_recomendada' ) ) ),
 			'type_label' => $style['label'],
 			'type_color' => $style['color'],
 			'org_name'   => get_bloginfo( 'name' ),
@@ -249,7 +249,7 @@ class Poster_Engine {
 	}
 
 	private static function price_label( int $id ): string {
-		$raw = self::meta_first( $id, array( '_conv_precio_socio', '_conv_precio_general', 'precio_socio', 'precio' ) );
+		$raw = self::meta_first( $id, array( '_convoca_precio_socio', '_convoca_precio_general', 'precio_socio', 'precio' ) );
 		$val = (float) str_replace( ',', '.', $raw );
 		return $val > 0 ? number_format_i18n( $val, 2 ) . ' €' : __( 'Gratuito', 'convoca-enroll' );
 	}

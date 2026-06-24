@@ -87,7 +87,7 @@ class Email_Automation {
 	 * Note: deleted_post_meta passes $meta_id as an array of IDs.
 	 */
 	public function clear_panel_cache( int|array $meta_id, int $post_id, string $meta_key ): void {
-		if ( $meta_key === '_conv_panel_page' ) {
+		if ( $meta_key === '_convoca_panel_page' ) {
 			delete_option( 'convoca_enroll_panel_reservas_page_id' );
 		}
 	}
@@ -384,7 +384,7 @@ class Email_Automation {
 	 * Public method to resend a confirmation email.
 	 */
 	public function resend_confirmation( int $inscripcion_id ): bool {
-		$actividad_id = (int) get_post_meta( $inscripcion_id, '_conv_actividad_id', true );
+		$actividad_id = (int) get_post_meta( $inscripcion_id, '_convoca_actividad_id', true );
 		if ( ! $actividad_id ) {
 			return false;
 		}
@@ -399,7 +399,7 @@ class Email_Automation {
 		$target_start = wp_date( 'Y-m-d\TH:i', strtotime( '+7 days' ) );
 		$target_end   = wp_date( 'Y-m-d\TH:i', strtotime( '+7 days +2 hours' ) );
 
-		$activities = $this->get_activities_for_reminder( 'reminder_7dias', $target_start, $target_end, '_conv_fecha_inicio' );
+		$activities = $this->get_activities_for_reminder( 'reminder_7dias', $target_start, $target_end, '_convoca_fecha_inicio' );
 
 		foreach ( $activities as $activity ) {
 			$inscriptions = $this->get_confirmed_inscriptions( $activity->ID );
@@ -415,7 +415,7 @@ class Email_Automation {
 		$target_start = wp_date( 'Y-m-d\TH:i', strtotime( '+23 hours' ) );
 		$target_end   = wp_date( 'Y-m-d\TH:i', strtotime( '+25 hours' ) );
 
-		$activities = $this->get_activities_for_reminder( 'reminder_1dia', $target_start, $target_end, '_conv_fecha_inicio' );
+		$activities = $this->get_activities_for_reminder( 'reminder_1dia', $target_start, $target_end, '_convoca_fecha_inicio' );
 
 		foreach ( $activities as $activity ) {
 			$inscriptions = $this->get_confirmed_inscriptions( $activity->ID );
@@ -431,7 +431,7 @@ class Email_Automation {
 		$target_start = wp_date( 'Y-m-d\TH:i', strtotime( '+1 hour' ) );
 		$target_end   = wp_date( 'Y-m-d\TH:i', strtotime( '+2 hours' ) );
 
-		$activities = $this->get_activities_for_reminder( 'reminder_1hora', $target_start, $target_end, '_conv_fecha_inicio' );
+		$activities = $this->get_activities_for_reminder( 'reminder_1hora', $target_start, $target_end, '_convoca_fecha_inicio' );
 
 		foreach ( $activities as $activity ) {
 			$inscriptions = $this->get_confirmed_inscriptions( $activity->ID );
@@ -447,7 +447,7 @@ class Email_Automation {
 		$target_start = wp_date( 'Y-m-d\T00:00', strtotime( '-7 days' ) );
 		$target_end   = wp_date( 'Y-m-d\T23:59', strtotime( '-7 days' ) );
 
-		$activities = $this->get_activities_for_reminder( 'reminder_post_evento', $target_start, $target_end, '_conv_fecha_fin' );
+		$activities = $this->get_activities_for_reminder( 'reminder_post_evento', $target_start, $target_end, '_convoca_fecha_fin' );
 
 		foreach ( $activities as $activity ) {
 			$inscriptions = $this->get_confirmed_inscriptions( $activity->ID );
@@ -468,7 +468,7 @@ class Email_Automation {
 				'meta_query'     => array(
 					'relation' => 'AND',
 					array(
-						'key'     => '_conv_' . $reminder_key,
+						'key'     => '_convoca_' . $reminder_key,
 						'value'   => '1',
 						'compare' => '=',
 					),
@@ -492,11 +492,11 @@ class Email_Automation {
 				'meta_query'     => array(
 					'relation' => 'AND',
 					array(
-						'key'   => '_conv_actividad_id',
+						'key'   => '_convoca_actividad_id',
 						'value' => $actividad_id,
 					),
 					array(
-						'key'   => '_conv_estado',
+						'key'   => '_convoca_estado',
 						'value' => 'confirmada',
 					),
 				),
@@ -517,7 +517,7 @@ class Email_Automation {
 		// Uses INSERT ON DUPLICATE KEY UPDATE with a WHERE condition on the timestamp,
 		// so only the first process to check (within the 5-min window) gets through.
 		global $wpdb;
-		$dedup_key = '_conv_last_email_sent_' . $slug;
+		$dedup_key = '_convoca_last_email_sent_' . $slug;
 		$result    = $wpdb->query(
 			$wpdb->prepare(
 				"INSERT INTO {$wpdb->postmeta} (post_id, meta_key, meta_value)
@@ -540,7 +540,7 @@ class Email_Automation {
 			return;
 		}
 
-		$email = get_post_meta( $inscripcion_id, '_conv_email', true );
+		$email = get_post_meta( $inscripcion_id, '_convoca_email', true );
 		if ( ! $email ) {
 			return;
 		}
@@ -602,9 +602,9 @@ class Email_Automation {
 		}
 
 		// Log the event and update last contact meta.
-		update_post_meta( $inscripcion_id, '_conv_last_contact', wp_date( 'Y-m-d H:i:s' ) );
-		update_post_meta( $inscripcion_id, '_conv_last_contact_type', 'email' );
-		update_post_meta( $inscripcion_id, '_conv_last_email_sent', $slug );
+		update_post_meta( $inscripcion_id, '_convoca_last_contact', wp_date( 'Y-m-d H:i:s' ) );
+		update_post_meta( $inscripcion_id, '_convoca_last_contact_type', 'email' );
+		update_post_meta( $inscripcion_id, '_convoca_last_email_sent', $slug );
 
 		\Convoca\Core\Logger::info(
 			sprintf( 'Email automatizado encolado: %s', $slug ),
@@ -643,12 +643,12 @@ class Email_Automation {
 	}
 
 	private function build_vars( int $inscripcion_id, int $actividad_id ): array {
-		$m         = fn( $key ) => get_post_meta( $inscripcion_id, '_conv_' . $key, true );
+		$m         = fn( $key ) => get_post_meta( $inscripcion_id, '_convoca_' . $key, true );
 		$am        = function ( $key ) use ( $actividad_id ) {
-			$value = get_post_meta( $actividad_id, '_conv_' . $key, true );
-			// Fallback: 'ubicacion' can also be stored as '_conv_lugar '
+			$value = get_post_meta( $actividad_id, '_convoca_' . $key, true );
+			// Fallback: 'ubicacion' can also be stored as '_convoca_lugar '
 			if ( empty( $value ) && $key === 'ubicacion' ) {
-				$value = get_post_meta( $actividad_id, '_conv_lugar', true );
+				$value = get_post_meta( $actividad_id, '_convoca_lugar', true );
 			}
 			return $value;
 		};
@@ -661,7 +661,7 @@ class Email_Automation {
 		if ( ! $panel_page_id ) {
 			$panel_page = get_pages(
 				array(
-					'meta_key'   => '_conv_panel_page',
+					'meta_key'   => '_convoca_panel_page',
 					'meta_value' => '1',
 					'number'     => 1,
 				)
@@ -701,12 +701,12 @@ class Email_Automation {
 	}
 
 	private function get_checkin_url( int $inscripcion_id ): string {
-		$token = get_post_meta( $inscripcion_id, '_conv_checkin_token', true );
+		$token = get_post_meta( $inscripcion_id, '_convoca_checkin_token', true );
 		return home_url( '/checkin/?token=' . $token . '&h=' . hash_hmac( 'sha256', (string) $inscripcion_id, wp_salt( 'nonce' ) ) );
 	}
 
 	private function get_ics_link( int $inscripcion_id ): string {
-		$token = get_post_meta( $inscripcion_id, '_conv_checkin_token', true );
+		$token = get_post_meta( $inscripcion_id, '_convoca_checkin_token', true );
 		if ( ! $token ) {
 			return '#';
 		}

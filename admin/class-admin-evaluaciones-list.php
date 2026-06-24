@@ -29,7 +29,7 @@ class Admin_Evaluaciones_List {
 	public static function custom_column_content( $column, $post_id ) {
 		switch ( $column ) {
 			case 'actividad':
-				$actividad_id = get_post_meta( $post_id, '_conv_eval_actividad_id', true );
+				$actividad_id = get_post_meta( $post_id, '_convoca_eval_actividad_id', true );
 				if ( $actividad_id ) {
 					$edit_link = get_edit_post_link( $actividad_id );
 					$title     = get_the_title( $actividad_id );
@@ -40,7 +40,7 @@ class Admin_Evaluaciones_List {
 				break;
 
 			case 'evaluador':
-				$usuario_id = get_post_meta( $post_id, '_conv_eval_usuario_id', true );
+				$usuario_id = get_post_meta( $post_id, '_convoca_eval_usuario_id', true );
 				if ( $usuario_id ) {
 					$user = get_userdata( $usuario_id );
 					if ( $user ) {
@@ -55,10 +55,10 @@ class Admin_Evaluaciones_List {
 				break;
 
 			case 'puntuacion':
-				$g = (int) get_post_meta( $post_id, '_conv_eval_gestion', true );
-				$i = (int) get_post_meta( $post_id, '_conv_eval_instalaciones', true );
-				$p = (int) get_post_meta( $post_id, '_conv_eval_participantes', true );
-				$c = (int) get_post_meta( $post_id, '_conv_eval_comunicacion', true );
+				$g = (int) get_post_meta( $post_id, '_convoca_eval_gestion', true );
+				$i = (int) get_post_meta( $post_id, '_convoca_eval_instalaciones', true );
+				$p = (int) get_post_meta( $post_id, '_convoca_eval_participantes', true );
+				$c = (int) get_post_meta( $post_id, '_convoca_eval_comunicacion', true );
 
 				$count = 0;
 				$sum   = 0;
@@ -129,7 +129,7 @@ class Admin_Evaluaciones_List {
 		}
 
 		if ( 'convoca_evaluacion' == $type && is_admin() && $pagenow == 'edit.php' && isset( $_GET['filter_actividad'] ) && $_GET['filter_actividad'] > 0 ) {
-			$query->query_vars['meta_key']   = '_conv_eval_actividad_id';
+			$query->query_vars['meta_key']   = '_convoca_eval_actividad_id';
 			$query->query_vars['meta_value'] = intval( $_GET['filter_actividad'] );
 		}
 	}

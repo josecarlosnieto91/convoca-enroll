@@ -77,7 +77,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 				"INSERT IGNORE INTO $table_name (code, post_id)
              SELECT meta_value, post_id FROM {$wpdb->postmeta}
              WHERE meta_key = %s AND meta_value != ''",
-				'_conv_codigo_reserva'
+				'_convoca_codigo_reserva'
 			)
 		);
 
@@ -96,7 +96,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 			$wpdb->prepare(
 				"UPDATE {$wpdb->postmeta} SET meta_value = 'si' 
              WHERE meta_key = %s AND meta_value = '1'",
-				'_conv_asistencia'
+				'_convoca_asistencia'
 			)
 		);
 
@@ -105,7 +105,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 			$wpdb->prepare(
 				"UPDATE {$wpdb->postmeta} SET meta_value = 'no' 
              WHERE meta_key = %s AND meta_value = '0'",
-				'_conv_asistencia'
+				'_convoca_asistencia'
 			)
 		);
 

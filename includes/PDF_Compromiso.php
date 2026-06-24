@@ -57,8 +57,8 @@ class PDF_Compromiso {
              INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id 
              INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id 
              WHERE p.post_type = 'convoca_documento' 
-             AND pm1.meta_key = '_conv_usuario_id' AND pm1.meta_value = %d 
-             AND pm2.meta_key = '_conv_actividad_id' AND pm2.meta_value = %d 
+             AND pm1.meta_key = '_convoca_usuario_id' AND pm1.meta_value = %d 
+             AND pm2.meta_key = '_convoca_actividad_id' AND pm2.meta_value = %d 
              AND p.post_status = 'publish' LIMIT 1",
 				$user_id,
 				$actividad_id
@@ -99,8 +99,8 @@ class PDF_Compromiso {
                  INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id 
                  INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id 
                  WHERE p.post_type = 'convoca_documento' 
-                 AND pm1.meta_key = '_conv_usuario_id' AND pm1.meta_value = %d 
-                 AND pm2.meta_key = '_conv_actividad_id' AND pm2.meta_value = %d 
+                 AND pm1.meta_key = '_convoca_usuario_id' AND pm1.meta_value = %d 
+                 AND pm2.meta_key = '_convoca_actividad_id' AND pm2.meta_value = %d 
                  AND p.post_status = 'publish' 
                  FOR UPDATE",
 					$user_id,
@@ -114,22 +114,22 @@ class PDF_Compromiso {
 				return (int) $existing_id;
 			}
 
-			if ( ! class_exists( '\\Convoca\\Core\\CONV_Signature' ) ) {
+			if ( ! class_exists( '\\Convoca\\Core\\Signature' ) ) {
 				$wpdb->query( 'ROLLBACK' );
 				wp_delete_post( $temp_post_id, true );
 				$error            = __( 'La clase de firma digital no se encuentra disponible.', 'convoca-enroll' );
 				self::$last_error = $error;
-				error_log( 'Convoca Enroll: CONV_Signature class not found.' );
+				error_log( 'Convoca Enroll: Signature class not found.' );
 				if ( is_admin() ) {
 					set_transient( self::ERROR_TRANSIENT . get_current_user_id(), $error, 30 );
 				}
 				return null;
 			}
 
-			$signature = new \Convoca\Core\CONV_Signature();
+			$signature = new \Convoca\Core\Signature();
 
 			// Datos del Voluntario.
-			$dni = get_user_meta( $user_id, '_convoca_shifts_dni', true ) ?: ( get_user_meta( $user_id, '_conv_dni', true ) ?: 'N/A' );
+			$dni = get_user_meta( $user_id, '_convoca_shifts_dni', true ) ?: ( get_user_meta( $user_id, '_convoca_dni', true ) ?: 'N/A' );
 
 			$meta_act         = CPT_Actividad::get_meta( $actividad_id );
 			$titulo_actividad = $actividad->post_title;
@@ -148,8 +148,8 @@ class PDF_Compromiso {
 
 			$stamp_html = $signature->get_acceptance_stamp_html( $nombre_voluntario, $ip, $timestamp, $content_for_hash );
 
-			if ( strpos( $template_html, '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE CONV_Signature -->' ) !== false ) {
-				$template_html = str_replace( '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE CONV_Signature -->', $stamp_html, $template_html );
+			if ( strpos( $template_html, '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE Signature -->' ) !== false ) {
+				$template_html = str_replace( '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE Signature -->', $stamp_html, $template_html );
 			} else {
 				$template_html .= $stamp_html;
 			}
@@ -191,12 +191,12 @@ class PDF_Compromiso {
 			// ── 4. Publish and save meta INSIDE transaction ──
 			$wpdb->update( $wpdb->posts, array( 'post_status' => 'publish' ), array( 'ID' => $temp_post_id ) );
 
-			update_post_meta( $temp_post_id, '_conv_usuario_id', $user_id );
-			update_post_meta( $temp_post_id, '_conv_actividad_id', $actividad_id );
-			update_post_meta( $temp_post_id, '_conv_tipo_documento', 'anexo_voluntariado' );
-			update_post_meta( $temp_post_id, '_conv_hash', $hash );
-			update_post_meta( $temp_post_id, '_conv_documento_url', rest_url( 'convoca/v1/documentos/' . $temp_post_id ) );
-			update_post_meta( $temp_post_id, '_conv_documento_path', $generated_path );
+			update_post_meta( $temp_post_id, '_convoca_usuario_id', $user_id );
+			update_post_meta( $temp_post_id, '_convoca_actividad_id', $actividad_id );
+			update_post_meta( $temp_post_id, '_convoca_tipo_documento', 'anexo_voluntariado' );
+			update_post_meta( $temp_post_id, '_convoca_hash', $hash );
+			update_post_meta( $temp_post_id, '_convoca_documento_url', rest_url( 'convoca/v1/documentos/' . $temp_post_id ) );
+			update_post_meta( $temp_post_id, '_convoca_documento_path', $generated_path );
 
 			$wpdb->query( 'COMMIT' );
 			return $temp_post_id;

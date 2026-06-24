@@ -218,7 +218,7 @@ endif;
 			'meta_query'     => array(
 				'relation' => 'AND',
 				array(
-					'key'     => '_conv_fecha_inicio',
+					'key'     => '_convoca_fecha_inicio',
 					'value'   => array( $start . ' 00:00:00', $end . ' 23:59:59' ),
 					'compare' => 'BETWEEN',
 					'type'    => 'DATETIME',
@@ -228,14 +228,14 @@ endif;
 
 		if ( $status === 'futuras' ) {
 			$args['meta_query'][] = array(
-				'key'     => '_conv_fecha_inicio',
+				'key'     => '_convoca_fecha_inicio',
 				'value'   => current_time( 'mysql' ),
 				'compare' => '>=',
 				'type'    => 'DATETIME',
 			);
 		} elseif ( $status === 'pasadas' ) {
 			$args['meta_query'][] = array(
-				'key'     => '_conv_fecha_inicio',
+				'key'     => '_convoca_fecha_inicio',
 				'value'   => current_time( 'mysql' ),
 				'compare' => '<',
 				'type'    => 'DATETIME',
@@ -254,8 +254,8 @@ endif;
 				$wpdb->prepare(
 					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm 
                  JOIN {$wpdb->posts} p ON p.ID = pm.post_id 
-                 WHERE pm.meta_key = '_conv_actividad_id' AND pm.meta_value = %d 
-                 AND p.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_conv_asistencia' AND meta_value = 'si')",
+                 WHERE pm.meta_key = '_convoca_actividad_id' AND pm.meta_value = %d 
+                 AND p.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_asistencia' AND meta_value = 'si')",
 					$post->ID
 				)
 			);
@@ -263,9 +263,9 @@ endif;
 			$data[] = array(
 				'id'                 => $post->ID,
 				'title'              => $post->post_title,
-				'fecha'              => get_post_meta( $post->ID, '_conv_fecha_inicio', true ),
-				'plazas_totales'     => get_post_meta( $post->ID, '_conv_plazas_totales', true ),
-				'plazas_disponibles' => get_post_meta( $post->ID, '_conv_plazas_disponibles', true ),
+				'fecha'              => get_post_meta( $post->ID, '_convoca_fecha_inicio', true ),
+				'plazas_totales'     => get_post_meta( $post->ID, '_convoca_plazas_totales', true ),
+				'plazas_disponibles' => get_post_meta( $post->ID, '_convoca_plazas_disponibles', true ),
 				'confirmadas'        => $counts['confirmada'],
 				'asistentes'         => $asistentes,
 			);
@@ -383,7 +383,7 @@ endif;
 		$results = $wpdb->get_results(
 			"SELECT meta_value AS estado, COUNT(*) AS total 
              FROM {$wpdb->postmeta} 
-             WHERE meta_key = '_conv_estado' 
+             WHERE meta_key = '_convoca_estado' 
              GROUP BY meta_value"
 		);
 
@@ -402,8 +402,8 @@ endif;
 			"SELECT pm.meta_value as activity_id, COUNT(*) as total 
              FROM {$wpdb->postmeta} pm
              JOIN {$wpdb->postmeta} pm_status ON pm.post_id = pm_status.post_id
-             WHERE pm.meta_key = '_conv_actividad_id' 
-               AND pm_status.meta_key = '_conv_estado' AND pm_status.meta_value = 'confirmada'
+             WHERE pm.meta_key = '_convoca_actividad_id' 
+               AND pm_status.meta_key = '_convoca_estado' AND pm_status.meta_value = 'confirmada'
              GROUP BY pm.meta_value 
              ORDER BY total DESC 
              LIMIT 10"
@@ -469,7 +469,7 @@ endif;
 
 		// Get activities with inscriptions that have been in waitlist.
 		$activity_ids = $wpdb->get_col(
-			"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_conv_actividad_id'"
+			"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_actividad_id'"
 		);
 
 		foreach ( $activity_ids as $act_id ) {
@@ -482,8 +482,8 @@ endif;
 				$wpdb->prepare(
 					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm
                  JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-                 WHERE pm.meta_key = '_conv_actividad_id' AND pm.meta_value = %d
-                 AND p.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_conv_promovido_espera' AND meta_value = '1')",
+                 WHERE pm.meta_key = '_convoca_actividad_id' AND pm.meta_value = %d
+                 AND p.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_promovido_espera' AND meta_value = '1')",
 					$act_id
 				)
 			);
@@ -557,7 +557,7 @@ endif;
 		// The normalization below tries to detect this.
 
 		$activity_ids = $wpdb->get_col(
-			"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_conv_actividad_id'"
+			"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_actividad_id'"
 		);
 
 		foreach ( $activity_ids as $act_id ) {
@@ -568,10 +568,10 @@ endif;
                  JOIN {$wpdb->postmeta} pm_status ON pm_act.post_id = pm_status.post_id
                  JOIN {$wpdb->postmeta} pm_method ON pm_act.post_id = pm_method.post_id
                  JOIN {$wpdb->postmeta} pm_amount ON pm_act.post_id = pm_amount.post_id
-                 WHERE pm_act.meta_key = '_conv_actividad_id' AND pm_act.meta_value = %d
-                   AND pm_status.meta_key = '_conv_pagado' AND pm_status.meta_value = '1'
-                   AND pm_method.meta_key = '_conv_metodo_pago'
-                   AND pm_amount.meta_key = '_conv_importe_pagado'
+                 WHERE pm_act.meta_key = '_convoca_actividad_id' AND pm_act.meta_value = %d
+                   AND pm_status.meta_key = '_convoca_pagado' AND pm_status.meta_value = '1'
+                   AND pm_method.meta_key = '_convoca_metodo_pago'
+                   AND pm_amount.meta_key = '_convoca_importe_pagado'
                  GROUP BY pm_method.meta_value",
 					$act_id
 				)
@@ -609,9 +609,9 @@ endif;
                  FROM {$wpdb->postmeta} pm_act
                  JOIN {$wpdb->postmeta} pm_status ON pm_act.post_id = pm_status.post_id
                  JOIN {$wpdb->postmeta} pm_amount ON pm_act.post_id = pm_amount.post_id
-                 WHERE pm_act.meta_key = '_conv_actividad_id' AND pm_act.meta_value = %d
-                   AND pm_status.meta_key = '_conv_pagado' AND pm_status.meta_value = '0'
-                   AND pm_amount.meta_key = '_conv_importe_pagado'",
+                 WHERE pm_act.meta_key = '_convoca_actividad_id' AND pm_act.meta_value = %d
+                   AND pm_status.meta_key = '_convoca_pagado' AND pm_status.meta_value = '0'
+                   AND pm_amount.meta_key = '_convoca_importe_pagado'",
 					$act_id
 				)
 			) / 100;
@@ -803,14 +803,14 @@ endif;
 			'post_status'    => 'publish',
 			'meta_query'     => array(
 				array(
-					'key'     => '_conv_fecha_inicio',
+					'key'     => '_convoca_fecha_inicio',
 					'value'   => array( $year . '-01-01 00:00:00', $year . '-12-31 23:59:59' ),
 					'compare' => 'BETWEEN',
 					'type'    => 'DATETIME',
 				),
 			),
 			'orderby'        => 'meta_value',
-			'meta_key'       => '_conv_fecha_inicio',
+			'meta_key'       => '_convoca_fecha_inicio',
 			'order'          => 'ASC',
 		);
 
@@ -830,10 +830,10 @@ endif;
                     SUM(CASE WHEN pm_socio.meta_value = '1' OR pm_tipo.meta_value = 'socio' THEN 1 ELSE 0 END) as socios
                  FROM {$wpdb->postmeta} pm_act
                  JOIN {$wpdb->postmeta} pm_status ON pm_act.post_id = pm_status.post_id
-                 LEFT JOIN {$wpdb->postmeta} pm_socio ON pm_act.post_id = pm_socio.post_id AND pm_socio.meta_key = '_conv_es_socio'
-                 LEFT JOIN {$wpdb->postmeta} pm_tipo ON pm_act.post_id = pm_tipo.post_id AND pm_tipo.meta_key = '_conv_tipo_inscripcion'
-                 WHERE pm_act.meta_key = '_conv_actividad_id' AND pm_act.meta_value = %d
-                   AND pm_status.meta_key = '_conv_estado' AND pm_status.meta_value = 'confirmada'",
+                 LEFT JOIN {$wpdb->postmeta} pm_socio ON pm_act.post_id = pm_socio.post_id AND pm_socio.meta_key = '_convoca_es_socio'
+                 LEFT JOIN {$wpdb->postmeta} pm_tipo ON pm_act.post_id = pm_tipo.post_id AND pm_tipo.meta_key = '_convoca_tipo_inscripcion'
+                 WHERE pm_act.meta_key = '_convoca_actividad_id' AND pm_act.meta_value = %d
+                   AND pm_status.meta_key = '_convoca_estado' AND pm_status.meta_value = 'confirmada'",
 					$id
 				)
 			);
@@ -967,11 +967,11 @@ endif;
                 AVG(CAST(pm_participantes.meta_value AS DECIMAL(3,2))) AS participantes,
                 AVG(CAST(pm_comunicacion.meta_value AS DECIMAL(3,2))) AS comunicacion
             FROM {$wpdb->posts} p
-            JOIN {$wpdb->postmeta} pm_act ON p.ID = pm_act.post_id AND pm_act.meta_key = '_conv_eval_actividad_id'
-            LEFT JOIN {$wpdb->postmeta} pm_gestion ON p.ID = pm_gestion.post_id AND pm_gestion.meta_key = '_conv_eval_gestion'
-            LEFT JOIN {$wpdb->postmeta} pm_instalaciones ON p.ID = pm_instalaciones.post_id AND pm_instalaciones.meta_key = '_conv_eval_instalaciones'
-            LEFT JOIN {$wpdb->postmeta} pm_participantes ON p.ID = pm_participantes.post_id AND pm_participantes.meta_key = '_conv_eval_participantes'
-            LEFT JOIN {$wpdb->postmeta} pm_comunicacion ON p.ID = pm_comunicacion.post_id AND pm_comunicacion.meta_key = '_conv_eval_comunicacion'
+            JOIN {$wpdb->postmeta} pm_act ON p.ID = pm_act.post_id AND pm_act.meta_key = '_convoca_eval_actividad_id'
+            LEFT JOIN {$wpdb->postmeta} pm_gestion ON p.ID = pm_gestion.post_id AND pm_gestion.meta_key = '_convoca_eval_gestion'
+            LEFT JOIN {$wpdb->postmeta} pm_instalaciones ON p.ID = pm_instalaciones.post_id AND pm_instalaciones.meta_key = '_convoca_eval_instalaciones'
+            LEFT JOIN {$wpdb->postmeta} pm_participantes ON p.ID = pm_participantes.post_id AND pm_participantes.meta_key = '_convoca_eval_participantes'
+            LEFT JOIN {$wpdb->postmeta} pm_comunicacion ON p.ID = pm_comunicacion.post_id AND pm_comunicacion.meta_key = '_convoca_eval_comunicacion'
             WHERE p.post_type = 'convoca_evaluacion' AND p.post_status = 'publish' $where_extra
             GROUP BY pm_act.meta_value, p.post_title
             ORDER BY count DESC
@@ -1076,7 +1076,7 @@ endif;
 				$batch     = 0;
 				$per_batch = 200;
 				do {
-					$meta_where = "pm_act.meta_key = '_conv_eval_actividad_id'";
+					$meta_where = "pm_act.meta_key = '_convoca_eval_actividad_id'";
 					$meta_args  = array();
 					if ( $filter_act > 0 ) {
 						$meta_where .= ' AND pm_act.meta_value = %d';
@@ -1096,26 +1096,26 @@ endif;
 					}
 					update_meta_cache( 'post', $eval_ids );
 					foreach ( $eval_ids as $eid ) {
-						$u = get_userdata( get_post_meta( $eid, '_conv_eval_usuario_id', true ) );
+						$u = get_userdata( get_post_meta( $eid, '_convoca_eval_usuario_id', true ) );
 						fputcsv(
 							$out,
 							array(
 								$eid,
-								get_the_title( get_post_meta( $eid, '_conv_eval_actividad_id', true ) ),
+								get_the_title( get_post_meta( $eid, '_convoca_eval_actividad_id', true ) ),
 								$u ? $u->user_login : 'Desconocido',
-								get_post_meta( $eid, '_conv_eval_fecha', true ),
-								get_post_meta( $eid, '_conv_eval_gestion', true ),
-								get_post_meta( $eid, '_conv_eval_instalaciones', true ),
-								get_post_meta( $eid, '_conv_eval_participantes', true ),
-								get_post_meta( $eid, '_conv_eval_comunicacion', true ),
-								get_post_meta( $eid, '_conv_eval_comentarios_gestion', true ),
-								get_post_meta( $eid, '_conv_eval_necesidades_no_cubiertas', true ),
-								get_post_meta( $eid, '_conv_eval_mejoras_gestion', true ),
-								get_post_meta( $eid, '_conv_eval_mejoras_instalaciones', true ),
-								get_post_meta( $eid, '_conv_eval_comentarios_participantes', true ),
-								get_post_meta( $eid, '_conv_eval_aspectos_positivos', true ),
-								get_post_meta( $eid, '_conv_eval_aspectos_mejorar', true ),
-								get_post_meta( $eid, '_conv_eval_otros_comentarios', true ),
+								get_post_meta( $eid, '_convoca_eval_fecha', true ),
+								get_post_meta( $eid, '_convoca_eval_gestion', true ),
+								get_post_meta( $eid, '_convoca_eval_instalaciones', true ),
+								get_post_meta( $eid, '_convoca_eval_participantes', true ),
+								get_post_meta( $eid, '_convoca_eval_comunicacion', true ),
+								get_post_meta( $eid, '_convoca_eval_comentarios_gestion', true ),
+								get_post_meta( $eid, '_convoca_eval_necesidades_no_cubiertas', true ),
+								get_post_meta( $eid, '_convoca_eval_mejoras_gestion', true ),
+								get_post_meta( $eid, '_convoca_eval_mejoras_instalaciones', true ),
+								get_post_meta( $eid, '_convoca_eval_comentarios_participantes', true ),
+								get_post_meta( $eid, '_convoca_eval_aspectos_positivos', true ),
+								get_post_meta( $eid, '_convoca_eval_aspectos_mejorar', true ),
+								get_post_meta( $eid, '_convoca_eval_otros_comentarios', true ),
 							),
 							';'
 						);

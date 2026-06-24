@@ -26,11 +26,11 @@ class Admin_Evaluacion_Fields {
 	public static function render_meta_box( $post ) {
 		wp_nonce_field( 'convoca_evaluacion_fields', 'convoca_evaluacion_fields_nonce' );
 
-		$actividad_id  = get_post_meta( $post->ID, '_conv_eval_actividad_id', true );
-		$gestion       = get_post_meta( $post->ID, '_conv_eval_gestion', true );
-		$instalaciones = get_post_meta( $post->ID, '_conv_eval_instalaciones', true );
-		$participantes = get_post_meta( $post->ID, '_conv_eval_participantes', true );
-		$comunicacion  = get_post_meta( $post->ID, '_conv_eval_comunicacion', true );
+		$actividad_id  = get_post_meta( $post->ID, '_convoca_eval_actividad_id', true );
+		$gestion       = get_post_meta( $post->ID, '_convoca_eval_gestion', true );
+		$instalaciones = get_post_meta( $post->ID, '_convoca_eval_instalaciones', true );
+		$participantes = get_post_meta( $post->ID, '_convoca_eval_participantes', true );
+		$comunicacion  = get_post_meta( $post->ID, '_convoca_eval_comunicacion', true );
 
 		$actividades = get_posts(
 			array(
@@ -62,7 +62,7 @@ class Admin_Evaluacion_Fields {
 		);
 
 		foreach ( $ratings as $key => $label ) :
-			$current_val = get_post_meta( $post->ID, '_conv_eval_' . $key, true );
+			$current_val = get_post_meta( $post->ID, '_convoca_eval_' . $key, true );
 			?>
 			<div class="convoca-field">
 				<label><?php echo esc_html( $label ); ?></label>
@@ -112,13 +112,13 @@ class Admin_Evaluacion_Fields {
 		}
 
 		// Auto-save user ID if creating new and is admin/monitor.
-		if ( ! get_post_meta( $post_id, '_conv_eval_usuario_id', true ) ) {
-			update_post_meta( $post_id, '_conv_eval_usuario_id', get_current_user_id() );
+		if ( ! get_post_meta( $post_id, '_convoca_eval_usuario_id', true ) ) {
+			update_post_meta( $post_id, '_convoca_eval_usuario_id', get_current_user_id() );
 		}
 
 		// Auto-save date if not present.
-		if ( ! get_post_meta( $post_id, '_conv_eval_fecha', true ) ) {
-			update_post_meta( $post_id, '_conv_eval_fecha', wp_date( 'Y-m-d H:i:s' ) );
+		if ( ! get_post_meta( $post_id, '_convoca_eval_fecha', true ) ) {
+			update_post_meta( $post_id, '_convoca_eval_fecha', wp_date( 'Y-m-d H:i:s' ) );
 		}
 	}
 }

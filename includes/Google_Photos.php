@@ -115,11 +115,11 @@ class Google_Photos
             return null;
         }
 
-        $album_id = get_post_meta($actividad_id, '_conv_google_album_id', true);
+        $album_id = get_post_meta($actividad_id, '_convoca_google_album_id', true);
         if (!empty($album_id)) {
             return [
                 'id'  => $album_id,
-                'url' => get_post_meta($actividad_id, '_conv_google_album_url', true),
+                'url' => get_post_meta($actividad_id, '_convoca_google_album_url', true),
             ];
         }
 
@@ -127,7 +127,7 @@ class Google_Photos
         $settings  = get_option(self::OPTION, []);
         $prefix    = $settings['google_photos_album_prefix'] ?? get_bloginfo('name') . ' - ';
         
-        $fecha           = get_post_meta($actividad_id, '_conv_fecha_inicio', true);
+        $fecha           = get_post_meta($actividad_id, '_convoca_fecha_inicio', true);
         $fecha_formatted = $fecha ? wp_date('d/m/Y', strtotime($fecha)) : '';
         
         $album_title = $prefix . $actividad->post_title . ($fecha_formatted ? ' - ' . $fecha_formatted : '');
@@ -138,8 +138,8 @@ class Google_Photos
         try {
             $created = $this->service->albums->create($album);
             
-            update_post_meta($actividad_id, '_conv_google_album_id', $created->getId());
-            update_post_meta($actividad_id, '_conv_google_album_created_at', current_time('mysql'));
+            update_post_meta($actividad_id, '_convoca_google_album_id', $created->getId());
+            update_post_meta($actividad_id, '_convoca_google_album_created_at', current_time('mysql'));
 
             return [
                 'id'  => $created->getId(),
@@ -157,14 +157,14 @@ class Google_Photos
             return null;
         }
 
-        $album_id = get_post_meta($actividad_id, '_conv_google_album_id', true);
+        $album_id = get_post_meta($actividad_id, '_convoca_google_album_id', true);
         if (empty($album_id)) {
             return null;
         }
 
-        $already_shared = get_post_meta($actividad_id, '_conv_google_album_shared', true);
+        $already_shared = get_post_meta($actividad_id, '_convoca_google_album_shared', true);
         if ($already_shared) {
-            return get_post_meta($actividad_id, '_conv_google_album_url', true);
+            return get_post_meta($actividad_id, '_convoca_google_album_url', true);
         }
 
         try {
@@ -173,8 +173,8 @@ class Google_Photos
             
             $shareable_url = $share_response->getShareInfo()->getShareableUrl();
             
-            update_post_meta($actividad_id, '_conv_google_album_url', $shareable_url);
-            update_post_meta($actividad_id, '_conv_google_album_shared', '1');
+            update_post_meta($actividad_id, '_convoca_google_album_url', $shareable_url);
+            update_post_meta($actividad_id, '_convoca_google_album_shared', '1');
 
             return $shareable_url;
         } catch (\Exception $e) {
@@ -191,14 +191,14 @@ class Google_Photos
             'post_status'    => 'publish',
             'meta_query'     => [
                 'relation' => 'AND',
-                ['key' => '_conv_actividad_id', 'value' => $actividad_id],
-                ['key' => '_conv_estado', 'value' => 'confirmada'],
+                ['key' => '_convoca_actividad_id', 'value' => $actividad_id],
+                ['key' => '_convoca_estado', 'value' => 'confirmada'],
             ],
         ]);
 
         $emails = [];
         foreach ($inscriptions as $insc) {
-            $email = get_post_meta($insc->ID, '_conv_email', true);
+            $email = get_post_meta($insc->ID, '_convoca_email', true);
             if ($email && !in_array($email, $emails, true)) {
                 $emails[] = $email;
             }
@@ -209,7 +209,7 @@ class Google_Photos
 
     public function get_coordinator_email(int $actividad_id): ?string
     {
-        $responsables = get_post_meta($actividad_id, '_conv_responsables', true);
+        $responsables = get_post_meta($actividad_id, '_convoca_responsables', true);
         if (empty($responsables)) {
             return null;
         }
@@ -229,7 +229,7 @@ class Google_Photos
     {
         $album_url = $this->share_album($actividad_id);
         if (!$album_url) {
-            $album_url = get_post_meta($actividad_id, '_conv_google_album_url', true);
+            $album_url = get_post_meta($actividad_id, '_convoca_google_album_url', true);
         }
 
         $coordinator_email = $this->get_coordinator_email($actividad_id);
@@ -282,7 +282,7 @@ class Google_Photos
             }
 
             // Ensure meta is updated BEFORE the loop to avoid duplicates if script times out.
-            update_post_meta($actividad_id, '_conv_google_album_shared', '1');
+            update_post_meta($actividad_id, '_convoca_google_album_shared', '1');
 
             $emails = $this->get_participants_emails($actividad_id);
             if (empty($emails)) {
@@ -346,24 +346,24 @@ class Google_Photos
             'meta_query'     => [
                 'relation' => 'AND',
                 [
-                    'key'     => '_conv_fecha_fin',
+                    'key'     => '_convoca_fecha_fin',
                     'value'   => [$yesterday, $today],
                     'compare' => 'BETWEEN',
                     'type'    => 'DATETIME',
                 ],
                 [
-                    'key'     => '_conv_google_album_id',
+                    'key'     => '_convoca_google_album_id',
                     'compare' => 'EXISTS',
                 ],
                 [
-                    'key'     => '_conv_google_album_shared',
+                    'key'     => '_convoca_google_album_shared',
                     'compare' => 'NOT EXISTS',
                 ],
             ],
         ]);
 
         foreach ($activities as $activity) {
-            $create_option = get_post_meta($activity->ID, '_conv_google_create_album', true);
+            $create_option = get_post_meta($activity->ID, '_convoca_google_create_album', true);
             
             if ($create_option !== '0') {
                 $instance->notify_participants($activity->ID);

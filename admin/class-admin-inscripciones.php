@@ -282,7 +282,7 @@ class Inscriptions_List extends \WP_List_Table {
 				'post_type'      => 'miembro',
 				'meta_query'     => array(
 					array(
-						'key'     => '_conv_email',
+						'key'     => '_convoca_email',
 						'value'   => array_unique( $emails ),
 						'compare' => 'IN',
 					),
@@ -293,7 +293,7 @@ class Inscriptions_List extends \WP_List_Table {
 		);
 
 		foreach ( $members as $member_id ) {
-			$email = get_post_meta( $member_id, '_conv_email', true );
+			$email = get_post_meta( $member_id, '_convoca_email', true );
 			if ( $email ) {
 				$this->member_cache[ $email ] = $member_id;
 			}
@@ -357,11 +357,11 @@ class Inscriptions_List extends \WP_List_Table {
 					'meta_query'     => array(
 						'relation' => 'AND',
 						array(
-							'key'   => '_conv_usuario_id',
+							'key'   => '_convoca_usuario_id',
 							'value' => $user->ID,
 						),
 						array(
-							'key'   => '_conv_actividad_id',
+							'key'   => '_convoca_actividad_id',
 							'value' => $act_id,
 						),
 					),
@@ -377,7 +377,7 @@ class Inscriptions_List extends \WP_List_Table {
 		}
 
 		if ( $doc_id ) {
-			$url = get_post_meta( $doc_id, '_conv_documento_url', true );
+			$url = get_post_meta( $doc_id, '_convoca_documento_url', true );
 			if ( $url ) {
 				return '<a href="' . esc_url( $url ) . '" target="_blank" class="button button-small">✅ Firmado</a>';
 			}
@@ -391,7 +391,7 @@ class Inscriptions_List extends \WP_List_Table {
 		$is_voluntario = false;
 
 		if ( $user ) {
-			if ( in_array( 'voluntario_aprobado', (array) $user->roles ) || get_user_meta( $user->ID, '_conv_es_voluntario', true ) ) {
+			if ( in_array( 'voluntario_aprobado', (array) $user->roles ) || get_user_meta( $user->ID, '_convoca_es_voluntario', true ) ) {
 				$is_voluntario = true;
 			}
 		}

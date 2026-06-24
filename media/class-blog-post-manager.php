@@ -16,8 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Blog_Post_Manager {
 
-	const META_BLOG_POST_ID = '_conv_media_blog_post_id';
-	const META_ACTIVIDAD_ID = '_conv_media_actividad_id';
+	const META_BLOG_POST_ID = '_convoca_media_blog_post_id';
+	const META_ACTIVIDAD_ID = '_convoca_media_actividad_id';
 
 	/**
 	 * Create or reuse a blog post for the given activity.
@@ -74,7 +74,7 @@ class Blog_Post_Manager {
 				'category'     => self::get_category_id(),
 				'meta_input'   => array(
 					self::META_ACTIVIDAD_ID => $actividad_id,
-					'_conv_schema_event'    => self::build_schema( $actividad, $fecha_inicio, $fecha_fin, $ubicacion, $permalink ),
+					'_convoca_schema_event'    => self::build_schema( $actividad, $fecha_inicio, $fecha_fin, $ubicacion, $permalink ),
 				),
 			) 
 		);
@@ -138,7 +138,7 @@ class Blog_Post_Manager {
 		);
 
 		// Update schema.
-		update_post_meta( $post_id, '_conv_schema_event', self::build_schema( $actividad, $fecha_inicio, $fecha_fin, $ubicacion, $permalink ) );
+		update_post_meta( $post_id, '_convoca_schema_event', self::build_schema( $actividad, $fecha_inicio, $fecha_fin, $ubicacion, $permalink ) );
 
 		// Update featured image if poster changed.
 		if ( $poster_url ) {
@@ -271,7 +271,7 @@ class Blog_Post_Manager {
 	 */
 	private static function get_tags( int $actividad_id ): array {
 		$tags = array( 'actividad', 'convoca' );
-		$tipo = get_post_meta( $actividad_id, '_conv_tipo_actividad', true );
+		$tipo = get_post_meta( $actividad_id, '_convoca_tipo_actividad', true );
 		if ( $tipo ) {
 			$tags[] = $tipo;
 		}

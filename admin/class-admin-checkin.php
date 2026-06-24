@@ -28,7 +28,7 @@ class Admin_Checkin {
 			'posts_per_page' => 50,
 			'post_status'    => array( 'publish', 'future', 'draft', 'private' ),
 			'orderby'        => 'meta_value',
-			'meta_key'       => '_conv_fecha_inicio',
+			'meta_key'       => '_convoca_fecha_inicio',
 			'order'          => 'DESC',
 		);
 		if ( null !== $allowed_ids ) {
@@ -65,11 +65,11 @@ class Admin_Checkin {
 				'meta_query'     => array(
 					'relation' => 'AND',
 					array(
-						'key'   => '_conv_actividad_id',
+						'key'   => '_convoca_actividad_id',
 						'value' => $actividad_id,
 					),
 					array(
-						'key'     => '_conv_estado',
+						'key'     => '_convoca_estado',
 						'value'   => 'cancelada',
 						'compare' => '!=',
 					),
@@ -84,12 +84,12 @@ class Admin_Checkin {
 				$query_args['meta_query'][] = array(
 					'relation' => 'OR',
 					array(
-						'key'     => '_conv_nombre',
+						'key'     => '_convoca_nombre',
 						'value'   => $search,
 						'compare' => 'LIKE',
 					),
 					array(
-						'key'     => '_conv_email',
+						'key'     => '_convoca_email',
 						'value'   => $search,
 						'compare' => 'LIKE',
 					),
@@ -112,7 +112,7 @@ class Admin_Checkin {
 						<option value="0"><?php _e( '— Seleccionar —', 'convoca-enroll' ); ?></option>
 						<?php
 						foreach ( $actividades as $act ) :
-							$fecha     = get_post_meta( $act->ID, '_conv_fecha_inicio', true );
+							$fecha     = get_post_meta( $act->ID, '_convoca_fecha_inicio', true );
 							$fecha_fmt = $fecha ? wp_date( 'd/m', strtotime( $fecha ) ) : '';
 							?>
 							<option value="<?php echo $act->ID; ?>" <?php selected( $actividad_id, $act->ID ); ?>>
@@ -132,7 +132,7 @@ class Admin_Checkin {
 					$total     = count( $inscripciones );
 					$presentes = 0;
 					foreach ( $inscripciones as $ins ) {
-						$asistencia = get_post_meta( $ins->ID, '_conv_asistencia', true );
+						$asistencia = get_post_meta( $ins->ID, '_convoca_asistencia', true );
 						if ( $asistencia === 'si' ) {
 							++$presentes;
 						}
@@ -160,11 +160,11 @@ class Admin_Checkin {
 							<?php
 							foreach ( $inscripciones as $ins ) :
 								$id         = $ins->ID;
-								$asistencia = get_post_meta( $id, '_conv_asistencia', true );
-								$estado     = get_post_meta( $id, '_conv_estado', true );
-								$pagado     = get_post_meta( $id, '_conv_pagado', true );
-								$es_socio   = get_post_meta( $id, '_conv_es_socio', true );
-								$telefono   = get_post_meta( $id, '_conv_telefono', true );
+								$asistencia = get_post_meta( $id, '_convoca_asistencia', true );
+								$estado     = get_post_meta( $id, '_convoca_estado', true );
+								$pagado     = get_post_meta( $id, '_convoca_pagado', true );
+								$es_socio   = get_post_meta( $id, '_convoca_es_socio', true );
+								$telefono   = get_post_meta( $id, '_convoca_telefono', true );
 								?>
 								<tr data-id="<?php echo $id; ?>">
 									<td>

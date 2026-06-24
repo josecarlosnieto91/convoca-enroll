@@ -59,9 +59,9 @@ class Admin_Media_Dashboard {
 	public function render_metabox( \WP_Post $post ): void {
 		$templates       = Template_Manager::get_all();
 		$formats         = Poster_Engine::all_format_dimensions();
-		$blog_id         = get_post_meta( $post->ID, '_conv_media_blog_post_id', true );
-		$selected_format = get_post_meta( $post->ID, '_conv_poster_last_format', true ) ?: 'square';
-		$image_id        = (int) get_post_meta( $post->ID, '_conv_poster_image_id', true );
+		$blog_id         = get_post_meta( $post->ID, '_convoca_media_blog_post_id', true );
+		$selected_format = get_post_meta( $post->ID, '_convoca_poster_last_format', true ) ?: 'square';
+		$image_id        = (int) get_post_meta( $post->ID, '_convoca_poster_image_id', true );
 		$image_url       = $image_id ? wp_get_attachment_image_url( $image_id, 'medium' ) : '';
 		$poster_url      = '';
 		$render_result   = Poster_Engine::render( $post->ID, 'nature-classic', array( 'format' => $selected_format ) );
@@ -361,11 +361,11 @@ class Admin_Media_Dashboard {
 			wp_send_json_error( array( 'message' => 'Permiso denegado' ) );
 		}
 
-		update_post_meta( $post_id, '_conv_poster_last_format', $format );
+		update_post_meta( $post_id, '_convoca_poster_last_format', $format );
 		if ( $image_id ) {
-			update_post_meta( $post_id, '_conv_poster_image_id', $image_id );
+			update_post_meta( $post_id, '_convoca_poster_image_id', $image_id );
 		} else {
-			delete_post_meta( $post_id, '_conv_poster_image_id' );
+			delete_post_meta( $post_id, '_convoca_poster_image_id' );
 		}
 
 		$result = Poster_Engine::render( $post_id, $template, array(

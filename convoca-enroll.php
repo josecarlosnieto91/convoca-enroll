@@ -123,7 +123,7 @@ register_activation_hook(
 			);
 			if ( $page_id && ! is_wp_error( $page_id ) ) {
 				update_option( 'convoca_enroll_panel_page_id', $page_id );
-				update_post_meta( $page_id, '_conv_panel_page', '1' );
+				update_post_meta( $page_id, '_convoca_panel_page', '1' );
 			}
 		}
 

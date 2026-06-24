@@ -477,7 +477,7 @@ class Checkin_Handler {
                  FROM {$wpdb->posts} p 
                  INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id 
                  WHERE p.post_type = 'inscripcion' 
-                 AND pm.meta_key = '_conv_checkin_token' 
+                 AND pm.meta_key = '_convoca_checkin_token' 
                  AND pm.meta_value = %s 
                  LIMIT 1 FOR UPDATE",
 					$token
@@ -493,27 +493,27 @@ class Checkin_Handler {
 			$wpdb->query(
 				$wpdb->prepare(
 					"SELECT meta_id FROM {$wpdb->postmeta} 
-                 WHERE post_id = %d AND meta_key IN ('_conv_checkin_token', '_conv_estado', '_conv_asistencia') 
+                 WHERE post_id = %d AND meta_key IN ('_convoca_checkin_token', '_convoca_estado', '_convoca_asistencia') 
                  FOR UPDATE",
 					$id
 				)
 			);
 
 			// 3. Verify token and check state (now safe from concurrent writes)
-			$db_token = get_post_meta( $id, '_conv_checkin_token', true );
+			$db_token = get_post_meta( $id, '_convoca_checkin_token', true );
 			if ( ! hash_equals( $db_token, $token ) ) {
 				$wpdb->query( 'ROLLBACK' );
 				return new \WP_Error( 'invalid_token', __( 'Token de check-in no válido.', 'convoca-enroll' ) );
 			}
 
-			$estado = get_post_meta( $id, '_conv_estado', true );
+			$estado = get_post_meta( $id, '_convoca_estado', true );
 			if ( $estado !== 'confirmada' ) {
 				$wpdb->query( 'ROLLBACK' );
 				return new \WP_Error( 'not_confirmed', __( 'La inscripción no está confirmada.', 'convoca-enroll' ) );
 			}
 
 			// 4. IDEMPOTENCY: Check if already attended
-			$asistencia = get_post_meta( $id, '_conv_asistencia', true );
+			$asistencia = get_post_meta( $id, '_convoca_asistencia', true );
 			if ( $asistencia === 'si' ) {
 				$wpdb->query( 'COMMIT' );
 				return true;
@@ -549,14 +549,14 @@ class Checkin_Handler {
 		$inscriptions = get_posts(
 			array(
 				'post_type'      => 'inscripcion',
-				'meta_key'       => '_conv_checkin_token',
+				'meta_key'       => '_convoca_checkin_token',
 				'meta_value'     => $token,
 				'posts_per_page' => 1,
 			)
 		);
 		$id           = $inscriptions[0]->ID;
-		$nombre       = get_post_meta( $id, '_conv_nombre', true );
-		$act_id       = (int) get_post_meta( $id, '_conv_actividad_id', true );
+		$nombre       = get_post_meta( $id, '_convoca_nombre', true );
+		$act_id       = (int) get_post_meta( $id, '_convoca_actividad_id', true );
 		$act_title    = get_the_title( $act_id );
 
 		wp_die(
@@ -591,14 +591,14 @@ class Checkin_Handler {
 		$inscriptions = get_posts(
 			array(
 				'post_type'      => 'inscripcion',
-				'meta_key'       => '_conv_checkin_token',
+				'meta_key'       => '_convoca_checkin_token',
 				'meta_value'     => $token,
 				'posts_per_page' => 1,
 			)
 		);
 		$id           = $inscriptions[0]->ID;
-		$nombre       = get_post_meta( $id, '_conv_nombre', true );
-		$act_id       = (int) get_post_meta( $id, '_conv_actividad_id', true );
+		$nombre       = get_post_meta( $id, '_convoca_nombre', true );
+		$act_id       = (int) get_post_meta( $id, '_convoca_actividad_id', true );
 
 		// Check activity permission.
 		if ( ! CPT_Actividad::is_user_responsible( $user_id, $act_id ) ) {

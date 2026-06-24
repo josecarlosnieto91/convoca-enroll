@@ -35,7 +35,7 @@ class Volunteer_Hour_Tracker {
 		}
 
 		// Check if user is a volunteer.
-		if ( ! in_array( 'voluntario_aprobado', (array) $user->roles ) && ! $user->has_cap( 'gestionar_mis_turnos' ) && ! get_user_meta( $user->ID, '_conv_es_voluntario', true ) ) {
+		if ( ! in_array( 'voluntario_aprobado', (array) $user->roles ) && ! $user->has_cap( 'gestionar_mis_turnos' ) && ! get_user_meta( $user->ID, '_convoca_es_voluntario', true ) ) {
 			return;
 		}
 
@@ -60,7 +60,7 @@ class Volunteer_Hour_Tracker {
 		}
 
 		// Case 2: Attendance changed from 'si' to something else - subtract hours.
-		$was_counted = get_post_meta( $inscripcion_id, '_conv_horas_contadas', true );
+		$was_counted = get_post_meta( $inscripcion_id, '_convoca_horas_contadas', true );
 		if ( $was_counted === '1' ) {
 			self::subtract_hours( $inscripcion_id, $user );
 		}
@@ -86,7 +86,7 @@ class Volunteer_Hour_Tracker {
 		}
 
 		global $wpdb;
-		$meta_key_total = '_conv_horas_voluntariado_total';
+		$meta_key_total = '_convoca_horas_voluntariado_total';
 
 		$wpdb->query( 'START TRANSACTION' );
 
@@ -102,7 +102,7 @@ class Volunteer_Hour_Tracker {
 				)
 			);
 
-			delete_post_meta( $inscripcion_id, '_conv_horas_contadas' );
+			delete_post_meta( $inscripcion_id, '_convoca_horas_contadas' );
 
 			$wpdb->query( 'COMMIT' );
 		} catch ( \Throwable $e ) {
@@ -122,8 +122,8 @@ class Volunteer_Hour_Tracker {
 		$email = $user->user_email;
 
 		global $wpdb;
-		$meta_key_total   = '_conv_horas_voluntariado_total';
-		$meta_key_counted = '_conv_horas_contadas';
+		$meta_key_total   = '_convoca_horas_voluntariado_total';
+		$meta_key_counted = '_convoca_horas_contadas';
 
 		$wpdb->query( 'START TRANSACTION' );
 
@@ -204,7 +204,7 @@ class Volunteer_Hour_Tracker {
 				$members = get_posts(
 					array(
 						'post_type'      => 'miembro',
-						'meta_key'       => '_conv_email',
+						'meta_key'       => '_convoca_email',
 						'meta_value'     => $email,
 						'posts_per_page' => 1,
 						'fields'         => 'ids',
@@ -215,12 +215,12 @@ class Volunteer_Hour_Tracker {
 					update_post_meta( $log_id, ' _conv_miembro_id', $members[0] );
 				}
 
-				update_post_meta( $log_id, '_conv_usuario_id', $user->ID );
-				update_post_meta( $log_id, '_conv_fecha', wp_date( 'Y-m-d' ) );
-				update_post_meta( $log_id, '_conv_horas', $hours );
-				update_post_meta( $log_id, '_conv_actividad_id', $actividad_id );
-				update_post_meta( $log_id, '_conv_estado', 'aprobada' );
-				update_post_meta( $log_id, '_conv_tareas', 'Asistencia a actividad programada' );
+				update_post_meta( $log_id, '_convoca_usuario_id', $user->ID );
+				update_post_meta( $log_id, '_convoca_fecha', wp_date( 'Y-m-d' ) );
+				update_post_meta( $log_id, '_convoca_horas', $hours );
+				update_post_meta( $log_id, '_convoca_actividad_id', $actividad_id );
+				update_post_meta( $log_id, '_convoca_estado', 'aprobada' );
+				update_post_meta( $log_id, '_convoca_tareas', 'Asistencia a actividad programada' );
 			}
 		} else {
 			\Convoca\Core\Logger::warning(

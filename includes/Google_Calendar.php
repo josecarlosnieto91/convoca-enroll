@@ -147,7 +147,7 @@ class Google_Calendar {
 			return;
 		}
 
-		$sync_enabled = get_post_meta( $post_id, '_conv_google_calendar_sync', true );
+		$sync_enabled = get_post_meta( $post_id, '_convoca_google_calendar_sync', true );
 		if ( $sync_enabled === '0' ) {
 			return;
 		}
@@ -175,7 +175,7 @@ class Google_Calendar {
 			return;
 		}
 
-		$event_id = get_post_meta( $post_id, '_conv_google_event_id', true );
+		$event_id = get_post_meta( $post_id, '_convoca_google_event_id', true );
 		if ( empty( $event_id ) ) {
 			return;
 		}
@@ -197,12 +197,12 @@ class Google_Calendar {
 
 		$settings    = get_option( self::OPTION, array() );
 		$calendar_id = $settings['google_calendar_id'] ?? 'primary';
-		$event_id    = get_post_meta( $actividad_id, '_conv_google_event_id', true );
+		$event_id    = get_post_meta( $actividad_id, '_convoca_google_event_id', true );
 
 		$actividad    = get_post( $actividad_id );
-		$fecha_inicio = get_post_meta( $actividad_id, '_conv_fecha_inicio', true );
-		$fecha_fin    = get_post_meta( $actividad_id, '_conv_fecha_fin', true );
-		$ubicacion    = get_post_meta( $actividad_id, '_conv_ubicacion', true );
+		$fecha_inicio = get_post_meta( $actividad_id, '_convoca_fecha_inicio', true );
+		$fecha_fin    = get_post_meta( $actividad_id, '_convoca_fecha_fin', true );
+		$ubicacion    = get_post_meta( $actividad_id, '_convoca_ubicacion', true );
 
 		if ( ! $fecha_inicio ) {
 			return null;
@@ -232,7 +232,7 @@ class Google_Calendar {
 		);
 
 		$event     = new GoogleEvent( $event_data );
-		$sync_type = get_post_meta( $actividad_id, '_conv_google_calendar_sync', true );
+		$sync_type = get_post_meta( $actividad_id, '_convoca_google_calendar_sync', true );
 
 		try {
 			if ( $event_id ) {
@@ -241,8 +241,8 @@ class Google_Calendar {
 				$updated_event = $this->service->events->insert( $this->calendar_id, $event );
 			}
 
-			update_post_meta( $actividad_id, '_conv_google_event_id', $updated_event->getId() );
-			update_post_meta( $actividad_id, '_conv_google_event_link', $updated_event->getHtmlLink() );
+			update_post_meta( $actividad_id, '_convoca_google_event_id', $updated_event->getId() );
+			update_post_meta( $actividad_id, '_convoca_google_event_link', $updated_event->getHtmlLink() );
 
 			return true;
 		} catch ( \Exception $e ) {
@@ -259,9 +259,9 @@ class Google_Calendar {
 			return null;
 		}
 
-		$act_start    = get_post_meta( $actividad_id, '_conv_fecha_inicio', true );
-		$act_end      = get_post_meta( $actividad_id, '_conv_fecha_fin', true );
-		$act_location = get_post_meta( $actividad_id, '_conv_ubicacion', true );
+		$act_start    = get_post_meta( $actividad_id, '_convoca_fecha_inicio', true );
+		$act_end      = get_post_meta( $actividad_id, '_convoca_fecha_fin', true );
+		$act_location = get_post_meta( $actividad_id, '_convoca_ubicacion', true );
 		$act_title    = $actividad->post_title;
 		$act_desc     = $actividad->post_content;
 
@@ -305,7 +305,7 @@ class Google_Calendar {
 	public function serve_ics( int $id, bool $is_inscription = false ): void {
 		$actividad_id = $id;
 		if ( $is_inscription ) {
-			$actividad_id = get_post_meta( $id, '_conv_actividad_id', true );
+			$actividad_id = get_post_meta( $id, '_convoca_actividad_id', true );
 		}
 
 		$ics_content = $this->generate_ics( (int) $actividad_id );

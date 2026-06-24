@@ -180,16 +180,16 @@ class Form_Inscripcion {
 			set_transient( $lock_key, true, 30 );
 
 			// Set inscription the mount paid to the requested one.
-			update_post_meta( $result, '_conv_importe_pagado', $amount_cents );
+			update_post_meta( $result, '_convoca_importe_pagado', $amount_cents );
 
 			// Check if gateway plugin is available.
 			if ( \Convoca\Core\Features::is_gateway_active() ) {
 				// 2. Verificar si ya existe un pago asociado que no sea fallido
-				$pago_id_existente = (int) get_post_meta( $result, '_conv_pago_id', true );
+				$pago_id_existente = (int) get_post_meta( $result, '_convoca_pago_id', true );
 				$payment           = null;
 
 				if ( $pago_id_existente ) {
-					$pago_status = get_post_meta( $pago_id_existente, '_conv_status', true );
+					$pago_status = get_post_meta( $pago_id_existente, '_convoca_status', true );
 					if ( $pago_status !== 'failed' ) {
 						$payment = array(
 							'pago_id'     => $pago_id_existente,
@@ -213,14 +213,14 @@ class Form_Inscripcion {
 				delete_transient( $lock_key );
 
 				if ( ! is_wp_error( $payment ) ) {
-					update_post_meta( $result, '_conv_pago_id', $payment['pago_id'] );
+					update_post_meta( $result, '_convoca_pago_id', $payment['pago_id'] );
 
 					$success_data = array(
 						'estado'         => 'pendiente_pago',
 						'estado_label'   => 'Pendiente de aportación',
 						'plazas'         => (int) $act_meta['plazas_disponibles'],
 						'redirect'       => $payment['payment_url'],
-						'codigo_reserva' => get_post_meta( $result, '_conv_codigo_reserva', true ),
+						'codigo_reserva' => get_post_meta( $result, '_convoca_codigo_reserva', true ),
 					);
 
 					if ( ! empty( Motor_Inscripcion::$last_pdf_error ) ) {
@@ -234,8 +234,8 @@ class Form_Inscripcion {
 				} else {
 					// Error en pasarela: marcar para revisión manual.
 					\Convoca\Core\Logger::error( 'Error al crear el pago en la pasarela (Inscripción): ' . $payment->get_error_message(), 'Enroll/Form', $result );
-					update_post_meta( $result, '_conv_needs_manual_review', '1' );
-					update_post_meta( $result, '_conv_review_note', 'Error en pasarela de pago: ' . $payment->get_error_message() );
+					update_post_meta( $result, '_convoca_needs_manual_review', '1' );
+					update_post_meta( $result, '_convoca_review_note', 'Error en pasarela de pago: ' . $payment->get_error_message() );
 
 					// Devolver éxito con flag de error de pasarela para que el usuario vea que se registró.
 					wp_send_json_success(
@@ -243,7 +243,7 @@ class Form_Inscripcion {
 							'gateway_error'  => true,
 							'error_message'  => 'La inscripción está registrada pero el pago no se pudo procesar automáticamente. Por favor, contacta con nosotros para completar la aportación.',
 							'estado'         => 'pendiente_pago',
-							'codigo_reserva' => get_post_meta( $result, '_conv_codigo_reserva', true ),
+							'codigo_reserva' => get_post_meta( $result, '_convoca_codigo_reserva', true ),
 							'plazas'         => (int) $act_meta['plazas_disponibles'],
 						)
 					);
@@ -251,13 +251,13 @@ class Form_Inscripcion {
 			}
 		}
 
-		$estado = get_post_meta( $result, '_conv_estado', true );
+		$estado = get_post_meta( $result, '_convoca_estado', true );
 
 		$success_data = array(
 			'estado'         => $estado,
 			'estado_label'   => CPT_Inscripcion::LABELS[ $estado ] ?? $estado,
 			'plazas'         => (int) $act_meta['plazas_disponibles'],
-			'codigo_reserva' => get_post_meta( $result, '_conv_codigo_reserva', true ),
+			'codigo_reserva' => get_post_meta( $result, '_convoca_codigo_reserva', true ),
 			'redirect'       => add_query_arg( 'enroll_success', '1', home_url() ),
 		);
 

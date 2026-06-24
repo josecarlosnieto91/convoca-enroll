@@ -27,7 +27,7 @@ class Admin_Evaluaciones_Meta_Box {
 			array(
 				'post_type'      => 'convoca_evaluacion',
 				'posts_per_page' => -1,
-				'meta_key'       => '_conv_eval_actividad_id',
+				'meta_key'       => '_convoca_eval_actividad_id',
 				'meta_value'     => $post->ID,
 				'post_status'    => 'publish',
 			)
@@ -46,10 +46,10 @@ class Admin_Evaluaciones_Meta_Box {
 		$sum_comunicacion  = 0;
 
 		foreach ( $evaluaciones as $eval ) {
-			$sum_gestion       += (int) get_post_meta( $eval->ID, '_conv_eval_gestion', true );
-			$sum_instalaciones += (int) get_post_meta( $eval->ID, '_conv_eval_instalaciones', true );
-			$sum_participantes += (int) get_post_meta( $eval->ID, '_conv_eval_participantes', true );
-			$sum_comunicacion  += (int) get_post_meta( $eval->ID, '_conv_eval_comunicacion', true );
+			$sum_gestion       += (int) get_post_meta( $eval->ID, '_convoca_eval_gestion', true );
+			$sum_instalaciones += (int) get_post_meta( $eval->ID, '_convoca_eval_instalaciones', true );
+			$sum_participantes += (int) get_post_meta( $eval->ID, '_convoca_eval_participantes', true );
+			$sum_comunicacion  += (int) get_post_meta( $eval->ID, '_convoca_eval_comunicacion', true );
 		}
 
 		$avg_gestion       = round( $sum_gestion / $total_evals, 1 );

@@ -63,12 +63,12 @@ class Admin_Evaluaciones_Editor {
 		$eval    = $post_id ? get_post( $post_id ) : null;
 
 		$meta = array(
-			'actividad_id'  => $post_id ? get_post_meta( $post_id, '_conv_eval_actividad_id', true ) : ( $_GET['actividad_id'] ?? '' ),
-			'gestion'       => $post_id ? get_post_meta( $post_id, '_conv_eval_gestion', true ) : '',
-			'instalaciones' => $post_id ? get_post_meta( $post_id, '_conv_eval_instalaciones', true ) : '',
-			'participantes' => $post_id ? get_post_meta( $post_id, '_conv_eval_participantes', true ) : '',
-			'comunicacion'  => $post_id ? get_post_meta( $post_id, '_conv_eval_comunicacion', true ) : '',
-			'usuario_id'    => $post_id ? get_post_meta( $post_id, '_conv_eval_usuario_id', true ) : get_current_user_id(),
+			'actividad_id'  => $post_id ? get_post_meta( $post_id, '_convoca_eval_actividad_id', true ) : ( $_GET['actividad_id'] ?? '' ),
+			'gestion'       => $post_id ? get_post_meta( $post_id, '_convoca_eval_gestion', true ) : '',
+			'instalaciones' => $post_id ? get_post_meta( $post_id, '_convoca_eval_instalaciones', true ) : '',
+			'participantes' => $post_id ? get_post_meta( $post_id, '_convoca_eval_participantes', true ) : '',
+			'comunicacion'  => $post_id ? get_post_meta( $post_id, '_convoca_eval_comunicacion', true ) : '',
+			'usuario_id'    => $post_id ? get_post_meta( $post_id, '_convoca_eval_usuario_id', true ) : get_current_user_id(),
 		);
 
 		$actividades = get_posts(
@@ -76,7 +76,7 @@ class Admin_Evaluaciones_Editor {
 				'post_type'      => 'actividad',
 				'posts_per_page' => 50,
 				'post_status'    => 'any',
-				'meta_key'       => '_conv_fecha_inicio',
+				'meta_key'       => '_convoca_fecha_inicio',
 				'orderby'        => 'meta_value',
 				'order'          => 'DESC',
 			)
@@ -105,7 +105,7 @@ class Admin_Evaluaciones_Editor {
 									<option value=""><?php _e( '— Seleccionar actividad —', 'convoca-enroll' ); ?></option>
 									<?php foreach ( $actividades as $act ) : ?>
 										<option value="<?php echo $act->ID; ?>" <?php selected( $meta['actividad_id'], $act->ID ); ?>>
-											<?php echo esc_html( $act->post_title ); ?> (<?php echo substr( get_post_meta( $act->ID, '_conv_fecha_inicio', true ), 0, 10 ); ?>)
+											<?php echo esc_html( $act->post_title ); ?> (<?php echo substr( get_post_meta( $act->ID, '_convoca_fecha_inicio', true ), 0, 10 ); ?>)
 										</option>
 									<?php endforeach; ?>
 								</select>
@@ -214,18 +214,18 @@ class Admin_Evaluaciones_Editor {
 		}
 
 		// Save Meta.
-		update_post_meta( $post_id, '_conv_eval_actividad_id', $actividad_id );
-		update_post_meta( $post_id, '_conv_eval_gestion', (int) $_POST['gestion'] );
-		update_post_meta( $post_id, '_conv_eval_instalaciones', (int) $_POST['instalaciones'] );
-		update_post_meta( $post_id, '_conv_eval_participantes', (int) $_POST['participantes'] );
-		update_post_meta( $post_id, '_conv_eval_comunicacion', (int) $_POST['comunicacion'] );
+		update_post_meta( $post_id, '_convoca_eval_actividad_id', $actividad_id );
+		update_post_meta( $post_id, '_convoca_eval_gestion', (int) $_POST['gestion'] );
+		update_post_meta( $post_id, '_convoca_eval_instalaciones', (int) $_POST['instalaciones'] );
+		update_post_meta( $post_id, '_convoca_eval_participantes', (int) $_POST['participantes'] );
+		update_post_meta( $post_id, '_convoca_eval_comunicacion', (int) $_POST['comunicacion'] );
 
-		if ( ! get_post_meta( $post_id, '_conv_eval_usuario_id', true ) ) {
-			update_post_meta( $post_id, '_conv_eval_usuario_id', get_current_user_id() );
+		if ( ! get_post_meta( $post_id, '_convoca_eval_usuario_id', true ) ) {
+			update_post_meta( $post_id, '_convoca_eval_usuario_id', get_current_user_id() );
 		}
 
-		if ( ! get_post_meta( $post_id, '_conv_eval_fecha', true ) ) {
-			update_post_meta( $post_id, '_conv_eval_fecha', current_time( 'mysql' ) );
+		if ( ! get_post_meta( $post_id, '_convoca_eval_fecha', true ) ) {
+			update_post_meta( $post_id, '_convoca_eval_fecha', current_time( 'mysql' ) );
 		}
 
 		wp_redirect( admin_url( 'edit.php?post_type=conv_evaluacion&message=saved' ) );

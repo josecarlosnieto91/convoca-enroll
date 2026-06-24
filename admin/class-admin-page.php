@@ -317,7 +317,7 @@ class Admin_Page {
 		$table = new Inscriptions_List();
 		$table->prepare_items();
 		echo '<form method="get"><input type="hidden" name="page" value="convoca-enroll">';
-		wp_nonce_field( 'bulk-inscripciones', '_conv_nonce', true, false );
+		wp_nonce_field( 'bulk-inscripciones', '_convoca_nonce', true, false );
 		$table->search_box( __( 'Buscar', 'convoca-enroll' ), 'convoca-enroll-search' );
 		$table->display();
 		echo '</form></div>';
@@ -336,11 +336,11 @@ class Admin_Page {
 		echo '<tbody>';
 		foreach ( $upcoming as $post ) {
 			$id          = $post->ID;
-			$fecha       = get_post_meta( $id, '_conv_fecha_inicio', true );
-			$total       = (int) get_post_meta( $id, '_conv_plazas_totales', true );
-			$disponibles = (int) get_post_meta( $id, '_conv_plazas_disponibles', true );
+			$fecha       = get_post_meta( $id, '_convoca_fecha_inicio', true );
+			$total       = (int) get_post_meta( $id, '_convoca_plazas_totales', true );
+			$disponibles = (int) get_post_meta( $id, '_convoca_plazas_disponibles', true );
 			$ocupadas    = $total - $disponibles;
-			$ubicacion   = get_post_meta( $id, '_conv_ubicacion', true );
+			$ubicacion   = get_post_meta( $id, '_convoca_ubicacion', true );
 
 			echo '<tr>';
 			echo '<td><strong>' . esc_html( $post->post_title ) . '</strong></td>';
@@ -387,7 +387,7 @@ class Admin_Page {
 			echo '<select name="delegados[' . $user_id . '][]" multiple style="width:100%; height:120px;">';
 			foreach ( $actividades as $act ) {
 				$sel = in_array( (string) $act->ID, array_map( 'strval', $assigned ), true ) ? 'selected' : '';
-				echo '<option value="' . $act->ID . '" ' . $sel . '>' . esc_html( $act->post_title ) . ' (' . get_post_meta( $act->ID, '_conv_fecha_inicio', true ) . ')</option>';
+				echo '<option value="' . $act->ID . '" ' . $sel . '>' . esc_html( $act->post_title ) . ' (' . get_post_meta( $act->ID, '_convoca_fecha_inicio', true ) . ')</option>';
 			}
 			echo '</select>';
 			echo '</td>';
@@ -426,8 +426,8 @@ class Admin_Page {
 			}
 
 			$actividad_id = (int) CPT_Inscripcion::get_meta( $id, 'actividad_id' );
-			$aforo_actual = (int) get_post_meta( $actividad_id, '_conv_plazas_ocupadas', true );
-			$aforo_max    = (int) get_post_meta( $actividad_id, '_conv_aforo', true );
+			$aforo_actual = (int) get_post_meta( $actividad_id, '_convoca_plazas_ocupadas', true );
+			$aforo_max    = (int) get_post_meta( $actividad_id, '_convoca_aforo', true );
 
 			if ( $aforo_actual >= $aforo_max ) {
 				++$skipped_capacity;
@@ -533,13 +533,13 @@ class Admin_Page {
 						<tr>
 							<th>Fecha</th>
 							<td>
-								<?php echo esc_html( get_post_meta( $act_id, '_conv_fecha_inicio', true ) ); ?>
+								<?php echo esc_html( get_post_meta( $act_id, '_convoca_fecha_inicio', true ) ); ?>
 							</td>
 						</tr>
 						<tr>
 							<th>Ubicación</th>
 							<td>
-								<?php echo esc_html( get_post_meta( $act_id, '_conv_ubicacion', true ) ); ?>
+								<?php echo esc_html( get_post_meta( $act_id, '_convoca_ubicacion', true ) ); ?>
 							</td>
 						</tr>
 						<tr>
@@ -597,7 +597,7 @@ class Admin_Page {
 			<!-- Internal notes -->
 			<div class="conv-detail-card" style="margin-top:1.5rem">
 				<h3>📝 <?php esc_html_e( 'Notas internas', 'convoca-enroll' ); ?></h3>
-				<textarea id="conv-internal-notes" rows="4" style="width:100%;"><?php echo esc_textarea( get_post_meta( $id, '_conv_notas', true ) ); ?></textarea>
+				<textarea id="conv-internal-notes" rows="4" style="width:100%;"><?php echo esc_textarea( get_post_meta( $id, '_convoca_notas', true ) ); ?></textarea>
 				<div style="margin-top:8px;display:flex;gap:10px;align-items:center;">
 					<button type="button" id="conv-save-notes" class="convoca-btn convoca-btn-outline" data-id="<?php echo $id; ?>"><?php esc_html_e( 'Guardar nota', 'convoca-enroll' ); ?></button>
 					<span id="conv-notes-status" style="font-size:12px;color:#999;"></span>
@@ -819,7 +819,7 @@ class Admin_Page {
 			wp_send_json_error( __( 'No tienes permisos.', 'convoca-enroll' ) );
 		}
 		$notas = sanitize_textarea_field( wp_unslash( $_POST['notas'] ?? '' ) );
-		update_post_meta( $id, '_conv_notas', $notas );
+		update_post_meta( $id, '_convoca_notas', $notas );
 		\Convoca\Core\Logger::info( "Nota actualizada en inscripción #$id", 'Enroll/Admin', $id );
 		wp_send_json_success( __( 'Nota guardada.', 'convoca-enroll' ) );
 	}

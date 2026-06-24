@@ -56,7 +56,7 @@ class Formulario_Evaluacion {
 			return '<p>' . __( 'ID de actividad no válido o inexistente.', 'convoca-enroll' ) . '</p>';
 		}
 
-		$fecha_fin = get_post_meta( $actividad_id, '_conv_fecha_fin', true );
+		$fecha_fin = get_post_meta( $actividad_id, '_convoca_fecha_fin', true );
 		if ( ! $fecha_fin || strtotime( $fecha_fin ) > current_time( 'timestamp' ) ) {
 			return '<p>' . __( 'Esta actividad aún no ha finalizado y no puede ser evaluada.', 'convoca-enroll' ) . '</p>';
 		}
@@ -73,11 +73,11 @@ class Formulario_Evaluacion {
 				'post_type'      => 'convoca_evaluacion',
 				'meta_query'     => array(
 					array(
-						'key'   => '_conv_eval_actividad_id',
+						'key'   => '_convoca_eval_actividad_id',
 						'value' => $actividad_id,
 					),
 					array(
-						'key'   => '_conv_eval_usuario_id',
+						'key'   => '_convoca_eval_usuario_id',
 						'value' => $user->ID,
 					),
 				),
@@ -97,7 +97,7 @@ class Formulario_Evaluacion {
 		} else {
 			// Is monitor?
 			$is_monitor       = in_array( 'monitor_actividad', (array) $user->roles );
-			$responsables_raw = get_post_meta( $actividad_id, '_conv_responsables', true );
+			$responsables_raw = get_post_meta( $actividad_id, '_convoca_responsables', true );
 			$responsables     = is_array( $responsables_raw ) ? $responsables_raw : explode( ',', (string) $responsables_raw );
 			if ( in_array( $user->ID, array_map( 'intval', $responsables ) ) ) {
 				$is_monitor = true;
@@ -116,18 +116,18 @@ class Formulario_Evaluacion {
 							'posts_per_page' => 1,
 							'meta_query'     => array(
 								array(
-									'key'   => '_conv_actividad_id',
+									'key'   => '_convoca_actividad_id',
 									'value' => $actividad_id,
 								),
 								array(
-									'key'   => '_conv_user_id',
+									'key'   => '_convoca_user_id',
 									'value' => $user->ID,
 								),
 							),
 						)
 					);
 					if ( ! empty( $inscriptions ) ) {
-						$asistencia = get_post_meta( $inscriptions[0]->ID, '_conv_asistencia', true );
+						$asistencia = get_post_meta( $inscriptions[0]->ID, '_convoca_asistencia', true );
 						if ( $asistencia === 'si' ) {
 							$can_evaluate = true;
 						}
@@ -257,7 +257,7 @@ class Formulario_Evaluacion {
 			wp_send_json_error( __( 'ID de actividad no válido o inexistente.', 'convoca-enroll' ) );
 		}
 
-		$fecha_fin = get_post_meta( $actividad_id, '_conv_fecha_fin', true );
+		$fecha_fin = get_post_meta( $actividad_id, '_convoca_fecha_fin', true );
 		if ( ! $fecha_fin || strtotime( $fecha_fin ) > current_time( 'timestamp' ) ) {
 			wp_send_json_error( __( 'Esta actividad aún no ha finalizado y no puede ser evaluada.', 'convoca-enroll' ) );
 		}
@@ -268,11 +268,11 @@ class Formulario_Evaluacion {
 				'post_type'      => 'convoca_evaluacion',
 				'meta_query'     => array(
 					array(
-						'key'   => '_conv_eval_actividad_id',
+						'key'   => '_convoca_eval_actividad_id',
 						'value' => $actividad_id,
 					),
 					array(
-						'key'   => '_conv_eval_usuario_id',
+						'key'   => '_convoca_eval_usuario_id',
 						'value' => $user->ID,
 					),
 				),
@@ -318,12 +318,12 @@ class Formulario_Evaluacion {
 		}
 
 		// Save metadata.
-		update_post_meta( $eval_id, '_conv_eval_actividad_id', $actividad_id );
-		update_post_meta( $eval_id, '_conv_eval_usuario_id', $user->ID );
-		update_post_meta( $eval_id, '_conv_eval_fecha', current_time( 'mysql' ) );
+		update_post_meta( $eval_id, '_convoca_eval_actividad_id', $actividad_id );
+		update_post_meta( $eval_id, '_convoca_eval_usuario_id', $user->ID );
+		update_post_meta( $eval_id, '_convoca_eval_fecha', current_time( 'mysql' ) );
 
 		foreach ( $ratings as $field => $val ) {
-			update_post_meta( $eval_id, '_conv_eval_' . $field, $val );
+			update_post_meta( $eval_id, '_convoca_eval_' . $field, $val );
 		}
 
 		$text_fields = array(
@@ -338,7 +338,7 @@ class Formulario_Evaluacion {
 		);
 		foreach ( $text_fields as $field ) {
 			$val = isset( $_POST[ $field ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ $field ] ) ) : '';
-			update_post_meta( $eval_id, '_conv_eval_' . $field, $val );
+			update_post_meta( $eval_id, '_convoca_eval_' . $field, $val );
 		}
 
 		// Hook for integrations.

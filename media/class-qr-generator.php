@@ -102,7 +102,7 @@ class QR_Generator {
 	 * Resolve the best URL for the QR code.
 	 */
 	private static function resolve_url( int $actividad_id ): ?string {
-		$blog_post_id = get_post_meta( $actividad_id, '_conv_media_blog_post_id', true );
+		$blog_post_id = get_post_meta( $actividad_id, '_convoca_media_blog_post_id', true );
 		if ( $blog_post_id && get_post_status( $blog_post_id ) === 'publish' ) {
 			return get_permalink( $blog_post_id );
 		}

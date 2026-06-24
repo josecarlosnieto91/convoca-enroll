@@ -678,7 +678,7 @@ class Motor_Inscripcion {
 				"INSERT IGNORE INTO $table_name (code, post_id)
              SELECT meta_value, post_id FROM {$wpdb->postmeta}
              WHERE meta_key = %s AND meta_value != ''",
-				'_conv_codigo_reserva'
+				'_convoca_codigo_reserva'
 			)
 		);
 	}

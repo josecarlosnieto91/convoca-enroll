@@ -71,7 +71,7 @@ class Admin_Inscripcion_Form {
 								<option value="">— Seleccionar actividad —</option>
 								<?php foreach ( $actividades as $act ) : ?>
 									<?php
-									$fecha       = get_post_meta( $act->ID, '_conv_fecha_inicio', true );
+									$fecha       = get_post_meta( $act->ID, '_convoca_fecha_inicio', true );
 									$fecha_label = $fecha ? date_i18n( 'd/m/Y', strtotime( $fecha ) ) : 'Sin fecha';
 									?>
 									<option value="<?php echo (int) $act->ID; ?>">
