@@ -239,7 +239,7 @@ add_action(
 		new Social\Social_Rest_API();
 		Social\Social_Healthcheck::init();
 
-		if ( ! function_exists( 'Convoca\Enroll\conv_ensure_enroll_capabilities' ) ) {
+		if ( ! function_exists( 'Convoca\Enroll\convoca_ensure_enroll_capabilities' ) ) {
 			/**
 			 * Ensure all necessary roles and capabilities are present.
 			 * Called on init to prevent race conditions or missing caps after updates.
@@ -313,7 +313,7 @@ add_action(
 				}
 			}
 		}
-		add_action( 'init', 'Convoca\Enroll\conv_ensure_enroll_capabilities', 1 );
+		add_action( 'init', 'Convoca\Enroll\convoca_ensure_enroll_capabilities', 1 );
 
 		/**
 		 * Only run ensure_capabilities if the version hash has changed
@@ -324,8 +324,8 @@ add_action(
 			function () {
 				$version_hash = md5( CONVOCA_ENROLL_VERSION . '_caps_v2' );
 				if ( get_option( 'convoca_enroll_caps_hash' ) !== $version_hash ) {
-					if ( function_exists( 'Convoca\Enroll\conv_ensure_enroll_capabilities' ) ) {
-						conv_ensure_enroll_capabilities();
+					if ( function_exists( 'Convoca\Enroll\convoca_ensure_enroll_capabilities' ) ) {
+						convoca_ensure_enroll_capabilities();
 					}
 					update_option( 'convoca_enroll_caps_hash', $version_hash, false );
 				}
