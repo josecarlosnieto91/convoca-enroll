@@ -38,14 +38,7 @@ if ( file_exists( $composer_autoload ) ) {
 }
 
 /* ── Convoca Core fallback ────────────────────────── */
-if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
-	$core_path = WP_PLUGIN_DIR . '/convoca-core/includes';
-	if ( is_dir( $core_path ) ) {
-		foreach ( glob( $core_path . '/class-*.php' ) as $file ) {
-			require_once $file;
-		}
-	}
-}
+// Core classes auto-loaded via Convoca Core's Composer PSR-4
 
 // Compatibility Check: Ensure Convoca Common is loaded.
 if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
@@ -79,35 +72,7 @@ if ( ! defined( 'CONV_ENROLL_URL' ) ) {
 }
 
 /* ── Autoloader ───────────────────────────────────────────── */
-spl_autoload_register(
-	function ( string $class ): void {
-		$prefix = 'Convoca\\Enroll\\';
-		if ( ! str_starts_with( $class, $prefix ) ) {
-			return;
-		}
-		$relative   = str_replace( $prefix, '', $class );
-		$relative   = strtolower( str_replace( '_', '-', $relative ) );
-		$relative   = str_replace( '\\', '/', $relative ); // Convert sub-namespace separators.
-		$class_name = basename( $relative ); // Use only the last segment for WP convention.
-
-		foreach ( array( 'includes/', 'admin/', 'public/', 'media/', 'social/' ) as $dir ) {
-			// Standard WP convention: class-name.php.
-			$wp_file = CONV_ENROLL_DIR . $dir . 'class-' . $class_name . '.php';
-			if ( file_exists( $wp_file ) ) {
-				require_once $wp_file;
-				return;
-			}
-
-			// PSR-4 style: ClassName.php.
-			$psr_file = CONV_ENROLL_DIR . $dir . str_replace( $prefix, '', $class ) . '.php';
-			$psr_file = str_replace( '\\', '/', $psr_file ); // Handle sub-namespaces if any.
-			if ( file_exists( $psr_file ) ) {
-				require_once $psr_file;
-				return;
-			}
-		}
-	}
-);
+// PSR-4 autoloading handled by Composer (vendor/autoload.php)
 
 /* ── Activation ───────────────────────────────────────────── */
 /**
