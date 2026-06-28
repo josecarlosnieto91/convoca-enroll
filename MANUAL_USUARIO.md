@@ -1,4 +1,4 @@
-# MANUAL_USUARIO.md — Convoca Enroll v2.6.0
+# MANUAL_USUARIO.md — Convoca Enroll v2.6.1
 
 > Guía para administradores: gestión de actividades e inscripciones.
 
