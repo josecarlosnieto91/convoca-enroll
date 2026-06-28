@@ -294,7 +294,7 @@ class Admin_Page {
 	public function render_evaluaciones(): void {
 		// Redirect to the standard WP evaluation list,
 		// which already has custom columns and filters via Admin_Evaluaciones_List.
-		wp_safe_redirect( admin_url( 'edit.php?post_type=conv_evaluacion' ) );
+		wp_safe_redirect( admin_url( 'edit.php?post_type=convoca_evaluacion' ) );
 		exit;
 	}
 
