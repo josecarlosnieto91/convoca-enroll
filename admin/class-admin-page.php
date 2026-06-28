@@ -311,7 +311,11 @@ class Admin_Page {
 		echo '<div class="wrap"><h1>' . esc_html__( 'Inscripciones', 'convoca-enroll' ) . '</h1>';
 		echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-nueva-inscripcion' ) ) . '" class="page-title-action">' . esc_html__( '+ Nueva inscripción', 'convoca-enroll' ) . '</a>';
 		echo '<a href="' . esc_url( admin_url( 'admin-ajax.php?action=convoca_enroll_export_csv&nonce=' . wp_create_nonce( 'convoca_enroll_export_csv' ) ) ) . '" class="page-title-action">' . esc_html__( 'Exportar CSV', 'convoca-enroll' ) . '</a>';
-		echo '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_export_inscripciones_pdf' ), 'convoca_enroll_export_inscripciones_pdf' ) ) . '" class="page-title-action">' . esc_html__( 'Exportar PDF', 'convoca-enroll' ) . '</a>';
+		if ( \Convoca\Core\License_Manager::has_pro( 'pdf_memories' ) ) {
+			echo '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_export_inscripciones_pdf' ), 'convoca_enroll_export_inscripciones_pdf' ) ) . '" class="page-title-action">' . esc_html__( 'Exportar PDF', 'convoca-enroll' ) . '</a>';
+		} else {
+			echo '<a href="' . esc_url( admin_url( 'admin.php?page=convoca-license' ) ) . '" class="page-title-action" style="opacity:0.6;">🔒 ' . esc_html__( 'Exportar PDF (PRO)', 'convoca-enroll' ) . '</a>';
+		}
 
 		require_once CONVOCA_ENROLL_DIR . 'admin/class-admin-inscripciones.php';
 		$table = new Inscriptions_List();

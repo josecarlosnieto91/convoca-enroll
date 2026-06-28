@@ -23,9 +23,13 @@ class Admin_Reports {
 			'espera'       => __( 'Lista de espera', 'convoca-enroll' ),
 			'financiero'   => __( 'Financiero', 'convoca-enroll' ),
 			'monitores'    => __( 'Actividad Monitores', 'convoca-enroll' ),
-			'memoria'      => __( 'Memoria Actividades', 'convoca-enroll' ),
 			'evaluaciones' => __( 'Evaluaciones', 'convoca-enroll' ),
 		);
+
+		// PRO features.
+		if ( \Convoca\Core\License_Manager::has_pro( 'pdf_memories' ) ) {
+			$this->tabs['memoria'] = __( 'Memoria Actividades', 'convoca-enroll' );
+		}
 
 		add_action( 'admin_init', array( $this, 'handle_export' ) );
 	}
@@ -121,7 +125,11 @@ class Admin_Reports {
 				$this->tab_monitores();
 				break;
 			case 'memoria':
-				$this->tab_memoria();
+				if ( \Convoca\Core\License_Manager::has_pro( 'pdf_memories' ) ) {
+					$this->tab_memoria();
+				} else {
+					echo '<div class="convoca-alert convoca-alert--info" style="display:block;margin:20px 0;"><p>🔒 <strong>Memoria de Actividades</strong> es una funcionalidad PRO. <a href="' . esc_url( admin_url( 'admin.php?page=convoca-license' ) ) . '">Activa tu licencia</a> para desbloquear informes detallados y exportaciones.</p></div>';
+				}
 				break;
 			case 'evaluaciones':
 				$this->tab_evaluaciones();

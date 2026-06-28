@@ -148,6 +148,7 @@ class Admin_Settings {
 
 		<h2><?php esc_html_e( 'Webhooks', 'convoca-enroll' ); ?></h2>
 
+		<?php if ( \Convoca\Core\License_Manager::has_pro( 'webhooks' ) ) : ?>
 		<div class="convoca-field">
 			<label for="webhook_url"><?php esc_html_e( 'URL del Webhook', 'convoca-enroll' ); ?></label>
 			<input type="url" id="webhook_url" name="conv[webhook_url]"
@@ -161,6 +162,12 @@ class Admin_Settings {
 				value="<?php echo esc_attr( $s['webhook_secret'] ?? '' ); ?>">
 			<small class="convoca-small"><?php esc_html_e( 'Firma opcional que se enviará en la cabecera X-Convoca-Signature con el hash SHA-256 del payload crudo.', 'convoca-enroll' ); ?></small>
 		</div>
+		<?php else : ?>
+		<div class="convoca-alert convoca-alert--info" style="display:block;margin-bottom:20px;padding:12px 16px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;">
+			<p style="margin:0;">🔒 <strong>Webhooks salientes</strong> es una funcionalidad PRO. 
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-license' ) ); ?>" style="font-weight:600;">Activa tu licencia</a> para conectarte con make.com, Zapier y otros sistemas externos.</p>
+		</div>
+		<?php endif; ?>
 
 		<h2><?php esc_html_e( 'Google Sheets', 'convoca-enroll' ); ?></h2>
 
@@ -222,6 +229,24 @@ class Admin_Settings {
 					<?php endif; ?>
 				</div>
 			<?php endif; ?>
+		</div>
+
+		<!-- PRO Features Section -->
+		<div class="conv-pro-section" style="margin-top:40px;padding:25px;background:#fefce8;border:2px dashed #eab308;border-radius:12px;">
+			<h2 style="margin-top:0;color:#a16207;">✨ Funcionalidades PRO</h2>
+			<p style="color:#713f12;">Las siguientes funcionalidades están disponibles con una licencia PRO. <a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-license' ) ); ?>">Activa tu licencia</a> para desbloquearlas.</p>
+			<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:15px;">
+				<div style="background:#fff;border-radius:8px;padding:15px;border:1px solid #e2e8f0;opacity:0.7;">
+					<span style="font-size:1.2rem;">📱</span>
+					<span style="font-weight:600;margin-left:8px;">PWA Check-in QR</span>
+					<span style="display:block;font-size:11px;color:#94a3b8;margin-top:4px;">Registro QR por móvil para participantes</span>
+				</div>
+				<div style="background:#fff;border-radius:8px;padding:15px;border:1px solid #e2e8f0;opacity:0.7;">
+					<span style="font-size:1.2rem;">📄</span>
+					<span style="font-weight:600;margin-left:8px;">PDF Memories</span>
+					<span style="display:block;font-size:11px;color:#94a3b8;margin-top:4px;">Exportación PDF y memoria de actividades</span>
+				</div>
+			</div>
 		</div>
 		<?php
 	}
