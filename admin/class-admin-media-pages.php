@@ -97,11 +97,11 @@ class Admin_Media_Subpages {
 							<td><strong><?php echo esc_html( $a['network'] ); ?></strong></td>
 							<td><?php echo esc_html( $a['account_name'] ?: $a['account_id'] ); ?></td>
 							<td><?php echo esc_html( $a['token_expires_at'] ? date( 'd/m/Y', strtotime( $a['token_expires_at'] ) ) : '—' ); ?></td>
-							<td><?php echo $a['is_active'] ? '✅ Activa' : '❌ Inactiva'; ?></td>
-							<td><a href="<?php echo esc_url( rest_url( 'convoca/v1/social/accounts/' . $a['id'] ) ); ?>" class="button button-small" onclick="return confirm('¿Desconectar esta cuenta?')">Desconectar</a></td>
+							<td><?php echo $a['is_active'] ? '✅ ' . esc_html__( 'Activa', 'convoca-enroll' ) : '❌ ' . esc_html__( 'Inactiva', 'convoca-enroll' ); ?></td>
+							<td><a href="<?php echo esc_url( rest_url( 'convoca/v1/social/accounts/' . $a['id'] ) ); ?>" class="button button-small" onclick="return confirm('<?php echo esc_js( __( '¿Desconectar esta cuenta?', 'convoca-enroll' ) ); ?>')"><?php esc_html_e( 'Desconectar', 'convoca-enroll' ); ?></a></td>
 						</tr>
 					<?php endforeach; if ( empty( $accounts ) ) : ?>
-						<tr><td colspan="5">No hay cuentas conectadas. Usa los botones de arriba para conectar.</td></tr>
+						<tr><td colspan="5"><?php esc_html_e( 'No hay cuentas conectadas. Usa los botones de arriba para conectar.', 'convoca-enroll' ); ?></td></tr>
 					<?php endif; ?>
 				</tbody>
 			</table>

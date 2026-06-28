@@ -274,7 +274,7 @@ class Rest_API {
 		$act_id = (int) CPT_Inscripcion::get_meta( $id, 'actividad_id' );
 
 		if ( ! $this->check_permission_for_activity( $act_id ) ) {
-			return new \WP_Error( 'rest_forbidden', 'No tienes permiso para gestionar esta actividad.', array( 'status' => 403 ) );
+			return new \WP_Error( 'rest_forbidden', __( 'No tienes permiso para gestionar esta actividad.', 'convoca-enroll' ), array( 'status' => 403 ) );
 		}
 
 		$estado = sanitize_text_field( $req['estado'] );
@@ -305,7 +305,7 @@ class Rest_API {
 	public function get_stats( \WP_REST_Request $req ): \WP_REST_Response|\WP_Error {
 		$act_id = (int) $req['actividad_id'];
 		if ( ! $this->check_permission_for_activity( $act_id ) ) {
-			return new \WP_Error( 'rest_forbidden', 'No tienes permiso para ver estadísticas de esta actividad.', array( 'status' => 403 ) );
+			return new \WP_Error( 'rest_forbidden', __( 'No tienes permiso para ver estadísticas de esta actividad.', 'convoca-enroll' ), array( 'status' => 403 ) );
 		}
 
 		$counts = CPT_Inscripcion::count_by_activity( $act_id );
@@ -369,7 +369,7 @@ class Rest_API {
 				array(
 					'error'   => 'Inscription not confirmed',
 					'estado'  => $estado,
-					'message' => 'Solo se pueden confirmar asistentes con reserva confirmada.',
+					'message' => __( 'Solo se pueden confirmar asistentes con reserva confirmada.', 'convoca-enroll' ),
 				),
 				400
 			);
@@ -395,7 +395,7 @@ class Rest_API {
 				'success'         => true,
 				'nombre'          => $participante,
 				'already_checked' => ( $affected === 0 ),
-				'message'         => ( $affected === 0 ) ? 'Esta reserva ya había sido escaneada.' : 'Check-in realizado correctamente.',
+				'message'         => ( $affected === 0 ) ? __( 'Esta reserva ya había sido escaneada.', 'convoca-enroll' ) : __( 'Check-in realizado correctamente.', 'convoca-enroll' ),
 			)
 		);
 	}
@@ -410,7 +410,7 @@ class Rest_API {
 		// Check if ID is activity or inscription.
 		$post = get_post( $id );
 		if ( ! $post ) {
-			wp_die( 'No encontrado.', 404 );
+			wp_die( __( 'No encontrado.', 'convoca-enroll' ), '', 404 );
 		}
 
 		if ( $post->post_type === 'actividad' ) {
@@ -419,7 +419,7 @@ class Rest_API {
 			// Actually, let's just use the activity ID hash for public activities.
 			$expected = hash_hmac( 'sha256', (string) $id, \Convoca\Core\Utils::get_persistent_salt() );
 			if ( $token !== $expected ) {
-				wp_die( 'Acceso denegado.', 403 );
+				wp_die( __( 'Acceso denegado.', 'convoca-enroll' ), '', 403 );
 			}
 			$calendar = new Google_Calendar();
 			$calendar->serve_ics( $id );
@@ -427,12 +427,12 @@ class Rest_API {
 			// Validate checkin token.
 			$stored_token = CPT_Inscripcion::get_meta( $id, 'checkin_token' );
 			if ( ! $stored_token || ! hash_equals( $stored_token, $token ) ) {
-				wp_die( 'Token de seguridad inválido.', 403 );
+				wp_die( __( 'Token de seguridad inválido.', 'convoca-enroll' ), '', 403 );
 			}
 			$calendar = new Google_Calendar();
 			$calendar->serve_ics( $id, true );
 		} else {
-			wp_die( 'Tipo de post no válido.', 400 );
+			wp_die( __( 'Tipo de post no válido.', 'convoca-enroll' ), '', 400 );
 		}
 	}
 

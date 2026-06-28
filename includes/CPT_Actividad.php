@@ -679,7 +679,7 @@ class CPT_Actividad {
 		}
 
 		function bdeShareAlbum(activityId) {
-			if (!confirm('¿Compartir el álbum con todos los participantes confirmados?')) return;
+			if (!confirm('<?php echo esc_js( __( '¿Compartir el álbum con todos los participantes confirmados?', 'convoca-enroll' ) ); ?>')) return;
 			
 			const fd = new FormData();
 			fd.append('action', 'convoca_enroll_google_photos_share');

@@ -311,7 +311,7 @@ class Google_Calendar {
 		$ics_content = $this->generate_ics( (int) $actividad_id );
 
 		if ( ! $ics_content ) {
-			wp_die( 'Error al generar el archivo de calendario.' );
+			wp_die( __( 'Error al generar el archivo de calendario.', 'convoca-enroll' ) );
 		}
 
 		$filename = sanitize_title( get_the_title( $actividad_id ) ) . '.ics';

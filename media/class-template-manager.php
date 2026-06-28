@@ -133,10 +133,10 @@ class Template_Manager {
 	 */
 	public static function import_json( array $data ) {
 		if ( empty( $data['name'] ) || empty( $data['config'] ) ) {
-			return new \WP_Error( 'invalid_template_schema', 'El JSON debe contener name y config.' );
+			return new \WP_Error( 'invalid_template_schema', __( 'El JSON debe contener name y config.', 'convoca-enroll' ) );
 		}
 		if ( ! is_array( $data['config'] ) || empty( $data['config']['layers'] ) ) {
-			return new \WP_Error( 'invalid_template_schema', 'config debe contener un array de layers.' );
+			return new \WP_Error( 'invalid_template_schema', __( 'config debe contener un array de layers.', 'convoca-enroll' ) );
 		}
 		$slug = ! empty( $data['slug'] ) ? sanitize_title( $data['slug'] ) : sanitize_title( $data['name'] ) . '-' . uniqid();
 		return self::save(
