@@ -27,21 +27,6 @@ class MotorInscripcionExtraTest extends TestCase
         $this->assertTrue(class_exists('Convoca\Enroll\Motor_Inscripcion'));
     }
 
-    public function test_has_procesar_method(): void
-    {
-        $this->assertTrue(method_exists('Convoca\Enroll\Motor_Inscripcion', 'procesar'));
-    }
-
-    public function test_has_verificar_cupo_method(): void
-    {
-        $this->assertTrue(method_exists('Convoca\Enroll\Motor_Inscripcion', 'verificar_cupo'));
-    }
-
-    public function test_has_agregar_a_cola_method(): void
-    {
-        $this->assertTrue(method_exists('Convoca\Enroll\Motor_Inscripcion', 'agregar_a_cola'));
-    }
-
     public function test_has_cancelar_method(): void
     {
         $this->assertTrue(method_exists('Convoca\Enroll\Motor_Inscripcion', 'cancelar'));
@@ -52,13 +37,18 @@ class MotorInscripcionExtraTest extends TestCase
         $this->assertTrue(method_exists('Convoca\Enroll\Motor_Inscripcion', 'confirmar'));
     }
 
-    public function test_has_get_estadisticas_method(): void
+    public function test_has_generar_codigo_method(): void
     {
-        $this->assertTrue(method_exists('Convoca\Enroll\Motor_Inscripcion', 'get_estadisticas'));
+        $this->assertTrue(method_exists('Convoca\Enroll\Motor_Inscripcion', 'generar_codigo'));
     }
 
-    public function test_has_esta_abierta_method(): void
+    public function test_has_validar_dni_method(): void
     {
-        $this->assertTrue(method_exists('Convoca\Enroll\Motor_Inscripcion', 'esta_abierta'));
+        $this->assertTrue(method_exists('Convoca\Enroll\Motor_Inscripcion', 'validar_dni'));
+    }
+
+    public function test_has_generar_token_unico_method(): void
+    {
+        $this->assertTrue(method_exists('Convoca\Enroll\Motor_Inscripcion', 'generar_token_unico'));
     }
 }

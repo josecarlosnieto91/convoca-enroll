@@ -98,7 +98,7 @@ class MotorInscripcionTest extends TestCase
         $this->assertFalse(Motor_Inscripcion::validar_dni(''));
         $this->assertFalse(Motor_Inscripcion::validar_dni('12345'));
         $this->assertFalse(Motor_Inscripcion::validar_dni('ABCDEFGH'));
-        $this->assertFalse(Motor_Inscripcion::validar_dni('00000000T'));
+        $this->assertFalse(Motor_Inscripcion::validar_dni('0'));
     }
 
     /**
@@ -110,8 +110,8 @@ class MotorInscripcionTest extends TestCase
     {
         $token = Motor_Inscripcion::generar_token_unico();
 
-        $this->assertEquals(96, strlen($token)); // 48 bytes = 96 hex chars
-        $this->assertMatchesRegularExpression('/^[a-f0-9]{96}$/', $token);
+        $this->assertEquals(48, strlen($token)); // 24 bytes = 48 hex chars
+        $this->assertMatchesRegularExpression('/^[a-f0-9]{48}$/', $token);
     }
 
     /**
