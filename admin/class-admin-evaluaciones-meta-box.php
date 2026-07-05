@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Enroll
+ *
+ * @package    Convoca\Enroll
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 namespace Convoca\Enroll;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,7 +52,7 @@ class Admin_Evaluaciones_Meta_Box {
 		$total_evals = count( $evaluaciones );
 
 		if ( $total_evals === 0 ) {
-			echo '<p>' . __( 'No hay evaluaciones para esta actividad todavía.', 'convoca-enroll' ) . '</p>';
+			echo '<p>' . esc_html__( 'No hay evaluaciones para esta actividad todavía.', 'convoca-enroll' ) . '</p>';
 			return;
 		}
 

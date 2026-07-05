@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Enroll
+ *
+ * @package    Convoca\Enroll
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 namespace Convoca\Enroll;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,11 +58,11 @@ class Admin_Evaluacion_Fields {
 
 		?>
 		<div class="convoca-field">
-			<label for="conv_eval_actividad_id"><?php _e( 'Actividad evaluada', 'convoca-enroll' ); ?></label>
+			<label for="conv_eval_actividad_id"><?php esc_html_e( 'Actividad evaluada', 'convoca-enroll' ); ?></label>
 			<select name="conv_eval_actividad_id" id="conv_eval_actividad_id" required>
-				<option value=""><?php _e( '— Seleccionar actividad —', 'convoca-enroll' ); ?></option>
+				<option value=""><?php esc_html_e( '— Seleccionar actividad —', 'convoca-enroll' ); ?></option>
 				<?php foreach ( $actividades as $act ) : ?>
-					<option value="<?php echo $act->ID; ?>" <?php selected( $actividad_id, $act->ID ); ?>>
+					<option value="<?php echo esc_attr( $act->ID ); ?>" <?php selected( $actividad_id, $act->ID ); ?>>
 						<?php echo esc_html( $act->post_title ); ?>
 					</option>
 				<?php endforeach; ?>
@@ -68,8 +84,8 @@ class Admin_Evaluacion_Fields {
 				<label><?php echo esc_html( $label ); ?></label>
 				<div class="convoca-rating-stars">
 					<?php for ( $i = 1; $i <= 5; $i++ ) : ?>
-						<label class="convoca-rating-star" title="<?php echo $i; ?>">
-							<input type="radio" name="conv_eval_<?php echo $key; ?>" value="<?php echo $i; ?>" <?php checked( $current_val, $i ); ?>>
+						<label class="convoca-rating-star" title="<?php echo esc_attr( $i ); ?>">
+							<input type="radio" name="conv_eval_<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $i ); ?>" <?php checked( $current_val, $i ); ?>>
 							<span class="convoca-star">★</span>
 						</label>
 					<?php endfor; ?>
@@ -84,7 +100,7 @@ class Admin_Evaluacion_Fields {
 			return;
 		}
 
-		if ( ! wp_verify_nonce( $_POST['convoca_evaluacion_fields_nonce'], 'convoca_evaluacion_fields' ) ) {
+		if ( ! wp_verify_nonce( wp_unslash( $_POST['convoca_evaluacion_fields_nonce'] ), 'convoca_evaluacion_fields' ) ) {
 			return;
 		}
 
@@ -107,7 +123,7 @@ class Admin_Evaluacion_Fields {
 		foreach ( $fields as $field ) {
 			$key = 'convoca_eval_' . $field;
 			if ( isset( $_POST[ $key ] ) ) {
-				update_post_meta( $post_id, '_' . $key, sanitize_text_field( $_POST[ $key ] ) );
+				update_post_meta( $post_id, '_' . $key, sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) );
 			}
 		}
 

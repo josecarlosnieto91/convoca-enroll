@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Enroll
+ *
+ * @package    Convoca\Enroll
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Custom editor for activity evaluations.
  *
@@ -88,9 +104,9 @@ class Admin_Evaluaciones_Editor {
 		<div class="wrap convoca-admin">
 			<h1><?php echo esc_html( $title ); ?></h1>
 
-			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="conv-form-custom">
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="conv-form-custom">
 				<input type="hidden" name="action" value="conv_enroll_save_evaluacion_admin">
-				<input type="hidden" name="id" value="<?php echo $post_id; ?>">
+				<input type="hidden" name="id" value="<?php echo esc_attr( $post_id ); ?>">
 				<?php wp_nonce_field( 'convoca_enroll_save_evaluacion_nonce' ); ?>
 
 				<div class="conv-grid conv-grid--2">
@@ -100,11 +116,11 @@ class Admin_Evaluaciones_Editor {
 						</div>
 						<div class="conv-card-body">
 							<div class="conv-field">
-								<label for="actividad_id"><?php _e( 'Actividad evaluada', 'convoca-enroll' ); ?> *</label>
+								<label for="actividad_id"><?php esc_html_e( 'Actividad evaluada', 'convoca-enroll' ); ?> *</label>
 								<select name="actividad_id" id="actividad_id" required class="widefat">
-									<option value=""><?php _e( '— Seleccionar actividad —', 'convoca-enroll' ); ?></option>
+									<option value=""><?php esc_html_e( '— Seleccionar actividad —', 'convoca-enroll' ); ?></option>
 									<?php foreach ( $actividades as $act ) : ?>
-										<option value="<?php echo $act->ID; ?>" <?php selected( $meta['actividad_id'], $act->ID ); ?>>
+										<option value="<?php echo esc_attr( $act->ID ); ?>" <?php selected( $meta['actividad_id'], $act->ID ); ?>>
 											<?php echo esc_html( $act->post_title ); ?> (<?php echo substr( get_post_meta( $act->ID, '_convoca_fecha_inicio', true ), 0, 10 ); ?>)
 										</option>
 									<?php endforeach; ?>
@@ -112,7 +128,7 @@ class Admin_Evaluaciones_Editor {
 							</div>
 
 							<div class="conv-field">
-								<label for="post_content"><?php _e( 'Comentarios / Observaciones', 'convoca-enroll' ); ?></label>
+								<label for="post_content"><?php esc_html_e( 'Comentarios / Observaciones', 'convoca-enroll' ); ?></label>
 								<textarea name="post_content" id="post_content" rows="10" class="widefat"><?php echo $eval ? esc_textarea( $eval->post_content ) : ''; ?></textarea>
 							</div>
 						</div>
@@ -138,7 +154,7 @@ class Admin_Evaluaciones_Editor {
 									<div class="convoca-rating-stars" style="display: flex; gap: 10px; font-size: 24px; cursor: pointer;">
 										<?php for ( $i = 1; $i <= 5; $i++ ) : ?>
 											<label style="cursor: pointer;">
-												<input type="radio" name="<?php echo $key; ?>" value="<?php echo $i; ?>" <?php checked( $meta[ $key ], $i ); ?> required style="display: none;">
+												<input type="radio" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $i ); ?>" <?php checked( $meta[ $key ], $i ); ?> required style="display: none;">
 												<span class="conv-star" style="color: <?php echo ( $meta[ $key ] >= $i ) ? '#f59e0b' : '#d1d5db'; ?>;">★</span>
 											</label>
 										<?php endfor; ?>
@@ -166,7 +182,7 @@ class Admin_Evaluaciones_Editor {
 
 				<div class="conv-form-actions">
 					<?php submit_button( __( 'Guardar Evaluación', 'convoca-enroll' ), 'primary', 'submit', false ); ?>
-					<a href="<?php echo admin_url( 'edit.php?post_type=conv_evaluacion' ); ?>" class="button"><?php _e( 'Cancelar', 'convoca-enroll' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=conv_evaluacion' ) ); ?>" class="button"><?php esc_html_e( 'Cancelar', 'convoca-enroll' ); ?></a>
 				</div>
 			</form>
 		</div>
@@ -186,12 +202,12 @@ class Admin_Evaluaciones_Editor {
 		check_admin_referer( 'convoca_enroll_save_evaluacion_nonce' );
 
 		if ( ! current_user_can( 'edit_posts' ) ) {
-			wp_die( __( 'No tienes permisos para realizar esta acción.', 'convoca-enroll' ) );
+			wp_die( esc_html__( 'No tienes permisos para realizar esta acción.', 'convoca-enroll' ) );
 		}
 
-		$post_id         = isset( $_POST['id'] ) ? (int) $_POST['id'] : 0;
+		$post_id         = isset( $_POST['id'] ) ? (int) wp_unslash( $_POST['id'] ) : 0;
 		$actividad_id    = (int) $_POST['actividad_id'];
-		$content         = sanitize_textarea_field( $_POST['post_content'] );
+		$content         = sanitize_textarea_field( wp_unslash( $_POST['post_content'] ?? '' ) );
 		$actividad_title = get_the_title( $actividad_id );
 
 		$post_data = array(

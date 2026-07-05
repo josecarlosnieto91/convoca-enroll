@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Enroll
+ *
+ * @package    Convoca\Enroll
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Admin page for template management.
  *
@@ -33,7 +49,7 @@ class Admin_Templates_Page {
 
 	public function render_page(): void {
 		if ( ! current_user_can( 'convoca_manage_media' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-enroll' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-enroll' ) );
 		}
 
 		$templates = Template_Manager::get_all();

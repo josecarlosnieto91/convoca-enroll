@@ -1,6 +1,27 @@
 <?php
 
+/**
+ * Convoca Enroll
+ *
+ * @package    Convoca\Enroll
+ * @subpackage Includes
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 namespace Convoca\Enroll;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+use WP_Error;
 
 /**
  * Checkin_Handler class.
@@ -44,7 +65,7 @@ class Checkin_Handler {
 
 		// Allow administrators, editors, and approved volunteers to access the check-in interface.
 		if ( ! current_user_can( 'manage_inscripciones' ) && ! in_array( 'voluntario_aprobado', (array) wp_get_current_user()->roles, true ) ) {
-			wp_die( __( 'No tienes permisos para realizar check-in.', 'convoca-enroll' ), __( 'Acceso Denegado', 'convoca-enroll' ), array( 'response' => 403 ) );
+			wp_die( esc_html__( 'No tienes permisos para realizar check-in.', 'convoca-enroll' ), esc_html__( 'Acceso Denegado', 'convoca-enroll' ), array( 'response' => 403 ) );
 		}
 
 		if ( $is_scanner_page ) {
@@ -68,7 +89,7 @@ class Checkin_Handler {
 		<head>
 			<meta charset="<?php bloginfo( 'charset' ); ?>">
 			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-			<title><?php _e( 'Check-in Convoca', 'convoca-enroll' ); ?></title>
+			<title><?php esc_html_e( 'Check-in Convoca', 'convoca-enroll' ); ?></title>
 			<?php wp_head(); ?>
 			<link rel="preconnect" href="https://fonts.googleapis.com">.
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>.
@@ -214,15 +235,15 @@ class Checkin_Handler {
 		<body>
 			<div class="app-container">
 				<div class="header">
-					<h1><?php _e( 'Check-in Convoca', 'convoca-enroll' ); ?></h1>
-					<p class="subtitle"><?php _e( 'Escáner de Asistencia', 'convoca-enroll' ); ?></p>
+					<h1><?php esc_html_e( 'Check-in Convoca', 'convoca-enroll' ); ?></h1>
+					<p class="subtitle"><?php esc_html_e( 'Escáner de Asistencia', 'convoca-enroll' ); ?></p>
 				</div>
 
 				<div class="scanner-wrapper">
 					<div id="reader"></div>
 					
 					<div class="overlay-controls">
-						<div id="status-badge" class="status-badge badge-scanning"><?php _e( 'Escaneando...', 'convoca-enroll' ); ?></div>
+						<div id="status-badge" class="status-badge badge-scanning"><?php esc_html_e( 'Escaneando...', 'convoca-enroll' ); ?></div>
 						<div class="action-buttons">
 							<button class="btn-circle" id="btn-camera" title="Cambiar Cámara">📷</button>
 							<button class="btn-circle" id="btn-torch" title="Linterna">🔦</button>
@@ -239,7 +260,7 @@ class Checkin_Handler {
 					<div class="result-title" id="res-title">¡Check-in Exitoso!</div>
 					<div class="result-name" id="res-name">Jose Carlos</div>
 					<div class="result-act" id="res-act">Visita al Centro Social</div>
-					<button class="btn-primary" id="btn-continue"><?php _e( 'Siguiente Escaneo', 'convoca-enroll' ); ?></button>
+					<button class="btn-primary" id="btn-continue"><?php esc_html_e( 'Siguiente Escaneo', 'convoca-enroll' ); ?></button>
 				</div>
 			</div>
 
@@ -278,11 +299,11 @@ class Checkin_Handler {
 
 					const formData = new URLSearchParams();
 					formData.append('action', 'convoca_enroll_qr_checkin');
-					formData.append('nonce', '<?php echo wp_create_nonce( 'convoca_enroll_qr_checkin' ); ?>');
+					formData.append('nonce', '<?php echo esc_js( wp_create_nonce( 'convoca_enroll_qr_checkin' ) ); ?>');
 					formData.append('id', token);
 
 					try {
-						const response = await fetch('<?php echo admin_url( 'admin-ajax.php' ); ?>', {
+						const response = await fetch('<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>', {
 							method: 'POST',
 							headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 							body: formData
@@ -542,7 +563,7 @@ class Checkin_Handler {
 		$result = $this->mark_as_attended_by_token( $token );
 
 		if ( is_wp_error( $result ) ) {
-			wp_die( $result->get_error_message(), __( 'Error de Check-in', 'convoca-enroll' ) );
+			wp_die( $result->get_error_message(), esc_html__( 'Error de Check-in', 'convoca-enroll' ) );
 		}
 
 		// Get info for the message.
@@ -560,8 +581,8 @@ class Checkin_Handler {
 		$act_title    = get_the_title( $act_id );
 
 		wp_die(
-			sprintf( __( 'Check-in confirmado para %1$s en "%2$s".', 'convoca-enroll' ), '<strong>' . esc_html( $nombre ) . '</strong>', esc_html( $act_title ) ),
-			__( 'Check-in Exitoso', 'convoca-enroll' ),
+			sprintf( esc_html__( 'Check-in confirmado para %1$s en "%2$s".', 'convoca-enroll' ), '<strong>' . esc_html( $nombre ) . '</strong>', esc_html( $act_title ) ),
+			esc_html__( 'Check-in Exitoso', 'convoca-enroll' ),
 			array(
 				'response'  => 200,
 				'back_link' => true,
@@ -580,7 +601,7 @@ class Checkin_Handler {
 			wp_send_json_error( __( 'No tienes permisos para realizar check-in.', 'convoca-enroll' ) );
 		}
 
-		$token  = sanitize_text_field( $_POST['id'] );
+		$token  = sanitize_text_field( wp_unslash( $_POST['id'] ?? '' ) );
 		$result = $this->mark_as_attended_by_token( $token );
 
 		if ( is_wp_error( $result ) ) {

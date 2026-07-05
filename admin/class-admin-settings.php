@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Enroll
+ *
+ * @package    Convoca\Enroll
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Admin settings: tabs for General, Normas, Protección de datos, Emails.
  *
@@ -36,7 +52,7 @@ class Admin_Settings {
 
 		$s         = get_option( self::OPTION, array() );
 		$templates = Email_Automation::get_templates();
-		$tab       = sanitize_text_field( $_GET['tab'] ?? 'general' );
+		$tab       = sanitize_text_field( wp_unslash( $_GET['tab'] ?? 'general' ) );
 		$tabs      = array(
 			'general'         => __( 'General', 'convoca-enroll' ),
 			'normas'          => __( 'Normas de inscripción', 'convoca-enroll' ),
@@ -53,7 +69,7 @@ class Admin_Settings {
 				<img src="<?php echo esc_url( CONVOCA_IMAGES_URL . 'logo.png' ); ?>" alt="Convoca Enroll" style="width: 80px; height: 80px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
 				<div>
 					<h1 style="margin: 0; padding: 0;"><?php esc_html_e( 'Ajustes de Inscripciones', 'convoca-enroll' ); ?></h1>
-					<p style="margin: 5px 0 0; color: #666; font-size: 1.1em;"><?php _e( 'Gestión de actividades y motor de reservas', 'convoca-enroll' ); ?></p>
+					<p style="margin: 5px 0 0; color: #666; font-size: 1.1em;"><?php esc_html_e( 'Gestión de actividades y motor de reservas', 'convoca-enroll' ); ?></p>
 				</div>
 			</div>
 
@@ -324,7 +340,7 @@ class Admin_Settings {
 		);
 		?>
 		<p>Variables disponibles:
-			<code><?php echo implode( '</code> <code>', Email_Automation::VARIABLES ); ?></code>
+			<code><?php echo esc_html( implode( '</code> <code>', Email_Automation::VARIABLES ) ); ?></code>
 		</p>
 
 		<?php
@@ -347,19 +363,19 @@ class Admin_Settings {
 				
 				<p>
 					<label><strong>Asunto</strong></label><br>
-					<input type="text" name="tpl[<?php echo $slug; ?>][subject]"
+					<input type="text" name="tpl[<?php echo esc_attr( $slug ); ?>][subject]"
 						value="<?php echo esc_attr( $tpl['subject'] ); ?>" class="large-text">
 				</p>
 				<p>
 					<label><strong>Cuerpo</strong></label><br>
-					<textarea name="tpl[<?php echo $slug; ?>][body]" rows="6"
+					<textarea name="tpl[<?php echo esc_attr( $slug ); ?>][body]" rows="6"
 						class="large-text"><?php echo esc_textarea( $tpl['body'] ); ?></textarea>
 				</p>
 
 				<div class="conv-attachment-row" style="margin-top: 10px;">
 					<label><strong>Adjunto</strong></label><br>
 					<div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
-						<input type="hidden" name="tpl[<?php echo $slug; ?>][attachment_id]" value="<?php echo esc_attr( $attachment_id ); ?>" class="conv_enroll_attachment_id">
+						<input type="hidden" name="tpl[<?php echo esc_attr( $slug ); ?>][attachment_id]" value="<?php echo esc_attr( $attachment_id ); ?>" class="conv_enroll_attachment_id">
 						<button type="button" class="convoca-btn convoca-btn-outline conv-upload-attachment"><?php echo esc_html__( 'Seleccionar archivo', 'convoca-enroll' ); ?></button>
 						<button type="button" class="convoca-btn convoca-btn-outline convoca-btn--danger conv-remove-attachment" <?php echo ! $attachment_id ? 'style="display:none"' : ''; ?>><?php echo esc_html__( 'Quitar', 'convoca-enroll' ); ?></button>
 						<span class="convoca-badge convoca-badge--info conv_enroll_attachment_name"><?php echo $attachment_url ? esc_html( basename( $attachment_url ) ) : esc_html__( 'Ninguno', 'convoca-enroll' ); ?></span>
@@ -696,7 +712,7 @@ class Admin_Settings {
 	public function maybe_save(): void {
 		if (
 			! isset( $_POST['convoca_enroll_settings_nonce'] ) ||
-			! wp_verify_nonce( $_POST['convoca_enroll_settings_nonce'], 'convoca_enroll_settings_save' )
+			! wp_verify_nonce( wp_unslash( $_POST['convoca_enroll_settings_nonce'] ), 'convoca_enroll_settings_save' )
 		) {
 			return;
 		}
@@ -705,12 +721,12 @@ class Admin_Settings {
 			return;
 		}
 
-		$tab = sanitize_text_field( $_POST['convoca_enroll_active_tab'] ?? 'general' );
+		$tab = sanitize_text_field( wp_unslash( $_POST['convoca_enroll_active_tab'] ?? 'general' ) );
 
 		// Load existing settings to merge.
 		$settings = get_option( self::OPTION, array() );
 
-		$conv = $_POST['conv'] ?? array();
+		$conv = wp_unslash( $_POST['conv'] ?? array() );
 
 		if ( $tab === 'general' ) {
 			$settings['admin_email']            = sanitize_email( $conv['admin_email'] ?? '' );
@@ -792,7 +808,7 @@ class Admin_Settings {
 			$settings['email_batch_size']  = absint( $conv['email_batch_size'] ?? 20 );
 			$settings['email_max_retries'] = absint( $conv['email_max_retries'] ?? 3 );
 
-			$tpl_raw   = $_POST['tpl'] ?? array();
+			$tpl_raw   = wp_unslash( $_POST['tpl'] ?? array() );
 			$templates = array();
 			foreach ( Email_Automation::TEMPLATES as $slug ) {
 				$templates[ $slug ] = array(
@@ -815,7 +831,7 @@ class Admin_Settings {
 			wp_send_json_error( __( 'No tienes permisos.', 'convoca-enroll' ) );
 		}
 
-		$slug = sanitize_text_field( $_POST['slug'] ?? '' );
+		$slug = sanitize_text_field( wp_unslash( $_POST['slug'] ?? '' ) );
 		if ( ! in_array( $slug, Email_Automation::TEMPLATES, true ) ) {
 			wp_send_json_error( __( 'Plantilla no válida.', 'convoca-enroll' ) );
 		}
@@ -833,13 +849,13 @@ class Admin_Settings {
 			return;
 		}
 
-		if ( ( $_GET['tab'] ?? '' ) === 'google_photos' ) {
+		if ( wp_unslash( $_GET['tab'] ?? '' ) === 'google_photos' ) {
 			$google_photos = new Google_Photos();
-			$result        = $google_photos->handle_oauth_callback( $_GET['code'], $_GET['state'] ?? '' );
+			$result        = $google_photos->handle_oauth_callback( wp_unslash( $_GET['code'] ), wp_unslash( $_GET['state'] ?? '' ) );
 			$redirect_tab  = 'google_photos';
-		} elseif ( ( $_GET['tab'] ?? '' ) === 'google_calendar' ) {
+		} elseif ( wp_unslash( $_GET['tab'] ?? '' ) === 'google_calendar' ) {
 			$google_calendar = new Google_Calendar();
-			$result          = $google_calendar->handle_oauth_callback( $_GET['code'], $_GET['state'] ?? '' );
+			$result          = $google_calendar->handle_oauth_callback( wp_unslash( $_GET['code'] ), wp_unslash( $_GET['state'] ?? '' ) );
 			$redirect_tab    = 'google_calendar';
 		} else {
 			return;

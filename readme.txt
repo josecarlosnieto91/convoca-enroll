@@ -1,6 +1,6 @@
 === Convoca Enroll ===
 Contributors: josecarlosnietoramos
-Tags: activities, registration, enrollment, QR, check-in, forms, asociaciones, ONG
+Tags: activities, registration, enrollment, QR, check-in, forms, associations, NGOs
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
@@ -8,39 +8,39 @@ Stable tag: 2.6.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Gestión de actividades e inscripciones con formularios, QR, Google Calendar y check-in.
+Activity and registration management with forms, QR, Google Calendar, and check-in.
 
 == Description ==
 
-Gestiona el ciclo completo de actividades: creación, inscripciones con control de aforo, lista de espera, check-in con QR, evaluaciones, recordatorios automáticos y sincronización con Google Calendar y Google Photos.
+Manage the complete activity lifecycle: creation, registrations with capacity control, wait list, QR check-in, evaluations, automatic reminders, and synchronization with Google Calendar and Google Photos.
 
-Funcionalidades gratuitas:
-* Creación y gestión de actividades con plazas y precios
-* Formulario de inscripción público con shortcode
-* Control de aforo y lista de espera automática
-* Check-in con QR para asistentes
-* Exportación a CSV de inscritos
-* CRM con estadísticas de inscripciones
-* API REST para integraciones
+Free features:
+* Activity creation and management with slots and pricing
+* Public registration form with shortcode
+* Capacity control and automatic wait list
+* QR check-in for attendees
+* CSV export of registrants
+* CRM with registration statistics
+* REST API for integrations
 
-Funcionalidades PRO (requieren licencia):
-* Check-in PWA (aplicación web progresiva)
-* Memorias PDF automáticas post-evento
-* Evaluaciones automáticas
-* Webhooks de inscripciones
+PRO features (license required):
+* PWA check-in (progressive web app)
+* Automatic post-event PDF reports
+* Automatic evaluations
+* Registration webhooks
 
-= Servicios externos =
+= External services =
 
-Este plugin puede conectar con servicios externos de Google Calendar y Google Photos mediante OAuth 2.0, bajo autorización explícita del administrador. También puede contactar con getconvoca.app para validar licencias PRO, solo cuando se introduce una clave.
+This plugin can connect to external Google Calendar and Google Photos services via OAuth 2.0, under explicit administrator authorization. It may also contact getconvoca.app to validate PRO licenses, only when a license key is entered.
 
 == Installation ==
 
-1. Asegúrate de que Convoca Core está activo
-2. Sube la carpeta convoca-enroll a /wp-content/plugins/
-3. Activa el plugin desde el menú Plugins
+1. Make sure Convoca Core is active
+2. Upload the convoca-enroll folder to /wp-content/plugins/
+3. Activate the plugin from the Plugins menu
 
 == Changelog ==
 
 = 2.6.1 =
-* Mejora: Tests unitarios — bootstrap corregido, 42 tests, 91 aserciones
-* Fix: Motor de inscripciones con validación DNI/NIE mejorada
+* Improvement: Unit tests — fixed bootstrap, 42 tests, 91 assertions
+* Fix: Registration engine with improved DNI/NIE validation

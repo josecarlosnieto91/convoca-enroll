@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Enroll
+ *
+ * @package    Convoca\Enroll
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 namespace Convoca\Enroll;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -47,7 +63,7 @@ class Admin_Evaluaciones_List {
 						$edit_link = get_edit_user_link( $usuario_id );
 						echo '<a href="' . esc_url( $edit_link ) . '">' . esc_html( $user->display_name ) . '</a>';
 					} else {
-						echo __( 'Usuario eliminado', 'convoca-enroll' ) . ' (ID: ' . intval( $usuario_id ) . ')';
+						echo esc_html__( 'Usuario eliminado', 'convoca-enroll' ) . ' (ID: ' . intval( $usuario_id ) . ')';
 					}
 				} else {
 					echo '-';
@@ -86,7 +102,7 @@ class Admin_Evaluaciones_List {
 							$stars .= '<span style="color:#d1d5db;">☆</span>';
 						}
 					}
-					echo $stars . ' (' . $media . '/5)';
+					echo wp_kses_post( $stars ) . ' (' . esc_html( $media ) . '/5)';
 				} else {
 					echo '-';
 				}
@@ -108,7 +124,7 @@ class Admin_Evaluaciones_List {
 			$selected = isset( $_GET['filter_actividad'] ) ? intval( $_GET['filter_actividad'] ) : 0;
 
 			echo '<select name="filter_actividad" id="filter_actividad">';
-			echo '<option value="0">' . __( 'Todas las actividades', 'convoca-enroll' ) . '</option>';
+			echo '<option value="0">' . esc_html__( 'Todas las actividades', 'convoca-enroll' ) . '</option>';
 			foreach ( $actividades as $actividad ) {
 				printf(
 					'<option value="%s" %s>%s</option>',
@@ -125,7 +141,7 @@ class Admin_Evaluaciones_List {
 		global $pagenow;
 		$type = 'post';
 		if ( isset( $_GET['post_type'] ) ) {
-			$type = $_GET['post_type'];
+			$type = wp_unslash( $_GET['post_type'] );
 		}
 
 		if ( 'convoca_evaluacion' == $type && is_admin() && $pagenow == 'edit.php' && isset( $_GET['filter_actividad'] ) && $_GET['filter_actividad'] > 0 ) {

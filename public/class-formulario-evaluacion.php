@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Enroll
+ *
+ * @package    Convoca\Enroll
+ * @subpackage Public
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 namespace Convoca\Enroll;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -53,16 +69,16 @@ class Formulario_Evaluacion {
 		$actividad_id = intval( $atts['actividad_id'] );
 		$actividad    = get_post( $actividad_id );
 		if ( ! $actividad || $actividad->post_type !== 'actividad' || $actividad->post_status !== 'publish' ) {
-			return '<p>' . __( 'ID de actividad no válido o inexistente.', 'convoca-enroll' ) . '</p>';
+			return '<p>' . esc_html__( 'ID de actividad no válido o inexistente.', 'convoca-enroll' ) . '</p>';
 		}
 
 		$fecha_fin = get_post_meta( $actividad_id, '_convoca_fecha_fin', true );
 		if ( ! $fecha_fin || strtotime( $fecha_fin ) > current_time( 'timestamp' ) ) {
-			return '<p>' . __( 'Esta actividad aún no ha finalizado y no puede ser evaluada.', 'convoca-enroll' ) . '</p>';
+			return '<p>' . esc_html__( 'Esta actividad aún no ha finalizado y no puede ser evaluada.', 'convoca-enroll' ) . '</p>';
 		}
 
 		if ( ! is_user_logged_in() ) {
-			return '<p>' . __( 'Debes iniciar sesión para evaluar esta actividad.', 'convoca-enroll' ) . '</p>';
+			return '<p>' . esc_html__( 'Debes iniciar sesión para evaluar esta actividad.', 'convoca-enroll' ) . '</p>';
 		}
 
 		$user = wp_get_current_user();
@@ -86,7 +102,7 @@ class Formulario_Evaluacion {
 		);
 
 		if ( ! empty( $existing ) ) {
-			return '<div class="conv-eval-notice">' . __( 'Ya has enviado una evaluación para esta actividad. ¡Gracias!', 'convoca-enroll' ) . '</div>';
+			return '<div class="conv-eval-notice">' . esc_html__( 'Ya has enviado una evaluación para esta actividad. ¡Gracias!', 'convoca-enroll' ) . '</div>';
 		}
 
 		// 2. Check permissions
@@ -137,21 +153,21 @@ class Formulario_Evaluacion {
 		}
 
 		if ( ! $can_evaluate ) {
-			return '<p>' . __( 'No tienes permisos para evaluar esta actividad o no consta tu asistencia.', 'convoca-enroll' ) . '</p>';
+			return '<p>' . esc_html__( 'No tienes permisos para evaluar esta actividad o no consta tu asistencia.', 'convoca-enroll' ) . '</p>';
 		}
 
 		ob_start();
 		?>
 		<div class="conv-evaluacion-container">
-			<h3><?php printf( __( 'Evaluar Actividad: %s', 'convoca-enroll' ), get_the_title( $actividad_id ) ); ?></h3>
+			<h3><?php printf( esc_html__( 'Evaluar Actividad: %s', 'convoca-enroll' ), esc_html( get_the_title( $actividad_id ) ) ); ?></h3>
 			<form id="conv-evaluacion-form" method="post">
 				<input type="hidden" name="actividad_id" value="<?php echo esc_attr( $actividad_id ); ?>">
 				<input type="hidden" name="action" value="convoca_submit_evaluacion">
 				<?php wp_nonce_field( 'convoca_evaluacion_nonce', 'security' ); ?>
 
 				<div class="conv-eval-section">
-					<h4><?php _e( '1. Valoraciones numéricas', 'convoca-enroll' ); ?></h4>
-					<p class="description"><?php _e( 'Valora del 1 al 5 (1 = Muy insatisfecho, 5 = Muy satisfecho)', 'convoca-enroll' ); ?></p>
+					<h4><?php esc_html_e( '1. Valoraciones numéricas', 'convoca-enroll' ); ?></h4>
+					<p class="description"><?php esc_html_e( 'Valora del 1 al 5 (1 = Muy insatisfecho, 5 = Muy satisfecho)', 'convoca-enroll' ); ?></p>
 					
 					<?php self::render_star_input( 'gestion', __( 'Gestión y coordinación', 'convoca-enroll' ) ); ?>
 					<?php self::render_star_input( 'instalaciones', __( 'Instalaciones / Espacio', 'convoca-enroll' ) ); ?>
@@ -160,10 +176,10 @@ class Formulario_Evaluacion {
 				</div>
 
 				<div class="conv-eval-section">
-					<h4><?php _e( '2. Comentarios y sugerencias', 'convoca-enroll' ); ?></h4>
+					<h4><?php esc_html_e( '2. Comentarios y sugerencias', 'convoca-enroll' ); ?></h4>
 					
 					<div class="conv-form-group">
-						<label for="comentarios_gestion"><?php _e( 'Cuéntanos brevemente tu experiencia', 'convoca-enroll' ); ?></label>
+						<label for="comentarios_gestion"><?php esc_html_e( 'Cuéntanos brevemente tu experiencia', 'convoca-enroll' ); ?></label>
 						<textarea id="comentarios_gestion" name="comentarios_gestion" rows="3"></textarea>
 					</div>
 
@@ -206,12 +222,12 @@ class Formulario_Evaluacion {
 				<div class="conv-eval-section conv-privacy-section">
 					<label>
 						<input type="checkbox" name="privacy_consent" required>
-						<?php printf( __( 'Acepto que mi evaluación sea tratada según la política de privacidad de %%s. Los datos se utilizarán internamente para mejorar las actividades.', 'convoca-enroll' ), esc_html( get_bloginfo( 'name' ) ) ); ?>
+						<?php printf( esc_html__( 'Acepto que mi evaluación sea tratada según la política de privacidad de %s. Los datos se utilizarán internamente para mejorar las actividades.', 'convoca-enroll' ), esc_html( get_bloginfo( 'name' ) ) ); ?>
 					</label>
 				</div>
 
 				<div class="conv-form-submit">
-					<button type="submit" class="button button-primary wp-element-button"><?php _e( 'Enviar Evaluación', 'convoca-enroll' ); ?></button>
+					<button type="submit" class="button button-primary wp-element-button"><?php esc_html_e( 'Enviar Evaluación', 'convoca-enroll' ); ?></button>
 				</div>
 				<div id="conv-evaluacion-response"></div>
 			</form>
@@ -226,7 +242,7 @@ class Formulario_Evaluacion {
 			<label><?php echo esc_html( $label ); ?></label>
 			<div class="star-rating" data-field="<?php echo esc_attr( $field_id ); ?>">
 				<?php for ( $i = 1; $i <= 5; $i++ ) : ?>
-					<span class="star" data-val="<?php echo $i; ?>" aria-label="<?php echo $i; ?> estrellas" role="button" tabindex="0">☆</span>
+					<span class="star" data-val="<?php echo esc_attr( $i ); ?>" aria-label="<?php echo esc_attr( $i ); ?> estrellas" role="button" tabindex="0">☆</span>
 				<?php endfor; ?>
 				<input type="hidden" name="<?php echo esc_attr( $field_id ); ?>" id="<?php echo esc_attr( $field_id ); ?>" value="0" required>
 			</div>

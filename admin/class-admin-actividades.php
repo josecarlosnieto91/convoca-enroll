@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Enroll
+ *
+ * @package    Convoca\Enroll
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Admin list table: Activities with metrics and custom editor.
  *
@@ -57,9 +73,9 @@ class Admin_Actividades {
 		$table->prepare_items();
 		?>
 		<div class="wrap">
-			<h1 class="wp-heading-inline"><?php _e( 'Gestión de Actividades', 'convoca-enroll' ); ?></h1>
-			<a href="<?php echo admin_url( 'post-new.php?post_type=actividad' ); ?>" class="page-title-action">
-				<?php _e( 'Añadir nueva', 'convoca-enroll' ); ?>
+			<h1 class="wp-heading-inline"><?php esc_html_e( 'Gestión de Actividades', 'convoca-enroll' ); ?></h1>
+			<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=actividad' ) ); ?>" class="page-title-action">
+				<?php esc_html_e( 'Añadir nueva', 'convoca-enroll' ); ?>
 			</a>
 			<hr class="wp-header-end">
 
@@ -149,9 +165,9 @@ class Admin_Actividades {
 		<div class="wrap convoca-admin">
 			<h1><?php echo esc_html( $title ); ?></h1>
 
-			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="conv-form-custom">
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="conv-form-custom">
 				<input type="hidden" name="action" value="conv_enroll_save_actividad_admin">
-				<input type="hidden" name="id" value="<?php echo $post_id; ?>">
+				<input type="hidden" name="id" value="<?php echo esc_attr( $post_id ); ?>">
 				<?php wp_nonce_field( 'convoca_enroll_save_actividad_nonce' ); ?>
 
 				<div class="conv-grid conv-grid--2">
@@ -231,7 +247,7 @@ class Admin_Actividades {
 									foreach ( $users as $user ) :
 										?>
 										<label style="display: block; margin-bottom: 5px;">
-											<input type="checkbox" name="responsables[]" value="<?php echo $user->ID; ?>" <?php checked( in_array( $user->ID, $current_resp ) ); ?>>
+											<input type="checkbox" name="responsables[]" value="<?php echo esc_attr( $user->ID ); ?>" <?php checked( in_array( $user->ID, $current_resp ) ); ?>>
 											<?php echo esc_html( $user->display_name ); ?>
 										</label>
 									<?php endforeach; ?>
@@ -246,7 +262,7 @@ class Admin_Actividades {
 					<?php if ( $post_id ) : ?>
 						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_duplicate_actividad&id=' . $post_id ), 'convoca_enroll_duplicate_' . $post_id ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📋 <?php _e( 'Duplicar', 'convoca-enroll' ); ?></a>
 					<?php endif; ?>
-					<a href="<?php echo admin_url( 'admin.php?page=convoca-core-enroll' ); ?>" class="convoca-btn convoca-btn-outline"><?php _e( 'Cancelar', 'convoca-enroll' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-core-enroll' ) ); ?>" class="convoca-btn convoca-btn-outline"><?php esc_html_e( 'Cancelar', 'convoca-enroll' ); ?></a>
 				</div>
 			</form>
 		</div>
@@ -260,13 +276,13 @@ class Admin_Actividades {
 		check_admin_referer( 'convoca_enroll_save_actividad_nonce' );
 
 		if ( ! current_user_can( 'edit_posts' ) ) {
-			wp_die( __( 'No tienes permisos para realizar esta acción.', 'convoca-enroll' ) );
+			wp_die( esc_html__( 'No tienes permisos para realizar esta acción.', 'convoca-enroll' ) );
 		}
 
-		$post_id = isset( $_POST['id'] ) ? (int) $_POST['id'] : 0;
-		$title   = sanitize_text_field( $_POST['post_title'] );
-		$content = wp_kses_post( $_POST['post_content'] );
-		$excerpt = sanitize_textarea_field( $_POST['post_excerpt'] );
+		$post_id = isset( $_POST['id'] ) ? (int) wp_unslash( $_POST['id'] ) : 0;
+		$title   = sanitize_text_field( wp_unslash( $_POST['post_title'] ?? '' ) );
+		$content = wp_kses_post( wp_unslash( $_POST['post_content'] ?? '' ) );
+		$excerpt = sanitize_textarea_field( wp_unslash( $_POST['post_excerpt'] ?? '' ) );
 
 		$post_data = array(
 			'post_type'    => 'actividad',
@@ -289,9 +305,9 @@ class Admin_Actividades {
 		}
 
 		// Save Meta.
-		update_post_meta( $post_id, '_convoca_fecha_inicio', sanitize_text_field( str_replace( 'T', ' ', $_POST['fecha_inicio'] ) ) );
-		update_post_meta( $post_id, '_convoca_fecha_fin', sanitize_text_field( str_replace( 'T', ' ', $_POST['fecha_fin'] ) ) );
-		update_post_meta( $post_id, '_convoca_ubicacion', sanitize_text_field( $_POST['ubicacion'] ) );
+		update_post_meta( $post_id, '_convoca_fecha_inicio', sanitize_text_field( str_replace( 'T', ' ', wp_unslash( $_POST['fecha_inicio'] ?? '' ) ) ) );
+		update_post_meta( $post_id, '_convoca_fecha_fin', sanitize_text_field( str_replace( 'T', ' ', wp_unslash( $_POST['fecha_fin'] ?? '' ) ) ) );
+		update_post_meta( $post_id, '_convoca_ubicacion', sanitize_text_field( wp_unslash( $_POST['ubicacion'] ?? '' ) ) );
 
 		$old_plazas = (int) get_post_meta( $post_id, '_convoca_plazas_totales', true );
 		$new_plazas = (int) $_POST['plazas_totales'];
@@ -303,7 +319,7 @@ class Admin_Actividades {
 			update_post_meta( $post_id, '_convoca_plazas_disponibles', max( 0, $new_plazas - $stats['confirmada'] ) );
 		}
 
-		update_post_meta( $post_id, '_convoca_precio_socio', sanitize_text_field( $_POST['precio_socio'] ) );
+		update_post_meta( $post_id, '_convoca_precio_socio', sanitize_text_field( wp_unslash( $_POST['precio_socio'] ?? '' ) ) );
 		update_post_meta( $post_id, '_convoca_requiere_pago', isset( $_POST['requiere_pago'] ) ? 1 : 0 );
 		update_post_meta( $post_id, '_convoca_actividad_lugg', isset( $_POST['actividad_lugg'] ) ? 1 : 0 );
 
@@ -318,17 +334,17 @@ class Admin_Actividades {
 	 * Duplicate an activity.
 	 */
 	public function handle_duplicate(): void {
-		$orig_id = (int) ( $_GET['id'] ?? 0 );
-		if ( ! $orig_id || ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'convoca_enroll_duplicate_' . $orig_id ) ) {
-			wp_die( __( 'Nonce inválido.', 'convoca-enroll' ) );
+		$orig_id = (int) ( wp_unslash( $_GET['id'] ?? 0 ) );
+		if ( ! $orig_id || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ?? '' ), 'convoca_enroll_duplicate_' . $orig_id ) ) {
+			wp_die( esc_html__( 'Nonce inválido.', 'convoca-enroll' ) );
 		}
 		if ( ! current_user_can( 'edit_posts' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-enroll' ) );
-		}
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-enroll' ) );
+			}
 
-		$orig = get_post( $orig_id );
-		if ( ! $orig || $orig->post_type !== 'actividad' ) {
-			wp_die( __( 'Actividad no encontrada.', 'convoca-enroll' ) );
+			$orig = get_post( $orig_id );
+			if ( ! $orig || $orig->post_type !== 'actividad' ) {
+			wp_die( esc_html__( 'Actividad no encontrada.', 'convoca-enroll' ) );
 		}
 
 		// Clone the post.
@@ -373,7 +389,7 @@ class Admin_Actividades {
 			'Enroll/Admin'
 		);
 
-		wp_redirect( admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $new_id ) );
+		wp_redirect( esc_url_raw( admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $new_id ) ) );
 		exit;
 	}
 }
@@ -409,7 +425,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 	public function prepare_items(): void {
 		$this->_column_headers = array( $this->get_columns(), array(), array() );
 
-		$search = stripslashes( sanitize_text_field( $_GET['s'] ?? '' ) );
+		$search = stripslashes( sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) ) );
 
 		$args = array(
 			'post_type'      => 'actividad',

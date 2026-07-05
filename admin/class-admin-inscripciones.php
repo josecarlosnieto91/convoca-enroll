@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Enroll
+ *
+ * @package    Convoca\Enroll
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Admin list table: Inscripciones.
  *
@@ -77,7 +93,7 @@ class Inscriptions_List extends \WP_List_Table {
 			return;
 		}
 
-		$estado_filter    = $_GET['estado_filter'] ?? '';
+		$estado_filter    = wp_unslash( $_GET['estado_filter'] ?? '' );
 		$actividad_filter = (int) ( $_GET['actividad_filter'] ?? 0 );
 
 		// Estado filter.
@@ -105,12 +121,12 @@ class Inscriptions_List extends \WP_List_Table {
 		echo '<option value="">— Actividad —</option>';
 		foreach ( $acts as $a ) {
 			$sel = selected( $actividad_filter, $a->ID, false );
-			echo "<option value='" . $a->ID . "' $sel>" . esc_html( $a->post_title ) . '</option>';
+			echo "<option value='" . esc_attr( $a->ID ) . "' $sel>" . esc_html( $a->post_title ) . '</option>';
 		}
 		echo '</select>';
 
 		// Doc Voluntario filter.
-		$doc_filter = $_GET['doc_filter'] ?? '';
+		$doc_filter = wp_unslash( $_GET['doc_filter'] ?? '' );
 		echo '<select name="doc_filter">';
 		echo '<option value="">— Doc. Voluntario —</option>';
 		echo '<option value="pendiente" ' . selected( $doc_filter, 'pendiente', false ) . '>Pendiente</option>';
@@ -148,7 +164,7 @@ class Inscriptions_List extends \WP_List_Table {
 		}
 
 		// Search.
-		$search = $_GET['s'] ?? '';
+		$search = wp_unslash( $_GET['s'] ?? '' );
 		if ( $search ) {
 			$search       = sanitize_text_field( $search );
 			$clean_search = strtoupper( str_replace( array( ' ', '-' ), '', $search ) );
@@ -239,8 +255,8 @@ class Inscriptions_List extends \WP_List_Table {
 		}
 
 		// Sorting.
-		$orderby         = sanitize_text_field( $_GET['orderby'] ?? 'date' );
-		$order           = sanitize_text_field( $_GET['order'] ?? 'DESC' );
+		$orderby         = sanitize_text_field( wp_unslash( $_GET['orderby'] ?? 'date' ) );
+		$order           = sanitize_text_field( wp_unslash( $_GET['order'] ?? 'DESC' ) );
 		$args['orderby'] = $orderby;
 		$args['order']   = $order;
 

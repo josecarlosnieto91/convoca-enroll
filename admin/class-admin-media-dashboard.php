@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Enroll
+ *
+ * @package    Convoca\Enroll
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Admin dashboard for Media & Social Suite.
  *
@@ -196,7 +212,7 @@ class Admin_Media_Dashboard {
 	 */
 	public function render_dashboard(): void {
 		if ( ! current_user_can( 'convoca_manage_media' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-enroll' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-enroll' ) );
 		}
 		?>
 		<div class="wrap">
@@ -234,8 +250,8 @@ class Admin_Media_Dashboard {
 	 */
 	public function ajax_republish(): void {
 		check_ajax_referer( 'convoca_media_nonce', 'nonce' );
-		$post_id  = (int) ( $_POST['post_id'] ?? 0 );
-		$network  = sanitize_text_field( $_POST['network'] ?? '' );
+		$post_id  = (int) ( wp_unslash( $_POST['post_id'] ?? 0 ) );
+		$network  = sanitize_text_field( wp_unslash( $_POST['network'] ?? '' ) );
 		if ( ! current_user_can( 'convoca_manage_media' ) || ! $post_id || ! $network ) {
 			wp_send_json_error( array( 'message' => 'Permiso denegado' ) );
 		}
@@ -264,8 +280,8 @@ class Admin_Media_Dashboard {
 	public function ajax_create_blog_post(): void {
 		check_ajax_referer( 'convoca_media_nonce', 'nonce' );
 
-		$post_id = (int) ( $_POST['post_id'] ?? 0 );
-		$status  = sanitize_text_field( $_POST['status'] ?? 'draft' );
+		$post_id = (int) ( wp_unslash( $_POST['post_id'] ?? 0 ) );
+		$status  = sanitize_text_field( wp_unslash( $_POST['status'] ?? 'draft' ) );
 
 		if ( ! current_user_can( 'convoca_manage_media' ) || ! $post_id ) {
 			wp_send_json_error( array( 'message' => 'Permiso denegado' ) );
@@ -294,7 +310,7 @@ class Admin_Media_Dashboard {
 		$publish_meta   = ! empty( $_POST['convoca_publish_meta'] );
 		$publish_google = ! empty( $_POST['convoca_publish_google'] );
 		$publish_wa     = ! empty( $_POST['convoca_publish_whatsapp'] );
-		$schedule_raw   = sanitize_text_field( $_POST['convoca_schedule_at'] ?? '' );
+		$schedule_raw   = sanitize_text_field( wp_unslash( $_POST['convoca_schedule_at'] ?? '' ) );
 		$timestamp      = $schedule_raw ? strtotime( $schedule_raw ) : time() + 60; // 1 min from now if immediate
 
 		if ( ! $publish_meta && ! $publish_google && ! $publish_wa ) {
@@ -352,9 +368,9 @@ class Admin_Media_Dashboard {
 	public function ajax_render_poster(): void {
 		check_ajax_referer( 'convoca_media_nonce', 'nonce' );
 
-		$post_id     = (int) ( $_POST['post_id'] ?? 0 );
-		$template    = sanitize_text_field( $_POST['template'] ?? 'nature-classic' );
-		$format      = sanitize_text_field( $_POST['format'] ?? 'square' );
+		$post_id     = (int) ( wp_unslash( $_POST['post_id'] ?? 0 ) );
+		$template    = sanitize_text_field( wp_unslash( $_POST['template'] ?? 'nature-classic' ) );
+		$format      = sanitize_text_field( wp_unslash( $_POST['format'] ?? 'square' ) );
 		$image_id    = absint( $_POST['image_id'] ?? 0 );
 
 		if ( ! current_user_can( 'convoca_manage_media' ) || ! $post_id ) {
