@@ -161,8 +161,10 @@ class Block_Inscripcion {
 		}
 
 		return '<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:20px;text-align:center;">
-            <div style="font-size:28px;font-weight:800;color:#c2410c;">' . $espera . '</div>
-            <div style="font-size:14px;color:#9a3412;">' . sprintf( _n( '%d persona esperando plaza', '%d personas esperando plaza', $espera, 'convoca-enroll' ), $espera ) . '</div>
+            <div style="font-size:28px;font-weight:800;color:#c2410c;">' . (int) $espera . '</div>
+            <div style="font-size:14px;color:#9a3412;">' .
+			/* translators: %d: number of people in waiting list */
+			sprintf( _n( '%d persona esperando plaza', '%d personas esperando plaza', $espera, 'convoca-enroll' ), $espera ) . '</div>
         </div>';
 	}
 }

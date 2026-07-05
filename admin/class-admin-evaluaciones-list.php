@@ -128,7 +128,7 @@ class Admin_Evaluaciones_List {
 			foreach ( $actividades as $actividad ) {
 				printf(
 					'<option value="%s" %s>%s</option>',
-					$actividad->ID,
+					esc_attr( $actividad->ID ),
 					selected( $selected, $actividad->ID, false ),
 					esc_html( $actividad->post_title )
 				);

@@ -93,7 +93,7 @@ class Admin_Template_Editor {
 					<h2>Capas <span style="font-size:13px;font-weight:400;color:#666;">(arrastra para reordenar)</span></h2>
 					<ul id="convoca-layer-list" class="convoca-layer-list" style="list-style:none;padding:0;margin:0;">
 						<?php foreach ( $config['layers'] ?? array() as $i => $layer ) : ?>
-							<li class="convoca-layer-item" data-index="<?php echo $i; ?>" style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:8px;padding:12px;cursor:move;">
+							<li class="convoca-layer-item" data-index="<?php echo esc_attr( $i ); ?>" style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:8px;padding:12px;cursor:move;">
 								<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
 									<strong style="font-size:13px;"><?php echo esc_html( $layer['type'] ); ?>
 										<?php if ( ! empty( $layer['ref'] ) ) : ?>
@@ -129,7 +129,7 @@ class Admin_Template_Editor {
 					<div id="convoca-editor-preview" style="background:#f8f9fa;border-radius:8px;padding:16px;text-align:center;">
 						<select id="convoca-editor-preview-activity" style="width:100%;margin-bottom:8px;">
 							<?php foreach ( get_posts( array( 'post_type' => 'actividad', 'posts_per_page' => 5, 'post_status' => 'any' ) ) as $p ) : ?>
-								<option value="<?php echo $p->ID; ?>"><?php echo esc_html( $p->post_title ); ?></option>
+								<option value="<?php echo esc_attr( $p->ID ); ?>"><?php echo esc_html( $p->post_title ); ?></option>
 							<?php endforeach; ?>
 						</select>
 						<button class="button" id="convoca-editor-preview-btn">Actualizar</button>

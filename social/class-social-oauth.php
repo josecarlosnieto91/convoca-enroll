@@ -51,7 +51,7 @@ class Social_OAuth {
 				'account_name'     => $account_name,
 				'access_token'     => $encrypted,
 				'refresh_token'    => $refresh,
-				'token_expires_at' => $expires_in ? date( 'Y-m-d H:i:s', time() + $expires_in ) : null,
+				'token_expires_at' => $expires_in ? gmdate( 'Y-m-d H:i:s', time() + $expires_in ) : null,
 				'is_active'        => 1,
 				'last_sync_at'     => current_time( 'mysql' ),
 			) 

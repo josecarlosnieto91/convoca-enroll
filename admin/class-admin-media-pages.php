@@ -112,7 +112,7 @@ class Admin_Media_Subpages {
 						<tr>
 							<td><strong><?php echo esc_html( $a['network'] ); ?></strong></td>
 							<td><?php echo esc_html( $a['account_name'] ?: $a['account_id'] ); ?></td>
-							<td><?php echo esc_html( $a['token_expires_at'] ? date( 'd/m/Y', strtotime( $a['token_expires_at'] ) ) : '—' ); ?></td>
+							<td><?php echo esc_html( $a['token_expires_at'] ? gmdate( 'd/m/Y', strtotime( $a['token_expires_at'] ) ) : '—' ); ?></td>
 							<td><?php echo $a['is_active'] ? '✅ ' . esc_html__( 'Activa', 'convoca-enroll' ) : '❌ ' . esc_html__( 'Inactiva', 'convoca-enroll' ); ?></td>
 							<td><a href="<?php echo esc_url( rest_url( 'convoca/v1/social/accounts/' . $a['id'] ) ); ?>" class="button button-small" onclick="return confirm('<?php echo esc_js( __( '¿Desconectar esta cuenta?', 'convoca-enroll' ) ); ?>')"><?php esc_html_e( 'Desconectar', 'convoca-enroll' ); ?></a></td>
 						</tr>
@@ -140,7 +140,7 @@ class Admin_Media_Subpages {
 							<td><?php echo esc_html( $l['action'] ); ?></td>
 							<td><span class="convoca-status-<?php echo esc_attr( $l['status'] ); ?>"><?php echo esc_html( $l['status'] ); ?></span></td>
 							<td><?php echo esc_html( substr( $l['message'] ?: '', 0, 100 ) ); ?></td>
-							<td><?php echo $l['duration_ms'] ? $l['duration_ms'] . 'ms' : '—'; ?></td>
+							<td><?php echo $l['duration_ms'] ? esc_html( $l['duration_ms'] ) . 'ms' : '—'; ?></td>
 							<td><?php echo esc_html( $l['created_at'] ); ?></td>
 						</tr>
 						<?php

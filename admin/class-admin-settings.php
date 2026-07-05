@@ -237,8 +237,8 @@ class Admin_Settings {
 				<div class="convoca-alert convoca-alert--warning" style="margin-top:10px;">
 					<p><strong><?php esc_html_e( 'Resultados de validación:', 'convoca-enroll' ); ?></strong></p>
 					<ul>
-						<li><?php printf( esc_html__( 'Huérfanos: %s', 'convoca-enroll' ), esc_html( $res['orphans'] ) ); ?></li>
-						<li><?php printf( esc_html__( 'Descuadres de plazas: %s', 'convoca-enroll' ), esc_html( $res['capacity_mismatch'] ) ); ?></li>
+						<li><?php /* translators: %s: number of orphan records */ printf( esc_html__( 'Huérfanos: %s', 'convoca-enroll' ), esc_html( $res['orphans'] ) ); ?></li>
+							<li><?php /* translators: %s: number of capacity mismatches */ printf( esc_html__( 'Descuadres de plazas: %s', 'convoca-enroll' ), esc_html( $res['capacity_mismatch'] ) ); ?></li>
 					</ul>
 					<?php if ( ! empty( $res['errors'] ) ) : ?>
 						<pre style="max-height:150px;overflow:auto;background:#f0f0f1;padding:5px;"><?php echo esc_html( implode( "\n", $res['errors'] ) ); ?></pre>
@@ -907,10 +907,12 @@ class Admin_Settings {
 
 		foreach ( $plugin_definitions as $slug => $data ) {
 			$is_active = class_exists( $data['class'] );
+			/* translators: %s: plugin name */
 			$checks[]  = array(
 				'title'   => sprintf( __( 'Plugin: %s', 'convoca-enroll' ), $data['name'] ),
 				'status'  => $is_active ? 'ok' : $data['severity'],
 				'message' => $is_active ? __( 'Activo y funcionando.', 'convoca-enroll' ) : __( 'Plugin no detectado o inactivo.', 'convoca-enroll' ),
+				/* translators: %s: plugin name */
 				'fix'     => ! $is_active ? sprintf( __( 'Instala y activa el plugin %s.', 'convoca-enroll' ), $data['name'] ) : '',
 			);
 		}
@@ -949,7 +951,8 @@ class Admin_Settings {
 			$checks[] = array(
 				'title'   => $data['title'],
 				'status'  => $page ? 'ok' : 'error',
-				'message' => $page ? sprintf( __( 'Detectada: %s', 'convoca-enroll' ), get_the_title( $page ) ) : __( 'No se ha encontrado ninguna página con este shortcode.', 'convoca-enroll' ),
+				/* translators: %s: page title */
+			'message' => $page ? sprintf( __( 'Detectada: %s', 'convoca-enroll' ), get_the_title( $page ) ) : __( 'No se ha encontrado ninguna página con este shortcode.', 'convoca-enroll' ),
 				'fix'     => ! $page ? $data['fix'] : '',
 			);
 		}

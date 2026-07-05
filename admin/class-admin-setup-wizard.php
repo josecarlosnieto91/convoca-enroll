@@ -67,7 +67,7 @@ class Admin_Setup_Wizard {
 			<div style="display:flex;gap:8px;margin:24px 0;padding:0;list-style:none;">
 				<?php foreach ( $steps as $num => $label ) : ?>
 					<div style="flex:1;text-align:center;padding:10px;border-radius:8px;background:<?php echo $num <= $step ? '#ff8700' : '#e2e8f0'; ?>;color:<?php echo $num <= $step ? '#fff' : '#666'; ?>;font-weight:600;font-size:13px;">
-						<?php echo $num . '. ' . esc_html( $label ); ?>
+						<?php echo (int) $num . '. ' . esc_html( $label ); ?>
 					</div>
 				<?php endforeach; ?>
 			</div>
@@ -168,7 +168,7 @@ class Admin_Setup_Wizard {
 				btn.prop('disabled', true).text('Generando...');
 				$.post(ajaxurl, {
 					action: 'convoca_wizard_test_poster',
-					nonce: '<?php echo wp_create_nonce( 'convoca_wizard_test' ); ?>'
+					nonce: '<?php echo esc_js( wp_create_nonce( 'convoca_wizard_test' ) ); ?>'
 				}, function(resp) {
 					if (resp.success) {
 						$('#convoca-wizard-preview').html('<img src="' + resp.data.url + '" style="max-width:300px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);"><p style="margin-top:8px;font-size:12px;color:#666;">Cartel generado (' + Math.round(resp.data.size/1024) + 'KB)</p>');

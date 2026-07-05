@@ -159,6 +159,7 @@ class Formulario_Evaluacion {
 		ob_start();
 		?>
 		<div class="conv-evaluacion-container">
+			<?php /* translators: %s: activity title */ ?>
 			<h3><?php printf( esc_html__( 'Evaluar Actividad: %s', 'convoca-enroll' ), esc_html( get_the_title( $actividad_id ) ) ); ?></h3>
 			<form id="conv-evaluacion-form" method="post">
 				<input type="hidden" name="actividad_id" value="<?php echo esc_attr( $actividad_id ); ?>">
@@ -184,37 +185,37 @@ class Formulario_Evaluacion {
 					</div>
 
 					<div class="conv-form-group">
-						<label for="necesidades_no_cubiertas"><?php _e( '¿Has necesitado algo que no te hayan facilitado?', 'convoca-enroll' ); ?></label>
-						<textarea id="necesidades_no_cubiertas" name="necesidades_no_cubiertas" rows="2"></textarea>
-					</div>
+									<label for="necesidades_no_cubiertas"><?php esc_html_e( '¿Has necesitado algo que no te hayan facilitado?', 'convoca-enroll' ); ?></label>
+									<textarea id="necesidades_no_cubiertas" name="necesidades_no_cubiertas" rows="2"></textarea>
+								</div>
 
-					<div class="conv-form-group">
-						<label for="mejoras_gestion"><?php _e( '¿Qué mejorarías en la gestión?', 'convoca-enroll' ); ?></label>
-						<textarea id="mejoras_gestion" name="mejoras_gestion" rows="2"></textarea>
-					</div>
+								<div class="conv-form-group">
+									<label for="mejoras_gestion"><?php esc_html_e( '¿Qué mejorarías en la gestión?', 'convoca-enroll' ); ?></label>
+									<textarea id="mejoras_gestion" name="mejoras_gestion" rows="2"></textarea>
+								</div>
 
-					<div class="conv-form-group">
-						<label for="mejoras_instalaciones"><?php _e( '¿Qué mejorarías del espacio/instalaciones?', 'convoca-enroll' ); ?></label>
-						<textarea id="mejoras_instalaciones" name="mejoras_instalaciones" rows="2"></textarea>
-					</div>
+								<div class="conv-form-group">
+									<label for="mejoras_instalaciones"><?php esc_html_e( '¿Qué mejorarías del espacio/instalaciones?', 'convoca-enroll' ); ?></label>
+									<textarea id="mejoras_instalaciones" name="mejoras_instalaciones" rows="2"></textarea>
+								</div>
 
-					<div class="conv-form-group">
-						<label for="comentarios_participantes"><?php _e( 'Comentarios sobre el público o dinámica', 'convoca-enroll' ); ?></label>
-						<textarea id="comentarios_participantes" name="comentarios_participantes" rows="2"></textarea>
-					</div>
+								<div class="conv-form-group">
+									<label for="comentarios_participantes"><?php esc_html_e( 'Comentarios sobre el público o dinámica', 'convoca-enroll' ); ?></label>
+									<textarea id="comentarios_participantes" name="comentarios_participantes" rows="2"></textarea>
+								</div>
 
-					<div class="conv-form-group">
-						<label for="aspectos_positivos"><?php _e( 'Aspectos positivos (lo mejor de la actividad)', 'convoca-enroll' ); ?></label>
-						<textarea id="aspectos_positivos" name="aspectos_positivos" rows="2"></textarea>
-					</div>
+								<div class="conv-form-group">
+									<label for="aspectos_positivos"><?php esc_html_e( 'Aspectos positivos (lo mejor de la actividad)', 'convoca-enroll' ); ?></label>
+									<textarea id="aspectos_positivos" name="aspectos_positivos" rows="2"></textarea>
+								</div>
 
-					<div class="conv-form-group">
-						<label for="aspectos_mejorar"><?php _e( 'Aspectos a mejorar', 'convoca-enroll' ); ?></label>
-						<textarea id="aspectos_mejorar" name="aspectos_mejorar" rows="2"></textarea>
-					</div>
+								<div class="conv-form-group">
+									<label for="aspectos_mejorar"><?php esc_html_e( 'Aspectos a mejorar', 'convoca-enroll' ); ?></label>
+									<textarea id="aspectos_mejorar" name="aspectos_mejorar" rows="2"></textarea>
+								</div>
 
-					<div class="conv-form-group">
-						<label for="otros_comentarios"><?php _e( 'Otros comentarios o sugerencias', 'convoca-enroll' ); ?></label>
+								<div class="conv-form-group">
+									<label for="otros_comentarios"><?php esc_html_e( 'Otros comentarios o sugerencias', 'convoca-enroll' ); ?></label>
 						<textarea id="otros_comentarios" name="otros_comentarios" rows="2"></textarea>
 					</div>
 				</div>
@@ -222,7 +223,7 @@ class Formulario_Evaluacion {
 				<div class="conv-eval-section conv-privacy-section">
 					<label>
 						<input type="checkbox" name="privacy_consent" required>
-						<?php printf( esc_html__( 'Acepto que mi evaluación sea tratada según la política de privacidad de %s. Los datos se utilizarán internamente para mejorar las actividades.', 'convoca-enroll' ), esc_html( get_bloginfo( 'name' ) ) ); ?>
+						<?php /* translators: %s: site name */ printf( esc_html__( 'Acepto que mi evaluación sea tratada según la política de privacidad de %s. Los datos se utilizarán internamente para mejorar las actividades.', 'convoca-enroll' ), esc_html( get_bloginfo( 'name' ) ) ); ?>
 					</label>
 				</div>
 

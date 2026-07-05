@@ -107,7 +107,7 @@ class Admin_Reports {
 					$active = ( $instance->current_tab === $id ) ? 'nav-tab-active' : '';
 					$url    = add_query_arg( array( 'tab' => $id ), admin_url( 'admin.php?page=conv-informes' ) );
 					?>
-					<a href="<?php echo esc_url( $url ); ?>" class="nav-tab <?php echo $active; ?>">
+					<a href="<?php echo esc_url( $url ); ?>" class="nav-tab <?php echo esc_attr( $active ); ?>">
 						<?php echo esc_html( $label ); ?>
 					</a>
 				<?php endforeach; ?>
@@ -211,8 +211,8 @@ class Admin_Reports {
 						$pct       = $act['plazas_totales'] > 0 ? round( ( $act['confirmadas'] / $act['plazas_totales'] ) * 100, 1 ) : 0;
 						$row_class = $pct >= 90 ? 'table-success' : ( $pct < 30 ? 'table-warning' : '' );
 						?>
-					<tr class="<?php echo $row_class; ?>">
-						<td><strong><a href="<?php echo get_edit_post_link( $act['id'] ); ?>"><?php echo esc_html( $act['title'] ); ?></a></strong></td>
+					<tr class="<?php echo esc_attr( $row_class ); ?>">
+					<td><strong><a href="<?php echo esc_url( get_edit_post_link( $act['id'] ) ); ?>"><?php echo esc_html( $act['title'] ); ?></a></strong></td>
 						<td><?php echo esc_html( date_i18n( 'd/m/Y', strtotime( $act['fecha'] ) ) ); ?></td>
 						<td><?php echo (int) $act['plazas_totales']; ?></td>
 						<td><?php echo (int) $act['confirmadas']; ?></td>
@@ -220,7 +220,7 @@ class Admin_Reports {
 						<td>
 							<div class="conv-progress-bar" style="width: 100px; background: #eee; height: 10px; border-radius: 5px; position: relative;">
 								<div style="width: <?php echo min( 100, $pct ); ?>%; background: <?php echo $pct >= 90 ? '#4caf50' : ( $pct < 30 ? '#ff9800' : '#2196f3' ); ?>; height: 100%; border-radius: 5px;"></div>
-								<span style="font-size: 10px; position: absolute; right: -35px; top: -3px;"><?php echo $pct; ?>%</span>
+								<span style="font-size: 10px; position: absolute; right: -35px; top: -3px;"><?php echo esc_html( $pct ); ?>%</span>
 							</div>
 						</td>
 						<td><?php echo (int) $act['asistentes']; ?></td>

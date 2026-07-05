@@ -245,8 +245,8 @@ class Blog_Post_Manager {
 			'name'        => $actividad->post_title,
 			'description' => wp_trim_words( $actividad->post_content, 30 ),
 			'url'         => $permalink,
-			'startDate'   => $fecha_inicio ? date( 'c', strtotime( $fecha_inicio ) ) : '',
-			'endDate'     => $fecha_fin ? date( 'c', strtotime( $fecha_fin ) ) : '',
+			'startDate'   => $fecha_inicio ? gmdate( 'c', strtotime( $fecha_inicio ) ) : '',
+			'endDate'     => $fecha_fin ? gmdate( 'c', strtotime( $fecha_fin ) ) : '',
 			'location'    => $ubicacion ? array(
 				'@type' => 'Place',
 				'name'  => $ubicacion,

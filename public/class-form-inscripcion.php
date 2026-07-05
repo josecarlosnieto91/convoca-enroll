@@ -240,6 +240,7 @@ class Form_Inscripcion {
 					);
 
 					if ( ! empty( Motor_Inscripcion::$last_pdf_error ) ) {
+						/* translators: %s: PDF generation error message */
 						$success_data['warning'] = sprintf(
 							__( 'La inscripción se ha iniciado, pero hubo un problema al generar el documento de compromiso: %s. Podrás completarlo más tarde.', 'convoca-enroll' ),
 							Motor_Inscripcion::$last_pdf_error
@@ -278,6 +279,7 @@ class Form_Inscripcion {
 		);
 
 		if ( ! empty( Motor_Inscripcion::$last_pdf_error ) ) {
+			/* translators: %s: PDF generation error message */
 			$success_data['warning'] = sprintf(
 				__( 'Inscripción realizada, pero hubo un problema al generar el documento de compromiso: %s. Por favor, contacta con nosotros si lo necesitas.', 'convoca-enroll' ),
 				Motor_Inscripcion::$last_pdf_error

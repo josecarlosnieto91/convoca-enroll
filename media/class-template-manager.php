@@ -119,6 +119,7 @@ class Template_Manager {
 		if ( ! empty( $config['layers'] ) ) {
 			foreach ( $config['layers'] as $i => $layer ) {
 				if ( empty( $layer['type'] ) ) {
+					/* translators: %d: layer number */
 					$errors[] = sprintf( __( 'Capa #%d: falta el tipo.', 'convoca-enroll' ), $i + 1 );
 				}
 			}

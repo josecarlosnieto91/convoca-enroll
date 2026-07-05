@@ -117,7 +117,7 @@ class Admin_Checkin {
 
 		?>
 		<div class="wrap conv-admin">
-			<h1><?php _e( 'Check-in de Actividades', 'convoca-enroll' ); ?></h1>
+			<h1><?php esc_html_e( 'Check-in de Actividades', 'convoca-enroll' ); ?></h1>
 
 			<?php if ( ! \Convoca\Core\License_Manager::has_pro( 'pwa_checkin' ) ) : ?>
 			<div class="convoca-alert convoca-alert--info" style="display:block;margin-bottom:20px;padding:12px 16px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;">
@@ -130,21 +130,21 @@ class Admin_Checkin {
 				<form method="get" action="">
 					<input type="hidden" name="page" value="conv-checkin">
 					
-					<label for="actividad_id"><?php _e( 'Seleccionar actividad:', 'convoca-enroll' ); ?></label>
+					<label for="actividad_id"><?php esc_html_e( 'Seleccionar actividad:', 'convoca-enroll' ); ?></label>
 					<select name="actividad_id" id="actividad_id" onchange="this.form.submit()">
-						<option value="0"><?php _e( '— Seleccionar —', 'convoca-enroll' ); ?></option>
+						<option value="0"><?php esc_html_e( '— Seleccionar —', 'convoca-enroll' ); ?></option>
 						<?php
 						foreach ( $actividades as $act ) :
 							$fecha     = get_post_meta( $act->ID, '_convoca_fecha_inicio', true );
 							$fecha_fmt = $fecha ? wp_date( 'd/m', strtotime( $fecha ) ) : '';
 							?>
-							<option value="<?php echo $act->ID; ?>" <?php selected( $actividad_id, $act->ID ); ?>>
-								<?php echo esc_html( $act->post_title ); ?> (<?php echo $fecha_fmt; ?>)
+							<option value="<?php echo esc_attr( $act->ID ); ?>" <?php selected( $actividad_id, $act->ID ); ?>>
+								<?php echo esc_html( $act->post_title ); ?> (<?php echo esc_html( $fecha_fmt ); ?>)
 							</option>
 						<?php endforeach; ?>
 					</select>
 
-					<input type="search" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php _e( 'Buscar participante...', 'convoca-enroll' ); ?>">
+					<input type="search" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_html_e( 'Buscar participante...', 'convoca-enroll' ); ?>">
 					<?php submit_button( __( 'Filtrar', 'convoca-enroll' ), 'secondary', 'submit', false ); ?>
 				</form>
 			</div>
@@ -162,23 +162,23 @@ class Admin_Checkin {
 					}
 					?>
 					<p>
-						<strong><?php _e( 'Asistencia:', 'convoca-enroll' ); ?></strong> 
-						<span id="conv-present-count"><?php echo $presentes; ?></span> / <?php echo $total; ?>
+						<strong><?php esc_html_e( 'Asistencia:', 'convoca-enroll' ); ?></strong> 
+						<span id="conv-present-count"><?php echo (int) $presentes; ?></span> / <?php echo (int) $total; ?>
 					</p>
 				</div>
 
 				<table class="wp-list-table widefat fixed striped">
 					<thead>
 						<tr>
-							<th><?php _e( 'Participante', 'convoca-enroll' ); ?></th>
-							<th><?php _e( 'Estado', 'convoca-enroll' ); ?></th>
-							<th><?php _e( 'Pago', 'convoca-enroll' ); ?></th>
-							<th style="width: 120px;"><?php _e( 'Check-in', 'convoca-enroll' ); ?></th>
+							<th><?php esc_html_e( 'Participante', 'convoca-enroll' ); ?></th>
+							<th><?php esc_html_e( 'Estado', 'convoca-enroll' ); ?></th>
+							<th><?php esc_html_e( 'Pago', 'convoca-enroll' ); ?></th>
+							<th style="width: 120px;"><?php esc_html_e( 'Check-in', 'convoca-enroll' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
 						<?php if ( empty( $inscripciones ) ) : ?>
-							<tr><td colspan="4"><?php _e( 'No hay inscripciones para esta actividad.', 'convoca-enroll' ); ?></td></tr>
+							<tr><td colspan="4"><?php esc_html_e( 'No hay inscripciones para esta actividad.', 'convoca-enroll' ); ?></td></tr>
 						<?php else : ?>
 							<?php
 							foreach ( $inscripciones as $ins ) :
@@ -189,14 +189,14 @@ class Admin_Checkin {
 								$es_socio   = get_post_meta( $id, '_convoca_es_socio', true );
 								$telefono   = get_post_meta( $id, '_convoca_telefono', true );
 								?>
-								<tr data-id="<?php echo $id; ?>">
+								<tr data-id="<?php echo esc_attr( $id ); ?>">
 									<td>
 										<strong><?php echo esc_html( $ins->post_title ); ?></strong>
 										<?php if ( $es_socio === '1' ) : ?>
 											<span class="dashicons dashicons-star-filled" title="Socio/a" style="color:#f1c40f;font-size:16px;"></span>
 										<?php endif; ?>
 										<div class="row-actions">
-											<span class="view"><a href="<?php echo admin_url( 'post.php?post=' . $id . '&action=edit' ); ?>"><?php _e( 'Ver ficha', 'convoca-enroll' ); ?></a> | </span>
+											<span class="view"><a href="<?php echo esc_url( admin_url( 'post.php?post=' . $id . '&action=edit' ) ); ?>"><?php esc_html_e( 'Ver ficha', 'convoca-enroll' ); ?></a> | </span>
 											<span class="tel"><a href="tel:<?php echo esc_attr( $telefono ); ?>"><?php echo esc_html( $telefono ); ?></a></span>
 										</div>
 									</td>
@@ -215,7 +215,7 @@ class Admin_Checkin {
 									<td>
 										<button type="button" 
 												class="button conv-toggle-checkin <?php echo ( $asistencia === 'si' ) ? 'button-primary' : ''; ?>" 
-												data-id="<?php echo $id; ?>">
+												data-id="<?php echo esc_attr( $id ); ?>">
 											<?php echo ( $asistencia === 'si' ) ? __( 'Registrado', 'convoca-enroll' ) : __( 'Pendiente', 'convoca-enroll' ); ?>
 										</button>
 									</td>
@@ -225,7 +225,7 @@ class Admin_Checkin {
 					</tbody>
 				</table>
 			<?php else : ?>
-				<p><?php _e( 'Selecciona una actividad para comenzar el check-in.', 'convoca-enroll' ); ?></p>
+				<p><?php esc_html_e( 'Selecciona una actividad para comenzar el check-in.', 'convoca-enroll' ); ?></p>
 			<?php endif; ?>
 		</div>
 		<?php

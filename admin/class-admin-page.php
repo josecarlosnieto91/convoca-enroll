@@ -375,7 +375,7 @@ class Admin_Page {
 
 	public function render_delegados(): void {
 		if ( ! current_user_can( 'convoca_view_reports' ) ) {
-			wp_die( esc_html__( 'No tienes permisos para acceder a esta página.' ) );
+			wp_die( esc_html__( 'No tienes permisos para acceder a esta página.', 'convoca-enroll' ) );
 		}
 
 		// Handle save.
@@ -407,7 +407,7 @@ class Admin_Page {
 			echo '<select name="delegados[' . esc_attr( $user_id ) . '][]" multiple style="width:100%; height:120px;">';
 			foreach ( $actividades as $act ) {
 				$sel = in_array( (string) $act->ID, array_map( 'strval', $assigned ), true ) ? 'selected' : '';
-				echo '<option value="' . esc_attr( $act->ID ) . '" ' . $sel . '>' . esc_html( $act->post_title ) . ' (' . esc_html( get_post_meta( $act->ID, '_convoca_fecha_inicio', true ) ) . ')</option>';
+				echo '<option value="' . esc_attr( $act->ID ) . '" ' . esc_attr( $sel ) . '>' . esc_html( $act->post_title ) . ' (' . esc_html( get_post_meta( $act->ID, '_convoca_fecha_inicio', true ) ) . ')</option>';
 			}
 			echo '</select>';
 			echo '</td>';
@@ -460,12 +460,14 @@ class Admin_Page {
 			}
 		}
 
+		/* translators: %d: number of confirmed enrollments */
 		$message = sprintf(
 			__( '%d inscripciones confirmadas.', 'convoca-enroll' ),
 			$confirmed
 		);
 
 		if ( $skipped_capacity > 0 || $skipped_state > 0 ) {
+			/* translators: %1$d: skipped due to capacity, %2$d: skipped due to non-confirmable state */
 			$message .= ' ' . sprintf(
 				__( '(%1$d saltadas por falta de aforo, %2$d por estado no confirmable).', 'convoca-enroll' ),
 				$skipped_capacity,

@@ -46,7 +46,7 @@ class Social_Scheduler {
 				'image_url'  => $image_url,
 				'accounts'   => $account_ids,
 			) ),
-			'scheduled_at' => $timestamp ? date( 'Y-m-d H:i:s', $timestamp ) : null,
+			'scheduled_at' => $timestamp ? gmdate( 'Y-m-d H:i:s', $timestamp ) : null,
 		) );
 
 		$queue_id = $wpdb->insert_id;
@@ -59,7 +59,7 @@ class Social_Scheduler {
 		\Convoca\Enroll\Media\Media_Logger::log( 'social_post', $queue_id, 'queued', 'ok', array(
 			'actividad_id' => $actividad_id,
 			'accounts'     => $account_ids,
-			'scheduled_at' => $timestamp ? date( 'c', $timestamp ) : 'immediate',
+			'scheduled_at' => $timestamp ? gmdate( 'c', $timestamp ) : 'immediate',
 		) );
 
 		return $queue_id;

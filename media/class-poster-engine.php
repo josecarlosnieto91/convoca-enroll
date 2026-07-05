@@ -501,7 +501,7 @@ class Poster_Engine {
 			array( __( 'Fecha', 'convoca-enroll' ), (string) ( $d['date'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) ),
 			array( __( 'Hora', 'convoca-enroll' ), (string) ( $d['time'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) ),
 			array( __( 'Lugar', 'convoca-enroll' ), (string) ( $d['location'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) ),
-			array( __( 'Plazas', 'convoca-enroll' ), $d['places'] ? sprintf( _n( '%d plaza', '%d plazas', $d['places'], 'convoca-enroll' ), $d['places'] ) : __( 'Por confirmar', 'convoca-enroll' ) ),
+			array( __( 'Plazas', 'convoca-enroll' ), $d['places'] ? /* translators: %d: number of available spots */ sprintf( _n( '%d plaza', '%d plazas', $d['places'], 'convoca-enroll' ), $d['places'] ) : __( 'Por confirmar', 'convoca-enroll' ) ),
 			array( __( 'Precio', 'convoca-enroll' ), (string) ( $d['price'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) )
 		);
 			if ( ! empty( $d['organizer'] ) ) { $meta_lines[] = array( __( 'Organiza', 'convoca-enroll' ), $d['organizer'] ); }
@@ -528,6 +528,7 @@ class Poster_Engine {
 			$ok = $img->writeImage( $path );
 			$img->clear(); $img->destroy();
 		} catch ( \Throwable $e ) {
+			/* translators: %s: error message */
 			return new \WP_Error( 'imagick_render_error', sprintf( __( 'Error generando el cartel: %s', 'convoca-enroll' ), $e->getMessage() ) );
 		}
 

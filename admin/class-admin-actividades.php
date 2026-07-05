@@ -173,21 +173,21 @@ class Admin_Actividades {
 				<div class="conv-grid conv-grid--2">
 					<div class="conv-card">
 						<div class="conv-card-header">
-							<h2><?php _e( 'Información Principal', 'convoca-enroll' ); ?></h2>
+							<h2><?php esc_html_e( 'Información Principal', 'convoca-enroll' ); ?></h2>
 						</div>
 						<div class="conv-card-body">
 							<div class="convoca-field">
-								<label for="title"><?php _e( 'Título de la Actividad', 'convoca-enroll' ); ?> *</label>
+								<label for="title"><?php esc_html_e( 'Título de la Actividad', 'convoca-enroll' ); ?> *</label>
 								<input type="text" name="post_title" id="title" value="<?php echo $actividad ? esc_attr( $actividad->post_title ) : ''; ?>" required>
 							</div>
 
 							<div class="convoca-field">
-								<label for="description"><?php _e( 'Descripción Completa', 'convoca-enroll' ); ?></label>
+								<label for="description"><?php esc_html_e( 'Descripción Completa', 'convoca-enroll' ); ?></label>
 								<textarea name="post_content" id="description" rows="15"><?php echo $actividad ? esc_textarea( $actividad->post_content ) : ''; ?></textarea>
 							</div>
 
 							<div class="convoca-field">
-								<label for="excerpt"><?php _e( 'Resumen Corto (para listados)', 'convoca-enroll' ); ?></label>
+								<label for="excerpt"><?php esc_html_e( 'Resumen Corto (para listados)', 'convoca-enroll' ); ?></label>
 								<textarea name="post_excerpt" id="excerpt" rows="3"><?php echo $actividad ? esc_textarea( $actividad->post_excerpt ) : ''; ?></textarea>
 							</div>
 						</div>
@@ -195,32 +195,32 @@ class Admin_Actividades {
 
 					<div class="conv-card">
 						<div class="conv-card-header">
-							<h2><?php _e( 'Configuración y Logística', 'convoca-enroll' ); ?></h2>
+							<h2><?php esc_html_e( 'Configuración y Logística', 'convoca-enroll' ); ?></h2>
 						</div>
 						<div class="conv-card-body">
 							<div class="conv-grid conv-grid--2">
 								<div class="conv-field">
-									<label for="fecha_inicio"><?php _e( 'Fecha y Hora Inicio', 'convoca-enroll' ); ?> *</label>
+									<label for="fecha_inicio"><?php esc_html_e( 'Fecha y Hora Inicio', 'convoca-enroll' ); ?> *</label>
 									<input type="datetime-local" name="fecha_inicio" id="fecha_inicio" value="<?php echo esc_attr( str_replace( ' ', 'T', substr( $meta['fecha_inicio'], 0, 16 ) ) ); ?>" required>
 								</div>
 								<div class="conv-field">
-									<label for="fecha_fin"><?php _e( 'Fecha y Hora Fin', 'convoca-enroll' ); ?></label>
+									<label for="fecha_fin"><?php esc_html_e( 'Fecha y Hora Fin', 'convoca-enroll' ); ?></label>
 									<input type="datetime-local" name="fecha_fin" id="fecha_fin" value="<?php echo esc_attr( str_replace( ' ', 'T', substr( $meta['fecha_fin'], 0, 16 ) ) ); ?>">
 								</div>
 							</div>
 
 							<div class="conv-field">
-								<label for="ubicacion"><?php _e( 'Ubicación / Punto de encuentro', 'convoca-enroll' ); ?></label>
+								<label for="ubicacion"><?php esc_html_e( 'Ubicación / Punto de encuentro', 'convoca-enroll' ); ?></label>
 								<input type="text" name="ubicacion" id="ubicacion" value="<?php echo esc_attr( $meta['ubicacion'] ); ?>" class="widefat">
 							</div>
 
 							<div class="conv-grid conv-grid--2">
 								<div class="conv-field">
-									<label for="plazas_totales"><?php _e( 'Plazas Totales', 'convoca-enroll' ); ?></label>
+									<label for="plazas_totales"><?php esc_html_e( 'Plazas Totales', 'convoca-enroll' ); ?></label>
 									<input type="number" name="plazas_totales" id="plazas_totales" value="<?php echo (int) $meta['plazas_totales']; ?>" min="0">
 								</div>
 								<div class="conv-field">
-									<label for="precio_socio"><?php _e( 'Precio Socio (€)', 'convoca-enroll' ); ?></label>
+									<label for="precio_socio"><?php esc_html_e( 'Precio Socio (€)', 'convoca-enroll' ); ?></label>
 									<input type="number" name="precio_socio" id="precio_socio" value="<?php echo esc_attr( $meta['precio_socio'] ); ?>" step="0.01">
 								</div>
 							</div>
@@ -228,19 +228,19 @@ class Admin_Actividades {
 							<div class="conv-field">
 								<label>
 									<input type="checkbox" name="requiere_pago" value="1" <?php checked( $meta['requiere_pago'], '1' ); ?>>
-									<?php _e( 'Requiere pago previo', 'convoca-enroll' ); ?>
+									<?php esc_html_e( 'Requiere pago previo', 'convoca-enroll' ); ?>
 								</label>
 							</div>
 
 							<div class="conv-field">
 								<label>
 									<input type="checkbox" name="actividad_lugg" value="1" <?php checked( $meta['actividad_lugg'], '1' ); ?>>
-									<?php _e( 'Es una actividad en el centro social', 'convoca-enroll' ); ?>
+									<?php esc_html_e( 'Es una actividad en el centro social', 'convoca-enroll' ); ?>
 								</label>
 							</div>
 
 							<div class="conv-field">
-								<label for="responsables"><?php _e( 'Monitores / Responsables', 'convoca-enroll' ); ?></label>
+								<label for="responsables"><?php esc_html_e( 'Monitores / Responsables', 'convoca-enroll' ); ?></label>
 								<div class="conv-checkbox-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #fff;">
 									<?php
 									$current_resp = is_array( $meta['responsables'] ) ? $meta['responsables'] : explode( ',', (string) $meta['responsables'] );
@@ -260,7 +260,7 @@ class Admin_Actividades {
 				<div class="conv-form-actions">
 					<?php submit_button( __( 'Guardar Actividad', 'convoca-enroll' ), 'primary', 'submit', false ); ?>
 					<?php if ( $post_id ) : ?>
-						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_duplicate_actividad&id=' . $post_id ), 'convoca_enroll_duplicate_' . $post_id ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📋 <?php _e( 'Duplicar', 'convoca-enroll' ); ?></a>
+						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_duplicate_actividad&id=' . $post_id ), 'convoca_enroll_duplicate_' . $post_id ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📋 <?php esc_html_e( 'Duplicar', 'convoca-enroll' ); ?></a>
 					<?php endif; ?>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-core-enroll' ) ); ?>" class="convoca-btn convoca-btn-outline"><?php esc_html_e( 'Cancelar', 'convoca-enroll' ); ?></a>
 				</div>
@@ -301,7 +301,7 @@ class Admin_Actividades {
 		}
 
 		if ( is_wp_error( $result ) ) {
-			wp_die( $result->get_error_message() );
+			wp_die( esc_html( $result->get_error_message() ) );
 		}
 
 		// Save Meta.
@@ -359,7 +359,7 @@ class Admin_Actividades {
 		);
 
 		if ( is_wp_error( $new_id ) ) {
-			wp_die( $new_id->get_error_message() );
+			wp_die( esc_html( $new_id->get_error_message() ) );
 		}
 
 		// Copy meta keys.

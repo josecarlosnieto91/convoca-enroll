@@ -169,16 +169,16 @@ class Email_Queue_List extends \WP_List_Table {
 			'failed'  => '❌ Fallido',
 		) as $s => $l ) {
 			$cnt = (int) ( $summary[ $s ] ?? 0 );
-			echo '<span style="font-size:12px;padding:4px 10px;border-radius:20px;background:#f0f0f1;">' . $l . ': <strong>' . $cnt . '</strong></span>';
+			echo '<span style="font-size:12px;padding:4px 10px;border-radius:20px;background:#f0f0f1;">' . esc_html( $l ) . ': <strong>' . (int) $cnt . '</strong></span>';
 		}
 		echo '</div>';
-		echo '<select name="filter_status"><option value="">' . __( 'Todos', 'convoca-enroll' ) . '</option>';
+		echo '<select name="filter_status"><option value="">' . esc_html__( 'Todos', 'convoca-enroll' ) . '</option>';
 		foreach ( array(
 			'pending' => 'Pendiente',
 			'sent'    => 'Enviado',
 			'failed'  => 'Fallido',
 		) as $s => $l ) {
-			echo '<option value="' . $s . '" ' . selected( $filter_status, $s, false ) . '>' . $l . '</option>';
+			echo '<option value="' . esc_attr( $s ) . '" ' . selected( $filter_status, $s, false ) . '>' . esc_html( $l ) . '</option>';
 		}
 		echo '</select>';
 		submit_button( __( 'Filtrar', 'convoca-enroll' ), 'convoca-btn convoca-btn-outline', 'filter_action', false );

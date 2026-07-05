@@ -81,7 +81,7 @@ class Admin_Logs {
 			<h1>Logs del Sistema</h1>
 
 			<p>
-				<a href="<?php echo wp_nonce_url( admin_url( 'edit.php?post_type=actividad&page=conv_enroll-logs&action=clear' ), 'convoca_enroll_clear_logs' ); ?>"
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'edit.php?post_type=actividad&page=conv_enroll-logs&action=clear' ), 'convoca_enroll_clear_logs' ) ); ?>"
 					class="button button-secondary"
 					onclick="return confirm('<?php echo esc_js( __( '¿Estás seguro de que quieres borrar todos los logs de Enroll?', 'convoca-enroll' ) ); ?>');">
 					<?php esc_html_e( 'Borrar logs de Enroll', 'convoca-enroll' ); ?>
@@ -114,7 +114,7 @@ class Admin_Logs {
 								<td><code><?php echo esc_html( $log->context ); ?></code></td>
 								<td>
 									<?php if ( $log->object_id ) : ?>
-										<a href="<?php echo get_edit_post_link( $log->object_id ); ?>">#
+										<a href="<?php echo esc_url( get_edit_post_link( $log->object_id ) ); ?>">#
 											<?php echo (int) $log->object_id; ?>
 										</a>
 									<?php else : ?>

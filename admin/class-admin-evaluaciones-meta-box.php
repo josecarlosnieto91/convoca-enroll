@@ -77,35 +77,35 @@ class Admin_Evaluaciones_Meta_Box {
 
 		?>
 		<div class="conv-eval-summary">
-			<p><strong><?php printf( __( 'Total evaluaciones: %d', 'convoca-enroll' ), $total_evals ); ?></strong></p>
-			<p><strong><?php _e( 'Media Global:', 'convoca-enroll' ); ?></strong> <?php self::render_stars( $overall_avg ); ?> (<?php echo $overall_avg; ?>/5)</p>
+			<p><strong><?php /* translators: %d: number of evaluations */ printf( esc_html__( 'Total evaluaciones: %d', 'convoca-enroll' ), (int) $total_evals ); ?></strong></p>
+			<p><strong><?php esc_html_e( 'Media Global:', 'convoca-enroll' ); ?></strong> <?php self::render_stars( $overall_avg ); ?> (<?php echo esc_html( $overall_avg ); ?>/5)</p>
 			
 			<hr>
 			
 			<table class="widefat striped">
 				<tbody>
 					<tr>
-						<td style="width: 30%;"><strong><?php _e( 'Gestión y coordinación', 'convoca-enroll' ); ?></strong></td>
-						<td><?php self::render_stars( $avg_gestion ); ?> (<?php echo $avg_gestion; ?>/5)</td>
-					</tr>
-					<tr>
-						<td><strong><?php _e( 'Instalaciones / Espacio', 'convoca-enroll' ); ?></strong></td>
-						<td><?php self::render_stars( $avg_instalaciones ); ?> (<?php echo $avg_instalaciones; ?>/5)</td>
-					</tr>
-					<tr>
-						<td><strong><?php _e( 'Participantes', 'convoca-enroll' ); ?></strong></td>
-						<td><?php self::render_stars( $avg_participantes ); ?> (<?php echo $avg_participantes; ?>/5)</td>
-					</tr>
-					<tr>
-						<td><strong><?php _e( 'Comunicación', 'convoca-enroll' ); ?></strong></td>
-						<td><?php self::render_stars( $avg_comunicacion ); ?> (<?php echo $avg_comunicacion; ?>/5)</td>
+						<td style="width: 30%;"><strong><?php esc_html_e( 'Gestión y coordinación', 'convoca-enroll' ); ?></strong></td>
+							<td><?php self::render_stars( $avg_gestion ); ?> (<?php echo esc_html( $avg_gestion ); ?>/5)</td>
+						</tr>
+						<tr>
+							<td><strong><?php esc_html_e( 'Instalaciones / Espacio', 'convoca-enroll' ); ?></strong></td>
+							<td><?php self::render_stars( $avg_instalaciones ); ?> (<?php echo esc_html( $avg_instalaciones ); ?>/5)</td>
+						</tr>
+						<tr>
+							<td><strong><?php esc_html_e( 'Participantes', 'convoca-enroll' ); ?></strong></td>
+							<td><?php self::render_stars( $avg_participantes ); ?> (<?php echo esc_html( $avg_participantes ); ?>/5)</td>
+						</tr>
+						<tr>
+							<td><strong><?php esc_html_e( 'Comunicación', 'convoca-enroll' ); ?></strong></td>
+							<td><?php self::render_stars( $avg_comunicacion ); ?> (<?php echo esc_html( $avg_comunicacion ); ?>/5)</td>
 					</tr>
 				</tbody>
 			</table>
 			
 			<p style="margin-top: 15px;">
 				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=conv_evaluacion&filter_actividad=' . $post->ID ) ); ?>" class="button button-primary">
-					<?php _e( 'Ver todas las evaluaciones', 'convoca-enroll' ); ?>
+					<?php esc_html_e( 'Ver todas las evaluaciones', 'convoca-enroll' ); ?>
 				</a>
 			</p>
 		</div>
@@ -121,6 +121,6 @@ class Admin_Evaluaciones_Meta_Box {
 				$stars .= '<span style="color:#d1d5db;">☆</span>';
 			}
 		}
-		echo $stars;
+		echo wp_kses_post( $stars );
 	}
 }

@@ -286,7 +286,7 @@ class Checkin_Handler {
 					if (isProcessing) return;
 					isProcessing = true;
 					
-					statusBadge.innerText = "<?php _e( 'Procesando...', 'convoca-enroll' ); ?>";
+					statusBadge.innerText = "<?php echo esc_js( __( 'Procesando...', 'convoca-enroll' ) ); ?>";
 					statusBadge.className = 'status-badge badge-processing';
 
 					// Extract token.
@@ -316,7 +316,7 @@ class Checkin_Handler {
 						alert("Error de conexión");
 						isProcessing = false;
 						statusBadge.className = 'status-badge badge-scanning';
-						statusBadge.innerText = "<?php _e( 'Escaneando...', 'convoca-enroll' ); ?>";
+						statusBadge.innerText = "<?php echo esc_js( __( 'Escaneando...', 'convoca-enroll' ) ); ?>";
 					}
 				}
 
@@ -343,7 +343,7 @@ class Checkin_Handler {
 				btnContinue.onclick = () => {
 					resultScreen.style.display = 'none';
 					statusBadge.className = 'status-badge badge-scanning';
-					statusBadge.innerText = "<?php _e( 'Escaneando...', 'convoca-enroll' ); ?>";
+					statusBadge.innerText = "<?php echo esc_js( __( 'Escaneando...', 'convoca-enroll' ) ); ?>";
 					isProcessing = false;
 				};
 
@@ -563,7 +563,7 @@ class Checkin_Handler {
 		$result = $this->mark_as_attended_by_token( $token );
 
 		if ( is_wp_error( $result ) ) {
-			wp_die( $result->get_error_message(), esc_html__( 'Error de Check-in', 'convoca-enroll' ) );
+			wp_die( esc_html( $result->get_error_message() ), esc_html__( 'Error de Check-in', 'convoca-enroll' ) );
 		}
 
 		// Get info for the message.
@@ -580,6 +580,7 @@ class Checkin_Handler {
 		$act_id       = (int) get_post_meta( $id, '_convoca_actividad_id', true );
 		$act_title    = get_the_title( $act_id );
 
+		/* translators: %1$s: participant name, %2$s: activity title */
 		wp_die(
 			sprintf( esc_html__( 'Check-in confirmado para %1$s en "%2$s".', 'convoca-enroll' ), '<strong>' . esc_html( $nombre ) . '</strong>', esc_html( $act_title ) ),
 			esc_html__( 'Check-in Exitoso', 'convoca-enroll' ),

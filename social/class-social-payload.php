@@ -97,7 +97,7 @@ class Social_Payload {
 
 	private static function get_meta_time( int $post_id ): string {
 		$val = get_post_meta( $post_id, '_convoca_fecha_inicio', true ) ?: get_post_meta( $post_id, '_convoca_fecha_inicio', true );
-		return $val ? date( 'H:i', strtotime( $val ) ) : '';
+		return $val ? gmdate( 'H:i', strtotime( $val ) ) : '';
 	}
 
 	private static function get_meta_location( int $post_id ): string {
