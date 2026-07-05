@@ -589,9 +589,9 @@ class Checkin_Handler {
 		$act_id       = (int) get_post_meta( $id, '_convoca_actividad_id', true );
 		$act_title    = get_the_title( $act_id );
 
-		/* translators: %1$s: participant name, %2$s: activity title */
 		wp_die(
 			sprintf(
+				/* translators: %1$s: participant name, %2$s: activity title */
 				esc_html__( 'Check-in confirmado para %1$s en "%2$s".', 'convoca-enroll' ),
 				'<strong>' . esc_html( $nombre ) . '</strong>',
 				esc_html( $act_title )

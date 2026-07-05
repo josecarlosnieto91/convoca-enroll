@@ -237,6 +237,7 @@ class Webhook_Dispatcher {
 			);
 
 			// 4. Retrieve locked rows
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $table_name is a trusted constant; $ids are intval'd
 			$queue = $wpdb->get_results( "SELECT * FROM $table_name WHERE id IN (" . implode( ',', array_map( 'intval', $ids ) ) . ')' );
 
 			if ( empty( $queue ) ) {

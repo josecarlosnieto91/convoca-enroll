@@ -62,7 +62,7 @@ class Pagina_Inscripcion {
 
 			<?php
 			// Use the theme's custom pattern for upcoming activities.
-			echo do_blocks( '<!-- wp:pattern {"slug":"convoca/proximas-actividades"} /-->' );
+			echo wp_kses_post( do_blocks( '<!-- wp:pattern {"slug":"convoca/proximas-actividades"} /-->' ) );
 			?>
 		</div>
 		<?php

@@ -46,6 +46,7 @@ class Admin_Inscripcion_Form {
 			'post_type'              => 'actividad',
 			'post_status'            => 'any',
 			'posts_per_page'         => -1,
+			// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.SuppressFilters_suppress_filters -- admin query optimization
 			'suppress_filters'       => true,
 			'no_found_rows'          => true, // Mejora rendimiento.
 			'update_post_term_cache' => false,

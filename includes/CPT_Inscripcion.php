@@ -179,6 +179,7 @@ class CPT_Inscripcion {
 
 		$counts = array_fill_keys( self::STATES, 0 );
 
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- META_PREFIX is a class constant
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT pm2.meta_value AS estado, COUNT(*) AS total
@@ -192,6 +193,7 @@ class CPT_Inscripcion {
 				$actividad_id
 			)
 		);
+		// phpcs:enable
 
 		foreach ( $results as $row ) {
 			if ( isset( $counts[ $row->estado ] ) ) {

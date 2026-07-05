@@ -370,7 +370,7 @@ class Google_Calendar {
 		
 		foreach ( glob( $temp_dir . $pattern ) as $file ) {
 			if ( is_file( $file ) && filemtime( $file ) < time() - DAY_IN_SECONDS ) {
-				@unlink( $file );
+				wp_delete_file( $file );
 			}
 		}
 	}

@@ -241,6 +241,7 @@ class Motor_Inscripcion {
 					$estado = 'lista_espera';
 				} else {
 					// Atomically decrement plazas for states that consume a spot.
+					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- META_PREFIX is a constant
 					$affected = $wpdb->query(
 						$wpdb->prepare(
 							"UPDATE {$wpdb->postmeta} 
@@ -334,6 +335,7 @@ class Motor_Inscripcion {
 
 				// If nobody was promoted from waitlist, we officially have +1 capacity.
 				if ( ! $promoted ) {
+					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- META_PREFIX is a constant
 					$affected = $wpdb->query(
 						$wpdb->prepare(
 							"UPDATE {$wpdb->postmeta} 
@@ -389,6 +391,7 @@ class Motor_Inscripcion {
 		try {
 			// All transitions to 'confirmada' from a non-confirmed state must decrement capacity.
 			if ( in_array( $estado_actual, array( 'pendiente', 'lista_espera', 'pendiente_pago' ), true ) ) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- META_PREFIX is a constant
 				$affected = $wpdb->query(
 					$wpdb->prepare(
 						"UPDATE {$wpdb->postmeta} 

@@ -176,6 +176,7 @@ class Email_Queue {
 			);
 
 			// 4. Retrieve locked rows
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $table_name is a trusted constant; $ids are intval'd
 			$emails = $wpdb->get_results( "SELECT * FROM $table_name WHERE id IN (" . implode( ',', array_map( 'intval', $ids ) ) . ')' );
 
 			if ( empty( $emails ) ) {

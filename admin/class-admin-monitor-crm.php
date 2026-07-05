@@ -149,6 +149,7 @@ class Admin_Monitor_CRM {
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename=' . $filename );
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV streaming to output
 		$output = fopen( 'php://output', 'w' );
 		// UTF-8 BOM for Excel.
 		fprintf( $output, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
@@ -212,6 +213,7 @@ class Admin_Monitor_CRM {
 			);
 		}
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- CSV streaming
 		fclose( $output );
 		exit;
 	}

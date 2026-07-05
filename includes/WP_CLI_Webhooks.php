@@ -68,6 +68,7 @@ class CLI_Webhooks extends \WP_CLI_Command {
 			$query .= $wpdb->prepare( ' LIMIT %d', $limit );
 		}
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $table_name is a trusted constant
 		$failed_ids = $wpdb->get_col( $query );
 
 		if ( empty( $failed_ids ) ) {

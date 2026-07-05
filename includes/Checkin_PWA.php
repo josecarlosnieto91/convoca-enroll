@@ -111,7 +111,7 @@ class Checkin_PWA {
 	 */
 	public static function serve_sw(): void {
 		$uri   = $_SERVER['REQUEST_URI'] ?? '';
-		$query = parse_url( $uri, PHP_URL_QUERY ) ?? '';
+		$query = wp_parse_url( $uri, PHP_URL_QUERY ) ?? '';
 		if ( strpos( $query, 'sw=1' ) === false ) {
 			return;
 		}
@@ -121,6 +121,7 @@ class Checkin_PWA {
 			header( 'Content-Type: application/javascript' );
 			header( 'Cache-Control: no-cache' );
 			header( 'Service-Worker-Allowed: /checkin/' );
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile -- PWA service worker delivery
 			readfile( $sw_path );
 		} else {
 			header( 'HTTP/1.1 404 Not Found' );

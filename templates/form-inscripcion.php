@@ -96,8 +96,8 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 			<?php if ( $show_plazas ) : ?>
 				<span id="conv-plazas-badge"
 					class="<?php echo $agotada ? 'conv-plazas--agotada' : 'conv-plazas--disponible'; ?>"
-					aria-label="<?php echo $agotada ? 'Plazas agotadas' : $plazas . ' de ' . $total . ' plazas disponibles'; ?>">
-					🎫 <?php echo $agotada ? 'Plazas agotadas' : $plazas . '/' . $total . ' plazas'; ?>
+					aria-label="<?php echo esc_attr( $agotada ? 'Plazas agotadas' : $plazas . ' de ' . $total . ' plazas disponibles' ); ?>">
+					🎫 <?php echo esc_html( $agotada ? 'Plazas agotadas' : $plazas . '/' . $total . ' plazas' ); ?>
 				</span>
 			<?php endif; ?>
 		</div>

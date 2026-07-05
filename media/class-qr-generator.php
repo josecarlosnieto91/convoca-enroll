@@ -143,7 +143,7 @@ class QR_Generator {
 		$upload_dir = wp_upload_dir();
 		$qr_file    = $upload_dir['basedir'] . '/convoca-qr/qr-actividad-' . $actividad_id . '.png';
 		if ( file_exists( $qr_file ) ) {
-			@unlink( $qr_file );
+			wp_delete_file( $qr_file );
 		}
 	}
 }

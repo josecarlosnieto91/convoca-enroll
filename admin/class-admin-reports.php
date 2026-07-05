@@ -1004,6 +1004,7 @@ endif;
             LIMIT 100",
 			$args
 		);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is already prepared via $wpdb->prepare() above
 		$results = $wpdb->get_results( $sql, ARRAY_A );
 
 		$grouped = array();
@@ -1063,6 +1064,7 @@ endif;
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV streaming to output
 		$out = fopen( 'php://output', 'w' );
 		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) ); // BOM for Excel.
 
@@ -1151,6 +1153,7 @@ endif;
 				break;
 		}
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- CSV streaming
 		fclose( $out );
 		exit;
 	}
