@@ -48,12 +48,12 @@ class Pagina_Inscripcion {
 		<div class="conv-pagina-inscripcion">
 			<?php if ( ! empty( $intro ) ) : ?>
 				<div class="conv-intro" style="margin-bottom: 2rem;">
-					<?php echo wpautop( $intro ); ?>
+					<?php echo wp_kses_post( wpautop( $intro ) ); ?>
 				</div>
 			<?php endif; ?>
 
 			<div class="conv-panel-link-wrapper" style="margin-bottom: 2rem;">
-				<a href="<?php echo $url_panel; ?>" class="conv-btn conv-btn--secondary">
+				<a href="<?php echo esc_url( $url_panel ); ?>" class="conv-btn conv-btn--secondary">
 					<?php esc_html_e( 'Ir a mi Panel de Reservas', 'convoca-enroll' ); ?>
 				</a>
 			</div>

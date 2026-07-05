@@ -33,6 +33,19 @@ class Checkin_Handler {
 		add_action( 'init', array( $this, 'register_rewrite_rules' ) );
 		add_action( 'template_redirect', array( $this, 'handle_checkin_page' ) );
 		add_action( 'wp_ajax_convoca_qr_checkin', array( $this, 'ajax_qr_checkin' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_checkin_assets' ) );
+	}
+
+	/**
+	 * Enqueue check-in scanner assets.
+	 */
+	public function enqueue_checkin_assets(): void {
+		if ( ! get_query_var( 'convoca_enroll_checkin_page' ) && ! get_query_var( 'convoca_enroll_checkin' ) ) {
+			return;
+		}
+
+		wp_enqueue_style( 'convoca-checkin-fonts', 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap', array(), null );
+		wp_enqueue_script( 'convoca-checkin-qrcode', 'https://unpkg.com/html5-qrcode', array(), null, true );
 	}
 
 	/**
@@ -91,10 +104,6 @@ class Checkin_Handler {
 			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
 			<title><?php esc_html_e( 'Check-in Convoca', 'convoca-enroll' ); ?></title>
 			<?php wp_head(); ?>
-			<link rel="preconnect" href="https://fonts.googleapis.com">.
-			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>.
-			<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">.
-			<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>.
 			<style>
 				:root {
 					--primary: #10b981;
@@ -582,7 +591,11 @@ class Checkin_Handler {
 
 		/* translators: %1$s: participant name, %2$s: activity title */
 		wp_die(
-			sprintf( esc_html__( 'Check-in confirmado para %1$s en "%2$s".', 'convoca-enroll' ), '<strong>' . esc_html( $nombre ) . '</strong>', esc_html( $act_title ) ),
+			sprintf(
+				esc_html__( 'Check-in confirmado para %1$s en "%2$s".', 'convoca-enroll' ),
+				'<strong>' . esc_html( $nombre ) . '</strong>',
+				esc_html( $act_title )
+			),
 			esc_html__( 'Check-in Exitoso', 'convoca-enroll' ),
 			array(
 				'response'  => 200,

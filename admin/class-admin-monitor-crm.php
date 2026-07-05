@@ -59,7 +59,7 @@ class Admin_Monitor_CRM {
 		}
 
 		if ( ! current_user_can( 'manage_inscripciones' ) ) {
-			wp_die( __( 'No tienes permisos suficientes.', 'convoca-enroll' ) );
+			wp_die( esc_html__( 'No tienes permisos suficientes.', 'convoca-enroll' ) );
 		}
 
 		$action       = sanitize_text_field( $_GET['action'] );
@@ -68,13 +68,13 @@ class Admin_Monitor_CRM {
 
 		// Verify nonce.
 		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'convoca_enroll_crm_' . $action . '_' . $id ) ) {
-			wp_die( __( 'Nonce inválido.', 'convoca-enroll' ) );
+			wp_die( esc_html__( 'Nonce inválido.', 'convoca-enroll' ) );
 		}
 
 		$related_actv_id = $id ? (int) CPT_Inscripcion::get_meta( $id, 'actividad_id' ) : $actividad_id;
 
 		if ( ! CPT_Actividad::is_user_responsible( get_current_user_id(), $related_actv_id ) ) {
-			wp_die( __( 'No tienes permiso para gestionar esta inscripción.', 'convoca-enroll' ) );
+			wp_die( esc_html__( 'No tienes permiso para gestionar esta inscripción.', 'convoca-enroll' ) );
 		}
 
 		\Convoca\Core\Logger::log(
@@ -99,7 +99,7 @@ class Admin_Monitor_CRM {
 		}
 
 		if ( is_wp_error( $result ) ) {
-			wp_die( $result->get_error_message() );
+			wp_die( esc_html( $result->get_error_message() ) );
 		}
 
 		wp_redirect(
@@ -123,7 +123,7 @@ class Admin_Monitor_CRM {
 		}
 
 		if ( ! current_user_can( 'manage_inscripciones' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-enroll' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-enroll' ) );
 		}
 
 		check_admin_referer( 'convoca_enroll_export_csv' );
@@ -133,7 +133,7 @@ class Admin_Monitor_CRM {
 
 		// Security check.
 		if ( ! CPT_Actividad::is_user_responsible( get_current_user_id(), $actividad_id ) ) {
-			wp_die( __( 'No tienes permiso para exportar datos de esta actividad.', 'convoca-enroll' ) );
+			wp_die( esc_html__( 'No tienes permiso para exportar datos de esta actividad.', 'convoca-enroll' ) );
 		}
 
 		\Convoca\Core\Logger::log(
@@ -274,7 +274,7 @@ class Admin_Monitor_CRM {
 		echo '<div class="conv-crm-header-main">';
 		echo '<h1>' . esc_html__( 'Panel de Control - Monitores', 'convoca-enroll' ) . '</h1>';
 		echo '<div class="header-actions">';
-		echo '<a href="' . home_url( '/checkin/' ) . '" target="_blank" class="conv-btn-premium conv-btn-qr">';
+		echo '<a href="' . esc_url( home_url( '/checkin/' ) ) . '" target="_blank" class="conv-btn-premium conv-btn-qr">';
 		echo '<span class="dashicons dashicons-qrcode"></span>';
 		echo esc_html__( 'Escáner QR Móvil', 'convoca-enroll' );
 		echo '</a>';
@@ -329,7 +329,7 @@ class Admin_Monitor_CRM {
 			$percent      = $total > 0 ? floor( ( $ocupadas / $total ) * 100 ) : 0;
 			$status_class = $percent >= 100 ? 'status-full' : ( $percent >= 80 ? 'status-warning' : 'status-ok' );
 
-			echo '<div class="convoca-activity-card ' . $status_class . '">';
+			echo '<div class="convoca-activity-card ' . esc_attr( $status_class ) . '">';
 			echo '<div class="card-header">';
 			echo '<h3>' . esc_html( $act->post_title ) . '</h3>';
 			echo '<span class="badge">' . esc_html( $fecha ) . '</span>';
@@ -337,12 +337,12 @@ class Admin_Monitor_CRM {
 			echo '<div class="card-body">';
 			echo '<div class="stat-row">';
 			echo '<span class="label">' . esc_html__( 'Inscritos:', 'convoca-enroll' ) . '</span>';
-			echo '<span class="value">' . sprintf( '%d / %d', $ocupadas, $total ) . '</span>';
+			echo '<span class="value">' . sprintf( '%d / %d', (int) $ocupadas, (int) $total ) . '</span>';
 			echo '</div>';
-			echo '<div class="progress-bar"><div class="progress" style="width: ' . $percent . '%;"></div></div>';
+			echo '<div class="progress-bar"><div class="progress" style="width: ' . (int) $percent . '%;"></div></div>';
 			echo '<div class="stat-row">';
 			echo '<span class="label">' . esc_html__( 'En espera:', 'convoca-enroll' ) . '</span>';
-			echo '<span class="value">' . $espera . '</span>';
+			echo '<span class="value">' . (int) $espera . '</span>';
 			echo '</div>';
 			echo '</div>';
 			echo '<div class="card-footer">';
@@ -389,7 +389,7 @@ class Admin_Monitor_CRM {
 		echo '<h1>' . esc_html( $act->post_title ) . '</h1>';
 		echo '<div class="conv-activity-info">';
 		echo '<div class="info-item"><span class="dashicons dashicons-calendar-alt"></span> ' . esc_html( $fecha ) . '</div>';
-		echo '<div class="info-item"><span class="dashicons dashicons-groups"></span> ' . $total . ' ' . esc_html__( 'plazas', 'convoca-enroll' ) . '</div>';
+		echo '<div class="info-item"><span class="dashicons dashicons-groups"></span> ' . (int) $total . ' ' . esc_html__( 'plazas', 'convoca-enroll' ) . '</div>';
 		echo '</div>';
 		echo '<div class="conv-crm-buttons">';
 		$export_all   = wp_nonce_url(
@@ -464,10 +464,10 @@ class Admin_Monitor_CRM {
 		}
 
 		echo '<div class="conv-crm-stats">';
-		echo '<div class="stat-box"><span>' . $confirmadas . '</span>' . esc_html__( 'Confirmados', 'convoca-enroll' ) . '</div>';
-		echo '<div class="stat-box green"><span>' . $asistieron . '</span>' . esc_html__( 'Asistieron', 'convoca-enroll' ) . '</div>';
-		echo '<div class="stat-box red"><span>' . $faltaron . '</span>' . esc_html__( 'Faltaron', 'convoca-enroll' ) . '</div>';
-		echo '<div class="stat-box warning"><span>' . $no_marcados . '</span>' . esc_html__( 'Pendientes', 'convoca-enroll' ) . '</div>';
+		echo '<div class="stat-box"><span>' . (int) $confirmadas . '</span>' . esc_html__( 'Confirmados', 'convoca-enroll' ) . '</div>';
+		echo '<div class="stat-box green"><span>' . (int) $asistieron . '</span>' . esc_html__( 'Asistieron', 'convoca-enroll' ) . '</div>';
+		echo '<div class="stat-box red"><span>' . (int) $faltaron . '</span>' . esc_html__( 'Faltaron', 'convoca-enroll' ) . '</div>';
+		echo '<div class="stat-box warning"><span>' . (int) $no_marcados . '</span>' . esc_html__( 'Pendientes', 'convoca-enroll' ) . '</div>';
 		echo '</div>';
 
 		if ( $checkin_mode ) {
@@ -480,7 +480,7 @@ class Admin_Monitor_CRM {
 					$nombre     = CPT_Inscripcion::get_meta( $ins->ID, 'nombre' );
 					$asistencia = CPT_Inscripcion::get_meta( $ins->ID, 'asistencia' );
 					$row_class  = $asistencia === '1' ? 'checked-in' : ( $asistencia === '0' ? 'absent' : '' );
-					echo '<div class="checkin-row ' . $row_class . '" data-id="' . $ins->ID . '">';
+					echo '<div class="checkin-row ' . esc_attr( $row_class ) . '" data-id="' . (int) $ins->ID . '">';
 					echo '<div class="checkin-name">' . esc_html( $nombre ) . '</div>';
 					echo '<div class="checkin-actions">';
 					echo '<button class="conv-btn-premium conv-btn-qr mark-attendance" data-status="1" style="font-size:16px;">' . esc_html__( 'Confirmar', 'convoca-enroll' ) . ' ✅</button>';
@@ -555,17 +555,17 @@ class Admin_Monitor_CRM {
 				echo '<a href="tel:' . esc_attr( $tel ) . '" style="color:var(--conv-text);text-decoration:none;">' . esc_html( $tel ) . '</a>';
 			}
 			echo '</div></td>';
-			echo '<td><span class="status-badge status-' . $estado . '">' . esc_html( $estado ) . '</span></td>';
+			echo '<td><span class="status-badge status-' . esc_attr( $estado ) . '">' . esc_html( $estado ) . '</span></td>';
 
 			if ( $is_waitlist ) {
-				echo '<td><span style="font-weight:700; color:var(--conv-waiting);">#' . ( $pos++ ) . '</span></td>';
+				echo '<td><span style="font-weight:700; color:var(--conv-waiting);">#' . (int) ( $pos++ ) . '</span></td>';
 			}
 
 			if ( ! $is_waitlist ) {
 				echo '<td style="text-align:center;">';
 				if ( $estado === 'confirmada' ) {
 					$asistencia = CPT_Inscripcion::get_meta( $item->ID, 'asistencia' );
-					echo '<div class="attendance-control" style="justify-content:center;" data-id="' . $item->ID . '">';
+					echo '<div class="attendance-control" style="justify-content:center;" data-id="' . (int) $item->ID . '">';
 					echo '<button class="attendance-btn mark-attendance ' . ( $asistencia === '1' ? 'active' : '' ) . '" data-status="1" title="Ha venido">✅</button>';
 					echo '<button class="attendance-btn mark-attendance ' . ( $asistencia === '0' ? 'active' : '' ) . '" data-status="0" title="No ha venido">❌</button>';
 					echo '</div>';
@@ -625,14 +625,14 @@ class Admin_Monitor_CRM {
 		$no_responden = $confirmadas - $asistieron - $faltaron;
 
 		echo '<div class="conv-summary-bar" style="display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap;">';
-		echo '<span style="background:#e2e8f0;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;">📋 ' . $total . ' total</span>';
-		echo '<span style="background:#d1fae5;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;color:#065f46;">✅ ' . $asistieron . ' asistieron</span>';
-		echo '<span style="background:#fef2f2;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;color:#991b1b;">❌ ' . $faltaron . ' faltaron</span>';
+		echo '<span style="background:#e2e8f0;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;">📋 ' . (int) $total . ' total</span>';
+		echo '<span style="background:#d1fae5;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;color:#065f46;">✅ ' . (int) $asistieron . ' asistieron</span>';
+		echo '<span style="background:#fef2f2;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;color:#991b1b;">❌ ' . (int) $faltaron . ' faltaron</span>';
 		if ( $no_responden > 0 ) {
-			echo '<span style="background:#fffbeb;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;color:#92400e;">❓ ' . $no_responden . ' sin registrar</span>';
+			echo '<span style="background:#fffbeb;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;color:#92400e;">❓ ' . (int) $no_responden . ' sin registrar</span>';
 		}
 		if ( $pendientes > 0 ) {
-			echo '<span style="background:#e0f2fe;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;color:#0369a1;">⏳ ' . $pendientes . ' pendientes</span>';
+			echo '<span style="background:#e0f2fe;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;color:#0369a1;">⏳ ' . (int) $pendientes . ' pendientes</span>';
 		}
 		echo '</div>';
 	}

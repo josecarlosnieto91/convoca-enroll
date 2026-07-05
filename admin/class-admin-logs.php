@@ -106,7 +106,7 @@ class Admin_Logs {
 									<?php echo esc_html( wp_date( 'd/m/Y H:i', strtotime( $log->created_at ) ) ); ?>
 								</td>
 								<td>
-									<?php echo \Convoca\Core\Utils::render_log_level_badge( $log->level ); ?>
+									<?php echo wp_kses_post( \Convoca\Core\Utils::render_log_level_badge( $log->level ) ); ?>
 								</td>
 								<td>
 									<?php echo esc_html( $log->message ); ?>
@@ -135,7 +135,7 @@ class Admin_Logs {
 				<div class="tablenav">
 					<div class="tablenav-pages">
 						<?php
-						echo paginate_links(
+						echo wp_kses_post( paginate_links(
 							array(
 								'base'      => add_query_arg( 'paged', '%#%' ),
 								'format'    => '',
@@ -144,8 +144,8 @@ class Admin_Logs {
 								'total'     => $num_pages,
 								'current'   => $pagenum,
 							)
-						);
-						?>
+						) );
+					?>
 					</div>
 				</div>
 			<?php endif; ?>

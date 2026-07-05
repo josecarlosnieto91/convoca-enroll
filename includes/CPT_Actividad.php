@@ -614,8 +614,8 @@ class CPT_Actividad {
 					$ocupadas = $total - $disp;
 					$pct      = round( ( $ocupadas / $total ) * 100 );
 					$color    = $pct >= 90 ? '#ff500a' : ( $pct >= 50 ? '#ff8700' : '#2d5a27' );
-					echo '<strong>' . $ocupadas . '/' . $total . '</strong>';
-					echo ' <span style="color:' . $color . ';font-size:11px">(' . $pct . '%)</span>';
+					echo '<strong>' . (int) $ocupadas . '/' . (int) $total . '</strong>';
+					echo ' <span style="color:' . esc_attr( $color ) . ';font-size:11px">(' . (int) $pct . '%)</span>';
 				} else {
 					echo '—';
 				}

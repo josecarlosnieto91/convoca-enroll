@@ -426,7 +426,7 @@ class Rest_API {
 		// Check if ID is activity or inscription.
 		$post = get_post( $id );
 		if ( ! $post ) {
-			wp_die( __( 'No encontrado.', 'convoca-enroll' ), '', 404 );
+			wp_die( esc_html__( 'No encontrado.', 'convoca-enroll' ), '', 404 );
 		}
 
 		if ( $post->post_type === 'actividad' ) {
@@ -435,7 +435,7 @@ class Rest_API {
 			// Actually, let's just use the activity ID hash for public activities.
 			$expected = hash_hmac( 'sha256', (string) $id, \Convoca\Core\Utils::get_persistent_salt() );
 			if ( $token !== $expected ) {
-				wp_die( __( 'Acceso denegado.', 'convoca-enroll' ), '', 403 );
+				wp_die( esc_html__( 'Acceso denegado.', 'convoca-enroll' ), '', 403 );
 			}
 			$calendar = new Google_Calendar();
 			$calendar->serve_ics( $id );
@@ -443,12 +443,12 @@ class Rest_API {
 			// Validate checkin token.
 			$stored_token = CPT_Inscripcion::get_meta( $id, 'checkin_token' );
 			if ( ! $stored_token || ! hash_equals( $stored_token, $token ) ) {
-				wp_die( __( 'Token de seguridad inválido.', 'convoca-enroll' ), '', 403 );
+				wp_die( esc_html__( 'Token de seguridad inválido.', 'convoca-enroll' ), '', 403 );
 			}
 			$calendar = new Google_Calendar();
 			$calendar->serve_ics( $id, true );
 		} else {
-			wp_die( __( 'Tipo de post no válido.', 'convoca-enroll' ), '', 400 );
+			wp_die( esc_html__( 'Tipo de post no válido.', 'convoca-enroll' ), '', 400 );
 		}
 	}
 

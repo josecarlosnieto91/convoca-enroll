@@ -112,7 +112,7 @@ class Admin_Evaluaciones_Editor {
 				<div class="conv-grid conv-grid--2">
 					<div class="conv-card">
 						<div class="conv-card-header">
-							<h2><?php _e( 'Actividad y Comentarios', 'convoca-enroll' ); ?></h2>
+							<h2><?php esc_html_e( 'Actividad y Comentarios', 'convoca-enroll' ); ?></h2>
 						</div>
 						<div class="conv-card-body">
 							<div class="conv-field">
@@ -121,7 +121,7 @@ class Admin_Evaluaciones_Editor {
 									<option value=""><?php esc_html_e( '— Seleccionar actividad —', 'convoca-enroll' ); ?></option>
 									<?php foreach ( $actividades as $act ) : ?>
 										<option value="<?php echo esc_attr( $act->ID ); ?>" <?php selected( $meta['actividad_id'], $act->ID ); ?>>
-											<?php echo esc_html( $act->post_title ); ?> (<?php echo substr( get_post_meta( $act->ID, '_convoca_fecha_inicio', true ), 0, 10 ); ?>)
+											<?php echo esc_html( $act->post_title ); ?> (<?php echo esc_html( substr( get_post_meta( $act->ID, '_convoca_fecha_inicio', true ), 0, 10 ) ); ?>)
 										</option>
 									<?php endforeach; ?>
 								</select>
@@ -136,7 +136,7 @@ class Admin_Evaluaciones_Editor {
 
 					<div class="conv-card">
 						<div class="conv-card-header">
-							<h2><?php _e( 'Puntuaciones (1-5)', 'convoca-enroll' ); ?></h2>
+							<h2><?php esc_html_e( 'Puntuaciones (1-5)', 'convoca-enroll' ); ?></h2>
 						</div>
 						<div class="conv-card-body">
 							<?php
@@ -226,7 +226,7 @@ class Admin_Evaluaciones_Editor {
 		}
 
 		if ( is_wp_error( $result ) ) {
-			wp_die( $result->get_error_message() );
+			wp_die( esc_html( $result->get_error_message() ) );
 		}
 
 		// Save Meta.

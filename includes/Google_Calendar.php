@@ -327,14 +327,14 @@ class Google_Calendar {
 		$ics_content = $this->generate_ics( (int) $actividad_id );
 
 		if ( ! $ics_content ) {
-			wp_die( __( 'Error al generar el archivo de calendario.', 'convoca-enroll' ) );
+			wp_die( esc_html__( 'Error al generar el archivo de calendario.', 'convoca-enroll' ) );
 		}
 
 		$filename = sanitize_title( get_the_title( $actividad_id ) ) . '.ics';
 
 		header( 'Content-Type: text/calendar; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
-		echo $ics_content;
+		header( 'Content-Disposition: attachment; filename="' . esc_attr( $filename ) . '"' );
+		echo esc_html( $ics_content );
 		exit;
 	}
 

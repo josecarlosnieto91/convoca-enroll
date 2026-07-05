@@ -101,7 +101,7 @@ class Inscriptions_List extends \WP_List_Table {
 		echo '<option value="">— Estado —</option>';
 		foreach ( CPT_Inscripcion::LABELS as $key => $label ) {
 			$sel = selected( $estado_filter, $key, false );
-			echo "<option value='" . esc_attr( $key ) . "' $sel>" . esc_html( $label ) . '</option>';
+			echo "<option value='" . esc_attr( $key ) . "' " . selected( $estado_filter, $key, false ) . ">" . esc_html( $label ) . '</option>';
 		}
 		echo '</select>';
 
@@ -121,7 +121,7 @@ class Inscriptions_List extends \WP_List_Table {
 		echo '<option value="">— Actividad —</option>';
 		foreach ( $acts as $a ) {
 			$sel = selected( $actividad_filter, $a->ID, false );
-			echo "<option value='" . esc_attr( $a->ID ) . "' $sel>" . esc_html( $a->post_title ) . '</option>';
+			echo "<option value='" . esc_attr( $a->ID ) . "' " . selected( $actividad_filter, $a->ID, false ) . ">" . esc_html( $a->post_title ) . '</option>';
 		}
 		echo '</select>';
 

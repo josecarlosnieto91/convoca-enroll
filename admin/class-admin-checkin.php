@@ -216,7 +216,7 @@ class Admin_Checkin {
 										<button type="button" 
 												class="button conv-toggle-checkin <?php echo ( $asistencia === 'si' ) ? 'button-primary' : ''; ?>" 
 												data-id="<?php echo esc_attr( $id ); ?>">
-											<?php echo ( $asistencia === 'si' ) ? __( 'Registrado', 'convoca-enroll' ) : __( 'Pendiente', 'convoca-enroll' ); ?>
+											<?php echo ( $asistencia === 'si' ) ? esc_html__( 'Registrado', 'convoca-enroll' ) : esc_html__( 'Pendiente', 'convoca-enroll' ); ?>
 										</button>
 									</td>
 								</tr>

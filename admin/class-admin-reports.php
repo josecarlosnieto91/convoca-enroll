@@ -219,7 +219,7 @@ class Admin_Reports {
 						<td><?php echo (int) $act['plazas_disponibles']; ?></td>
 						<td>
 							<div class="conv-progress-bar" style="width: 100px; background: #eee; height: 10px; border-radius: 5px; position: relative;">
-								<div style="width: <?php echo min( 100, $pct ); ?>%; background: <?php echo $pct >= 90 ? '#4caf50' : ( $pct < 30 ? '#ff9800' : '#2196f3' ); ?>; height: 100%; border-radius: 5px;"></div>
+								<div style="width: <?php echo (int) min( 100, $pct ); ?>%; background: <?php echo $pct >= 90 ? '#4caf50' : ( $pct < 30 ? '#ff9800' : '#2196f3' ); ?>; height: 100%; border-radius: 5px;"></div>
 								<span style="font-size: 10px; position: absolute; right: -35px; top: -3px;"><?php echo esc_html( $pct ); ?>%</span>
 							</div>
 						</td>
@@ -474,8 +474,8 @@ endif;
 					<tr>
 						<td><strong><?php echo esc_html( $act['title'] ); ?></strong></td>
 						<td><?php echo (int) $act['en_espera']; ?></td>
-						<td><?php echo $act['ratio_promocion']; ?>%</td>
-						<td><?php echo $act['tiempo_medio']; ?></td>
+						<td><?php echo (float) $act['ratio_promocion']; ?>%</td>
+						<td><?php echo (float) $act['tiempo_medio']; ?></td>
 					</tr>
 									<?php
 									endforeach;
@@ -690,7 +690,7 @@ endif;
 		$table_name = $wpdb->prefix . 'convoca_logs';
 
 		// Check if table exists.
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) !== $table_name ) {
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) !== $table_name ) {
 			return array();
 		}
 
@@ -706,11 +706,12 @@ endif;
              FROM $table_name l
              LEFT JOIN {$wpdb->users} u ON l.user_id = u.ID
              LEFT JOIN {$wpdb->posts} p ON l.object_id = p.ID
-             WHERE l.context LIKE 'Enroll/Monitor%%'
+             WHERE l.context LIKE %s
                AND p.post_type = 'actividad'
                AND l.created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)
              ORDER BY l.created_at DESC
-             LIMIT 200"
+             LIMIT 200",
+				'Enroll/Monitor%'
 			)
 		);
 
@@ -758,8 +759,8 @@ endif;
 				<div class="conv-filter-group">
 					<label>Año</label>
 					<select name="year">
-						<?php for ( $y = wp_date( 'Y' ); $y >= 2024; $y-- ) : ?>
-							<option value="<?php echo $y; ?>" <?php selected( $year, $y ); ?>><?php echo $y; ?></option>
+						<?php for ( $y = (int) wp_date( 'Y' ); $y >= 2024; $y-- ) : ?>
+							<option value="<?php echo (int) $y; ?>" <?php selected( $year, $y ); ?>><?php echo (int) $y; ?></option>
 						<?php endfor; ?>
 					</select>
 				</div>
@@ -798,7 +799,7 @@ endif;
 			</thead>
 			<tbody>
 				<?php if ( empty( $memoria ) ) : ?>
-					<tr><td colspan="6">No hay datos para el año <?php echo $year; ?>.</td></tr>
+					<tr><td colspan="6">No hay datos para el año <?php echo (int) $year; ?>.</td></tr>
 					<?php
 				else :
 					foreach ( $memoria as $row ) :
@@ -911,7 +912,7 @@ endif;
 				<select name="filter_actividad" id="filter_actividad">
 					<option value=""><?php esc_html_e( 'Todas las actividades', 'convoca-enroll' ); ?></option>
 					<?php foreach ( $all_acts as $aid ) : ?>
-						<option value="<?php echo $aid; ?>" <?php selected( $filter_actividad, $aid ); ?>>
+						<option value="<?php echo (int) $aid; ?>" <?php selected( $filter_actividad, $aid ); ?>>
 							<?php echo esc_html( get_the_title( $aid ) ); ?>
 						</option>
 					<?php endforeach; ?>
@@ -975,10 +976,11 @@ endif;
 		global $wpdb;
 
 		$where_extra = '';
-		$args        = array();
+		$where_clause = "p.post_type = 'convoca_evaluacion' AND p.post_status = 'publish'";
+		$args         = array();
 		if ( $actividad_id > 0 ) {
-			$where_extra = 'AND pm_act.meta_value = %d';
-			$args[]      = $actividad_id;
+			$where_clause .= ' AND pm_act.meta_value = %d';
+			$args[]        = $actividad_id;
 		}
 
 		$sql     = $wpdb->prepare(
@@ -996,7 +998,7 @@ endif;
             LEFT JOIN {$wpdb->postmeta} pm_instalaciones ON p.ID = pm_instalaciones.post_id AND pm_instalaciones.meta_key = '_convoca_eval_instalaciones'
             LEFT JOIN {$wpdb->postmeta} pm_participantes ON p.ID = pm_participantes.post_id AND pm_participantes.meta_key = '_convoca_eval_participantes'
             LEFT JOIN {$wpdb->postmeta} pm_comunicacion ON p.ID = pm_comunicacion.post_id AND pm_comunicacion.meta_key = '_convoca_eval_comunicacion'
-            WHERE p.post_type = 'convoca_evaluacion' AND p.post_status = 'publish' $where_extra
+            WHERE $where_clause
             GROUP BY pm_act.meta_value, p.post_title
             ORDER BY count DESC
             LIMIT 100",
@@ -1050,7 +1052,7 @@ endif;
 
 		// CSRF Protection.
 		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'convoca_enroll_export_csv' ) ) {
-			wp_die( __( 'Enlace de exportación inválido o caducado.', 'convoca-enroll' ) );
+			wp_die( esc_html__( 'Enlace de exportación inválido o caducado.', 'convoca-enroll' ) );
 		}
 
 		$type     = sanitize_text_field( $_GET['export'] );
@@ -1109,7 +1111,7 @@ endif;
 					$eval_ids = $wpdb->get_col(
 						$wpdb->prepare(
 							"SELECT p.ID FROM {$wpdb->posts} p
-                         JOIN {$wpdb->postmeta} pm_act ON p.ID = pm_act.post_id AND $meta_where
+					JOIN {$wpdb->postmeta} pm_act ON p.ID = pm_act.post_id AND pm_act.meta_key = '_convoca_eval_actividad_id'
                          WHERE p.post_type = 'convoca_evaluacion' AND p.post_status = 'publish'
                          ORDER BY p.ID ASC LIMIT %d OFFSET %d",
 							array_merge( $meta_args, array( $per_batch, $batch * $per_batch ) )

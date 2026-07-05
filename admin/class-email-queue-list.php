@@ -140,11 +140,13 @@ class Email_Queue_List extends \WP_List_Table {
 
 		if ( $this->current_action() === 'retry' && $ids ) {
 			check_admin_referer( 'bulk-emails' );
-			$wpdb->query( "UPDATE $table SET status = 'pending', retries = 0, next_retry_at = NULL WHERE id IN (" . implode( ',', $ids ) . ')' );
+			$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+			$wpdb->query( $wpdb->prepare( "UPDATE $table SET status = 'pending', retries = 0, next_retry_at = NULL WHERE id IN ($placeholders)", $ids ) );
 		}
 		if ( $this->current_action() === 'delete' && $ids ) {
 			check_admin_referer( 'bulk-emails' );
-			$wpdb->query( "DELETE FROM $table WHERE id IN (" . implode( ',', $ids ) . ')' );
+			$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+			$wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE id IN ($placeholders)", $ids ) );
 		}
 	}
 

@@ -90,7 +90,7 @@ register_activation_hook(
 	function (): void {
 		if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
-			wp_die( __( 'Convoca Enroll requires Convoca Core to be active. Please activate Convoca Core first.', 'convoca-enroll' ) );
+			wp_die( esc_html__( 'Convoca Enroll requires Convoca Core to be active. Please activate Convoca Core first.', 'convoca-enroll' ) );
 		}
 		CPT_Actividad::register();
 		CPT_Inscripcion::register();

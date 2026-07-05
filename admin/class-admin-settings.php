@@ -907,8 +907,8 @@ class Admin_Settings {
 
 		foreach ( $plugin_definitions as $slug => $data ) {
 			$is_active = class_exists( $data['class'] );
-			/* translators: %s: plugin name */
 			$checks[]  = array(
+				/* translators: %s: plugin name */
 				'title'   => sprintf( __( 'Plugin: %s', 'convoca-enroll' ), $data['name'] ),
 				'status'  => $is_active ? 'ok' : $data['severity'],
 				'message' => $is_active ? __( 'Activo y funcionando.', 'convoca-enroll' ) : __( 'Plugin no detectado o inactivo.', 'convoca-enroll' ),
@@ -952,7 +952,7 @@ class Admin_Settings {
 				'title'   => $data['title'],
 				'status'  => $page ? 'ok' : 'error',
 				/* translators: %s: page title */
-			'message' => $page ? sprintf( __( 'Detectada: %s', 'convoca-enroll' ), get_the_title( $page ) ) : __( 'No se ha encontrado ninguna página con este shortcode.', 'convoca-enroll' ),
+				'message' => $page ? sprintf( __( 'Detectada: %s', 'convoca-enroll' ), get_the_title( $page ) ) : __( 'No se ha encontrado ninguna página con este shortcode.', 'convoca-enroll' ),
 				'fix'     => ! $page ? $data['fix'] : '',
 			);
 		}
@@ -970,7 +970,6 @@ class Admin_Settings {
 
 	private static function find_page_by_shortcode( string $shortcode ) {
 		global $wpdb;
-		$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_content LIKE %s AND post_status = 'publish' AND post_type = 'page' LIMIT 1", '%' . $wpdb->esc_like( $shortcode ) . '%' );
-		return $wpdb->get_var( $query );
+		return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_content LIKE %s AND post_status = 'publish' AND post_type = 'page' LIMIT 1", '%' . $wpdb->esc_like( $shortcode ) . '%' ) );
 	}
 }
