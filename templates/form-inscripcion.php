@@ -1,20 +1,4 @@
 <?php
-
-/**
- * Convoca Enroll
- *
- * @package    Convoca\Enroll
- * @subpackage Templates
- *
- * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
- * @license    GPL-2.0-or-later
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- */
-
 /**
  * Template: Inscription form for an activity v3 — with intro, normas, and minor support.
  *
@@ -96,8 +80,8 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 			<?php if ( $show_plazas ) : ?>
 				<span id="conv-plazas-badge"
 					class="<?php echo $agotada ? 'conv-plazas--agotada' : 'conv-plazas--disponible'; ?>"
-					aria-label="<?php echo esc_attr( $agotada ? 'Plazas agotadas' : $plazas . ' de ' . $total . ' plazas disponibles' ); ?>">
-					🎫 <?php echo esc_html( $agotada ? 'Plazas agotadas' : $plazas . '/' . $total . ' plazas' ); ?>
+					aria-label="<?php echo $agotada ? 'Plazas agotadas' : $plazas . ' de ' . $total . ' plazas disponibles'; ?>">
+					🎫 <?php echo $agotada ? 'Plazas agotadas' : $plazas . '/' . $total . ' plazas'; ?>
 				</span>
 			<?php endif; ?>
 		</div>
@@ -150,8 +134,7 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 		<div class="convoca-grid-2">
 			<div class="convoca-field">
 				<label for="conv-dni">DNI / NIE / Identificación *</label>
-				<input type="text" id="conv-dni" name="dni" required autocomplete="off" placeholder="12345678A"
-					pattern="[0-9A-Za-z]{5,15}">
+				<input type="text" id="conv-dni" name="dni" required autocomplete="off" placeholder="12345678A">
 				<span class="convoca-error-msg">Introduce un documento de identificación válido.</span>
 			</div>
 			<div class="convoca-field">
