@@ -204,7 +204,7 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 		<?php endif; ?>
 
 		<div class="convoca-check-group">
-			<input type="checkbox" id="conv-consentimiento" name="consentimiento" required>
+			<input type="checkbox" id="conv-consentimiento" name="consentimiento">
 			<label for="conv-consentimiento">He leído y acepto la <a href="<?php echo esc_url( $url_privacidad ); ?>"
 					target="_blank" rel="noopener">Política de Privacidad</a> y el tratamiento de mis datos personales.
 				*</label>
