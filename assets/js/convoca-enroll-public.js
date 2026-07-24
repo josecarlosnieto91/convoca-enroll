@@ -129,7 +129,7 @@
             const fd = new FormData(form);
             const nonce = window.bdeEnroll?.nonce || '';
 
-            conv.ajaxPost('conv_enroll_inscribir', fd, nonce, 
+            conv.ajaxPost('convoca_inscribir', fd, nonce, 
                 /* On Success */
                 (res) => {
                     // Redirect directly without showing success pane if gateway rules
