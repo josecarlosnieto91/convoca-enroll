@@ -97,8 +97,18 @@
         form.addEventListener('submit', e => {
             e.preventDefault();
 
-            // Native shared validation
-            const ok = conv.form.validate(form);
+            // Validate required fields manually (bypass broken conv.form.validate)
+            const required = form.querySelectorAll('[required]');
+            let allValid = true;
+            required.forEach(function(el) {
+                var val = (el.value || '').trim();
+                var field = el.closest('.convoca-field');
+                if (field) field.classList.remove('has-error');
+                if (!val) {
+                    if (field) field.classList.add('has-error');
+                    allValid = false;
+                }
+            });
             
             const consentimiento = conv.$('#conv-consentimiento', form) || conv.$('#conv-consentimiento', wrapper);
             if (consentimiento && !consentimiento.checked) {
@@ -106,7 +116,7 @@
                 return;
             }
 
-            if (!ok) {
+            if (!allValid) {
                 conv.showAlert(alert, 'Rellena todos los campos obligatorios.', 'danger');
                 return;
             }
