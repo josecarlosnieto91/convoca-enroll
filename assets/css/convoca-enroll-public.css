@@ -30,7 +30,7 @@
     pointer-events: none;
 }
 
-.convoca-activity-card--lugg {
+.convoca-activity-card--externa {
     background: linear-gradient(135deg,
             var(--wp--preset--color--verde, #2d5a27),
             var(--wp--preset--color--violeta, #320028));
@@ -55,7 +55,7 @@
     z-index: 1;
 }
 
-.convoca-badge--lugg {
+.convoca-badge--externa {
     background: var(--wp--preset--color--verde, #2d5a27);
     color: var(--wp--preset--color--blanco, #fff);
     padding: 0.15rem 0.6rem;

@@ -40,7 +40,7 @@ class CPT_Actividad {
 		'precio_socio_dia',
 		'ubicacion',
 		'requiere_pago',
-		'actividad_lugg',
+		'actividad_externa',
 		'responsables',
 		'reminder_7dias',
 		'reminder_1dia',
@@ -115,7 +115,7 @@ class CPT_Actividad {
 				array(
 					'show_in_rest' => true,
 					'single'       => true,
-					'type'         => in_array( $key, array( 'plazas_totales', 'plazas_disponibles', 'requiere_pago', 'actividad_lugg', 'reminder_7dias', 'reminder_1dia', 'reminder_1hora', 'reminder_post_evento', 'google_create_album', 'google_calendar_sync' ) ) ? 'integer' : 'string',
+					'type'         => in_array( $key, array( 'plazas_totales', 'plazas_disponibles', 'requiere_pago', 'actividad_externa', 'reminder_7dias', 'reminder_1dia', 'reminder_1hora', 'reminder_post_evento', 'google_create_album', 'google_calendar_sync' ) ) ? 'integer' : 'string',
 				)
 			);
 		}
@@ -192,8 +192,8 @@ class CPT_Actividad {
 			</div>
 			<div class="convoca-field">
 				<div class="convoca-check-group" style="margin-top:1.8rem;">
-					<input type="checkbox" id="conv_enroll_actividad_lugg" name="conv_enroll_actividad_lugg" value="1" <?php checked( $m( 'actividad_lugg' ), '1' ); ?>>
-					<label for="conv_enroll_actividad_lugg"><?php esc_html_e( 'Es una actividad en el centro social', 'convoca-enroll' ); ?></label>
+					<input type="checkbox" id="conv_enroll_actividad_externa" name="conv_enroll_actividad_externa" value="1" <?php checked( $m( 'actividad_externa' ), '1' ); ?>>
+					<label for="conv_enroll_actividad_externa"><?php esc_html_e( 'Es una actividad externa', 'convoca-enroll' ); ?></label>
 				</div>
 			</div>
 			<div class="convoca-field" style="grid-column: 1 / -1; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--conv-border, #ddd);">
@@ -257,7 +257,7 @@ class CPT_Actividad {
 			'precio_socio_dia'     => fn( $v ) => floatval( str_replace( ',', '.', $v ) ),
 			'ubicacion'            => 'sanitize_text_field',
 			'requiere_pago'        => 'absint',
-			'actividad_lugg'       => 'absint',
+			'actividad_externa'       => 'absint',
 			'responsables'         => function ( $v ) {
 				return is_array( $v ) ? implode( ',', array_map( 'absint', $v ) ) : sanitize_text_field( $v );
 			},

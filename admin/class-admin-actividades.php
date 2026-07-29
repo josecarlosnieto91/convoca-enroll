@@ -234,8 +234,8 @@ class Admin_Actividades {
 
 							<div class="conv-field">
 								<label>
-									<input type="checkbox" name="actividad_lugg" value="1" <?php checked( $meta['actividad_lugg'], '1' ); ?>>
-									<?php esc_html_e( 'Es una actividad en el centro social', 'convoca-enroll' ); ?>
+									<input type="checkbox" name="actividad_externa" value="1" <?php checked( $meta['actividad_externa'], '1' ); ?>>
+									<?php esc_html_e( 'Es una actividad externa', 'convoca-enroll' ); ?>
 								</label>
 							</div>
 
@@ -321,7 +321,7 @@ class Admin_Actividades {
 
 		update_post_meta( $post_id, '_convoca_precio_socio', sanitize_text_field( wp_unslash( $_POST['precio_socio'] ?? '' ) ) );
 		update_post_meta( $post_id, '_convoca_requiere_pago', isset( $_POST['requiere_pago'] ) ? 1 : 0 );
-		update_post_meta( $post_id, '_convoca_actividad_lugg', isset( $_POST['actividad_lugg'] ) ? 1 : 0 );
+		update_post_meta( $post_id, '_convoca_actividad_externa', isset( $_POST['actividad_externa'] ) ? 1 : 0 );
 
 		$responsables = isset( $_POST['responsables'] ) ? array_map( 'intval', $_POST['responsables'] ) : array();
 		update_post_meta( $post_id, '_convoca_responsables', implode( ',', $responsables ) );
@@ -464,8 +464,8 @@ class Admin_Actividades_List extends \WP_List_Table {
 
 	protected function column_titulo( $item ): string {
 		$edit  = admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $item->ID );
-		$lugg  = get_post_meta( $item->ID, '_convoca_actividad_lugg', true );
-		$badge = $lugg === '1' ? ' <span class="convoca-badge convoca-badge--lugg" style="background:#2d5a27;color:#fff;">Centro Social</span>' : '';
+		$externa = get_post_meta( $item->ID, '_convoca_actividad_externa', true );
+		$badge = $externa === '1' ? ' <span class="convoca-badge convoca-badge--externa" style="background:#2d5a27;color:#fff;">🌐</span>' : '';
 
 		$status_badge = '';
 		if ( $item->post_status === 'draft' ) {

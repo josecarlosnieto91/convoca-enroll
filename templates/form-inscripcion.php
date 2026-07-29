@@ -23,7 +23,7 @@ $ubicacion        = $meta['ubicacion'] ?? '';
 $precio_s         = $meta['precio_socio'] ?? 0;
 $precio_sd        = $meta['precio_socio_dia'] ?? 0;
 $requiere_pago    = ! empty( $meta['requiere_pago'] );
-$is_lugg          = ! empty( $meta['actividad_lugg'] );
+$is_externa          = ! empty( $meta['actividad_externa'] );
 $agotada          = $plazas <= 0;
 $has_socio_dia    = (float) $precio_sd > 0;
 $permitir_menores = $settings['permitir_menores'] ?? true;
@@ -63,9 +63,9 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 	<?php endif; ?>
 
 	<!-- Activity header card -->
-	<div class="convoca-activity-card <?php echo $is_lugg ? 'convoca-activity-card--lugg' : ''; ?>">
-		<?php if ( $is_lugg ) : ?>
-			<span class="convoca-badge convoca-badge--lugg" aria-label="Actividad del centro social">Centro Social</span>
+	<div class="convoca-activity-card <?php echo $is_externa ? 'convoca-activity-card--externa' : ''; ?>">
+		<?php if ( $is_externa ) : ?>
+			<span class="convoca-badge convoca-badge--externa" aria-label="Actividad externa">🌐</span>
 		<?php endif; ?>
 		<h3 class="conv-activity-title">
 			<?php echo esc_html( $actividad->post_title ); ?>
@@ -224,7 +224,7 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 			style="display:none;font-size:1.3rem;font-weight:700;letter-spacing:2px;"></p>
 		<p class="convoca-small">Guarda tu código de reserva para consultar o cancelar tu inscripción.</p>
 		<p class="convoca-small">¿Tienes dudas? Escríbenos a <a
-				href="mailto:coordinacion@getconvoca.app">coordinacion@getconvoca.app</a></p>
+				href="mailto:{admin_email}">{admin_email}</a></p>
 		<p class="convoca-mt-medium"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="convoca-btn convoca-btn-outline">← Volver al inicio</a></p>
 	</div>
 
