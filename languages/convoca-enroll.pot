@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: convoca-enroll 2.6.1\n"
+"Project-Id-Version: Convoca Enroll 2.6.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-enroll\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-05T06:52:07+00:00\n"
+"POT-Creation-Date: 2026-08-04T22:40:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-enroll\n"
@@ -121,7 +121,7 @@ msgstr ""
 
 #: admin/class-admin-actividades.php:238
 #: includes/CPT_Actividad.php:196
-msgid "Es una actividad en el centro social"
+msgid "Es una actividad externa"
 msgstr ""
 
 #: admin/class-admin-actividades.php:243
@@ -149,24 +149,24 @@ msgstr ""
 
 #: admin/class-admin-actividades.php:339
 #: admin/class-admin-monitor-crm.php:71
-#: admin/class-admin-page.php:764
-#: admin/class-admin-page.php:813
+#: admin/class-admin-page.php:766
+#: admin/class-admin-page.php:815
 msgid "Nonce inválido."
 msgstr ""
 
 #: admin/class-admin-actividades.php:342
 #: admin/class-admin-media-dashboard.php:215
 #: admin/class-admin-monitor-crm.php:126
-#: admin/class-admin-page.php:767
-#: admin/class-admin-page.php:816
-#: admin/class-admin-page.php:839
+#: admin/class-admin-page.php:769
+#: admin/class-admin-page.php:818
+#: admin/class-admin-page.php:841
 #: admin/class-admin-settings.php:831
 #: admin/class-admin-templates-page.php:52
 msgid "No tienes permisos."
 msgstr ""
 
 #: admin/class-admin-actividades.php:347
-#: admin/class-admin-monitor-crm.php:362
+#: admin/class-admin-monitor-crm.php:364
 #: includes/Motor_Inscripcion.php:62
 #: includes/PDF_Compromiso.php:91
 #: includes/Rest_API.php:219
@@ -203,8 +203,8 @@ msgid "Buscar participante..."
 msgstr ""
 
 #: admin/class-admin-checkin.php:148
-#: admin/class-admin-reports.php:919
-#: admin/class-email-queue-list.php:184
+#: admin/class-admin-reports.php:920
+#: admin/class-email-queue-list.php:186
 msgid "Filtrar"
 msgstr ""
 
@@ -213,13 +213,13 @@ msgid "Asistencia:"
 msgstr ""
 
 #: admin/class-admin-checkin.php:173
-#: admin/class-admin-monitor-crm.php:525
+#: admin/class-admin-monitor-crm.php:527
 msgid "Participante"
 msgstr ""
 
 #: admin/class-admin-checkin.php:174
-#: admin/class-admin-monitor-crm.php:527
-#: admin/class-admin-page.php:778
+#: admin/class-admin-monitor-crm.php:529
+#: admin/class-admin-page.php:780
 #: admin/class-admin-settings.php:64
 #: admin/class-email-queue-list.php:46
 msgid "Estado"
@@ -230,7 +230,7 @@ msgid "Pago"
 msgstr ""
 
 #: admin/class-admin-checkin.php:176
-#: admin/class-admin-monitor-crm.php:532
+#: admin/class-admin-monitor-crm.php:534
 #: admin/class-admin-page.php:143
 #: admin/class-admin-page.php:144
 #: includes/Checkin_PWA.php:86
@@ -246,12 +246,12 @@ msgid "Ver ficha"
 msgstr ""
 
 #: admin/class-admin-checkin.php:219
-#: admin/class-admin-page.php:727
+#: admin/class-admin-page.php:729
 msgid "Registrado"
 msgstr ""
 
 #: admin/class-admin-checkin.php:219
-#: admin/class-admin-page.php:727
+#: admin/class-admin-page.php:729
 msgid "Pendiente"
 msgstr ""
 
@@ -276,28 +276,28 @@ msgstr ""
 #: admin/class-admin-evaluacion-fields.php:74
 #: admin/class-admin-evaluaciones-editor.php:144
 #: admin/class-admin-evaluaciones-meta-box.php:88
-#: public/class-formulario-evaluacion.php:172
+#: public/class-formulario-evaluacion.php:173
 msgid "Gestión y coordinación"
 msgstr ""
 
 #: admin/class-admin-evaluacion-fields.php:75
 #: admin/class-admin-evaluaciones-editor.php:145
 #: admin/class-admin-evaluaciones-meta-box.php:92
-#: public/class-formulario-evaluacion.php:173
+#: public/class-formulario-evaluacion.php:174
 msgid "Instalaciones / Espacio"
 msgstr ""
 
 #: admin/class-admin-evaluacion-fields.php:76
 #: admin/class-admin-evaluaciones-editor.php:146
 #: admin/class-admin-evaluaciones-meta-box.php:96
-#: admin/class-admin-reports.php:945
+#: admin/class-admin-reports.php:946
 msgid "Participantes"
 msgstr ""
 
 #: admin/class-admin-evaluacion-fields.php:77
 #: admin/class-admin-evaluaciones-editor.php:147
 #: admin/class-admin-evaluaciones-meta-box.php:100
-#: admin/class-admin-reports.php:946
+#: admin/class-admin-reports.php:947
 msgid "Comunicación"
 msgstr ""
 
@@ -335,9 +335,9 @@ msgid "Título"
 msgstr ""
 
 #: admin/class-admin-evaluaciones-list.php:38
-#: admin/class-admin-monitor-crm.php:159
-#: admin/class-admin-page.php:778
-#: admin/class-admin-reports.php:940
+#: admin/class-admin-monitor-crm.php:160
+#: admin/class-admin-page.php:780
+#: admin/class-admin-reports.php:941
 #: includes/CPT_Actividad.php:89
 #: media/class-poster-engine.php:322
 #: media/class-poster-engine.php:493
@@ -353,7 +353,7 @@ msgid "Puntuación Media"
 msgstr ""
 
 #: admin/class-admin-evaluaciones-list.php:41
-#: admin/class-admin-monitor-crm.php:160
+#: admin/class-admin-monitor-crm.php:161
 #: media/class-blog-post-manager.php:200
 #: media/class-poster-engine.php:501
 msgid "Fecha"
@@ -364,7 +364,7 @@ msgid "Usuario eliminado"
 msgstr ""
 
 #: admin/class-admin-evaluaciones-list.php:127
-#: admin/class-admin-reports.php:912
+#: admin/class-admin-reports.php:913
 msgid "Todas las actividades"
 msgstr ""
 
@@ -376,11 +376,13 @@ msgstr ""
 msgid "No hay evaluaciones para esta actividad todavía."
 msgstr ""
 
+#. translators: %d: number of evaluations
 #: admin/class-admin-evaluaciones-meta-box.php:80
 #, php-format
 msgid "Total evaluaciones: %d"
 msgstr ""
 
+#. translators: %d: number of evaluations
 #: admin/class-admin-evaluaciones-meta-box.php:81
 msgid "Media Global:"
 msgstr ""
@@ -389,22 +391,22 @@ msgstr ""
 msgid "Ver todas las evaluaciones"
 msgstr ""
 
-#: admin/class-admin-inscripcion-form.php:72
+#: admin/class-admin-inscripcion-form.php:73
 #: admin/class-admin-page.php:134
 #: admin/class-admin-page.php:135
 msgid "Añadir inscripción"
 msgstr ""
 
-#: admin/class-admin-inscripcion-form.php:78
+#: admin/class-admin-inscripcion-form.php:79
 msgid "Nueva Inscripción Manual"
 msgstr ""
 
-#: admin/class-admin-inscripcion-form.php:245
+#: admin/class-admin-inscripcion-form.php:246
 #: admin/class-admin-setup-wizard.php:208
 msgid "Sin permisos."
 msgstr ""
 
-#: admin/class-admin-inscripcion-form.php:251
+#: admin/class-admin-inscripcion-form.php:252
 msgid "No eres responsable de esta actividad."
 msgstr ""
 
@@ -567,151 +569,151 @@ msgstr ""
 msgid "No tienes permiso para exportar datos de esta actividad."
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:161
-#: admin/class-admin-page.php:778
+#: admin/class-admin-monitor-crm.php:162
+#: admin/class-admin-page.php:780
 msgid "Nombre"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:162
-#: admin/class-admin-page.php:778
+#: admin/class-admin-monitor-crm.php:163
+#: admin/class-admin-page.php:780
 msgid "Email"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:163
+#: admin/class-admin-monitor-crm.php:164
 msgid "Teléfono"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:164
+#: admin/class-admin-monitor-crm.php:165
 msgid "Estado Inscripción"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:165
+#: admin/class-admin-monitor-crm.php:166
 msgid "Asistencia"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:166
+#: admin/class-admin-monitor-crm.php:167
 msgid "Token Check-in"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:226
+#: admin/class-admin-monitor-crm.php:228
 msgid "Permission denied"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:235
+#: admin/class-admin-monitor-crm.php:237
 msgid "No responsable"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:275
+#: admin/class-admin-monitor-crm.php:277
 msgid "Panel de Control - Monitores"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:279
+#: admin/class-admin-monitor-crm.php:281
 msgid "Escáner QR Móvil"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:300
+#: admin/class-admin-monitor-crm.php:302
 msgid "No tienes actividades asignadas actualmente."
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:339
+#: admin/class-admin-monitor-crm.php:341
 msgid "Inscritos:"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:344
+#: admin/class-admin-monitor-crm.php:346
 msgid "En espera:"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:349
+#: admin/class-admin-monitor-crm.php:351
 msgid "Gestionar Actividad"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:368
+#: admin/class-admin-monitor-crm.php:370
 msgid "No tienes permiso para ver esta actividad."
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:379
+#: admin/class-admin-monitor-crm.php:381
 msgid "Volver"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:381
+#: admin/class-admin-monitor-crm.php:383
 msgid "Panel normal"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:383
+#: admin/class-admin-monitor-crm.php:385
 msgid "Modo Check-in Rápido"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:392
+#: admin/class-admin-monitor-crm.php:394
 msgid "plazas"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:413
+#: admin/class-admin-monitor-crm.php:415
 msgid "Exportar Asistentes"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:414
+#: admin/class-admin-monitor-crm.php:416
 msgid "Exportar Todas"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:467
+#: admin/class-admin-monitor-crm.php:469
 msgid "Confirmados"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:468
+#: admin/class-admin-monitor-crm.php:470
 msgid "Asistieron"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:469
+#: admin/class-admin-monitor-crm.php:471
 msgid "Faltaron"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:470
+#: admin/class-admin-monitor-crm.php:472
 msgid "Pendientes"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:475
+#: admin/class-admin-monitor-crm.php:477
 msgid "Check-in de Participantes"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:477
+#: admin/class-admin-monitor-crm.php:479
 msgid "No hay inscripciones confirmadas aún."
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:486
+#: admin/class-admin-monitor-crm.php:488
 msgid "Confirmar"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:495
-#: admin/class-admin-page.php:791
+#: admin/class-admin-monitor-crm.php:497
+#: admin/class-admin-page.php:793
 msgid "Listado de Inscripciones"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:503
+#: admin/class-admin-monitor-crm.php:505
 msgid "Lista de Espera"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:518
+#: admin/class-admin-monitor-crm.php:520
 msgid "No hay registros en esta sección."
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:526
+#: admin/class-admin-monitor-crm.php:528
 msgid "Contacto"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:529
+#: admin/class-admin-monitor-crm.php:531
 msgid "Posición"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:534
+#: admin/class-admin-monitor-crm.php:536
 #: admin/class-email-queue-list.php:49
 msgid "Acciones"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:592
+#: admin/class-admin-monitor-crm.php:594
 msgid "Promover"
 msgstr ""
 
-#: admin/class-admin-monitor-crm.php:592
+#: admin/class-admin-monitor-crm.php:594
 msgid "Validar"
 msgstr ""
 
@@ -771,7 +773,7 @@ msgstr ""
 
 #: admin/class-admin-page.php:191
 #: admin/class-admin-page.php:192
-#: admin/class-admin-page.php:800
+#: admin/class-admin-page.php:802
 msgid "Cola de Correos"
 msgstr ""
 
@@ -784,7 +786,7 @@ msgid "+ Nueva inscripción"
 msgstr ""
 
 #: admin/class-admin-page.php:329
-#: admin/class-admin-reports.php:935
+#: admin/class-admin-reports.php:936
 msgid "Exportar CSV"
 msgstr ""
 
@@ -797,12 +799,16 @@ msgid "Exportar PDF (PRO)"
 msgstr ""
 
 #: admin/class-admin-page.php:341
-#: admin/class-admin-page.php:803
+#: admin/class-admin-page.php:805
 msgid "Buscar"
 msgstr ""
 
 #: admin/class-admin-page.php:350
 msgid "Usa el menú estándar de WordPress para gestionar las actividades o mira el resumen aquí."
+msgstr ""
+
+#: admin/class-admin-page.php:378
+msgid "No tienes permisos para acceder a esta página."
 msgstr ""
 
 #: admin/class-admin-page.php:392
@@ -813,53 +819,55 @@ msgstr ""
 msgid "Guardar Asignaciones"
 msgstr ""
 
-#: admin/class-admin-page.php:464
+#. translators: %d: number of confirmed enrollments
+#: admin/class-admin-page.php:465
 #, php-format
 msgid "%d inscripciones confirmadas."
 msgstr ""
 
-#: admin/class-admin-page.php:470
+#. translators: %1$d: skipped due to capacity, %2$d: skipped due to non-confirmable state
+#: admin/class-admin-page.php:472
 #, php-format
 msgid "(%1$d saltadas por falta de aforo, %2$d por estado no confirmable)."
 msgstr ""
 
-#: admin/class-admin-page.php:619
+#: admin/class-admin-page.php:621
 msgid "Notas internas"
 msgstr ""
 
-#: admin/class-admin-page.php:622
+#: admin/class-admin-page.php:624
 msgid "Guardar nota"
 msgstr ""
 
-#: admin/class-admin-page.php:638
+#: admin/class-admin-page.php:640
 msgid "Guardando..."
 msgstr ""
 
-#: admin/class-admin-page.php:641
+#: admin/class-admin-page.php:643
 msgid "✓ Guardado"
 msgstr ""
 
-#: admin/class-admin-page.php:641
+#: admin/class-admin-page.php:643
 msgid "Error"
 msgstr ""
 
-#: admin/class-admin-page.php:642
+#: admin/class-admin-page.php:644
 msgid "Error de conexión"
 msgstr ""
 
-#: admin/class-admin-page.php:667
+#: admin/class-admin-page.php:669
 msgid "Sin permisos para esta inscripción."
 msgstr ""
 
-#: admin/class-admin-page.php:675
+#: admin/class-admin-page.php:677
 msgid "Estado no válido."
 msgstr ""
 
-#: admin/class-admin-page.php:758
+#: admin/class-admin-page.php:760
 msgid "Error al enviar el email."
 msgstr ""
 
-#: admin/class-admin-page.php:844
+#: admin/class-admin-page.php:846
 msgid "Nota guardada."
 msgstr ""
 
@@ -892,31 +900,31 @@ msgstr ""
 msgid "Informes de Inscripciones"
 msgstr ""
 
-#: admin/class-admin-reports.php:910
+#: admin/class-admin-reports.php:911
 msgid "Actividad:"
 msgstr ""
 
-#: admin/class-admin-reports.php:941
+#: admin/class-admin-reports.php:942
 msgid "Nº Evals"
 msgstr ""
 
-#: admin/class-admin-reports.php:942
+#: admin/class-admin-reports.php:943
 msgid "Media Global"
 msgstr ""
 
-#: admin/class-admin-reports.php:943
+#: admin/class-admin-reports.php:944
 msgid "Gestión"
 msgstr ""
 
-#: admin/class-admin-reports.php:944
+#: admin/class-admin-reports.php:945
 msgid "Instalaciones"
 msgstr ""
 
-#: admin/class-admin-reports.php:951
+#: admin/class-admin-reports.php:952
 msgid "No hay evaluaciones registradas."
 msgstr ""
 
-#: admin/class-admin-reports.php:1053
+#: admin/class-admin-reports.php:1056
 msgid "Enlace de exportación inválido o caducado."
 msgstr ""
 
@@ -1093,11 +1101,13 @@ msgstr ""
 msgid "Resultados de validación:"
 msgstr ""
 
+#. translators: %s: number of orphan records
 #: admin/class-admin-settings.php:240
 #, php-format
 msgid "Huérfanos: %s"
 msgstr ""
 
+#. translators: %s: number of capacity mismatches
 #: admin/class-admin-settings.php:241
 #, php-format
 msgid "Descuadres de plazas: %s"
@@ -1143,70 +1153,74 @@ msgstr ""
 msgid "Estado del Sistema"
 msgstr ""
 
-#: admin/class-admin-settings.php:911
+#. translators: %s: plugin name
+#: admin/class-admin-settings.php:912
 #, php-format
 msgid "Plugin: %s"
 msgstr ""
 
-#: admin/class-admin-settings.php:913
+#: admin/class-admin-settings.php:914
 msgid "Activo y funcionando."
 msgstr ""
 
-#: admin/class-admin-settings.php:913
+#: admin/class-admin-settings.php:914
 msgid "Plugin no detectado o inactivo."
 msgstr ""
 
-#: admin/class-admin-settings.php:914
+#. translators: %s: plugin name
+#: admin/class-admin-settings.php:916
 #, php-format
 msgid "Instala y activa el plugin %s."
 msgstr ""
 
-#: admin/class-admin-settings.php:921
+#: admin/class-admin-settings.php:923
 msgid "Página: Calendario de Actividades"
 msgstr ""
 
-#: admin/class-admin-settings.php:923
+#: admin/class-admin-settings.php:925
 msgid "Crea una página con el shortcode [convoca_calendario] para mostrar el listado de actividades."
 msgstr ""
 
-#: admin/class-admin-settings.php:926
+#: admin/class-admin-settings.php:928
 msgid "Página: Mis Inscripciones"
 msgstr ""
 
-#: admin/class-admin-settings.php:928
+#: admin/class-admin-settings.php:930
 msgid "Crea una página con el shortcode [convoca_mis_inscripciones] para que los usuarios vean sus reservas."
 msgstr ""
 
-#: admin/class-admin-settings.php:931
+#: admin/class-admin-settings.php:933
 msgid "Página: Control de Asistencia (Check-in)"
 msgstr ""
 
-#: admin/class-admin-settings.php:933
+#: admin/class-admin-settings.php:935
 msgid "Crea una página con el shortcode [convoca_checkin] para que los monitores registren la asistencia."
 msgstr ""
 
-#: admin/class-admin-settings.php:936
+#: admin/class-admin-settings.php:938
 msgid "Página: Pago de Actividad"
 msgstr ""
 
-#: admin/class-admin-settings.php:938
+#: admin/class-admin-settings.php:940
 msgid "Crea una página con el shortcode [convoca_pago_actividad] para procesar los pagos de inscripción."
 msgstr ""
 
-#: admin/class-admin-settings.php:941
+#: admin/class-admin-settings.php:943
 msgid "Página: Formulario de Evaluación"
 msgstr ""
 
-#: admin/class-admin-settings.php:943
+#: admin/class-admin-settings.php:945
 msgid "Crea una página con el shortcode [formulario_evaluacion] para que los monitores evalúen las actividades."
 msgstr ""
 
-#: admin/class-admin-settings.php:952
+#. translators: %s: page title
+#: admin/class-admin-settings.php:955
 #, php-format
 msgid "Detectada: %s"
 msgstr ""
 
-#: admin/class-admin-settings.php:952
+#. translators: %s: page title
+#: admin/class-admin-settings.php:955
 msgid "No se ha encontrado ninguna página con este shortcode."
 msgstr ""
 
@@ -1326,7 +1340,7 @@ msgstr ""
 
 #: admin/class-csv-exporter.php:43
 #: admin/class-csv-exporter.php:54
-#: includes/Checkin_Handler.php:68
+#: includes/Checkin_Handler.php:81
 msgid "Acceso Denegado"
 msgstr ""
 
@@ -1354,7 +1368,7 @@ msgstr ""
 msgid "Eliminar seleccionados"
 msgstr ""
 
-#: admin/class-email-queue-list.php:175
+#: admin/class-email-queue-list.php:177
 msgid "Todos"
 msgstr ""
 
@@ -1363,15 +1377,15 @@ msgid "Convoca Enroll requires Convoca Core to be active. Please activate Convoc
 msgstr ""
 
 #: convoca-enroll.php:144
-#: convoca-enroll.php:258
+#: convoca-enroll.php:253
 msgid "Monitor de Actividad"
 msgstr ""
 
-#: convoca-enroll.php:403
+#: convoca-enroll.php:398
 msgid "Cada minuto"
 msgstr ""
 
-#: convoca-enroll.php:409
+#: convoca-enroll.php:404
 msgid "Cada 7 días"
 msgstr ""
 
@@ -1383,74 +1397,76 @@ msgstr ""
 msgid "Sin lista de espera"
 msgstr ""
 
-#: includes/Block_Inscripcion.php:165
+#. translators: %d: number of people in waiting list
+#: includes/Block_Inscripcion.php:167
 #, php-format
 msgid "%d persona esperando plaza"
 msgid_plural "%d personas esperando plaza"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/Checkin_Handler.php:68
-#: includes/Checkin_Handler.php:601
+#: includes/Checkin_Handler.php:81
+#: includes/Checkin_Handler.php:615
 msgid "No tienes permisos para realizar check-in."
 msgstr ""
 
-#: includes/Checkin_Handler.php:92
-#: includes/Checkin_Handler.php:238
+#: includes/Checkin_Handler.php:105
+#: includes/Checkin_Handler.php:247
 #: includes/Checkin_PWA.php:85
 msgid "Check-in Convoca"
 msgstr ""
 
-#: includes/Checkin_Handler.php:239
+#: includes/Checkin_Handler.php:248
 msgid "Escáner de Asistencia"
 msgstr ""
 
-#: includes/Checkin_Handler.php:246
-#: includes/Checkin_Handler.php:319
-#: includes/Checkin_Handler.php:346
+#: includes/Checkin_Handler.php:255
+#: includes/Checkin_Handler.php:328
+#: includes/Checkin_Handler.php:355
 msgid "Escaneando..."
 msgstr ""
 
-#: includes/Checkin_Handler.php:263
+#: includes/Checkin_Handler.php:272
 msgid "Siguiente Escaneo"
 msgstr ""
 
-#: includes/Checkin_Handler.php:289
+#: includes/Checkin_Handler.php:298
 msgid "Procesando..."
 msgstr ""
 
-#: includes/Checkin_Handler.php:510
-#: includes/Checkin_Handler.php:527
+#: includes/Checkin_Handler.php:519
+#: includes/Checkin_Handler.php:536
 msgid "Token de check-in no válido."
 msgstr ""
 
-#: includes/Checkin_Handler.php:533
+#: includes/Checkin_Handler.php:542
 msgid "La inscripción no está confirmada."
 msgstr ""
 
-#: includes/Checkin_Handler.php:555
+#: includes/Checkin_Handler.php:564
 msgid "Error al procesar el check-in."
 msgstr ""
 
-#: includes/Checkin_Handler.php:566
+#: includes/Checkin_Handler.php:575
 msgid "Error de Check-in"
 msgstr ""
 
-#: includes/Checkin_Handler.php:584
+#. translators: %1$s: participant name, %2$s: activity title
+#: includes/Checkin_Handler.php:595
 #, php-format
 msgid "Check-in confirmado para %1$s en \"%2$s\"."
 msgstr ""
 
-#: includes/Checkin_Handler.php:585
+#: includes/Checkin_Handler.php:599
 msgid "Check-in Exitoso"
 msgstr ""
 
-#: includes/Checkin_Handler.php:627
+#: includes/Checkin_Handler.php:641
 #: includes/Rest_API.php:293
 msgid "No tienes permiso para gestionar esta actividad."
 msgstr ""
 
-#: includes/Checkin_Handler.php:634
+#: includes/Checkin_Handler.php:648
 msgid "Asistencia confirmada"
 msgstr ""
 
@@ -1586,7 +1602,7 @@ msgid "Fotos de la actividad"
 msgstr ""
 
 #: includes/Motor_Inscripcion.php:57
-#: public/class-formulario-evaluacion.php:257
+#: public/class-formulario-evaluacion.php:258
 msgid "Demasiados intentos. Inténtalo de nuevo más tarde."
 msgstr ""
 
@@ -1626,40 +1642,40 @@ msgstr ""
 msgid "Ya existe una inscripción activa para este DNI en esta actividad."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:256
+#: includes/Motor_Inscripcion.php:257
 msgid "No hay plazas disponibles."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:305
+#: includes/Motor_Inscripcion.php:306
 msgid "Error al procesar la inscripción."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:316
-#: includes/Motor_Inscripcion.php:632
+#: includes/Motor_Inscripcion.php:317
+#: includes/Motor_Inscripcion.php:635
 msgid "Inscripción no encontrada."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:366
+#: includes/Motor_Inscripcion.php:368
 msgid "Error al cancelar la inscripción."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:380
+#: includes/Motor_Inscripcion.php:382
 msgid "Solo se pueden confirmar inscripciones pendientes o en lista de espera."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:403
+#: includes/Motor_Inscripcion.php:406
 msgid "No hay plazas disponibles para confirmar esta inscripción."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:424
+#: includes/Motor_Inscripcion.php:427
 msgid "Error al confirmar la inscripción."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:518
+#: includes/Motor_Inscripcion.php:521
 msgid "Ya tienes una reserva activa. Cada persona solo puede realizar una única reserva de taller. Si quieres inscribir a un menor o persona a tu cargo, marca la opción correspondiente."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:637
+#: includes/Motor_Inscripcion.php:640
 msgid "Estado de asistencia no válido. Valores permitidos: si, no, no_registrada."
 msgstr ""
 
@@ -1771,6 +1787,7 @@ msgstr ""
 msgid "Imagen de la actividad"
 msgstr ""
 
+#. translators: %d: number of available spots
 #: media/class-poster-engine.php:501
 #: media/class-poster-engine.php:502
 #: media/class-poster-engine.php:503
@@ -1787,6 +1804,7 @@ msgstr ""
 msgid "Lugar"
 msgstr ""
 
+#. translators: %d: number of available spots
 #: media/class-poster-engine.php:504
 #, php-format
 msgid "%d plaza"
@@ -1794,6 +1812,7 @@ msgid_plural "%d plazas"
 msgstr[0] ""
 msgstr[1] ""
 
+#. translators: %d: number of available spots
 #: media/class-poster-engine.php:505
 msgid "Precio"
 msgstr ""
@@ -1810,12 +1829,13 @@ msgstr ""
 msgid "Apúntate"
 msgstr ""
 
-#: media/class-poster-engine.php:531
+#. translators: %s: error message
+#: media/class-poster-engine.php:532
 #, php-format
 msgid "Error generando el cartel: %s"
 msgstr ""
 
-#: media/class-poster-engine.php:534
+#: media/class-poster-engine.php:535
 msgid "No se pudo guardar el cartel generado."
 msgstr ""
 
@@ -1827,36 +1847,39 @@ msgstr ""
 msgid "Debe definir al menos una capa."
 msgstr ""
 
-#: media/class-template-manager.php:122
+#. translators: %d: layer number
+#: media/class-template-manager.php:123
 #, php-format
 msgid "Capa #%d: falta el tipo."
 msgstr ""
 
-#: media/class-template-manager.php:152
+#: media/class-template-manager.php:153
 msgid "El JSON debe contener name y config."
 msgstr ""
 
-#: media/class-template-manager.php:155
+#: media/class-template-manager.php:156
 msgid "config debe contener un array de layers."
 msgstr ""
 
-#: public/class-form-inscripcion.php:244
+#. translators: %s: PDF generation error message
+#: public/class-form-inscripcion.php:245
 #, php-format
 msgid "La inscripción se ha iniciado, pero hubo un problema al generar el documento de compromiso: %s. Podrás completarlo más tarde."
 msgstr ""
 
-#: public/class-form-inscripcion.php:282
+#. translators: %s: PDF generation error message
+#: public/class-form-inscripcion.php:284
 #, php-format
 msgid "Inscripción realizada, pero hubo un problema al generar el documento de compromiso: %s. Por favor, contacta con nosotros si lo necesitas."
 msgstr ""
 
 #: public/class-formulario-evaluacion.php:72
-#: public/class-formulario-evaluacion.php:273
+#: public/class-formulario-evaluacion.php:274
 msgid "ID de actividad no válido o inexistente."
 msgstr ""
 
 #: public/class-formulario-evaluacion.php:77
-#: public/class-formulario-evaluacion.php:278
+#: public/class-formulario-evaluacion.php:279
 msgid "Esta actividad aún no ha finalizado y no puede ser evaluada."
 msgstr ""
 
@@ -1872,97 +1895,99 @@ msgstr ""
 msgid "No tienes permisos para evaluar esta actividad o no consta tu asistencia."
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:162
+#. translators: %s: activity title
+#: public/class-formulario-evaluacion.php:163
 #, php-format
 msgid "Evaluar Actividad: %s"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:169
+#: public/class-formulario-evaluacion.php:170
 msgid "1. Valoraciones numéricas"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:170
+#: public/class-formulario-evaluacion.php:171
 msgid "Valora del 1 al 5 (1 = Muy insatisfecho, 5 = Muy satisfecho)"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:174
+#: public/class-formulario-evaluacion.php:175
 msgid "Grupo participante"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:175
+#: public/class-formulario-evaluacion.php:176
 msgid "Comunicación con el equipo"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:179
+#: public/class-formulario-evaluacion.php:180
 msgid "2. Comentarios y sugerencias"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:182
+#: public/class-formulario-evaluacion.php:183
 msgid "Cuéntanos brevemente tu experiencia"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:187
+#: public/class-formulario-evaluacion.php:188
 msgid "¿Has necesitado algo que no te hayan facilitado?"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:192
+#: public/class-formulario-evaluacion.php:193
 msgid "¿Qué mejorarías en la gestión?"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:197
+#: public/class-formulario-evaluacion.php:198
 msgid "¿Qué mejorarías del espacio/instalaciones?"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:202
+#: public/class-formulario-evaluacion.php:203
 msgid "Comentarios sobre el público o dinámica"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:207
+#: public/class-formulario-evaluacion.php:208
 msgid "Aspectos positivos (lo mejor de la actividad)"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:212
+#: public/class-formulario-evaluacion.php:213
 msgid "Aspectos a mejorar"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:217
+#: public/class-formulario-evaluacion.php:218
 msgid "Otros comentarios o sugerencias"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:225
+#. translators: %s: site name
+#: public/class-formulario-evaluacion.php:226
 #, php-format
 msgid "Acepto que mi evaluación sea tratada según la política de privacidad de %s. Los datos se utilizarán internamente para mejorar las actividades."
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:230
+#: public/class-formulario-evaluacion.php:231
 msgid "Enviar Evaluación"
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:261
+#: public/class-formulario-evaluacion.php:262
 msgid "Debes iniciar sesión."
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:268
+#: public/class-formulario-evaluacion.php:269
 msgid "Actividad no válida."
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:300
+#: public/class-formulario-evaluacion.php:301
 msgid "Ya has enviado una evaluación para esta actividad."
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:306
+#: public/class-formulario-evaluacion.php:307
 msgid "Estamos procesando tu solicitud, por favor espera."
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:316
+#: public/class-formulario-evaluacion.php:317
 msgid "Por favor, completa todas las valoraciones numéricas (de 1 a 5 estrellas)."
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:333
+#: public/class-formulario-evaluacion.php:334
 msgid "Error al guardar la evaluación."
 msgstr ""
 
-#: public/class-formulario-evaluacion.php:363
+#: public/class-formulario-evaluacion.php:364
 msgid "Evaluación enviada con éxito. ¡Gracias por tu colaboración!"
 msgstr ""
 
@@ -2020,7 +2045,7 @@ msgstr ""
 msgid "Actividad no disponible"
 msgstr ""
 
-#: templates/form-inscripcion.php:68
+#: templates/form-inscripcion.php:52
 msgid "📋 Normas de inscripción"
 msgstr ""
 
