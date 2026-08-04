@@ -59,7 +59,7 @@ class Inscriptions_List extends \WP_List_Table {
 
 	public function get_columns(): array {
 		return array(
-			'cb'             => '<input type="checkbox" />',
+			'cb'             => __( '<input type="checkbox" />', 'convoca-enroll' ),
 			'nombre'         => 'Nombre',
 			'email'          => 'Email',
 			'dni'            => 'DNI',
@@ -98,7 +98,7 @@ class Inscriptions_List extends \WP_List_Table {
 
 		// Estado filter.
 		echo '<select name="estado_filter">';
-		echo '<option value="">— Estado —</option>';
+		echo '<option value="">' . esc_html__( '— Estado —', 'convoca-enroll' ) . '</option>';
 		foreach ( CPT_Inscripcion::LABELS as $key => $label ) {
 			$sel = selected( $estado_filter, $key, false );
 			echo "<option value='" . esc_attr( $key ) . "' " . selected( $estado_filter, $key, false ) . ">" . esc_html( $label ) . '</option>';
@@ -118,7 +118,7 @@ class Inscriptions_List extends \WP_List_Table {
 		$acts = get_posts( $acts_args );
 
 		echo '<select name="actividad_filter">';
-		echo '<option value="">— Actividad —</option>';
+		echo '<option value="">' . esc_html__( '— Actividad —', 'convoca-enroll' ) . '</option>';
 		foreach ( $acts as $a ) {
 			$sel = selected( $actividad_filter, $a->ID, false );
 			echo "<option value='" . esc_attr( $a->ID ) . "' " . selected( $actividad_filter, $a->ID, false ) . ">" . esc_html( $a->post_title ) . '</option>';
@@ -128,9 +128,9 @@ class Inscriptions_List extends \WP_List_Table {
 		// Doc Voluntario filter.
 		$doc_filter = wp_unslash( $_GET['doc_filter'] ?? '' );
 		echo '<select name="doc_filter">';
-		echo '<option value="">— Doc. Voluntario —</option>';
-		echo '<option value="pendiente" ' . selected( $doc_filter, 'pendiente', false ) . '>Pendiente</option>';
-		echo '<option value="firmado" ' . selected( $doc_filter, 'firmado', false ) . '>Firmado</option>';
+		echo '<option value="">' . esc_html__( '— Doc. Voluntario —', 'convoca-enroll' ) . '</option>';
+		echo '<option value="pendiente" ' . selected( $doc_filter, 'pendiente', false ) . '>' . esc_html__( 'Pendiente', 'convoca-enroll' ) . '</option>';
+		echo '<option value="firmado" ' . selected( $doc_filter, 'firmado', false ) . '>' . esc_html__( 'Firmado', 'convoca-enroll' ) . '</option>';
 		echo '</select>';
 
 		submit_button( 'Filtrar', 'secondary', 'filter_action', false );
@@ -351,12 +351,12 @@ class Inscriptions_List extends \WP_List_Table {
 	public function column_asistencia( $item ): string {
 		$status = CPT_Inscripcion::get_meta( $item->ID, 'asistencia' );
 		if ( $status === 'si' ) {
-			return '<span class="convoca-badge convoca-badge--success">Asistió</span>';
+			return '<span class="convoca-badge convoca-badge--success">' . esc_html__( 'Asistió', 'convoca-enroll' ) . '</span>';
 		}
 		if ( $status === 'no' ) {
-			return '<span class="convoca-badge convoca-badge--error">No asistió</span>';
+			return '<span class="convoca-badge convoca-badge--error">' . esc_html__( 'No asistió', 'convoca-enroll' ) . '</span>';
 		}
-		return '<span class="convoca-badge convoca-badge--info">Sin registrar</span>';
+		return '<span class="convoca-badge convoca-badge--info">' . esc_html__( 'Sin registrar', 'convoca-enroll' ) . '</span>';
 	}
 
 	public function column_doc_voluntario( $item ): string {
@@ -395,7 +395,7 @@ class Inscriptions_List extends \WP_List_Table {
 		if ( $doc_id ) {
 			$url = get_post_meta( $doc_id, '_convoca_documento_url', true );
 			if ( $url ) {
-				return '<a href="' . esc_url( $url ) . '" target="_blank" class="button button-small">✅ Firmado</a>';
+				return '<a href="' . esc_url( $url ) . '" target="_blank" class="button button-small">' . esc_html__( '✅ Firmado', 'convoca-enroll' ) . '</a>';
 			}
 			return '✅ Firmado';
 		}
@@ -413,10 +413,10 @@ class Inscriptions_List extends \WP_List_Table {
 		}
 
 		if ( $is_voluntario && ! empty( $fecha_fin ) ) {
-			return '<span style="color:#e53e3e;font-weight:bold;">⏳ Pendiente</span>';
+			return '<span style="color:#e53e3e;font-weight:bold;">' . esc_html__( '⏳ Pendiente', 'convoca-enroll' ) . '</span>';
 		}
 
-		return '<span style="color:#999">❌ N/A</span>';
+		return '<span style="color:#999">' . esc_html__( '❌ N/A', 'convoca-enroll' ) . '</span>';
 	}
 
 	public function column_email( $item ): string {
@@ -442,7 +442,7 @@ class Inscriptions_List extends \WP_List_Table {
 	public function column_whatsapp( $item ): string {
 		$has_wa = CPT_Inscripcion::get_meta( $item->ID, 'whatsapp' );
 		if ( $has_wa === 'no' ) {
-			return '<span style="color:#999">No</span>';
+			return '<span style="color:#999">' . esc_html__( 'No', 'convoca-enroll' ) . '</span>';
 		}
 
 		$wa_url = $this->build_whatsapp_link( $item->ID );

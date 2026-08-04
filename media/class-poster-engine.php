@@ -349,7 +349,7 @@ class Poster_Engine {
 			'muted'       => $v[3],
 			'accent'      => $accent_color,
 			'accent_text' => $accent_text,
-			'panel'       => 'rgba(255,255,255,0.94)',
+			'panel'       => __( 'rgba(255,255,255,0.94)', 'convoca-enroll' ),
 		);
 	}
 

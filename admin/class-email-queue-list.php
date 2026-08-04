@@ -40,7 +40,7 @@ class Email_Queue_List extends \WP_List_Table {
 
 	public function get_columns(): array {
 		return array(
-			'cb'         => '<input type="checkbox">',
+			'cb'         => __( '<input type="checkbox">', 'convoca-enroll' ),
 			'recipient'  => __( 'Destinatario', 'convoca-enroll' ),
 			'subject'    => __( 'Asunto', 'convoca-enroll' ),
 			'status'     => __( 'Estado', 'convoca-enroll' ),

@@ -74,15 +74,15 @@ class Admin_Media_Subpages {
 		$success  = sanitize_text_field( $_GET['convoca_success'] ?? '' );
 
 		$error_msgs   = array(
-			'oauth_denied'  => 'Autorización cancelada por el usuario.',
-			'csrf'          => 'Error de seguridad: state inválido. Intenta de nuevo.',
-			'token_failed'  => 'Error al obtener el token de acceso.',
-			'meta_no_app'   => 'Meta App ID no configurado. Define CONVOCA_META_APP_ID y CONVOCA_META_APP_SECRET en wp-config.php.',
-			'google_no_app' => 'Google Client ID no configurado. Define CONVOCA_GOOGLE_CLIENT_ID y CONVOCA_GOOGLE_CLIENT_SECRET en wp-config.php.',
-			'no_pages'      => 'Conectado pero no se encontraron páginas de Facebook. Crea una página primero.',
+			'oauth_denied'  => __( 'Autorización cancelada por el usuario.', 'convoca-enroll' ),
+			'csrf'          => __( 'Error de seguridad: state inválido. Intenta de nuevo.', 'convoca-enroll' ),
+			'token_failed'  => __( 'Error al obtener el token de acceso.', 'convoca-enroll' ),
+			'meta_no_app'   => __( 'Meta App ID no configurado. Define CONVOCA_META_APP_ID y CONVOCA_META_APP_SECRET en wp-config.php.', 'convoca-enroll' ),
+			'google_no_app' => __( 'Google Client ID no configurado. Define CONVOCA_GOOGLE_CLIENT_ID y CONVOCA_GOOGLE_CLIENT_SECRET en wp-config.php.', 'convoca-enroll' ),
+			'no_pages'      => __( 'Conectado pero no se encontraron páginas de Facebook. Crea una página primero.', 'convoca-enroll' ),
 		);
 		$success_msgs = array(
-			'connected' => '✅ Cuenta(s) conectada(s) correctamente.',
+			'connected' => __( '✅ Cuenta(s) conectada(s) correctamente.', 'convoca-enroll' ),
 		);
 		?>
 		<div class="wrap">

@@ -135,7 +135,7 @@ class Media_Rest_API {
 	public function get_template( \WP_REST_Request $request ): \WP_REST_Response {
 		$tpl = Template_Manager::get( (int) $request->get_param( 'id' ) );
 		if ( ! $tpl ) {
-			return new \WP_REST_Response( array( 'error' => 'Template not found' ), 404 );
+			return new \WP_REST_Response( array( 'error' => __( 'Template not found', 'convoca-enroll' ) ), 404 );
 		}
 		return new \WP_REST_Response( $tpl, 200 );
 	}

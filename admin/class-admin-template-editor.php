@@ -146,7 +146,7 @@ class Admin_Template_Editor {
 	public function ajax_save(): void {
 		check_ajax_referer( 'convoca_editor', 'nonce' );
 		if ( ! current_user_can( 'convoca_manage_media' ) ) {
-			wp_send_json_error( array( 'message' => 'Sin permisos.' ) );
+			wp_send_json_error( array( 'message' => __( 'Sin permisos.', 'convoca-enroll' ) ) );
 		}
 
 		$slug  = sanitize_text_field( $_POST['slug'] ?? '' );
@@ -174,7 +174,7 @@ class Admin_Template_Editor {
 	public function ajax_export(): void {
 		check_ajax_referer( 'convoca_editor', 'nonce' );
 		if ( ! current_user_can( 'convoca_manage_media' ) ) {
-			wp_send_json_error( array( 'message' => 'Sin permisos.' ) );
+			wp_send_json_error( array( 'message' => __( 'Sin permisos.', 'convoca-enroll' ) ) );
 		}
 		$slug = sanitize_text_field( $_POST['slug'] ?? '' );
 		$data = Template_Manager::export_json( $slug );
@@ -187,7 +187,7 @@ class Admin_Template_Editor {
 	public function ajax_import(): void {
 		check_ajax_referer( 'convoca_editor', 'nonce' );
 		if ( ! current_user_can( 'convoca_manage_media' ) ) {
-			wp_send_json_error( array( 'message' => 'Sin permisos.' ) );
+			wp_send_json_error( array( 'message' => __( 'Sin permisos.', 'convoca-enroll' ) ) );
 		}
 
 		if ( empty( $_FILES['json_file'] ) || $_FILES['json_file']['error'] !== UPLOAD_ERR_OK ) {

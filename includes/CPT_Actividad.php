@@ -646,7 +646,7 @@ class CPT_Actividad {
 	public function render_google_photos_metabox( \WP_Post $post ): void {
 		$settings = get_option( 'convoca_enroll_settings', array() );
 		if ( empty( $settings['google_photos_enabled'] ) ) {
-			echo '<p>La integración con Google Photos está desactivada.</p>';
+			echo '<p>' . esc_html__( 'La integración con Google Photos está desactivada.', 'convoca-enroll' ) . '</p>';
 			return;
 		}
 
@@ -669,7 +669,7 @@ class CPT_Actividad {
 				echo '<p><a href="' . esc_url( $album_url ) . '" target="_blank">Ver álbum</a></p>';
 			}
 			if ( $album_shared ) {
-				echo '<p style="color:green;">✓ Compartido con participantes</p>';
+				echo '<p style="color:green;">' . esc_html__( '✓ Compartido con participantes', 'convoca-enroll' ) . '</p>';
 			} else {
 				echo '<p><button type="button" class="button" onclick="bdeShareAlbum(' . esc_attr( $post->ID ) . ')">Compartir con participantes</button></p>';
 			}
@@ -760,7 +760,7 @@ class CPT_Actividad {
 		check_ajax_referer( 'convoca_enroll_google_photos_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'edit_post', $_POST['activity_id'] ) ) {
-			wp_send_json_error( 'Sin permisos' );
+			wp_send_json_error( __( 'Sin permisos', 'convoca-enroll' ) );
 		}
 
 		$actividad_id  = absint( $_POST['activity_id'] );
@@ -785,7 +785,7 @@ class CPT_Actividad {
 		check_ajax_referer( 'convoca_enroll_google_photos_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'edit_post', $_POST['activity_id'] ) ) {
-			wp_send_json_error( 'Sin permisos' );
+			wp_send_json_error( __( 'Sin permisos', 'convoca-enroll' ) );
 		}
 
 		$actividad_id  = absint( $_POST['activity_id'] );
@@ -814,12 +814,12 @@ class CPT_Actividad {
 
 		$activity_id = absint( $_POST['activity_id'] ?? 0 );
 		if ( ! current_user_can( 'edit_post', $activity_id ) ) {
-			wp_send_json_error( 'Permisos insuficientes.' );
+			wp_send_json_error( __( 'Permisos insuficientes.', 'convoca-enroll' ) );
 		}
 		$calendar = new Google_Calendar();
 
 		if ( ! $calendar->is_configured() ) {
-			wp_send_json_error( 'La integración con Google Calendar no está configurada.' );
+			wp_send_json_error( __( 'La integración con Google Calendar no está configurada.', 'convoca-enroll' ) );
 		}
 
 		$result = $calendar->sync_event( $activity_id );
@@ -839,12 +839,12 @@ class CPT_Actividad {
 
 		$activity_id = absint( $_POST['activity_id'] ?? 0 );
 		if ( ! current_user_can( 'edit_post', $activity_id ) ) {
-			wp_send_json_error( 'Permisos insuficientes.' );
+			wp_send_json_error( __( 'Permisos insuficientes.', 'convoca-enroll' ) );
 		}
 		$calendar = new Google_Calendar();
 
 		if ( ! $calendar->is_configured() ) {
-			wp_send_json_error( 'La integración con Google Calendar no está configurada.' );
+			wp_send_json_error( __( 'La integración con Google Calendar no está configurada.', 'convoca-enroll' ) );
 		}
 
 		$event_id = get_post_meta( $activity_id, '_convoca_google_event_id', true );

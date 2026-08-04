@@ -64,7 +64,7 @@ class Poster_Layout_Validator {
         // Check collaborator logos
         $has_brands = strpos($html, 'poster-brands-footer') !== false;
         if ( ! $has_brands ) {
-            $issues[] = ['type' => 'missing_brands', 'severity' => 'info', 'msg' => 'No collaborator logos'];
+            $issues[] = ['type' => 'missing_brands', 'severity' => 'info', 'msg' => __( 'No collaborator logos', 'convoca-enroll' )];
         }
         
         // Check subtitle
@@ -89,7 +89,7 @@ class Poster_Layout_Validator {
         
         // Check box-sizing
         if ( strpos($html, 'box-sizing:border-box') === false ) {
-            $issues[] = ['type' => 'missing_box_sizing', 'severity' => 'error', 'msg' => 'Missing box-sizing:border-box'];
+            $issues[] = ['type' => 'missing_box_sizing', 'severity' => 'error', 'msg' => __( 'Missing box-sizing:border-box', 'convoca-enroll' )];
         }
         
         // Score calculation

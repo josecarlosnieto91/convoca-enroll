@@ -47,7 +47,7 @@ class Meta_Provider implements Social_Provider_Interface {
 	}
 
 	public function authenticate( string $auth_code ): array {
-		return array( 'success' => false, 'message' => 'Usa los endpoints REST /social/auth/meta' );
+		return array( 'success' => false, 'message' => __( 'Usa los endpoints REST /social/auth/meta', 'convoca-enroll' ) );
 	}
 
 	/**
@@ -61,7 +61,7 @@ class Meta_Provider implements Social_Provider_Interface {
 		// Idempotency lock: prevent concurrent duplicate publishing.
 		$lock_key = 'convoca_lock_' . md5( $message . $poster_url . 'meta' );
 		if ( get_transient( $lock_key ) ) {
-			return array( 'success' => false, 'message' => 'Ya hay una publicación en curso para este contenido (lock activo).' );
+			return array( 'success' => false, 'message' => __( 'Ya hay una publicación en curso para este contenido (lock activo).', 'convoca-enroll' ) );
 		}
 		set_transient( $lock_key, time(), 300 ); // 5 min lock
 
@@ -75,11 +75,11 @@ class Meta_Provider implements Social_Provider_Interface {
 				'link'    => $link_url,
 			);
 			error_log( '[CONVOCA DRY-RUN] Meta payload: ' . wp_json_encode( $payload ) );
-			return array( 'success' => true, 'message' => '[DRY-RUN] Simulated', 'id' => 'dry_' . time() );
+			return array( 'success' => true, 'message' => __( '[DRY-RUN] Simulated', 'convoca-enroll' ), 'id' => 'dry_' . time() );
 		}
 
 		if ( empty( $this->access_token ) ) {
-			return array( 'success' => false, 'message' => 'Token no disponible. Reconecta la cuenta.' );
+			return array( 'success' => false, 'message' => __( 'Token no disponible. Reconecta la cuenta.', 'convoca-enroll' ) );
 		}
 
 		$results = array();
@@ -143,7 +143,7 @@ class Meta_Provider implements Social_Provider_Interface {
 
 		if ( is_wp_error( $response ) ) {
 			\Convoca\Enroll\Social\Social_Payload::log_api_error( 'meta_facebook', $response, $endpoint );
-			return array( 'success' => false, 'message' => 'Facebook: ' . $response->get_error_message() );
+			return array( 'success' => false, 'message' => __( 'Facebook: ', 'convoca-enroll' ) . $response->get_error_message() );
 		}
 
 		$code   = wp_remote_retrieve_response_code( $response );
@@ -165,7 +165,7 @@ class Meta_Provider implements Social_Provider_Interface {
 			return array( 'success' => false, 'message' => "Facebook: $err" );
 		}
 
-		return array( 'success' => true, 'message' => 'Facebook OK', 'id' => $result['id'] ?? '' );
+		return array( 'success' => true, 'message' => __( 'Facebook OK', 'convoca-enroll' ), 'id' => $result['id'] ?? '' );
 	}
 
 	/**
@@ -176,7 +176,7 @@ class Meta_Provider implements Social_Provider_Interface {
 			$this->ig_user_id = $this->discover_instagram();
 		}
 		if ( ! $this->ig_user_id ) {
-			return array( 'success' => false, 'message' => 'Instagram: no hay cuenta de Instagram Business vinculada a esta página.' );
+			return array( 'success' => false, 'message' => __( 'Instagram: no hay cuenta de Instagram Business vinculada a esta página.', 'convoca-enroll' ) );
 		}
 
 		// Step 1: Create media container.
@@ -190,7 +190,7 @@ class Meta_Provider implements Social_Provider_Interface {
 		) );
 
 		if ( is_wp_error( $create ) ) {
-			return array( 'success' => false, 'message' => 'Instagram: ' . $create->get_error_message() );
+			return array( 'success' => false, 'message' => __( 'Instagram: ', 'convoca-enroll' ) . $create->get_error_message() );
 		}
 
 		$create_body = json_decode( wp_remote_retrieve_body( $create ), true );
@@ -200,7 +200,7 @@ class Meta_Provider implements Social_Provider_Interface {
 
 		$media_id = $create_body['id'] ?? '';
 		if ( ! $media_id ) {
-			return array( 'success' => false, 'message' => 'Instagram: no se obtuvo ID del media container.' );
+			return array( 'success' => false, 'message' => __( 'Instagram: no se obtuvo ID del media container.', 'convoca-enroll' ) );
 		}
 
 		// Step 2: Publish the container.
@@ -215,7 +215,7 @@ class Meta_Provider implements Social_Provider_Interface {
 		) );
 
 		if ( is_wp_error( $publish ) ) {
-			return array( 'success' => false, 'message' => 'Instagram: ' . $publish->get_error_message() );
+			return array( 'success' => false, 'message' => __( 'Instagram: ', 'convoca-enroll' ) . $publish->get_error_message() );
 		}
 
 		$pub_body = json_decode( wp_remote_retrieve_body( $publish ), true );
@@ -223,7 +223,7 @@ class Meta_Provider implements Social_Provider_Interface {
 			return array( 'success' => false, 'message' => "Instagram: {$pub_body['error']['message']}" );
 		}
 
-		return array( 'success' => true, 'message' => 'Instagram OK', 'id' => $pub_body['id'] ?? '' );
+		return array( 'success' => true, 'message' => __( 'Instagram OK', 'convoca-enroll' ), 'id' => $pub_body['id'] ?? '' );
 	}
 
 	/**

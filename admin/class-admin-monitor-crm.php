@@ -572,7 +572,7 @@ class Admin_Monitor_CRM {
 					echo '<button class="attendance-btn mark-attendance ' . ( $asistencia === '0' ? 'active' : '' ) . '" data-status="0" title="No ha venido">❌</button>';
 					echo '</div>';
 				} else {
-					echo '<span style="color:#cbd5e1;">&mdash;</span>';
+					echo '<span style="color:#cbd5e1;">' . esc_html__( '&mdash;', 'convoca-enroll' ) . '</span>';
 				}
 				echo '</td>';
 			}

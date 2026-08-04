@@ -253,7 +253,7 @@ class Admin_Media_Dashboard {
 		$post_id  = (int) ( wp_unslash( $_POST['post_id'] ?? 0 ) );
 		$network  = sanitize_text_field( wp_unslash( $_POST['network'] ?? '' ) );
 		if ( ! current_user_can( 'convoca_manage_media' ) || ! $post_id || ! $network ) {
-			wp_send_json_error( array( 'message' => 'Permiso denegado' ) );
+			wp_send_json_error( array( 'message' => __( 'Permiso denegado', 'convoca-enroll' ) ) );
 		}
 
 		$message   = \Convoca\Enroll\Social\Social_Payload::build_message( $post_id );
@@ -284,7 +284,7 @@ class Admin_Media_Dashboard {
 		$status  = sanitize_text_field( wp_unslash( $_POST['status'] ?? 'draft' ) );
 
 		if ( ! current_user_can( 'convoca_manage_media' ) || ! $post_id ) {
-			wp_send_json_error( array( 'message' => 'Permiso denegado' ) );
+			wp_send_json_error( array( 'message' => __( 'Permiso denegado', 'convoca-enroll' ) ) );
 		}
 
 		$result = Blog_Post_Manager::create_or_update( $post_id, null, $status );
@@ -374,7 +374,7 @@ class Admin_Media_Dashboard {
 		$image_id    = absint( $_POST['image_id'] ?? 0 );
 
 		if ( ! current_user_can( 'convoca_manage_media' ) || ! $post_id ) {
-			wp_send_json_error( array( 'message' => 'Permiso denegado' ) );
+			wp_send_json_error( array( 'message' => __( 'Permiso denegado', 'convoca-enroll' ) ) );
 		}
 
 		update_post_meta( $post_id, '_convoca_poster_last_format', $format );

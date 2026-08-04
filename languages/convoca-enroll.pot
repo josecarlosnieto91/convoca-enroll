@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-04T22:40:35+00:00\n"
+"POT-Creation-Date: 2026-08-04T23:00:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-enroll\n"
@@ -171,6 +171,7 @@ msgstr ""
 #: includes/PDF_Compromiso.php:91
 #: includes/Rest_API.php:219
 #: media/class-blog-post-manager.php:67
+#: public/class-form-inscripcion.php:66
 msgid "Actividad no encontrada."
 msgstr ""
 
@@ -251,6 +252,7 @@ msgid "Registrado"
 msgstr ""
 
 #: admin/class-admin-checkin.php:219
+#: admin/class-admin-inscripciones.php:132
 #: admin/class-admin-page.php:729
 msgid "Pendiente"
 msgstr ""
@@ -402,7 +404,12 @@ msgid "Nueva Inscripción Manual"
 msgstr ""
 
 #: admin/class-admin-inscripcion-form.php:246
+#: admin/class-admin-page.php:717
+#: admin/class-admin-page.php:750
 #: admin/class-admin-setup-wizard.php:208
+#: admin/class-admin-template-editor.php:149
+#: admin/class-admin-template-editor.php:177
+#: admin/class-admin-template-editor.php:190
 msgid "Sin permisos."
 msgstr ""
 
@@ -410,8 +417,28 @@ msgstr ""
 msgid "No eres responsable de esta actividad."
 msgstr ""
 
+#: admin/class-admin-inscripciones.php:62
+msgid "<input type=\"checkbox\" />"
+msgstr ""
+
 #: admin/class-admin-inscripciones.php:87
 msgid "Confirmar plazas"
+msgstr ""
+
+#: admin/class-admin-inscripciones.php:101
+msgid "— Estado —"
+msgstr ""
+
+#: admin/class-admin-inscripciones.php:121
+msgid "— Actividad —"
+msgstr ""
+
+#: admin/class-admin-inscripciones.php:131
+msgid "— Doc. Voluntario —"
+msgstr ""
+
+#: admin/class-admin-inscripciones.php:133
+msgid "Firmado"
 msgstr ""
 
 #: admin/class-admin-inscripciones.php:332
@@ -420,6 +447,34 @@ msgstr ""
 
 #: admin/class-admin-inscripciones.php:345
 msgid "Tarjeta Socio"
+msgstr ""
+
+#: admin/class-admin-inscripciones.php:354
+msgid "Asistió"
+msgstr ""
+
+#: admin/class-admin-inscripciones.php:357
+msgid "No asistió"
+msgstr ""
+
+#: admin/class-admin-inscripciones.php:359
+msgid "Sin registrar"
+msgstr ""
+
+#: admin/class-admin-inscripciones.php:398
+msgid "✅ Firmado"
+msgstr ""
+
+#: admin/class-admin-inscripciones.php:416
+msgid "⏳ Pendiente"
+msgstr ""
+
+#: admin/class-admin-inscripciones.php:419
+msgid "❌ N/A"
+msgstr ""
+
+#: admin/class-admin-inscripciones.php:445
+msgid "No"
 msgstr ""
 
 #: admin/class-admin-logs.php:86
@@ -503,12 +558,46 @@ msgstr ""
 msgid "Ver logs"
 msgstr ""
 
+#: admin/class-admin-media-dashboard.php:256
+#: admin/class-admin-media-dashboard.php:287
+#: admin/class-admin-media-dashboard.php:377
+msgid "Permiso denegado"
+msgstr ""
+
 #: admin/class-admin-media-pages.php:47
 msgid "Cola de publicaciones"
 msgstr ""
 
 #: admin/class-admin-media-pages.php:64
 msgid "No hay publicaciones en la cola."
+msgstr ""
+
+#: admin/class-admin-media-pages.php:77
+msgid "Autorización cancelada por el usuario."
+msgstr ""
+
+#: admin/class-admin-media-pages.php:78
+msgid "Error de seguridad: state inválido. Intenta de nuevo."
+msgstr ""
+
+#: admin/class-admin-media-pages.php:79
+msgid "Error al obtener el token de acceso."
+msgstr ""
+
+#: admin/class-admin-media-pages.php:80
+msgid "Meta App ID no configurado. Define CONVOCA_META_APP_ID y CONVOCA_META_APP_SECRET en wp-config.php."
+msgstr ""
+
+#: admin/class-admin-media-pages.php:81
+msgid "Google Client ID no configurado. Define CONVOCA_GOOGLE_CLIENT_ID y CONVOCA_GOOGLE_CLIENT_SECRET en wp-config.php."
+msgstr ""
+
+#: admin/class-admin-media-pages.php:82
+msgid "Conectado pero no se encontraron páginas de Facebook. Crea una página primero."
+msgstr ""
+
+#: admin/class-admin-media-pages.php:85
+msgid "✅ Cuenta(s) conectada(s) correctamente."
 msgstr ""
 
 #: admin/class-admin-media-pages.php:89
@@ -709,6 +798,10 @@ msgstr ""
 msgid "Acciones"
 msgstr ""
 
+#: admin/class-admin-monitor-crm.php:575
+msgid "&mdash;"
+msgstr ""
+
 #: admin/class-admin-monitor-crm.php:594
 msgid "Promover"
 msgstr ""
@@ -861,6 +954,15 @@ msgstr ""
 
 #: admin/class-admin-page.php:677
 msgid "Estado no válido."
+msgstr ""
+
+#: admin/class-admin-page.php:709
+#: admin/class-admin-page.php:742
+msgid "ID de inscripción no válido."
+msgstr ""
+
+#: admin/class-admin-page.php:758
+msgid "Email enviado correctamente."
 msgstr ""
 
 #: admin/class-admin-page.php:760
@@ -1113,6 +1215,10 @@ msgstr ""
 msgid "Descuadres de plazas: %s"
 msgstr ""
 
+#: admin/class-admin-settings.php:294
+msgid "conv[normas_inscripcion]"
+msgstr ""
+
 #: admin/class-admin-settings.php:307
 msgid "URL Política de Privacidad"
 msgstr ""
@@ -1135,6 +1241,26 @@ msgstr ""
 
 #: admin/class-admin-settings.php:324
 msgid "URL a la que apunta «aquí» en la frase «Puedes consultar la información completa sobre protección de datos y uso de imágenes aquí.»"
+msgstr ""
+
+#: admin/class-admin-settings.php:333
+msgid "Inscripción recibida"
+msgstr ""
+
+#: admin/class-admin-settings.php:335
+msgid "Promoción de lista de espera"
+msgstr ""
+
+#: admin/class-admin-settings.php:336
+msgid "Confirmación de plaza"
+msgstr ""
+
+#: admin/class-admin-settings.php:337
+msgid "Cancelación de reserva"
+msgstr ""
+
+#: admin/class-admin-settings.php:339
+msgid "Post-evento (feedback)"
 msgstr ""
 
 #: admin/class-admin-settings.php:379
@@ -1177,12 +1303,20 @@ msgstr ""
 msgid "Página: Calendario de Actividades"
 msgstr ""
 
+#: admin/class-admin-settings.php:924
+msgid "[convoca_calendario]"
+msgstr ""
+
 #: admin/class-admin-settings.php:925
 msgid "Crea una página con el shortcode [convoca_calendario] para mostrar el listado de actividades."
 msgstr ""
 
 #: admin/class-admin-settings.php:928
 msgid "Página: Mis Inscripciones"
+msgstr ""
+
+#: admin/class-admin-settings.php:929
+msgid "[convoca_mis_inscripciones]"
 msgstr ""
 
 #: admin/class-admin-settings.php:930
@@ -1201,12 +1335,20 @@ msgstr ""
 msgid "Página: Pago de Actividad"
 msgstr ""
 
+#: admin/class-admin-settings.php:939
+msgid "[convoca_pago_actividad]"
+msgstr ""
+
 #: admin/class-admin-settings.php:940
 msgid "Crea una página con el shortcode [convoca_pago_actividad] para procesar los pagos de inscripción."
 msgstr ""
 
 #: admin/class-admin-settings.php:943
 msgid "Página: Formulario de Evaluación"
+msgstr ""
+
+#: admin/class-admin-settings.php:944
+msgid "[formulario_evaluacion]"
 msgstr ""
 
 #: admin/class-admin-settings.php:945
@@ -1294,6 +1436,7 @@ msgid "Datos inválidos."
 msgstr ""
 
 #: admin/class-admin-template-editor.php:160
+#: media/class-template-manager.php:136
 msgid "Plantilla no encontrada."
 msgstr ""
 
@@ -1344,6 +1487,10 @@ msgstr ""
 msgid "Acceso Denegado"
 msgstr ""
 
+#: admin/class-email-queue-list.php:43
+msgid "<input type=\"checkbox\">"
+msgstr ""
+
 #: admin/class-email-queue-list.php:44
 msgid "Destinatario"
 msgstr ""
@@ -1374,6 +1521,10 @@ msgstr ""
 
 #: convoca-enroll.php:93
 msgid "Convoca Enroll requires Convoca Core to be active. Please activate Convoca Core first."
+msgstr ""
+
+#: convoca-enroll.php:124
+msgid "<!-- wp:shortcode -->[convoca_panel_reservas]<!-- /wp:shortcode -->"
 msgstr ""
 
 #: convoca-enroll.php:144
@@ -1519,8 +1670,21 @@ msgstr ""
 msgid "Ubicación"
 msgstr ""
 
+#: includes/CPT_Actividad.php:649
+msgid "La integración con Google Photos está desactivada."
+msgstr ""
+
+#: includes/CPT_Actividad.php:672
+msgid "✓ Compartido con participantes"
+msgstr ""
+
 #: includes/CPT_Actividad.php:698
 msgid "¿Compartir el álbum con todos los participantes confirmados?"
+msgstr ""
+
+#: includes/CPT_Actividad.php:763
+#: includes/CPT_Actividad.php:788
+msgid "Sin permisos"
 msgstr ""
 
 #: includes/CPT_Actividad.php:771
@@ -1529,6 +1693,16 @@ msgstr ""
 
 #: includes/CPT_Actividad.php:796
 msgid "No se pudo crear el álbum"
+msgstr ""
+
+#: includes/CPT_Actividad.php:817
+#: includes/CPT_Actividad.php:842
+msgid "Permisos insuficientes."
+msgstr ""
+
+#: includes/CPT_Actividad.php:822
+#: includes/CPT_Actividad.php:847
+msgid "La integración con Google Calendar no está configurada."
 msgstr ""
 
 #: includes/CPT_Actividad.php:830
@@ -1582,6 +1756,14 @@ msgstr ""
 
 #: includes/CPT_Inscripcion.php:140
 msgid "Inscripción"
+msgstr ""
+
+#: includes/Email_Automation.php:351
+msgid "<h1>Nuevo álbum disponible</h1>"
+msgstr ""
+
+#: includes/Email_Automation.php:358
+msgid "<h1>¡Ya puedes ver las fotos! 🎉</h1>"
 msgstr ""
 
 #: includes/Email_Automation.php:573
@@ -1697,8 +1879,28 @@ msgstr ""
 msgid "Demasiadas peticiones."
 msgstr ""
 
+#: includes/Rest_API.php:228
+msgid "Too many requests"
+msgstr ""
+
 #: includes/Rest_API.php:324
 msgid "No tienes permiso para ver estadísticas de esta actividad."
+msgstr ""
+
+#: includes/Rest_API.php:348
+msgid "Token required"
+msgstr ""
+
+#: includes/Rest_API.php:367
+msgid "Invalid token"
+msgstr ""
+
+#: includes/Rest_API.php:377
+msgid "No tienes permiso para realizar check-in en esta actividad."
+msgstr ""
+
+#: includes/Rest_API.php:386
+msgid "Inscription not confirmed"
 msgstr ""
 
 #: includes/Rest_API.php:388
@@ -1770,6 +1972,18 @@ msgstr ""
 msgid "Inscríbete en esta actividad"
 msgstr ""
 
+#: media/class-layout-validator.php:67
+msgid "No collaborator logos"
+msgstr ""
+
+#: media/class-layout-validator.php:92
+msgid "Missing box-sizing:border-box"
+msgstr ""
+
+#: media/class-media-rest-api.php:138
+msgid "Template not found"
+msgstr ""
+
 #: media/class-poster-engine.php:51
 msgid "Imagick no está disponible. Instala/activa la extensión PHP Imagick para generar carteles."
 msgstr ""
@@ -1781,6 +1995,10 @@ msgstr ""
 #: media/class-poster-engine.php:270
 #: media/class-poster-engine.php:518
 msgid "Gratuito"
+msgstr ""
+
+#: media/class-poster-engine.php:352
+msgid "rgba(255,255,255,0.94)"
 msgstr ""
 
 #: media/class-poster-engine.php:486
@@ -1839,6 +2057,22 @@ msgstr ""
 msgid "No se pudo guardar el cartel generado."
 msgstr ""
 
+#: media/class-template-defaults.php:77
+msgid "Gran imagen protagonista con acentos verdes. Ideal para rutas, naturaleza y actividades al aire libre."
+msgstr ""
+
+#: media/class-template-defaults.php:100
+msgid "0,2,4,rgba(0,0,0,0.3)"
+msgstr ""
+
+#: media/class-template-defaults.php:100
+msgid "0,4,12,rgba(0,0,0,0.15)"
+msgstr ""
+
+#: media/class-template-defaults.php:233
+msgid "Estilo profesional con bloques de color y tipografía limpia. Ideal para ONGs y entidades sociales."
+msgstr ""
+
 #: media/class-template-manager.php:114
 msgid "Las dimensiones (width/height) son obligatorias."
 msgstr ""
@@ -1861,10 +2095,18 @@ msgstr ""
 msgid "config debe contener un array de layers."
 msgstr ""
 
+#: public/class-form-inscripcion.php:236
+msgid "Pendiente de aportación"
+msgstr ""
+
 #. translators: %s: PDF generation error message
 #: public/class-form-inscripcion.php:245
 #, php-format
 msgid "La inscripción se ha iniciado, pero hubo un problema al generar el documento de compromiso: %s. Podrás completarlo más tarde."
+msgstr ""
+
+#: public/class-form-inscripcion.php:261
+msgid "La inscripción está registrada pero el pago no se pudo procesar automáticamente. Por favor, contacta con nosotros para completar la aportación."
 msgstr ""
 
 #. translators: %s: PDF generation error message
@@ -2043,6 +2285,92 @@ msgstr ""
 
 #: public/class-panel-reservas.php:180
 msgid "Actividad no disponible"
+msgstr ""
+
+#: social/class-gbp-provider.php:48
+msgid "Usa los endpoints REST /social/auth/google"
+msgstr ""
+
+#: social/class-gbp-provider.php:57
+msgid "Lock activo para este contenido en GBP."
+msgstr ""
+
+#: social/class-gbp-provider.php:69
+msgid "[DRY-RUN] Simulated GBP"
+msgstr ""
+
+#: social/class-gbp-provider.php:73
+#: social/class-meta-provider.php:82
+msgid "Token no disponible. Reconecta la cuenta."
+msgstr ""
+
+#: social/class-gbp-provider.php:84
+msgid "GBP: No hay location_id. Reconecta la cuenta."
+msgstr ""
+
+#: social/class-gbp-provider.php:139
+msgid "Publicado en Google Business Profile"
+msgstr ""
+
+#: social/class-meta-provider.php:50
+msgid "Usa los endpoints REST /social/auth/meta"
+msgstr ""
+
+#: social/class-meta-provider.php:64
+msgid "Ya hay una publicación en curso para este contenido (lock activo)."
+msgstr ""
+
+#: social/class-meta-provider.php:78
+msgid "[DRY-RUN] Simulated"
+msgstr ""
+
+#: social/class-meta-provider.php:146
+msgid "Facebook: "
+msgstr ""
+
+#: social/class-meta-provider.php:168
+msgid "Facebook OK"
+msgstr ""
+
+#: social/class-meta-provider.php:179
+msgid "Instagram: no hay cuenta de Instagram Business vinculada a esta página."
+msgstr ""
+
+#: social/class-meta-provider.php:193
+#: social/class-meta-provider.php:218
+msgid "Instagram: "
+msgstr ""
+
+#: social/class-meta-provider.php:203
+msgid "Instagram: no se obtuvo ID del media container."
+msgstr ""
+
+#: social/class-meta-provider.php:226
+msgid "Instagram OK"
+msgstr ""
+
+#: social/class-social-publisher.php:47
+msgid "Cuenta no encontrada o token expirado."
+msgstr ""
+
+#: social/class-social-publisher.php:108
+msgid "Publicado en Facebook"
+msgstr ""
+
+#: social/class-social-publisher.php:119
+msgid "Instagram requiere una imagen."
+msgstr ""
+
+#: social/class-social-publisher.php:145
+msgid "No se obtuvo ID del media container."
+msgstr ""
+
+#: social/class-social-publisher.php:169
+msgid "Publicado en Instagram"
+msgstr ""
+
+#: social/class-social-publisher.php:219
+msgid "Publicado en Google"
 msgstr ""
 
 #: templates/form-inscripcion.php:52

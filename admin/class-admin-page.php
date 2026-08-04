@@ -706,7 +706,7 @@ class Admin_Page {
 
 		$id = (int) ( wp_unslash( $_POST['inscripcion_id'] ?? 0 ) );
 		if ( ! $id ) {
-			wp_send_json_error( 'ID de inscripción no válido.' );
+			wp_send_json_error( __( 'ID de inscripción no válido.', 'convoca-enroll' ) );
 		}
 
 		// Permissions check.
@@ -714,7 +714,7 @@ class Admin_Page {
 			$allowed_ids = CPT_Actividad::get_allowed_activities_ids();
 			$act_id      = (int) CPT_Inscripcion::get_meta( $id, 'actividad_id' );
 			if ( null === $allowed_ids || ! in_array( $act_id, $allowed_ids, true ) ) {
-				wp_send_json_error( 'Sin permisos.' );
+				wp_send_json_error( __( 'Sin permisos.', 'convoca-enroll' ) );
 			}
 		}
 
@@ -739,7 +739,7 @@ class Admin_Page {
 
 		$id = (int) ( wp_unslash( $_POST['inscripcion_id'] ?? 0 ) );
 		if ( ! $id ) {
-			wp_send_json_error( 'ID de inscripción no válido.' );
+			wp_send_json_error( __( 'ID de inscripción no válido.', 'convoca-enroll' ) );
 		}
 
 		// Permissions check.
@@ -747,7 +747,7 @@ class Admin_Page {
 			$allowed_ids = CPT_Actividad::get_allowed_activities_ids();
 			$act_id      = (int) CPT_Inscripcion::get_meta( $id, 'actividad_id' );
 			if ( null === $allowed_ids || ! in_array( $act_id, $allowed_ids, true ) ) {
-				wp_send_json_error( 'Sin permisos.' );
+				wp_send_json_error( __( 'Sin permisos.', 'convoca-enroll' ) );
 			}
 		}
 
@@ -755,7 +755,7 @@ class Admin_Page {
 		$res        = $automation->resend_confirmation( $id );
 
 		if ( $res ) {
-			wp_send_json_success( 'Email enviado correctamente.' );
+			wp_send_json_success( __( 'Email enviado correctamente.', 'convoca-enroll' ) );
 		} else {
 			wp_send_json_error( __( 'Error al enviar el email.', 'convoca-enroll' ) );
 		}

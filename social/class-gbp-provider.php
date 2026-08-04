@@ -45,7 +45,7 @@ class GBP_Provider implements Social_Provider_Interface {
 	}
 
 	public function authenticate( string $auth_code ): array {
-		return array( 'success' => false, 'message' => 'Usa los endpoints REST /social/auth/google' );
+		return array( 'success' => false, 'message' => __( 'Usa los endpoints REST /social/auth/google', 'convoca-enroll' ) );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class GBP_Provider implements Social_Provider_Interface {
 	public function publish( string $message, string $image_url = '', string $link_url = '' ): array {
 		$lock_key = 'convoca_lock_' . md5( $message . $image_url . 'gbp' );
 		if ( get_transient( $lock_key ) ) {
-			return array( 'success' => false, 'message' => 'Lock activo para este contenido en GBP.' );
+			return array( 'success' => false, 'message' => __( 'Lock activo para este contenido en GBP.', 'convoca-enroll' ) );
 		}
 		set_transient( $lock_key, time(), 300 );
 		if ( $this->is_dry_run() ) {
@@ -66,11 +66,11 @@ class GBP_Provider implements Social_Provider_Interface {
 				'link'        => $link_url,
 			);
 			error_log( '[CONVOCA DRY-RUN] GBP payload: ' . wp_json_encode( $payload ) );
-			return array( 'success' => true, 'message' => '[DRY-RUN] Simulated GBP', 'id' => 'dry_gbp_' . time() );
+			return array( 'success' => true, 'message' => __( '[DRY-RUN] Simulated GBP', 'convoca-enroll' ), 'id' => 'dry_gbp_' . time() );
 		}
 
 		if ( empty( $this->access_token ) ) {
-			return array( 'success' => false, 'message' => 'Token no disponible. Reconecta la cuenta.' );
+			return array( 'success' => false, 'message' => __( 'Token no disponible. Reconecta la cuenta.', 'convoca-enroll' ) );
 		}
 
 		// Truncate and sanitize for GBP.
@@ -81,7 +81,7 @@ class GBP_Provider implements Social_Provider_Interface {
 		$this->maybe_refresh_token();
 
 		if ( empty( $this->location_id ) ) {
-			return array( 'success' => false, 'message' => 'GBP: No hay location_id. Reconecta la cuenta.' );
+			return array( 'success' => false, 'message' => __( 'GBP: No hay location_id. Reconecta la cuenta.', 'convoca-enroll' ) );
 		}
 
 		$post_body = array(
@@ -136,7 +136,7 @@ class GBP_Provider implements Social_Provider_Interface {
 		}
 
 		delete_transient( $lock_key );
-		return array( 'success' => true, 'message' => 'Publicado en Google Business Profile', 'id' => $body['name'] ?? '' );
+		return array( 'success' => true, 'message' => __( 'Publicado en Google Business Profile', 'convoca-enroll' ), 'id' => $body['name'] ?? '' );
 	}
 
 	/**

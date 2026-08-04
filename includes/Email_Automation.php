@@ -348,14 +348,14 @@ class Email_Automation {
 			),
 			'google_photos_album_creado'     => array(
 				'subject' => 'Álbum de fotos para "{actividad}" — ' . get_bloginfo('name'),
-				'body'    => '<h1>Nuevo álbum disponible</h1>'
+				'body'    => __( '<h1>Nuevo álbum disponible</h1>', 'convoca-enroll' )
 					. '<p>Se ha creado un álbum de Google Photos para la actividad <strong>{actividad}</strong>.</p>'
 					. Email_Layout::button_html( '{album_url}', 'Subir fotos' )
 					. '<p>Una vez el evento haya terminado, puedes compartir el álbum con los participantes.</p>',
 			),
 			'google_photos_album_compartido' => array(
 				'subject' => 'Fotos de "{actividad}" — ' . get_bloginfo('name'),
-				'body'    => '<h1>¡Ya puedes ver las fotos! 🎉</h1>'
+				'body'    => __( '<h1>¡Ya puedes ver las fotos! 🎉</h1>', 'convoca-enroll' )
 					. '<p>Ya están disponibles las fotos de la actividad <strong>{actividad}</strong>.</p>'
 					. '<p>Hemos subido un álbum con los mejores momentos.</p>'
 					. Email_Layout::button_html( '{album_url}', 'Ver fotos' )

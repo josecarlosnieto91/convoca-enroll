@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WPML String Translation configuration for Convoca Enroll.
+  Options listed here become translatable via WPML > String Translation
+  (admin texts). Array options may require field-level mapping if WPML
+  does not pick them up automatically.
+-->
+<wpml-config>
+    <admin-texts>
+        <key name="convoca_enroll_settings"/>
+    </admin-texts>
+</wpml-config>

@@ -121,7 +121,7 @@ register_activation_hook(
 			$page_id = wp_insert_post(
 				array(
 					'post_title'   => 'Panel de reservas',
-					'post_content' => '<!-- wp:shortcode -->[convoca_panel_reservas]<!-- /wp:shortcode -->',
+					'post_content' => __( '<!-- wp:shortcode -->[convoca_panel_reservas]<!-- /wp:shortcode -->', 'convoca-enroll' ),
 					'post_status'  => 'publish',
 					'post_type'    => 'page',
 					'post_name'    => 'panel-reservas',

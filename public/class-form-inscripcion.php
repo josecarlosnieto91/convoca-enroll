@@ -63,7 +63,7 @@ class Form_Inscripcion {
 
 		$actividad = get_post( $actividad_id );
 		if ( ! $actividad || $actividad->post_type !== 'actividad' ) {
-			return '<p class="convoca-alert convoca-alert--danger">Actividad no encontrada.</p>';
+			return '<p class="convoca-alert convoca-alert--danger">' . esc_html__( 'Actividad no encontrada.', 'convoca-enroll' ) . '</p>';
 		}
 
 		$meta = CPT_Actividad::get_meta( $actividad_id );
@@ -233,7 +233,7 @@ class Form_Inscripcion {
 
 					$success_data = array(
 						'estado'         => 'pendiente_pago',
-						'estado_label'   => 'Pendiente de aportación',
+						'estado_label'   => __( 'Pendiente de aportación', 'convoca-enroll' ),
 						'plazas'         => (int) $act_meta['plazas_disponibles'],
 						'redirect'       => $payment['payment_url'],
 						'codigo_reserva' => get_post_meta( $result, '_convoca_codigo_reserva', true ),
@@ -258,7 +258,7 @@ class Form_Inscripcion {
 					wp_send_json_success(
 						array(
 							'gateway_error'  => true,
-							'error_message'  => 'La inscripción está registrada pero el pago no se pudo procesar automáticamente. Por favor, contacta con nosotros para completar la aportación.',
+							'error_message'  => __( 'La inscripción está registrada pero el pago no se pudo procesar automáticamente. Por favor, contacta con nosotros para completar la aportación.', 'convoca-enroll' ),
 							'estado'         => 'pendiente_pago',
 							'codigo_reserva' => get_post_meta( $result, '_convoca_codigo_reserva', true ),
 							'plazas'         => (int) $act_meta['plazas_disponibles'],

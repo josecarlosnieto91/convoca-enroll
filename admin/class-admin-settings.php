@@ -291,7 +291,7 @@ class Admin_Settings {
 			$normas,
 			'convoca_enroll_normas_inscripcion',
 			array(
-				'textarea_name' => 'conv[normas_inscripcion]',
+				'textarea_name' => __( 'conv[normas_inscripcion]', 'convoca-enroll' ),
 				'textarea_rows' => 12,
 				'media_buttons' => false,
 				'teeny'         => false,
@@ -330,13 +330,13 @@ class Admin_Settings {
 
 	private static function render_tab_emails( array $templates ): void {
 		$labels = array(
-			'recepcion'              => 'Inscripción recibida',
+			'recepcion'              => __( 'Inscripción recibida', 'convoca-enroll' ),
 			'lista_espera'           => 'En lista de espera',
-			'promocion_lista_espera' => 'Promoción de lista de espera',
-			'confirmacion_plaza'     => 'Confirmación de plaza',
-			'cancelacion_reserva'    => 'Cancelación de reserva',
+			'promocion_lista_espera' => __( 'Promoción de lista de espera', 'convoca-enroll' ),
+			'confirmacion_plaza'     => __( 'Confirmación de plaza', 'convoca-enroll' ),
+			'cancelacion_reserva'    => __( 'Cancelación de reserva', 'convoca-enroll' ),
 			'recordatorio_24h'       => 'Recordatorio 24h',
-			'feedback_post'          => 'Post-evento (feedback)',
+			'feedback_post'          => __( 'Post-evento (feedback)', 'convoca-enroll' ),
 		);
 		?>
 		<p>Variables disponibles:
@@ -921,12 +921,12 @@ class Admin_Settings {
 		$required_pages = array(
 			'convoca_calendario'        => array(
 				'title'     => __( 'Página: Calendario de Actividades', 'convoca-enroll' ),
-				'shortcode' => '[convoca_calendario]',
+				'shortcode' => __( '[convoca_calendario]', 'convoca-enroll' ),
 				'fix'       => __( 'Crea una página con el shortcode [convoca_calendario] para mostrar el listado de actividades.', 'convoca-enroll' ),
 			),
 			'convoca_mis_inscripciones' => array(
 				'title'     => __( 'Página: Mis Inscripciones', 'convoca-enroll' ),
-				'shortcode' => '[convoca_mis_inscripciones]',
+				'shortcode' => __( '[convoca_mis_inscripciones]', 'convoca-enroll' ),
 				'fix'       => __( 'Crea una página con el shortcode [convoca_mis_inscripciones] para que los usuarios vean sus reservas.', 'convoca-enroll' ),
 			),
 			'convoca_checkin'           => array(
@@ -936,12 +936,12 @@ class Admin_Settings {
 			),
 			'convoca_pago_actividad'    => array(
 				'title'     => __( 'Página: Pago de Actividad', 'convoca-enroll' ),
-				'shortcode' => '[convoca_pago_actividad]',
+				'shortcode' => __( '[convoca_pago_actividad]', 'convoca-enroll' ),
 				'fix'       => __( 'Crea una página con el shortcode [convoca_pago_actividad] para procesar los pagos de inscripción.', 'convoca-enroll' ),
 			),
 			'formulario_evaluacion'  => array(
 				'title'     => __( 'Página: Formulario de Evaluación', 'convoca-enroll' ),
-				'shortcode' => '[formulario_evaluacion]',
+				'shortcode' => __( '[formulario_evaluacion]', 'convoca-enroll' ),
 				'fix'       => __( 'Crea una página con el shortcode [formulario_evaluacion] para que los monitores evalúen las actividades.', 'convoca-enroll' ),
 			),
 		);

@@ -74,7 +74,7 @@ class Template_Defaults {
 		return array(
 			'name'        => 'Nature Classic',
 			'slug'        => 'nature-classic',
-			'description' => 'Gran imagen protagonista con acentos verdes. Ideal para rutas, naturaleza y actividades al aire libre.',
+			'description' => __( 'Gran imagen protagonista con acentos verdes. Ideal para rutas, naturaleza y actividades al aire libre.', 'convoca-enroll' ),
 			'config'      => wp_json_encode( array(
 				'version'    => '2.0',
 				'design_tokens' => array(
@@ -97,7 +97,7 @@ class Template_Defaults {
 						'disclaimer' => array( 'family' => 'Lato', 'weight' => 300, 'size' => 14, 'color' => '#666666' ),
 					),
 					'spacing' => array( 'margin' => 60, 'padding' => 24, 'gap' => 12, 'corner' => 16 ),
-					'shadows' => array( 'text' => '0,2,4,rgba(0,0,0,0.3)', 'box' => '0,4,12,rgba(0,0,0,0.15)' ),
+					'shadows' => array( 'text' => __( '0,2,4,rgba(0,0,0,0.3)', 'convoca-enroll' ), 'box' => __( '0,4,12,rgba(0,0,0,0.15)', 'convoca-enroll' ) ),
 				),
 				'formats' => array(
 					'square'    => array( 'width' => 1080, 'height' => 1080 ),
@@ -230,7 +230,7 @@ class Template_Defaults {
 		return array(
 			'name'        => 'Modern NGO',
 			'slug'        => 'modern-ngo',
-			'description' => 'Estilo profesional con bloques de color y tipografía limpia. Ideal para ONGs y entidades sociales.',
+			'description' => __( 'Estilo profesional con bloques de color y tipografía limpia. Ideal para ONGs y entidades sociales.', 'convoca-enroll' ),
 			'config'      => wp_json_encode( array(
 				'version'    => '2.0',
 				'design_tokens' => array(

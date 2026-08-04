@@ -44,7 +44,7 @@ class Social_Publisher {
 	public static function publish( int $account_id, string $message, string $image_url = '', string $link_url = '' ): array {
 		$account = Social_OAuth::get_token( $account_id );
 		if ( ! $account ) {
-			return array( 'success' => false, 'message' => 'Cuenta no encontrada o token expirado.' );
+			return array( 'success' => false, 'message' => __( 'Cuenta no encontrada o token expirado.', 'convoca-enroll' ) );
 		}
 
 		$network = $account['network'];
@@ -105,7 +105,7 @@ class Social_Publisher {
 			return array( 'success' => false, 'message' => $body['error']['message'] ?? 'Error desconocido' );
 		}
 
-		return array( 'success' => true, 'message' => 'Publicado en Facebook', 'id' => $body['id'] ?? '' );
+		return array( 'success' => true, 'message' => __( 'Publicado en Facebook', 'convoca-enroll' ), 'id' => $body['id'] ?? '' );
 	}
 
 	/**
@@ -116,7 +116,7 @@ class Social_Publisher {
 		$ig_user_id = $account['account_id'];
 
 		if ( ! $image_url ) {
-			return array( 'success' => false, 'message' => 'Instagram requiere una imagen.' );
+			return array( 'success' => false, 'message' => __( 'Instagram requiere una imagen.', 'convoca-enroll' ) );
 		}
 
 		// Step 1: Create media container
@@ -142,7 +142,7 @@ class Social_Publisher {
 		$media_id = $create_body['id'] ?? '';
 
 		if ( ! $media_id ) {
-			return array( 'success' => false, 'message' => 'No se obtuvo ID del media container.' );
+			return array( 'success' => false, 'message' => __( 'No se obtuvo ID del media container.', 'convoca-enroll' ) );
 		}
 
 		// Step 2: Publish the container
@@ -166,7 +166,7 @@ class Social_Publisher {
 			return array( 'success' => false, 'message' => $pub_body['error']['message'] ?? 'Error' );
 		}
 
-		return array( 'success' => true, 'message' => 'Publicado en Instagram', 'id' => $pub_body['id'] ?? '' );
+		return array( 'success' => true, 'message' => __( 'Publicado en Instagram', 'convoca-enroll' ), 'id' => $pub_body['id'] ?? '' );
 	}
 
 	/**
@@ -216,6 +216,6 @@ class Social_Publisher {
 			return array( 'success' => false, 'message' => $body['error']['message'] ?? 'Error' );
 		}
 
-		return array( 'success' => true, 'message' => 'Publicado en Google', 'id' => $body['name'] ?? '' );
+		return array( 'success' => true, 'message' => __( 'Publicado en Google', 'convoca-enroll' ), 'id' => $body['name'] ?? '' );
 	}
 }

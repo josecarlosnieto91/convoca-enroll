@@ -225,7 +225,7 @@ class Rest_API {
 
 	public function get_session_status(): \WP_REST_Response {
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'session_status', 20, 60 ) ) {
-			return new \WP_REST_Response( array( 'error' => 'Too many requests' ), 429 );
+			return new \WP_REST_Response( array( 'error' => __( 'Too many requests', 'convoca-enroll' ) ), 429 );
 		}
 
 		if ( \Convoca\Core\Features::is_members_active() && \Convoca\Members\Member_Auth::is_authenticated() ) {
@@ -345,7 +345,7 @@ class Rest_API {
 		$monitor_id = get_current_user_id();
 
 		if ( empty( $token ) ) {
-			return new \WP_REST_Response( array( 'error' => 'Token required' ), 400 );
+			return new \WP_REST_Response( array( 'error' => __( 'Token required', 'convoca-enroll' ) ), 400 );
 		}
 
 		$posts = get_posts(
@@ -364,7 +364,7 @@ class Rest_API {
 
 		if ( empty( $posts ) ) {
 			\Convoca\Core\Logger::info( "Intento de check-in fallido: Token inválido ($token)", 'Enroll/Checkin', $monitor_id );
-			return new \WP_REST_Response( array( 'error' => 'Invalid token' ), 404 );
+			return new \WP_REST_Response( array( 'error' => __( 'Invalid token', 'convoca-enroll' ) ), 404 );
 		}
 
 		$insc    = $posts[0];
@@ -374,7 +374,7 @@ class Rest_API {
 		// Check permission.
 		if ( ! $this->check_permission_for_activity( $act_id ) ) {
 			\Convoca\Core\Logger::info( "Intento de check-in fallido: Usuario sin permisos para actividad #$act_id", 'Enroll/Checkin', $monitor_id, array( 'inscripcion_id' => $insc_id ) );
-			return new \WP_REST_Response( array( 'error' => 'No tienes permiso para realizar check-in en esta actividad.' ), 403 );
+			return new \WP_REST_Response( array( 'error' => __( 'No tienes permiso para realizar check-in en esta actividad.', 'convoca-enroll' ) ), 403 );
 		}
 
 		// Verify status is confirmed.
@@ -383,7 +383,7 @@ class Rest_API {
 			\Convoca\Core\Logger::info( "Intento de check-in fallido: Inscripción #$insc_id no confirmada (Estado: $estado)", 'Enroll/Checkin', $monitor_id );
 			return new \WP_REST_Response(
 				array(
-					'error'   => 'Inscription not confirmed',
+					'error'   => __( 'Inscription not confirmed', 'convoca-enroll' ),
 					'estado'  => $estado,
 					'message' => __( 'Solo se pueden confirmar asistentes con reserva confirmada.', 'convoca-enroll' ),
 				),

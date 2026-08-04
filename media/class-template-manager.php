@@ -133,7 +133,7 @@ class Template_Manager {
 	public static function export_json( $slug_or_id ): array {
 		$tpl = self::get( $slug_or_id );
 		if ( ! $tpl ) {
-			return array( 'error' => 'Plantilla no encontrada.' );
+			return array( 'error' => __( 'Plantilla no encontrada.', 'convoca-enroll' ) );
 		}
 		return array(
 			'name'        => $tpl['name'],
