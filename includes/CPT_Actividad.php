@@ -55,12 +55,14 @@ class CPT_Actividad {
 		'obligaciones',
 	);
 
-	public const REMINDER_TYPES = array(
-		'reminder_7dias'       => '7 días antes',
-		'reminder_1dia'        => '1 día antes',
-		'reminder_1hora'       => '1 hora antes',
-		'reminder_post_evento' => 'Seguimiento post-evento',
-	);
+	public static function reminder_types(): array {
+		return array(
+			'reminder_7dias'       => __( '7 días antes', 'convoca-enroll' ),
+			'reminder_1dia'        => __( '1 día antes', 'convoca-enroll' ),
+			'reminder_1hora'       => __( '1 hora antes', 'convoca-enroll' ),
+			'reminder_post_evento' => __( 'Seguimiento post-evento', 'convoca-enroll' ),
+		);
+	}
 
 	public function __construct() {
 		add_action( 'init', array( __CLASS__, 'register' ) );
@@ -652,7 +654,7 @@ class CPT_Actividad {
 
 		$google_photos = new Google_Photos();
 		if ( ! $google_photos->is_configured() ) {
-			echo '<p>Google Photos no está configurado. <a href="' . esc_url( admin_url( 'admin.php?page=conv-ajustes&tab=google_photos' ) ) . '">Configurar</a></p>';
+			echo '<p>' . esc_html__( 'Google Photos no está configurado.', 'convoca-enroll' ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=conv-ajustes&tab=google_photos' ) ) . '">' . esc_html__( 'Configurar', 'convoca-enroll' ) . '</a></p>';
 			return;
 		}
 
@@ -662,11 +664,11 @@ class CPT_Actividad {
 		$create_album = get_post_meta( $post->ID, '_convoca_google_create_album', true );
 
 		if ( ! $album_id && $create_album !== '0' ) {
-			echo '<p><button type="button" class="button button-primary" onclick="bdeCreateAlbum(' . esc_attr( $post->ID ) . ')">Crear álbum</button></p>';
+			echo '<p><button type="button" class="button button-primary" onclick="bdeCreateAlbum(' . esc_attr( $post->ID ) . ')">' . esc_html__( 'Crear álbum', 'convoca-enroll' ) . '</button></p>';
 		} elseif ( $album_id ) {
-			echo '<p><strong>Álbum:</strong> ' . esc_html( $album_id ) . '</p>';
+			echo '<p><strong>' . esc_html__( 'Álbum:', 'convoca-enroll' ) . '</strong> ' . esc_html( $album_id ) . '</p>';
 			if ( $album_url ) {
-				echo '<p><a href="' . esc_url( $album_url ) . '" target="_blank">Ver álbum</a></p>';
+				echo '<p><a href="' . esc_url( $album_url ) . '" target="_blank">' . esc_html__( 'Ver álbum', 'convoca-enroll' ) . '</a></p>';
 			}
 			if ( $album_shared ) {
 				echo '<p style="color:green;">' . esc_html__( '✓ Compartido con participantes', 'convoca-enroll' ) . '</p>';

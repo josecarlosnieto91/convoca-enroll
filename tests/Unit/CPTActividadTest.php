@@ -69,11 +69,11 @@ class CPTActividadTest extends TestCase
     /**
      * Test that REMINDER_TYPES contains expected keys.
      *
-     * @covers \Convoca\Enroll\CPT_Actividad::REMINDER_TYPES
+     * @covers \Convoca\Enroll\CPT_Actividad::reminder_types()
      */
     public function test_reminder_types(): void
     {
-        $reminders = CPT_Actividad::REMINDER_TYPES;
+        $reminders = CPT_Actividad::reminder_types();
 
         $this->assertIsArray($reminders);
         $this->assertArrayHasKey('reminder_7dias', $reminders);
@@ -85,11 +85,11 @@ class CPTActividadTest extends TestCase
     /**
      * Test that reminder labels are non-empty.
      *
-     * @covers \Convoca\Enroll\CPT_Actividad::REMINDER_TYPES
+     * @covers \Convoca\Enroll\CPT_Actividad::reminder_types()
      */
     public function test_reminder_labels(): void
     {
-        $reminders = CPT_Actividad::REMINDER_TYPES;
+        $reminders = CPT_Actividad::reminder_types();
 
         foreach ($reminders as $key => $label) {
             $this->assertNotEmpty($label, "Reminder $key has empty label");

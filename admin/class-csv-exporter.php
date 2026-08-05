@@ -139,7 +139,7 @@ class CSV_Exporter {
 					\Convoca\Core\Utils::escape_csv_field( $m( 'email' ) ),
 					\Convoca\Core\Utils::escape_csv_field( $m( 'telefono' ) ),
 					$m( 'es_socio' ) === '1' ? 'Sí' : 'No',
-					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::LABELS[ $m( 'estado' ) ] ?? $m( 'estado' ) ),
+					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::labels()[ $m( 'estado' ) ] ?? $m( 'estado' ) ),
 					$m( 'pagado' ) === '1' ? 'Sí' : 'No',
 					\Convoca\Core\Utils::escape_csv_field( get_the_title( $act_id ) ),
 					\Convoca\Core\Utils::escape_csv_field( get_the_date( 'd/m/Y H:i', $post ) ),

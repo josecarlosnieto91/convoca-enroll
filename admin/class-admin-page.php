@@ -352,7 +352,7 @@ class Admin_Page {
 		$upcoming = CPT_Actividad::get_upcoming( 20 );
 
 		echo '<table class="widefat fixed striped">';
-		echo '<thead><tr><th>Título</th><th>Fecha</th><th>Aforo</th><th>Ubicación</th></tr></thead>';
+		echo '<thead><tr><th>' . esc_html__( 'Título', 'convoca-enroll' ) . '</th><th>' . esc_html__( 'Fecha', 'convoca-enroll' ) . '</th><th>' . esc_html__( 'Aforo', 'convoca-enroll' ) . '</th><th>' . esc_html__( 'Ubicación', 'convoca-enroll' ) . '</th></tr></thead>';
 		echo '<tbody>';
 		foreach ( $upcoming as $post ) {
 			$id          = $post->ID;
@@ -483,7 +483,7 @@ class Admin_Page {
 	private function render_detail( int $id ): void {
 		$post = get_post( $id );
 		if ( ! $post || $post->post_type !== 'inscripcion' ) {
-			echo '<div class="wrap"><p>Inscripción no encontrada.</p></div>';
+			echo '<div class="wrap"><p>' . esc_html__( 'Inscripción no encontrada.', 'convoca-enroll' ) . '</p></div>';
 			return;
 		}
 
@@ -590,7 +590,7 @@ class Admin_Page {
 					<p>
 						<label><strong>Estado:</strong></label><br>
 						<select name="estado">
-							<?php foreach ( CPT_Inscripcion::LABELS as $key => $label ) : ?>
+							<?php foreach ( CPT_Inscripcion::labels() as $key => $label ) : ?>
 								<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $estado, $key ); ?>>
 									<?php echo esc_html( $label ); ?>
 								</option>

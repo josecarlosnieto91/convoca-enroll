@@ -113,142 +113,142 @@ class Email_Automation {
 	public static function get_default_templates_array(): array {
 		return array(
 			'recepcion'                      => array(
-				'subject' => 'Inscripción recibida — {actividad}',
-				'body'    => '<h1>Hola {nombre},</h1>'
-					. '<p>Hemos recibido tu inscripción para <strong>{actividad}</strong>.</p>'
-					. '<p>Tu aportación se encuentra actualmente <strong>pendiente de validación</strong>. Te confirmaremos tu plaza lo antes posible.</p>'
+				'subject' => __( 'Inscripción recibida — {actividad}', 'convoca-enroll' ),
+				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-enroll' )
+					. __( '<p>Hemos recibido tu inscripción para <strong>{actividad}</strong>.</p>', 'convoca-enroll' )
+					. __( '<p>Tu aportación se encuentra actualmente <strong>pendiente de validación</strong>. Te confirmaremos tu plaza lo antes posible.</p>', 'convoca-enroll' )
 					. Email_Layout::meta_table(
 						array(
 							array(
-								'label' => 'Actividad',
+								'label' => __( 'Actividad', 'convoca-enroll' ),
 								'value' => '{actividad}',
 							),
 							array(
-								'label' => 'Fecha',
+								'label' => __( 'Fecha', 'convoca-enroll' ),
 								'value' => '{fecha}',
 							),
 							array(
-								'label' => 'Hora',
+								'label' => __( 'Hora', 'convoca-enroll' ),
 								'value' => '{hora}',
 							),
 							array(
-								'label' => 'Ubicación',
+								'label' => __( 'Ubicación', 'convoca-enroll' ),
 								'value' => '{ubicacion}',
 							),
 							array(
-								'label' => 'Estado',
+								'label' => __( 'Estado', 'convoca-enroll' ),
 								'value' => '{estado}',
 							),
 							array(
-								'label' => 'Aportación',
+								'label' => __( 'Aportación', 'convoca-enroll' ),
 								'value' => '{importe}',
 							),
 							array(
-								'label' => 'Reserva',
+								'label' => __( 'Reserva', 'convoca-enroll' ),
 								'value' => '{codigo_reserva}',
 							),
 						)
 					)
-					. '<p>Guarda tu código de reserva para consultar o cancelar tu inscripción.</p>'
-					. Email_Layout::button_html( '{panel_reservas}', 'Ver mis reservas' ),
+					. __( '<p>Guarda tu código de reserva para consultar o cancelar tu inscripción.</p>', 'convoca-enroll' )
+					. Email_Layout::button_html( '{panel_reservas}', __( 'Ver mis reservas', 'convoca-enroll' ) ),
 			),
 			'lista_espera'                   => array(
-				'subject' => 'En lista de espera — {actividad}',
-				'body'    => '<h1>Hola {nombre},</h1>'
-					. '<p>Te has apuntado a <strong>{actividad}</strong> pero has quedado en <strong>lista de espera</strong>, ya que el aforo está completo.</p>'
-					. '<p>Te avisaremos por correo si se libera una plaza.</p>'
+				'subject' => __( 'En lista de espera — {actividad}', 'convoca-enroll' ),
+				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-enroll' )
+					. __( '<p>Te has apuntado a <strong>{actividad}</strong> pero has quedado en <strong>lista de espera</strong>, ya que el aforo está completo.</p>', 'convoca-enroll' )
+					. __( '<p>Te avisaremos por correo si se libera una plaza.</p>', 'convoca-enroll' )
 					. Email_Layout::meta_table(
 						array(
 							array(
-								'label' => 'Actividad',
+								'label' => __( 'Actividad', 'convoca-enroll' ),
 								'value' => '{actividad}',
 							),
 							array(
-								'label' => 'Reserva',
+								'label' => __( 'Reserva', 'convoca-enroll' ),
 								'value' => '{codigo_reserva}',
 							),
 						)
 					)
-					. Email_Layout::button_html( '{panel_reservas}', 'Ver mis reservas' ),
+					. Email_Layout::button_html( '{panel_reservas}', __( 'Ver mis reservas', 'convoca-enroll' ) ),
 			),
 			'promocion_lista_espera'         => array(
-				'subject' => '¡Tienes una plaza disponible! — {actividad}',
-				'body'    => '<h1>¡Buenas noticias, {nombre}! 🎉</h1>'
-					. '<p>Se ha liberado una plaza para <strong>{actividad}</strong> y se te ha asignado automáticamente.</p>'
-					. '<p>Tu inscripción se encuentra ahora <strong>pendiente de validación</strong>. Te confirmaremos tu plaza definitiva lo antes posible.</p>'
+				'subject' => __( '¡Tienes una plaza disponible! — {actividad}', 'convoca-enroll' ),
+				'body'    => __( '<h1>¡Buenas noticias, {nombre}! 🎉</h1>', 'convoca-enroll' )
+					. __( '<p>Se ha liberado una plaza para <strong>{actividad}</strong> y se te ha asignado automáticamente.</p>', 'convoca-enroll' )
+					. __( '<p>Tu inscripción se encuentra ahora <strong>pendiente de validación</strong>. Te confirmaremos tu plaza definitiva lo antes posible.</p>', 'convoca-enroll' )
 					. Email_Layout::meta_table(
 						array(
 							array(
-								'label' => 'Actividad',
+								'label' => __( 'Actividad', 'convoca-enroll' ),
 								'value' => '{actividad}',
 							),
 							array(
-								'label' => 'Fecha',
+								'label' => __( 'Fecha', 'convoca-enroll' ),
 								'value' => '{fecha}',
 							),
 							array(
-								'label' => 'Hora',
+								'label' => __( 'Hora', 'convoca-enroll' ),
 								'value' => '{hora}',
 							),
 							array(
-								'label' => 'Ubicación',
+								'label' => __( 'Ubicación', 'convoca-enroll' ),
 								'value' => '{ubicacion}',
 							),
 						)
 					),
 			),
 			'confirmacion_plaza'             => array(
-				'subject' => '¡Plaza confirmada! — {actividad}',
-				'body'    => '<h1>¡Plaza confirmada, {nombre}! 🎉</h1>'
-					. '<p>Tu plaza para <strong>{actividad}</strong> está confirmada.</p>'
-					. '<p>Hemos recibido correctamente tu aportación.</p>'
+				'subject' => __( '¡Plaza confirmada! — {actividad}', 'convoca-enroll' ),
+				'body'    => __( '<h1>¡Plaza confirmada, {nombre}! 🎉</h1>', 'convoca-enroll' )
+					. __( '<p>Tu plaza para <strong>{actividad}</strong> está confirmada.</p>', 'convoca-enroll' )
+					. __( '<p>Hemos recibido correctamente tu aportación.</p>', 'convoca-enroll' )
 					. Email_Layout::meta_table(
 						array(
 							array(
-								'label' => 'Actividad',
+								'label' => __( 'Actividad', 'convoca-enroll' ),
 								'value' => '{actividad}',
 							),
 							array(
-								'label' => 'Fecha',
+								'label' => __( 'Fecha', 'convoca-enroll' ),
 								'value' => '{fecha}',
 							),
 							array(
-								'label' => 'Hora',
+								'label' => __( 'Hora', 'convoca-enroll' ),
 								'value' => '{hora}',
 							),
 							array(
-								'label' => 'Ubicación',
+								'label' => __( 'Ubicación', 'convoca-enroll' ),
 								'value' => '{ubicacion}',
 							),
 							array(
-								'label' => 'Aportación',
+								'label' => __( 'Aportación', 'convoca-enroll' ),
 								'value' => '{importe}',
 							),
 							array(
-								'label' => 'Reserva',
+								'label' => __( 'Reserva', 'convoca-enroll' ),
 								'value' => '{codigo_reserva}',
 							),
 						)
 					)
-					. '<p>Adjuntamos tu código QR y un enlace al calendario.</p>'
-					. Email_Layout::button_html( '{panel_reservas}', 'Ver mis reservas' ),
+					. __( '<p>Adjuntamos tu código QR y un enlace al calendario.</p>', 'convoca-enroll' )
+					. Email_Layout::button_html( '{panel_reservas}', __( 'Ver mis reservas', 'convoca-enroll' ) ),
 			),
 			'cancelacion_reserva'            => array(
-				'subject' => 'Reserva cancelada — {actividad}',
-				'body'    => '<h1>Hola {nombre},</h1>'
-					. '<p>Tu reserva para <strong>{actividad}</strong> ha sido cancelada.</p>'
+				'subject' => __( 'Reserva cancelada — {actividad}', 'convoca-enroll' ),
+				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-enroll' )
+					. __( '<p>Tu reserva para <strong>{actividad}</strong> ha sido cancelada.</p>', 'convoca-enroll' )
 					. Email_Layout::meta_table(
 						array(
 							array(
-								'label' => 'Actividad',
+								'label' => __( 'Actividad', 'convoca-enroll' ),
 								'value' => '{actividad}',
 							),
 							array(
-								'label' => 'Fecha',
+								'label' => __( 'Fecha', 'convoca-enroll' ),
 								'value' => '{fecha}',
 							),
 							array(
-								'label' => 'Hora',
+								'label' => __( 'Hora', 'convoca-enroll' ),
 								'value' => '{hora}',
 							),
 						)
@@ -256,30 +256,30 @@ class Email_Automation {
 					. '<p>Si deseas volver a inscribirte, puedes hacerlo desde nuestra web.</p>',
 			),
 			'recordatorio_7dias'             => array(
-				'subject' => '¡Esta semana! {actividad}',
-				'body'    => '<h1>¡Hola {nombre}!</h1>'
-					. '<p>¡Esta semana tenemos <strong>{actividad}</strong>! 🎉</p>'
-					. '<p>Te esperamos. Aquí tienes los detalles:</p>'
+				'subject' => __( '¡Esta semana! {actividad}', 'convoca-enroll' ),
+				'body'    => __( '<h1>¡Hola {nombre}!</h1>', 'convoca-enroll' )
+					. __( '<p>¡Esta semana tenemos <strong>{actividad}</strong>! 🎉</p>', 'convoca-enroll' )
+					. __( '<p>Te esperamos. Aquí tienes los detalles:</p>', 'convoca-enroll' )
 					. Email_Layout::meta_table(
 						array(
 							array(
-								'label' => 'Actividad',
+								'label' => __( 'Actividad', 'convoca-enroll' ),
 								'value' => '{actividad}',
 							),
 							array(
-								'label' => 'Fecha',
+								'label' => __( 'Fecha', 'convoca-enroll' ),
 								'value' => '{fecha}',
 							),
 							array(
-								'label' => 'Hora',
+								'label' => __( 'Hora', 'convoca-enroll' ),
 								'value' => '{hora}',
 							),
 							array(
-								'label' => 'Ubicación',
+								'label' => __( 'Ubicación', 'convoca-enroll' ),
 								'value' => '{ubicacion}',
 							),
 							array(
-								'label' => 'Reserva',
+								'label' => __( 'Reserva', 'convoca-enroll' ),
 								'value' => '{codigo_reserva}',
 							),
 						)
@@ -287,52 +287,52 @@ class Email_Automation {
 					. '<p>¡Nos vemos! 🌿</p>',
 			),
 			'recordatorio_24h'               => array(
-				'subject' => 'Recordatorio: {actividad} es mañana',
-				'body'    => '<h1>Hola {nombre},</h1>'
-					. '<p>Te recordamos que <strong>mañana</strong> tienes la actividad <strong>{actividad}</strong>.</p>'
+				'subject' => __( 'Recordatorio: {actividad} es mañana', 'convoca-enroll' ),
+				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-enroll' )
+					. __( '<p>Te recordamos que <strong>mañana</strong> tienes la actividad <strong>{actividad}</strong>.</p>', 'convoca-enroll' )
 					. Email_Layout::meta_table(
 						array(
 							array(
-								'label' => 'Actividad',
+								'label' => __( 'Actividad', 'convoca-enroll' ),
 								'value' => '{actividad}',
 							),
 							array(
-								'label' => 'Fecha',
+								'label' => __( 'Fecha', 'convoca-enroll' ),
 								'value' => '{fecha}',
 							),
 							array(
-								'label' => 'Hora',
+								'label' => __( 'Hora', 'convoca-enroll' ),
 								'value' => '{hora}',
 							),
 							array(
-								'label' => 'Ubicación',
+								'label' => __( 'Ubicación', 'convoca-enroll' ),
 								'value' => '{ubicacion}',
 							),
 						)
 					)
-					. '<p>Si no puedes asistir, cancela tu inscripción para liberar la plaza.</p>'
-					. Email_Layout::button_html( '{panel_reservas}', 'Gestionar reserva' ),
+					. __( '<p>Si no puedes asistir, cancela tu inscripción para liberar la plaza.</p>', 'convoca-enroll' )
+					. Email_Layout::button_html( '{panel_reservas}', __( 'Gestionar reserva', 'convoca-enroll' ) ),
 			),
 			'recordatorio_1hora'             => array(
-				'subject' => '{actividad} comienza en 1 hora',
-				'body'    => '<h1>¡Ya casi, {nombre}!</h1>'
-					. '<p>La actividad <strong>{actividad}</strong> comienza en <strong>1 hora</strong>.</p>'
+				'subject' => __( '{actividad} comienza en 1 hora', 'convoca-enroll' ),
+				'body'    => __( '<h1>¡Ya casi, {nombre}!</h1>', 'convoca-enroll' )
+					. __( '<p>La actividad <strong>{actividad}</strong> comienza en <strong>1 hora</strong>.</p>', 'convoca-enroll' )
 					. Email_Layout::meta_table(
 						array(
 							array(
-								'label' => 'Actividad',
+								'label' => __( 'Actividad', 'convoca-enroll' ),
 								'value' => '{actividad}',
 							),
 							array(
-								'label' => 'Hora',
+								'label' => __( 'Hora', 'convoca-enroll' ),
 								'value' => '{hora}',
 							),
 							array(
-								'label' => 'Ubicación',
+								'label' => __( 'Ubicación', 'convoca-enroll' ),
 								'value' => '{ubicacion}',
 							),
 							array(
-								'label' => 'Reserva',
+								'label' => __( 'Reserva', 'convoca-enroll' ),
 								'value' => '{codigo_reserva}',
 							),
 						)
@@ -340,25 +340,25 @@ class Email_Automation {
 					. '<p>¡Te esperamos! 🌿</p>',
 			),
 			'feedback_post'                  => array(
-				'subject' => '¿Qué te pareció "{actividad}"?',
-				'body'    => '<h1>Hola {nombre},</h1>'
-					. '<p>¿Qué tal la experiencia en <strong>{actividad}</strong>? Nos encantaría conocer tu opinión.</p>'
-					. '<p>Puedes respondernos directamente a este email con tus comentarios.</p>'
+				'subject' => __( '¿Qué te pareció "{actividad}"?', 'convoca-enroll' ),
+				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-enroll' )
+					. __( '<p>¿Qué tal la experiencia en <strong>{actividad}</strong>? Nos encantaría conocer tu opinión.</p>', 'convoca-enroll' )
+					. __( '<p>Puedes respondernos directamente a este email con tus comentarios.</p>', 'convoca-enroll' )
 					. '<p>¡Gracias por participar! 🌿</p>',
 			),
 			'google_photos_album_creado'     => array(
 				'subject' => 'Álbum de fotos para "{actividad}" — ' . get_bloginfo('name'),
 				'body'    => __( '<h1>Nuevo álbum disponible</h1>', 'convoca-enroll' )
-					. '<p>Se ha creado un álbum de Google Photos para la actividad <strong>{actividad}</strong>.</p>'
-					. Email_Layout::button_html( '{album_url}', 'Subir fotos' )
+					. __( '<p>Se ha creado un álbum de Google Photos para la actividad <strong>{actividad}</strong>.</p>', 'convoca-enroll' )
+					. Email_Layout::button_html( '{album_url}', __( 'Subir fotos', 'convoca-enroll' ) )
 					. '<p>Una vez el evento haya terminado, puedes compartir el álbum con los participantes.</p>',
 			),
 			'google_photos_album_compartido' => array(
 				'subject' => 'Fotos de "{actividad}" — ' . get_bloginfo('name'),
 				'body'    => __( '<h1>¡Ya puedes ver las fotos! 🎉</h1>', 'convoca-enroll' )
-					. '<p>Ya están disponibles las fotos de la actividad <strong>{actividad}</strong>.</p>'
-					. '<p>Hemos subido un álbum con los mejores momentos.</p>'
-					. Email_Layout::button_html( '{album_url}', 'Ver fotos' )
+					. __( '<p>Ya están disponibles las fotos de la actividad <strong>{actividad}</strong>.</p>', 'convoca-enroll' )
+					. __( '<p>Hemos subido un álbum con los mejores momentos.</p>', 'convoca-enroll' )
+					. Email_Layout::button_html( '{album_url}', __( 'Ver fotos', 'convoca-enroll' ) )
 					. '<p>¡Gracias por participar en nuestras actividades! 🌿</p>',
 			),
 		);
@@ -699,7 +699,7 @@ class Email_Automation {
 			'{fecha}'            => $fecha,
 			'{hora}'             => $hora,
 			'{ubicacion}'        => $am( 'ubicacion' ) ?: '—',
-			'{estado}'           => CPT_Inscripcion::LABELS[ $m( 'estado' ) ] ?? $m( 'estado' ),
+			'{estado}'           => CPT_Inscripcion::labels()[ $m( 'estado' ) ] ?? $m( 'estado' ),
 			'{importe}'          => $importe,
 			'{plazas_restantes}' => $am( 'plazas_disponibles' ) ?: '0',
 			'{codigo_reserva}'   => $m( 'codigo_reserva' ) ?: '—',

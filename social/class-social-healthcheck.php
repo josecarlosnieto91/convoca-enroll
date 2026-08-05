@@ -74,8 +74,8 @@ class Social_Healthcheck {
 		$list = implode( ', ', $expired );
 		$url  = admin_url( 'admin.php?page=convoca-media-accounts' );
 		echo '<div class="notice notice-error is-dismissible"><p>';
-		echo '⚠️ Convoca Media Suite: La conexión con <strong>' . esc_html( $list ) . '</strong> ha expirado. ';
-		echo 'Por favor, ve a <a href="' . esc_url( $url ) . '">Media → Redes Sociales</a> y vuelve a conectar la cuenta.';
+		echo '⚠️ ' . esc_html__( 'Convoca Media Suite: La conexión con', 'convoca-enroll' ) . ' <strong>' . esc_html( $list ) . '</strong> ' . esc_html__( 'ha expirado.', 'convoca-enroll' ) . ' ';
+		echo esc_html__( 'Por favor, ve a', 'convoca-enroll' ) . ' <a href="' . esc_url( $url ) . '">' . esc_html__( 'Media → Redes Sociales', 'convoca-enroll' ) . '</a> ' . esc_html__( 'y vuelve a conectar la cuenta.', 'convoca-enroll' ) . '.';
 		echo '</p></div>';
 	}
 

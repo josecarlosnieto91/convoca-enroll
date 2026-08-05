@@ -99,7 +99,7 @@ class Inscriptions_List extends \WP_List_Table {
 		// Estado filter.
 		echo '<select name="estado_filter">';
 		echo '<option value="">' . esc_html__( '— Estado —', 'convoca-enroll' ) . '</option>';
-		foreach ( CPT_Inscripcion::LABELS as $key => $label ) {
+		foreach ( CPT_Inscripcion::labels() as $key => $label ) {
 			$sel = selected( $estado_filter, $key, false );
 			echo "<option value='" . esc_attr( $key ) . "' " . selected( $estado_filter, $key, false ) . ">" . esc_html( $label ) . '</option>';
 		}

@@ -68,14 +68,16 @@ class CPT_Inscripcion {
 		'cancelada',
 	);
 
-	public const LABELS = array(
-		'pendiente'      => 'Pendiente',
-		'pendiente_pago' => 'Pendiente de aportación',
-		'confirmada'     => 'Confirmada',
-		'pagada'         => 'Pagada (especial)',
-		'lista_espera'   => 'Lista de espera',
-		'cancelada'      => 'Cancelada',
-	);
+	public static function labels(): array {
+		return array(
+			'pendiente'      => __( 'Pendiente', 'convoca-enroll' ),
+			'pendiente_pago' => __( 'Pendiente de aportación', 'convoca-enroll' ),
+			'confirmada'     => __( 'Confirmada', 'convoca-enroll' ),
+			'pagada'         => __( 'Pagada (especial)', 'convoca-enroll' ),
+			'lista_espera'   => __( 'Lista de espera', 'convoca-enroll' ),
+			'cancelada'      => __( 'Cancelada', 'convoca-enroll' ),
+		);
+	}
 
 	public const BADGE_CLASSES = array(
 		'pendiente'      => 'convoca-badge convoca-badge--pending',
@@ -167,7 +169,7 @@ class CPT_Inscripcion {
 	 */
 	public static function badge( string $state ): string {
 		$class = self::BADGE_CLASSES[ $state ] ?? 'convoca-badge';
-		$label = self::LABELS[ $state ] ?? $state;
+		$label = self::labels()[ $state ] ?? $state;
 		return '<span class="' . esc_attr( $class ) . '">' . esc_html( $label ) . '</span>';
 	}
 

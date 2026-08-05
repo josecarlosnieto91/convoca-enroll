@@ -272,7 +272,7 @@ class Form_Inscripcion {
 
 		$success_data = array(
 			'estado'         => $estado,
-			'estado_label'   => CPT_Inscripcion::LABELS[ $estado ] ?? $estado,
+			'estado_label'   => CPT_Inscripcion::labels()[ $estado ] ?? $estado,
 			'plazas'         => (int) $act_meta['plazas_disponibles'],
 			'codigo_reserva' => get_post_meta( $result, '_convoca_codigo_reserva', true ),
 			'redirect'       => add_query_arg( 'enroll_success', '1', home_url() ),

@@ -140,7 +140,7 @@ class Admin_Inscripcion_Form {
 						<div class="convoca-field">
 							<label for="conv-admin-estado">Estado</label>
 							<select id="conv-admin-estado" name="estado">
-								<?php foreach ( CPT_Inscripcion::LABELS as $key => $label ) : ?>
+								<?php foreach ( CPT_Inscripcion::labels() as $key => $label ) : ?>
 									<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, 'confirmada' ); ?>>
 										<?php echo esc_html( $label ); ?>
 									</option>

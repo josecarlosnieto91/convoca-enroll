@@ -57,7 +57,7 @@ class Google_Sheets {
 			$m( 'email' ),
 			$m( 'telefono' ),
 			$m( 'es_socio' ) === '1' ? 'Sí' : 'No',
-			CPT_Inscripcion::LABELS[ $m( 'estado' ) ] ?? $m( 'estado' ),
+			CPT_Inscripcion::labels()[ $m( 'estado' ) ] ?? $m( 'estado' ),
 			current_time( 'd/m/Y H:i' ),
 		);
 
@@ -79,7 +79,7 @@ class Google_Sheets {
 			$m( 'email' ),
 			'',
 			'',
-			'CAMBIO → ' . ( CPT_Inscripcion::LABELS[ $m( 'estado' ) ] ?? $m( 'estado' ) ),
+			'CAMBIO → ' . ( CPT_Inscripcion::labels()[ $m( 'estado' ) ] ?? $m( 'estado' ) ),
 			current_time( 'd/m/Y H:i' ),
 		);
 

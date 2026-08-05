@@ -182,7 +182,7 @@ class Panel_Reservas {
 				'hora'              => $hora,
 				'ubicacion'         => $act ? ( CPT_Actividad::get_meta_value( $act_id, 'ubicacion' ) ?: '—' ) : '—',
 				'estado'            => $estado,
-				'estado_label'      => CPT_Inscripcion::LABELS[ $estado ] ?? $estado,
+				'estado_label'      => CPT_Inscripcion::labels()[ $estado ] ?? $estado,
 				'estado_class'      => CPT_Inscripcion::BADGE_CLASSES[ $estado ] ?? 'convoca-badge',
 				'codigo'            => $m( 'codigo_reserva' ),
 				'es_menor'          => $es_menor,

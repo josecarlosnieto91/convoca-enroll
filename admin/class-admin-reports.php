@@ -346,7 +346,7 @@ endif;
 			new Chart(document.getElementById('bdeChartStates'), {
 				type: 'pie',
 				data: {
-					labels: <?php echo json_encode( array_values( CPT_Inscripcion::LABELS ) ); ?>,
+					labels: <?php echo json_encode( array_values( CPT_Inscripcion::labels() ) ); ?>,
 					datasets: [{
 						data: <?php echo json_encode( array_values( $pie_data ) ); ?>,
 						backgroundColor: ['#ffd700', '#ff9800', '#4caf50', '#9c27b0', '#f44336']
