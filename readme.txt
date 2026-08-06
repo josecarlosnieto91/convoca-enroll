@@ -1,6 +1,6 @@
 === Convoca Enroll ===
 Contributors: josecarlosnietoramos
-Tags: activities, registration, enrollment, QR, check-in, forms, associations, NGOs
+Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
@@ -44,3 +44,30 @@ This plugin can connect to external Google Calendar and Google Photos services v
 = 2.6.1 =
 * Improvement: Unit tests — fixed bootstrap, 42 tests, 91 assertions
 * Fix: Registration engine with improved DNI/NIE validation
+
+== Screenshots ==
+
+1. Activities list
+2. Activity creation form
+3. Public registration form (shortcode)
+4. QR check-in screen
+5. Registrations statistics
+
+== Frequently Asked Questions ==
+
+= Does it require Convoca Core? =
+
+Yes. Convoca Enroll requires Convoca Core to be active.
+
+= Can I limit capacity? =
+
+Yes. Each activity has a capacity setting. When full, new registrations go to the wait list automatically.
+
+= Does Google Calendar sync require a Google account? =
+
+Yes. Google Calendar/Photos sync uses OAuth 2.0 and requires a Google Cloud project with the appropriate APIs enabled.
+
+== Upgrade Notice ==
+
+= 2.6.1 =
+* Compatibility and stability improvements. Recommended update.
