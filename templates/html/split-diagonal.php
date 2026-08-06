@@ -15,7 +15,7 @@
  * (at your option) any later version.
  */
 
-$split_y     = round( $height * 0.55 );
+$split_y = round( $height * 0.55 );
 ?><!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
 @font-face{font-family:'Playfair';src:url('<?php echo CONVOCA_ENROLL_URL; ?>assets/fonts/PlayfairDisplay.ttf')format('truetype');font-weight:700}
 @font-face{font-family:'Montserrat';src:url('<?php echo CONVOCA_ENROLL_URL; ?>assets/fonts/Montserrat.ttf')format('truetype')}

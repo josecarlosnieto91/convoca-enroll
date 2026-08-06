@@ -48,17 +48,39 @@ class Event_Style_Registry {
 	 */
 	public static function all(): array {
 		return array(
-			'naturaleza'   => array( 'label' => __( 'Naturaleza', 'convoca-enroll' ), 'color' => '#4caf50', 'text_color' => '#ffffff', 'icon' => '🌿', 'accent' => '#2e7d32' ),
-			'familiar'     => array( 'label' => __( 'Familiar', 'convoca-enroll' ), 'color' => '#ff9800', 'text_color' => '#ffffff', 'icon' => '👨‍👩‍👧‍👦', 'accent' => '#e65100' ),
-			'formacion'    => array( 'label' => __( 'Formación', 'convoca-enroll' ), 'color' => '#2196f3', 'text_color' => '#ffffff', 'icon' => '🎓', 'accent' => '#1565c0' ),
-			'adultos'      => array( 'label' => __( 'Adultos', 'convoca-enroll' ), 'color' => '#9c27b0', 'text_color' => '#ffffff', 'icon' => '🧑', 'accent' => '#6a1b9a' ),
-			'voluntariado' => array( 'label' => __( 'Voluntariado', 'convoca-enroll' ), 'color' => '#009688', 'text_color' => '#ffffff', 'icon' => '🤝', 'accent' => '#00695c' ),
-			'infantil'     => array( 'label' => __( 'Infantil', 'convoca-enroll' ), 'color' => '#ff5722', 'text_color' => '#ffffff', 'icon' => '🧒', 'accent' => '#bf360c' ),
-			'online'       => array( 'label' => __( 'Online', 'convoca-enroll' ), 'color' => '#607d8b', 'text_color' => '#ffffff', 'icon' => '💻', 'accent' => '#37474f' ),
-			'ruta'         => array( 'label' => __( 'Ruta interpretada', 'convoca-enroll' ), 'color' => '#8bc34a', 'text_color' => '#ffffff', 'icon' => '🚶', 'accent' => '#558b2f' ),
-			'taller'       => array( 'label' => __( 'Taller', 'convoca-enroll' ), 'color' => '#795548', 'text_color' => '#ffffff', 'icon' => '🔧', 'accent' => '#4e342e' ),
-			'socios'       => array( 'label' => __( 'Exclusiva socios', 'convoca-enroll' ), 'color' => '#e91e63', 'text_color' => '#ffffff', 'icon' => '⭐', 'accent' => '#c2185b' ),
-			'especial'     => array( 'label' => __( 'Especial', 'convoca-enroll' ), 'color' => '#f44336', 'text_color' => '#ffffff', 'icon' => '🎉', 'accent' => '#d32f2f' ),
+			'naturaleza'   => array(
+				'label' => __( 'Naturaleza', 'convoca-enroll' ), 'color' => '#4caf50', 'text_color' => '#ffffff', 'icon' => '🌿', 'accent' => '#2e7d32'
+			),
+			'familiar'     => array(
+				'label' => __( 'Familiar', 'convoca-enroll' ), 'color' => '#ff9800', 'text_color' => '#ffffff', 'icon' => '👨‍👩‍👧‍👦', 'accent' => '#e65100'
+			),
+			'formacion'    => array(
+				'label' => __( 'Formación', 'convoca-enroll' ), 'color' => '#2196f3', 'text_color' => '#ffffff', 'icon' => '🎓', 'accent' => '#1565c0'
+			),
+			'adultos'      => array(
+				'label' => __( 'Adultos', 'convoca-enroll' ), 'color' => '#9c27b0', 'text_color' => '#ffffff', 'icon' => '🧑', 'accent' => '#6a1b9a'
+			),
+			'voluntariado' => array(
+				'label' => __( 'Voluntariado', 'convoca-enroll' ), 'color' => '#009688', 'text_color' => '#ffffff', 'icon' => '🤝', 'accent' => '#00695c'
+			),
+			'infantil'     => array(
+				'label' => __( 'Infantil', 'convoca-enroll' ), 'color' => '#ff5722', 'text_color' => '#ffffff', 'icon' => '🧒', 'accent' => '#bf360c'
+			),
+			'online'       => array(
+				'label' => __( 'Online', 'convoca-enroll' ), 'color' => '#607d8b', 'text_color' => '#ffffff', 'icon' => '💻', 'accent' => '#37474f'
+			),
+			'ruta'         => array(
+				'label' => __( 'Ruta interpretada', 'convoca-enroll' ), 'color' => '#8bc34a', 'text_color' => '#ffffff', 'icon' => '🚶', 'accent' => '#558b2f'
+			),
+			'taller'       => array(
+				'label' => __( 'Taller', 'convoca-enroll' ), 'color' => '#795548', 'text_color' => '#ffffff', 'icon' => '🔧', 'accent' => '#4e342e'
+			),
+			'socios'       => array(
+				'label' => __( 'Exclusiva socios', 'convoca-enroll' ), 'color' => '#e91e63', 'text_color' => '#ffffff', 'icon' => '⭐', 'accent' => '#c2185b'
+			),
+			'especial'     => array(
+				'label' => __( 'Especial', 'convoca-enroll' ), 'color' => '#f44336', 'text_color' => '#ffffff', 'icon' => '🎉', 'accent' => '#d32f2f'
+			),
 		);
 	}
 

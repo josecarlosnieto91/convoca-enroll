@@ -939,7 +939,7 @@ class Admin_Settings {
 				'shortcode' => __( '[convoca_pago_actividad]', 'convoca-enroll' ),
 				'fix'       => __( 'Crea una página con el shortcode [convoca_pago_actividad] para procesar los pagos de inscripción.', 'convoca-enroll' ),
 			),
-			'formulario_evaluacion'  => array(
+			'formulario_evaluacion'     => array(
 				'title'     => __( 'Página: Formulario de Evaluación', 'convoca-enroll' ),
 				'shortcode' => __( '[formulario_evaluacion]', 'convoca-enroll' ),
 				'fix'       => __( 'Crea una página con el shortcode [formulario_evaluacion] para que los monitores evalúen las actividades.', 'convoca-enroll' ),

@@ -15,10 +15,10 @@
  * (at your option) any later version.
  */
 
-$card_w      = round( $width * 0.7 );
-$card_x      = round( ( $width - $card_w ) / 2 );
-$card_y      = round( $height * 0.52 );
-$card_h      = round( $height * 0.48 );
+$card_w = round( $width * 0.7 );
+$card_x = round( ( $width - $card_w ) / 2 );
+$card_y = round( $height * 0.52 );
+$card_h = round( $height * 0.48 );
 ?><!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
 @font-face{font-family:'Playfair';src:url('<?php echo CONVOCA_ENROLL_URL; ?>assets/fonts/PlayfairDisplay.ttf')format('truetype');font-weight:700}
 @font-face{font-family:'Montserrat';src:url('<?php echo CONVOCA_ENROLL_URL; ?>assets/fonts/Montserrat.ttf')format('truetype')}

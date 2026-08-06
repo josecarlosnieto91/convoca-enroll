@@ -19,7 +19,7 @@
 namespace Convoca\Enroll;
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+	exit;
 }
 
 // Load translations.
@@ -30,7 +30,7 @@ add_action(
 	'init',
 	function () {
 		wp_set_script_translations( 'convoca-enroll-scripts', 'convoca-enroll', plugin_dir_path( __FILE__ ) . 'languages/' );
-	load_plugin_textdomain( 'convoca-enroll', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+		load_plugin_textdomain( 'convoca-enroll', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	}
 );
 
@@ -44,7 +44,8 @@ if ( file_exists( $composer_autoload ) ) {
 	require_once $composer_autoload;
 }
 
-/* ── Convoca Core fallback ────────────────────────── */
+/*
+── Convoca Core fallback ────────────────────────── */
 // Core classes auto-loaded via Convoca Core's Composer PSR-4
 
 // Compatibility Check: Ensure Convoca Common is loaded.
@@ -78,7 +79,8 @@ if ( ! defined( 'CONVOCA_ENROLL_URL' ) ) {
 	define( 'CONVOCA_ENROLL_URL', plugin_dir_url( __FILE__ ) );
 }
 
-/* ── Autoloader ───────────────────────────────────────────── */
+/*
+── Autoloader ───────────────────────────────────────────── */
 // PSR-4 autoloading handled by Composer (vendor/autoload.php)
 
 /* ── Activation ───────────────────────────────────────────── */

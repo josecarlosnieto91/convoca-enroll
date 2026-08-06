@@ -259,7 +259,7 @@ class CPT_Actividad {
 			'precio_socio_dia'     => fn( $v ) => floatval( str_replace( ',', '.', $v ) ),
 			'ubicacion'            => 'sanitize_text_field',
 			'requiere_pago'        => 'absint',
-			'actividad_externa'       => 'absint',
+			'actividad_externa'    => 'absint',
 			'responsables'         => function ( $v ) {
 				return is_array( $v ) ? implode( ',', array_map( 'absint', $v ) ) : sanitize_text_field( $v );
 			},

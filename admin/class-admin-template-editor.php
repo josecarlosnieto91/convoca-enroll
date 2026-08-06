@@ -46,10 +46,14 @@ class Admin_Template_Editor {
 		wp_enqueue_script( 'jquery-ui-sortable' );
 		wp_enqueue_style( 'convoca-media-admin', CONVOCA_ENROLL_URL . 'assets/css/media-admin.css', array(), CONVOCA_ENROLL_VERSION );
 		wp_enqueue_script( 'convoca-editor', CONVOCA_ENROLL_URL . 'assets/js/convoca-editor.js', array( 'jquery', 'jquery-ui-sortable', 'wp-color-picker' ), CONVOCA_ENROLL_VERSION, true );
-		wp_localize_script( 'convoca-editor', 'convocaEditor', array(
-			'ajax_url' => admin_url( 'admin-ajax.php' ),
-			'nonce'    => wp_create_nonce( 'convoca_editor' ),
-		) );
+		wp_localize_script(
+			'convoca-editor',
+			'convocaEditor',
+			array(
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'nonce'    => wp_create_nonce( 'convoca_editor' ),
+			) 
+		);
 	}
 
 	public function register_page(): void {
@@ -64,12 +68,12 @@ class Admin_Template_Editor {
 	}
 
 	public function render(): void {
-		$slug    = sanitize_text_field( $_GET['template'] ?? 'nature-classic' );
-		$tpl     = Template_Manager::get( $slug );
+		$slug = sanitize_text_field( $_GET['template'] ?? 'nature-classic' );
+		$tpl  = Template_Manager::get( $slug );
 		if ( ! $tpl ) {
 			echo '<div class="wrap"><h1>Plantilla no encontrada</h1></div>'; return;
 		}
-		$config  = $tpl['config'];
+		$config    = $tpl['config'];
 		$templates = Template_Manager::get_all();
 		?>
 		<div class="wrap">
@@ -128,7 +132,13 @@ class Admin_Template_Editor {
 					<h2>Vista previa</h2>
 					<div id="convoca-editor-preview" style="background:#f8f9fa;border-radius:8px;padding:16px;text-align:center;">
 						<select id="convoca-editor-preview-activity" style="width:100%;margin-bottom:8px;">
-							<?php foreach ( get_posts( array( 'post_type' => 'actividad', 'posts_per_page' => 5, 'post_status' => 'any' ) ) as $p ) : ?>
+							<?php
+							foreach ( get_posts(
+								array(
+									'post_type' => 'actividad', 'posts_per_page' => 5, 'post_status' => 'any'
+								) 
+							) as $p ) :
+								?>
 								<option value="<?php echo esc_attr( $p->ID ); ?>"><?php echo esc_html( $p->post_title ); ?></option>
 							<?php endforeach; ?>
 						</select>
@@ -149,7 +159,7 @@ class Admin_Template_Editor {
 			wp_send_json_error( array( 'message' => __( 'Sin permisos.', 'convoca-enroll' ) ) );
 		}
 
-		$slug  = sanitize_text_field( $_POST['slug'] ?? '' );
+		$slug        = sanitize_text_field( $_POST['slug'] ?? '' );
 		$layers_data = json_decode( stripslashes( $_POST['layers'] ?? '[]' ), true );
 		if ( ! $slug || ! is_array( $layers_data ) ) {
 			wp_send_json_error( array( 'message' => __( 'Datos inválidos.', 'convoca-enroll' ) ) );
@@ -160,9 +170,9 @@ class Admin_Template_Editor {
 			wp_send_json_error( array( 'message' => __( 'Plantilla no encontrada.', 'convoca-enroll' ) ) );
 		}
 
-		$config = $tpl['config'];
+		$config           = $tpl['config'];
 		$config['layers'] = $layers_data;
-		$tpl['config'] = $config;
+		$tpl['config']    = $config;
 
 		$result = Template_Manager::save( $tpl );
 		if ( ! $result ) {
@@ -205,6 +215,10 @@ class Admin_Template_Editor {
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
-		wp_send_json_success( array( 'message' => __( 'Plantilla importada.', 'convoca-enroll' ), 'id' => $result ) );
+		wp_send_json_success(
+			array(
+				'message' => __( 'Plantilla importada.', 'convoca-enroll' ), 'id' => $result
+			) 
+		);
 	}
 }

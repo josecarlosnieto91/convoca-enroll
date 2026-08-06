@@ -23,7 +23,7 @@ $ubicacion        = $meta['ubicacion'] ?? '';
 $precio_s         = $meta['precio_socio'] ?? 0;
 $precio_sd        = $meta['precio_socio_dia'] ?? 0;
 $requiere_pago    = ! empty( $meta['requiere_pago'] );
-$is_externa          = ! empty( $meta['actividad_externa'] );
+$is_externa       = ! empty( $meta['actividad_externa'] );
 $agotada          = $plazas <= 0;
 $has_socio_dia    = (float) $precio_sd > 0;
 $permitir_menores = $settings['permitir_menores'] ?? true;

@@ -90,7 +90,7 @@ class Blog_Post_Manager {
 				'category'     => self::get_category_id(),
 				'meta_input'   => array(
 					self::META_ACTIVIDAD_ID => $actividad_id,
-					'_convoca_schema_event'    => self::build_schema( $actividad, $fecha_inicio, $fecha_fin, $ubicacion, $permalink ),
+					'_convoca_schema_event' => self::build_schema( $actividad, $fecha_inicio, $fecha_fin, $ubicacion, $permalink ),
 				),
 			) 
 		);

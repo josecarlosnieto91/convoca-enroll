@@ -975,7 +975,7 @@ endif;
 	private function get_evaluaciones_data( int $actividad_id = 0 ): array {
 		global $wpdb;
 
-		$where_extra = '';
+		$where_extra  = '';
 		$where_clause = "p.post_type = 'convoca_evaluacion' AND p.post_status = 'publish'";
 		$args         = array();
 		if ( $actividad_id > 0 ) {
@@ -983,7 +983,7 @@ endif;
 			$args[]        = $actividad_id;
 		}
 
-		$sql     = $wpdb->prepare(
+		$sql = $wpdb->prepare(
 			"SELECT 
                 pm_act.meta_value AS actividad_id,
                 p.post_title,

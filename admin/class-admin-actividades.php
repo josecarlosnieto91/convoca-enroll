@@ -340,10 +340,10 @@ class Admin_Actividades {
 		}
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_die( esc_html__( 'No tienes permisos.', 'convoca-enroll' ) );
-			}
+		}
 
 			$orig = get_post( $orig_id );
-			if ( ! $orig || $orig->post_type !== 'actividad' ) {
+		if ( ! $orig || $orig->post_type !== 'actividad' ) {
 			wp_die( esc_html__( 'Actividad no encontrada.', 'convoca-enroll' ) );
 		}
 
@@ -463,9 +463,9 @@ class Admin_Actividades_List extends \WP_List_Table {
 	}
 
 	protected function column_titulo( $item ): string {
-		$edit  = admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $item->ID );
+		$edit    = admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $item->ID );
 		$externa = get_post_meta( $item->ID, '_convoca_actividad_externa', true );
-		$badge = $externa === '1' ? ' <span class="convoca-badge convoca-badge--externa" style="background:#2d5a27;color:#fff;">🌐</span>' : '';
+		$badge   = $externa === '1' ? ' <span class="convoca-badge convoca-badge--externa" style="background:#2d5a27;color:#fff;">🌐</span>' : '';
 
 		$status_badge = '';
 		if ( $item->post_status === 'draft' ) {
