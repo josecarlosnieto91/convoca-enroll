@@ -48,12 +48,24 @@ Accede a **Convoca → Enroll → Ajustes**:
 6. Selecciona las **categorías** adecuadas (Rutas, Talleres, Voluntariado…)
 7. Haz clic en **Publicar**
 
-### Shortcode para mostrar actividades
+### Shortcodes
 
-Usa `[convoca_actividades]` en cualquier página para listar las actividades publicadas. Atributos opcionales:
+Usa `[convoca_inscripcion_page]` en una página para mostrar el listado de actividades con su formulario de inscripción:
 
 ```
-[convoca_actividades limite="6" categoria="rutas" orden="proximas"]
+[convoca_inscripcion_page]
+```
+
+Para mostrar el formulario de inscripción de una actividad concreta:
+
+```
+[convoca_form_inscripcion id="123"]
+```
+
+El panel de reservas del usuario:
+
+```
+[convoca_panel_reservas]
 ```
 
 ## 4. Gestionar inscripciones
@@ -141,9 +153,11 @@ El **Monitor CRM** en **Convoca → Enroll → CRM** muestra:
 
 | Shortcode/Bloque | Uso |
 |-----------------|-----|
-| `[convoca_actividades]` | Lista de actividades |
-| `[convoca_inscripcion]` | Formulario de inscripción (para página de actividad) |
+| `[convoca_inscripcion_page]` | Página de actividades con inscripción |
+| `[convoca_form_inscripcion id="123"]` | Formulario de inscripción de una actividad concreta |
+| `[convoca_panel_reservas]` | Panel de reservas del usuario |
 | `[convoca_actividad_meta field="ubicacion"]` | Muestra metadato de la actividad actual |
+| `[convoca_evaluacion]` | Formulario de evaluación post-actividad |
 | Bloque "Inscripción" | Versión Gutenberg del formulario |
 | Bloque "Próximas actividades" | Lista de actividades en editor de bloques |
 

@@ -16,7 +16,9 @@ Manage the complete activity lifecycle: creation, registrations with capacity co
 
 Free features:
 * Activity creation and management with slots and pricing
-* Public registration form with shortcode
+* Public registration form with shortcode `[convoca_form_inscripcion id="X"]`
+* Activities page shortcode `[convoca_inscripcion_page]`
+* Booking panel shortcode `[convoca_panel_reservas]`
 * Capacity control and automatic wait list
 * QR check-in for attendees
 * CSV export of registrants
