@@ -157,6 +157,7 @@ El **Monitor CRM** en **Convoca → Enroll → CRM** muestra:
 | `[convoca_form_inscripcion id="123"]` | Formulario de inscripción de una actividad concreta |
 | `[convoca_panel_reservas]` | Panel de reservas del usuario |
 | `[convoca_actividad_meta field="ubicacion"]` | Muestra metadato de la actividad actual |
+| `[convoca_inscripcion_actual]` | Formulario de inscripción de la actividad actual (página singular) |
 | `[convoca_evaluacion]` | Formulario de evaluación post-actividad |
 | Bloque "Inscripción" | Versión Gutenberg del formulario |
 | Bloque "Próximas actividades" | Lista de actividades en editor de bloques |
