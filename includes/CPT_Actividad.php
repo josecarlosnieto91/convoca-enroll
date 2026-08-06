@@ -78,6 +78,11 @@ class CPT_Actividad {
 		add_filter( 'manage_actividad_posts_columns', array( $this, 'list_columns' ) );
 		add_action( 'manage_actividad_posts_custom_column', array( $this, 'list_custom_column' ), 10, 2 );
 		add_filter( 'manage_edit-actividad_sortable_columns', array( $this, 'list_sortable_columns' ) );
+		add_filter( 'render_block', array( $this, 'render_activity_placeholders' ), 10, 2 );
+		add_filter( 'pre_get_posts', array( $this, 'archive_future_only' ) );
+		add_action( 'wp_head', array( $this, 'output_event_schema' ) );
+		add_shortcode( 'convoca_actividad_meta', array( $this, 'shortcode_actividad_meta' ) );
+		add_shortcode( 'convoca_inscripcion_actual', array( $this, 'shortcode_inscripcion_actual' ) );
 	}
 
 	/* ── Register CPT ──────────────────────────── */
@@ -865,5 +870,177 @@ class CPT_Actividad {
 		} catch ( \Exception $e ) {
 			wp_send_json_error( __( 'Error al eliminar el evento: ', 'convoca-enroll' ) . $e->getMessage() );
 		}
+	}
+
+	/* ── Public API: activity shortcodes & data (moved from theme) ── */
+
+	/**
+	 * [convoca_actividad_meta field="ubicacion"]
+	 * Render a single activity meta value, formatted for display.
+	 */
+	public function shortcode_actividad_meta( $atts ): string {
+		$atts = shortcode_atts(
+			array( 'field' => 'ubicacion' ),
+			$atts,
+			'convoca_actividad_meta'
+		);
+
+		$id = get_the_ID() ?: get_queried_object_id();
+		if ( ! $id || get_post_type( $id ) !== 'actividad' ) {
+			return '';
+		}
+
+		$meta_key = '_convoca_' . sanitize_key( $atts['field'] );
+		$value    = get_post_meta( $id, $meta_key, true );
+
+		if ( '' === $value || null === $value || false === $value ) {
+			return '';
+		}
+
+		if ( 'precio' === $atts['field'] ) {
+			return (float) $value > 0 ? number_format( (float) $value, 2, ',', '.' ) . ' €' : 'Gratis';
+		}
+		if ( 'plazas_disponibles' === $atts['field'] ) {
+			$total = get_post_meta( $id, '_convoca_plazas_totales', true );
+			return (int) $value . ' / ' . (int) $total;
+		}
+		if ( 'fecha_inicio' === $atts['field'] || 'fecha_fin' === $atts['field'] ) {
+			$ts = strtotime( $value );
+			return $ts ? date_i18n( 'j M Y', $ts ) : '';
+		}
+
+		return esc_html( $value );
+	}
+
+	/**
+	 * [convoca_inscripcion_actual]
+	 * Render the enroll form for the current actividad (singular context).
+	 */
+	public function shortcode_inscripcion_actual(): string {
+		if ( ! is_singular( 'actividad' ) ) {
+			if ( current_user_can( 'manage_options' ) ) {
+				return '<div class="convoca-alert convoca-alert--info" style="display:block;padding:15px;margin:10px 0;">' . esc_html__( '💡 Este shortcode debe usarse en la página de una actividad.', 'convoca-enroll' ) . '</div>';
+			}
+			return '';
+		}
+		$id = get_queried_object_id();
+		if ( ! $id || ! is_numeric( $id ) || $id <= 0 || get_post_type( $id ) !== 'actividad' ) {
+			return '';
+		}
+		if ( ! shortcode_exists( 'convoca_form_inscripcion' ) ) {
+			return '';
+		}
+		return do_shortcode( '[convoca_form_inscripcion id="' . (int) $id . '"]' );
+	}
+
+	/**
+	 * Replace %%PLACEHOLDER%% tokens in rendered blocks for activity content.
+	 */
+	public function render_activity_placeholders( $html, $block ) {
+		if ( strpos( $html, '%%' ) === false ) {
+			return $html;
+		}
+		global $post;
+		if ( ! $post || get_post_type( $post ) !== 'actividad' ) {
+			return $html;
+		}
+		$id  = $post->ID;
+		$map = array(
+			'%%FECHA_INICIO%%' => function () use ( $id ) {
+				$v = get_post_meta( $id, '_convoca_fecha_inicio', true );
+				return $v ? date_i18n( 'j \\d\\e F \\d\\e\\l Y', strtotime( $v ) ) : '';
+			},
+			'%%LUGAR%%'        => function () use ( $id ) {
+				return esc_html( get_post_meta( $id, '_convoca_lugar', true ) ?: get_post_meta( $id, '_convoca_ubicacion', true ) );
+			},
+			'%%PRECIO%%'       => function () use ( $id ) {
+				$p = (float) get_post_meta( $id, '_convoca_precio', true );
+				return $p > 0 ? number_format( $p, 2, ',', '.' ) . ' €' : 'Gratis';
+			},
+			'%%PLAZAS%%'       => function () use ( $id ) {
+				return ( (int) get_post_meta( $id, '_convoca_plazas_disponibles', true ) ) . ' / ' . ( (int) get_post_meta( $id, '_convoca_plazas_totales', true ) );
+			},
+		);
+		foreach ( $map as $k => $fn ) {
+			$html = str_replace( $k, $fn(), $html );
+		}
+		return $html;
+	}
+
+	/**
+	 * Archive: show only future activities, ordered by start date.
+	 */
+	public function archive_future_only( $query ) {
+		if ( ! is_admin() && $query->is_post_type_archive( 'actividad' ) && $query->is_main_query() ) {
+			$query->set( 'meta_key', '_convoca_fecha_inicio' );
+			$query->set( 'meta_compare', '>=' );
+			$query->set( 'meta_value', wp_date( 'Y-m-d' ) );
+			$query->set( 'orderby', 'meta_value' );
+			$query->set( 'order', 'ASC' );
+		}
+		return $query;
+	}
+
+	/**
+	 * JSON-LD Event schema for actividad singular views.
+	 */
+	public function output_event_schema(): void {
+		if ( ! is_singular( 'actividad' ) ) {
+			return;
+		}
+		$post_id = get_queried_object_id();
+		$post    = get_post( $post_id );
+
+		$start_date = get_post_meta( $post_id, '_convoca_fecha_inicio', true );
+		$end_date   = get_post_meta( $post_id, '_convoca_fecha_fin', true );
+		$location   = get_post_meta( $post_id, '_convoca_ubicacion', true );
+		$plazas_dis = (int) get_post_meta( $post_id, '_convoca_plazas_disponibles', true );
+
+		if ( empty( $start_date ) || ! strtotime( $start_date ) ) {
+			return;
+		}
+		$start_ts = strtotime( $start_date );
+		$end_ts   = ( empty( $end_date ) || ! strtotime( $end_date ) ) ? $start_ts + 7200 : strtotime( $end_date );
+
+		$start_iso = wp_date( 'c', $start_ts );
+		$end_iso   = wp_date( 'c', $end_ts );
+
+		$availability = ( $plazas_dis > 0 ) ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut';
+
+		$precio_socio    = get_post_meta( $post_id, '_convoca_precio_socio', true );
+		$precio_socio_dia = get_post_meta( $post_id, '_convoca_precio_socio_dia', true );
+		$precio_general  = get_post_meta( $post_id, '_convoca_precio_general', true );
+
+		$prices = array_filter( array( $precio_socio, $precio_socio_dia, $precio_general ), function ( $v ) {
+			return '' !== $v && strtolower( $v ) !== 'gratis';
+		} );
+		$lowest_price = ! empty( $prices ) ? min( array_map( function ( $v ) {
+			return (float) preg_replace( '/[^0-9.]/', '', str_replace( ',', '.', $v ) );
+		}, $prices ) ) : 0;
+
+		$schema = array(
+			'@context'    => 'https://schema.org',
+			'@type'       => 'EducationEvent',
+			'name'        => get_the_title( $post_id ),
+			'description' => wp_strip_all_tags( get_the_excerpt( $post_id ) ),
+			'startDate'   => $start_iso,
+			'endDate'     => $end_iso,
+			'eventStatus' => 'https://schema.org/EventScheduled',
+			'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
+			'location'    => array(
+				'@type' => 'Place',
+				'name'  => $location ? $location : get_bloginfo( 'name' ),
+			),
+			'offers'      => array(
+				'@type'         => 'Offer',
+				'price'         => (string) $lowest_price,
+				'priceCurrency' => 'EUR',
+				'availability'  => $availability,
+			),
+		);
+
+		echo "\n" . '<script type="application/ld+json" id="convoca-event-schema">' . "\n";
+		echo wp_json_encode( $schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT );
+		echo "\n" . '</script>' . "\n";
 	}
 }
