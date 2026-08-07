@@ -268,7 +268,7 @@ class Checkin_Handler {
 					<div class="result-icon" id="res-icon">✅</div>
 					<div class="result-title" id="res-title">¡Check-in Exitoso!</div>
 					<div class="result-name" id="res-name">Jose Carlos</div>
-					<div class="result-act" id="res-act">Visita al Centro Social</div>
+					<div class="result-act" id="res-act">Visita registrada</div>
 					<button class="btn-primary" id="btn-continue"><?php esc_html_e( 'Siguiente Escaneo', 'convoca-enroll' ); ?></button>
 				</div>
 			</div>
