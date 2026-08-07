@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 2.6.1
+Stable tag: 2.7.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,10 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.0 =
+* New: Activity API migrated from theme (actividad_meta, inscripcion_actual, %% placeholders, JSON-LD)
+* Fix: Declared eluceo/ical dependency (Google Calendar)
 
 = 2.6.1 =
 * Improvement: Unit tests — fixed bootstrap, 42 tests, 91 assertions
