@@ -5,7 +5,8 @@
     "type": "wordpress-plugin",
     "require": {
         "php": ">=8.1",
-        "chillerlan/php-qrcode": "^6.0"
+        "chillerlan/php-qrcode": "^6.0",
+        "eluceo/ical": "^2.9"
     },
     "autoload": {
         "psr-4": {
