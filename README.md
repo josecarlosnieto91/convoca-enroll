@@ -21,6 +21,13 @@ Gestión de inscripciones a actividades para la Asociación Convoca.
 - CSV export
 - Webhooks
 
+
+## 📖 Documentación
+
+La documentación completa (manual de usuario, API REST, hooks, instalación) vive en la wiki:
+
+👉 **[Convoca enroll](https://docs.getconvoca.app/plugins/convoca-enroll/)**
+
 ## Dependencies
 
 convoca-core, WordPress 6.4+, PHP 8.1+
