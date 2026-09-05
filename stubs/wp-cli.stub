@@ -1,0 +1,17 @@
+<?php
+/**
+ * PHPStan stubs for WP-CLI symbols used by convoca-enroll.
+ * WP-CLI is not present in an isolated CI checkout.
+ */
+
+class WP_CLI_Command
+{
+}
+
+class WP_CLI
+{
+    public static function log( mixed ...$args ): void {}
+    public static function success( mixed ...$args ): void {}
+    public static function error( mixed ...$args ): void {}
+    public static function add_command( mixed ...$args ): void {}
+}

@@ -1,13 +1,18 @@
+includes:
+    - phpstan-baseline.neon
+
 parameters:
     level: 5
     paths:
         - ./
     excludePaths:
         analyseAndScan:
-                - vendor (?)
-        - tests/
-        - node_modules/
-    scanFiles:
-        - vendor/wp-phpunit/wp-phpunit/includes/functions.php
+            - vendor
+            - tests
+            - node_modules (?)
     bootstrapFiles:
         - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+        - phpstan-bootstrap.php
+    scanFiles:
+        - stubs/wp-cli.stub
+        - stubs/convoca-core.stub

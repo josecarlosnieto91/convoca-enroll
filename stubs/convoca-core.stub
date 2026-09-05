@@ -1,0 +1,76 @@
+<?php
+/**
+ * PHPStan stubs for Convoca\Core symbols used by convoca-enroll.
+ *
+ * convoca-core is a separate plugin that is NOT present in an isolated CI
+ * checkout, so PHPStan resolves those symbols against these local stubs
+ * instead of scanning ../convoca-core (autosuficiente config).
+ */
+
+namespace Convoca\Core;
+
+class Upgrade_Manager
+{
+}
+
+class Logger
+{
+    public static function info( mixed ...$args ): void {}
+    public static function error( mixed ...$args ): void {}
+    public static function warning( mixed ...$args ): void {}
+    public static function log( mixed ...$args ): void {}
+}
+
+class Utils
+{
+    public static function escape_csv_field( mixed ...$args ): mixed { return null; }
+    public static function format_date( mixed ...$args ): mixed { return null; }
+    public static function check_rate_limit( mixed ...$args ): mixed { return null; }
+    public static function do_action( mixed ...$args ): void {}
+    public static function set_admin_notice( mixed ...$args ): void {}
+    public static function acquire_lock( mixed ...$args ): mixed { return null; }
+    public static function release_lock( mixed ...$args ): void {}
+    public static function is_plugin_active_safe( mixed ...$args ): mixed { return null; }
+    public static function get_logo_url( mixed ...$args ): mixed { return null; }
+    public static function admin_notice( mixed ...$args ): void {}
+    public static function rest_cache_get( mixed ...$args ): mixed { return null; }
+    public static function render_stored_notices( mixed ...$args ): void {}
+    public static function render_log_level_badge( mixed ...$args ): mixed { return null; }
+    public static function render_diagnostic_panel( mixed ...$args ): mixed { return null; }
+    public static function get_persistent_salt( mixed ...$args ): mixed { return null; }
+    public static function get_aportacion_label( mixed ...$args ): mixed { return null; }
+}
+
+class License_Manager
+{
+    public static function has_pro( mixed ...$args ): mixed { return null; }
+}
+
+class Features
+{
+    public static function is_members_active( mixed ...$args ): mixed { return null; }
+    public static function is_gateway_active( mixed ...$args ): mixed { return null; }
+}
+
+class Event_Style_Registry
+{
+    public static function get( mixed ...$args ): mixed { return null; }
+}
+
+class Email_Layout
+{
+    public static function render( mixed ...$args ): mixed { return null; }
+}
+
+class Signature
+{
+    public function get_acceptance_stamp_html( mixed ...$args ): mixed { return null; }
+    public function create_hash( mixed ...$args ): mixed { return null; }
+    public function generate_pdf( mixed ...$args ): mixed { return null; }
+    public function get_last_error( mixed ...$args ): mixed { return null; }
+}
+
+class Webhook_Manager
+{
+    public function dispatch( mixed ...$args ): void {}
+}
