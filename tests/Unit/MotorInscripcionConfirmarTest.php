@@ -51,7 +51,21 @@ final class TrackingWpdb
 
     public function prepare( string $sql, ...$args ): string
     {
-        return $sql;
+        // Sustitución mínima tipo wpdb: %d → int, %s → string escapada con
+        // comillas (nombres de tabla wp_* se dejan tal cual, vienen de $wpdb).
+        $i   = 0;
+        $out = preg_replace_callback(
+            '/%(?:\d+\$)?([ds])/',
+            function ( $m ) use ( $args, &$i ) {
+                $val = $args[ $i++ ] ?? '';
+                if ( 'd' === $m[1] ) {
+                    return (string) (int) $val;
+                }
+                return "'" . addslashes( (string) $val ) . "'";
+            },
+            $sql
+        );
+        return $out ?? $sql;
     }
 
     public function get_var( string $sql = null, int $x = 0, int $y = 0 )
