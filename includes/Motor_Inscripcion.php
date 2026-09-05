@@ -177,6 +177,7 @@ class Motor_Inscripcion {
 
 		// Check duplicate by DNI in same activity if enabled or by default.
 		$bloquear_dni = $settings['bloquear_dni_duplicado'] ?? '1';
+		$dni_query    = array();
 		if ( $bloquear_dni === '1' && ! empty( $dni ) ) {
 			$dni_query    = array(
 				'post_type'      => 'inscripcion',
@@ -245,9 +246,9 @@ class Motor_Inscripcion {
 				)
 			);
 
-			if ( is_wp_error( $post_id ) ) {
+			if ( ! $post_id ) {
 				$wpdb->query( 'ROLLBACK' );
-				return $post_id;
+				return new \WP_Error( 'insert_failed', __( 'No se pudo crear la inscripción.', 'convoca-enroll' ) );
 			}
 
 			$estado = $datos['estado_forzado'] ?? null;
@@ -433,7 +434,7 @@ class Motor_Inscripcion {
 
 			// Generar o regenerar token único de check-in.
 			$token = CPT_Inscripcion::get_meta( $inscripcion_id, 'checkin_token' );
-			if ( empty( $token ) || $estado_actual === 'cancelada' ) {
+			if ( empty( $token ) ) {
 				$token = wp_generate_password( 32, false );
 				CPT_Inscripcion::update_meta( $inscripcion_id, 'checkin_token', $token );
 			}
@@ -723,6 +724,23 @@ class Motor_Inscripcion {
              WHERE meta_key = %s AND meta_value != ''",
 				'_convoca_codigo_reserva'
 			)
+		);
+	}
+
+	/**
+	 * Clean up orphan reservation codes (posts deleted or no longer exist).
+	 * Hooked to the daily 'convoca_enroll_cleanup_orphan_codes' cron event.
+	 */
+	public static function cleanup_orphan_codes(): void {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'convoca_reservation_codes';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table name is prefixed internally.
+		$wpdb->query(
+			"DELETE FROM {$table_name}
+             WHERE post_id NOT IN (
+                 SELECT ID FROM {$wpdb->posts}
+             )"
 		);
 	}
 }

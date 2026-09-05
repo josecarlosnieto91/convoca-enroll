@@ -260,10 +260,10 @@ class Google_Calendar {
 			update_post_meta( $actividad_id, '_convoca_google_event_id', $updated_event->getId() );
 			update_post_meta( $actividad_id, '_convoca_google_event_link', $updated_event->getHtmlLink() );
 
-			return true;
+			return $updated_event->getId();
 		} catch ( \Exception $e ) {
 			error_log( 'Convoca Enroll: Error syncing with Google Calendar: ' . $e->getMessage() );
-			return false;
+			return null;
 		}
 	}
 
@@ -348,7 +348,7 @@ class Google_Calendar {
 		}
 
 		$temp_dir = get_temp_dir();
-		$filename = 'actividad-' . $actividad_id . '-' . wp_hash( $actividad_id ) . '.ics';
+		$filename = 'actividad-' . $actividad_id . '-' . wp_hash( (string) $actividad_id ) . '.ics';
 		$path     = $temp_dir . $filename;
 
 		// Clean up old ICS files for this activity first.

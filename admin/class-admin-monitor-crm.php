@@ -508,8 +508,6 @@ class Admin_Monitor_CRM {
 				echo '</div>';
 			}
 		}
-
-		$this->render_scripts();
 	}
 
 	/**

@@ -121,7 +121,7 @@ class Inscriptions_List extends \WP_List_Table {
 		echo '<option value="">' . esc_html__( '— Actividad —', 'convoca-enroll' ) . '</option>';
 		foreach ( $acts as $a ) {
 			$sel = selected( $actividad_filter, $a->ID, false );
-			echo "<option value='" . esc_attr( $a->ID ) . "' " . selected( $actividad_filter, $a->ID, false ) . '>' . esc_html( $a->post_title ) . '</option>';
+			echo "<option value='" . esc_attr( (string) $a->ID ) . "' " . selected( $actividad_filter, $a->ID, false ) . '>' . esc_html( $a->post_title ) . '</option>';
 		}
 		echo '</select>';
 
@@ -144,15 +144,15 @@ class Inscriptions_List extends \WP_List_Table {
 			'posts_per_page' => 20,
 			'paged'          => $this->get_pagenum(),
 			'post_status'    => array( 'publish', 'pending', 'draft', 'private', 'future' ),
+			'meta_query'     => array(),
 		);
 
 		// Filter by monitor if not admin.
 		$allowed_ids = CPT_Actividad::get_allowed_activities_ids();
 		if ( null !== $allowed_ids ) {
-			$existing_mq        = $args['meta_query'] ?? array();
 			$args['meta_query'] = array_merge(
 				array( 'relation' => 'AND' ),
-				$existing_mq,
+				$args['meta_query'],
 				array(
 					array(
 						'key'     => CPT_Inscripcion::META_PREFIX . 'actividad_id',
@@ -218,8 +218,7 @@ class Inscriptions_List extends \WP_List_Table {
 				'value'   => $search,
 				'compare' => 'LIKE',
 			);
-			$existing_mq        = $args['meta_query'] ?? array();
-			$args['meta_query'] = array_merge( array( 'relation' => 'AND' ), $existing_mq, array( $search_mq ) );
+			$args['meta_query'] = array_merge( array( 'relation' => 'AND' ), $args['meta_query'], array( $search_mq ) );
 		}
 
 		// Filters.
@@ -250,8 +249,7 @@ class Inscriptions_List extends \WP_List_Table {
 			}
 		}
 		if ( $meta_query ) {
-			$existing           = $args['meta_query'] ?? array();
-			$args['meta_query'] = array_merge( array( 'relation' => 'AND' ), $existing, $meta_query );
+			$args['meta_query'] = array_merge( array( 'relation' => 'AND' ), $args['meta_query'], $meta_query );
 		}
 
 		// Sorting.
@@ -318,6 +316,11 @@ class Inscriptions_List extends \WP_List_Table {
 
 	/* ── Column renderers ──────────────────────── */
 
+	/**
+	 * Render row checkbox.
+	 *
+	 * @param \WP_Post $item Row item.
+	 */
 	public function column_cb( $item ): string {
 		return '<input type="checkbox" name="ids[]" value="' . $item->ID . '">';
 	}

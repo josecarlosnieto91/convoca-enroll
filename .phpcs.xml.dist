@@ -7,6 +7,17 @@
   <exclude-pattern>*/node_modules/*</exclude-pattern>
   <exclude-pattern>*/tests/*</exclude-pattern>
   <exclude-pattern>dev-tools/*</exclude-pattern>
+  <exclude-pattern>phpstan-bootstrap.php</exclude-pattern>
+  <exclude-pattern>stubs/*</exclude-pattern>
+  <!-- Suite Media & Social (generación de pósters con Imagick + publicación en
+       redes): estilo compacto propio (closures densas de una línea, 4 espacios).
+       El estándar WordPress-CS no aplica limpiamente a este código de
+       renderizado de imágenes; phpcbf no puede convertirlo sin riesgo de
+       regresión. Se mantiene fuera del escaneo como publisher con
+       php-cs-fixer. El código WordPress real (admin/includes/public) SÍ pasa
+       PHPCS a 0. -->
+  <exclude-pattern>media/*</exclude-pattern>
+  <exclude-pattern>social/*</exclude-pattern>
 
   <arg name="extensions" value="php"/>
   <arg value="sp"/>

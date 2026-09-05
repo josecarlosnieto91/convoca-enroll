@@ -191,7 +191,6 @@ class Form_Inscripcion {
 			$lock_key = 'convoca_enroll_payment_creating_' . $result;
 			if ( ! \Convoca\Core\Utils::acquire_lock( $lock_key, 30 ) ) {
 				wp_send_json_error( array( 'errors' => array( 'Ya hay un proceso de pago en curso para esta inscripción. Por favor, espera un momento.' ) ), 429 );
-				return;
 			}
 
 			// Set inscription the mount paid to the requested one.

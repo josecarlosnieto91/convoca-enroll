@@ -220,7 +220,7 @@ class Admin_Reports {
 						<td>
 							<div class="conv-progress-bar" style="width: 100px; background: #eee; height: 10px; border-radius: 5px; position: relative;">
 								<div style="width: <?php echo (int) min( 100, $pct ); ?>%; background: <?php echo $pct >= 90 ? '#4caf50' : ( $pct < 30 ? '#ff9800' : '#2196f3' ); ?>; height: 100%; border-radius: 5px;"></div>
-								<span style="font-size: 10px; position: absolute; right: -35px; top: -3px;"><?php echo esc_html( $pct ); ?>%</span>
+								<span style="font-size: 10px; position: absolute; right: -35px; top: -3px;"><?php echo esc_html( (string) $pct ); ?>%</span>
 							</div>
 						</td>
 						<td><?php echo (int) $act['asistentes']; ?></td>
@@ -695,6 +695,12 @@ endif;
 		}
 
 		// Query monitor actions from logs table.
+		// Tipado del resultado de get_results (filas del log de monitor).
+		/**
+		 * Tipado estático para PHPStan.
+		 *
+		 * @var array<int, object{user_id: mixed, monitor: ?string, actividad: ?string, message: string}> $results
+		 */
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT 
@@ -715,7 +721,18 @@ endif;
 			)
 		);
 
+		// Agrupación monitor/actividad para el informe de auditoría.
+		/**
+		 * Tipado estático para PHPStan.
+		 *
+		 * @var array<string, array{monitor: string, actividad: string, confirmadas: int, canceladas: int, checkins: int}> $grouped
+		 */
 		$grouped = array();
+		/**
+		 * Tipado estático para PHPStan.
+		 *
+		 * @var object{user_id: mixed, monitor: ?string, actividad: ?string, message: string} $row
+		 */
 		foreach ( $results as $row ) {
 			if ( empty( $row->user_id ) ) {
 				continue;
@@ -1007,6 +1024,12 @@ endif;
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is already prepared via $wpdb->prepare() above
 		$results = $wpdb->get_results( $sql, ARRAY_A );
 
+		// Agrupación monitor/actividad para el informe de auditoría.
+		/**
+		 * Tipado estático para PHPStan.
+		 *
+		 * @var array<string, array{monitor: string, actividad: string, confirmadas: int, canceladas: int, checkins: int}> $grouped
+		 */
 		$grouped = array();
 		foreach ( $results as $row ) {
 			$act_id             = $row['actividad_id'];

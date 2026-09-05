@@ -95,8 +95,8 @@ class Blog_Post_Manager {
 			) 
 		);
 
-		if ( is_wp_error( $post_id ) ) {
-			return $post_id;
+		if ( ! $post_id ) {
+			return new \WP_Error( 'insert_failed', __( 'No se pudo crear la entrada del blog.', 'convoca-enroll' ) );
 		}
 
 		// Link activity -> blog post.
@@ -266,7 +266,7 @@ class Blog_Post_Manager {
 
 		if ( file_exists( $local_path ) ) {
 			$filetype = wp_check_filetype( $local_path );
-			$filename = 'poster-actividad-' . $actividad_id . '.' . ( $filetype['ext'] ?? 'png' );
+			$filename = 'poster-actividad-' . $actividad_id . '.' . ( $filetype['ext'] ?: 'png' );
 
 			$attachment_id = media_handle_sideload(
 				array(

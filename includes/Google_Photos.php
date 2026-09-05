@@ -230,7 +230,7 @@ class Google_Photos {
 		}
 
 		$ids      = array_map( 'trim', explode( ',', $responsables ) );
-		$first_id = isset( $ids[0] ) ? absint( $ids[0] ) : 0;
+		$first_id = absint( $ids[0] );
 
 		if ( $first_id > 0 ) {
 			$user = get_userdata( $first_id );

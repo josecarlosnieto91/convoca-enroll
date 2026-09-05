@@ -68,7 +68,6 @@ class Admin_Checkin {
 					esc_html__( 'Acceso denegado', 'convoca-enroll' ),
 					array( 'response' => 403 )
 				);
-				return;
 			}
 		}
 
@@ -96,7 +95,6 @@ class Admin_Checkin {
 
 			if ( $search ) {
 				// Search by name or email stored in meta, not post title.
-				unset( $query_args['s'] );
 				$query_args['meta_query'][] = array(
 					'relation' => 'OR',
 					array(
@@ -138,7 +136,7 @@ class Admin_Checkin {
 							$fecha     = get_post_meta( $act->ID, '_convoca_fecha_inicio', true );
 							$fecha_fmt = $fecha ? wp_date( 'd/m', strtotime( $fecha ) ) : '';
 							?>
-							<option value="<?php echo esc_attr( $act->ID ); ?>" <?php selected( $actividad_id, $act->ID ); ?>>
+							<option value="<?php echo esc_attr( (string) $act->ID ); ?>" <?php selected( $actividad_id, $act->ID ); ?>>
 								<?php echo esc_html( $act->post_title ); ?> (<?php echo esc_html( $fecha_fmt ); ?>)
 							</option>
 						<?php endforeach; ?>
@@ -189,7 +187,7 @@ class Admin_Checkin {
 								$es_socio   = get_post_meta( $id, '_convoca_es_socio', true );
 								$telefono   = get_post_meta( $id, '_convoca_telefono', true );
 								?>
-								<tr data-id="<?php echo esc_attr( $id ); ?>">
+								<tr data-id="<?php echo esc_attr( (string) $id ); ?>">
 									<td>
 										<strong><?php echo esc_html( $ins->post_title ); ?></strong>
 										<?php if ( $es_socio === '1' ) : ?>
@@ -215,7 +213,7 @@ class Admin_Checkin {
 									<td>
 										<button type="button" 
 												class="button conv-toggle-checkin <?php echo ( $asistencia === 'si' ) ? 'button-primary' : ''; ?>" 
-												data-id="<?php echo esc_attr( $id ); ?>">
+												data-id="<?php echo esc_attr( (string) $id ); ?>">
 											<?php echo ( $asistencia === 'si' ) ? esc_html__( 'Registrado', 'convoca-enroll' ) : esc_html__( 'Pendiente', 'convoca-enroll' ); ?>
 										</button>
 									</td>

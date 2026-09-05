@@ -585,7 +585,7 @@ class Admin_Page {
 			<div class="conv-detail-card" style="margin-top:1.5rem">
 				<h3>Estado y Pago</h3>
 				<form id="conv-state-form">
-					<input type="hidden" name="inscripcion_id" value="<?php echo esc_attr( $id ); ?>">
+					<input type="hidden" name="inscripcion_id" value="<?php echo esc_attr( (string) $id ); ?>">
 					
 					<p>
 						<label><strong>Estado:</strong></label><br>
@@ -609,7 +609,7 @@ class Admin_Page {
 				</form>
 
 				<div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
-					<button type="button" id="conv-resend-email" class="button" data-id="<?php echo esc_attr( $id ); ?>">
+					<button type="button" id="conv-resend-email" class="button" data-id="<?php echo esc_attr( (string) $id ); ?>">
 						✉️ Reenviar email de confirmación
 					</button>
 					<span class="spinner"></span>
@@ -621,7 +621,7 @@ class Admin_Page {
 				<h3>📝 <?php esc_html_e( 'Notas internas', 'convoca-enroll' ); ?></h3>
 				<textarea id="conv-internal-notes" rows="4" style="width:100%;"><?php echo esc_textarea( get_post_meta( $id, '_convoca_notas', true ) ); ?></textarea>
 				<div style="margin-top:8px;display:flex;gap:10px;align-items:center;">
-					<button type="button" id="conv-save-notes" class="convoca-btn convoca-btn-outline" data-id="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Guardar nota', 'convoca-enroll' ); ?></button>
+					<button type="button" id="conv-save-notes" class="convoca-btn convoca-btn-outline" data-id="<?php echo esc_attr( (string) $id ); ?>"><?php esc_html_e( 'Guardar nota', 'convoca-enroll' ); ?></button>
 					<span id="conv-notes-status" style="font-size:12px;color:#999;"></span>
 				</div>
 			</div>
@@ -790,7 +790,7 @@ class Admin_Page {
 			);
 		}
 
-		\convoca_export_pdf( __( 'Listado de Inscripciones', 'convoca-enroll' ), $headers, $rows, 'inscripciones-convoca' );
+		\Convoca\Core\convoca_export_pdf( __( 'Listado de Inscripciones', 'convoca-enroll' ), $headers, $rows, 'inscripciones-convoca' );
 	}
 
 	public function render_email_queue(): void {

@@ -102,7 +102,7 @@ class Admin_Evaluaciones_List {
 							$stars .= '<span style="color:#d1d5db;">☆</span>';
 						}
 					}
-					echo wp_kses_post( $stars ) . ' (' . esc_html( $media ) . '/5)';
+					echo wp_kses_post( $stars ) . ' (' . esc_html( (string) $media ) . '/5)';
 				} else {
 					echo '-';
 				}
@@ -128,7 +128,7 @@ class Admin_Evaluaciones_List {
 			foreach ( $actividades as $actividad ) {
 				printf(
 					'<option value="%s" %s>%s</option>',
-					esc_attr( $actividad->ID ),
+					esc_attr( (string) $actividad->ID ),
 					selected( $selected, $actividad->ID, false ),
 					esc_html( $actividad->post_title )
 				);

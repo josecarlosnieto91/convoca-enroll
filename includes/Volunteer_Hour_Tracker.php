@@ -216,7 +216,7 @@ class Volunteer_Hour_Tracker {
 				)
 			);
 
-			if ( ! is_wp_error( $log_id ) ) {
+			if ( $log_id ) {
 				$members = get_posts(
 					array(
 						'post_type'      => 'miembro',

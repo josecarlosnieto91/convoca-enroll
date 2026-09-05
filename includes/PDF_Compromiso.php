@@ -101,7 +101,7 @@ class PDF_Compromiso {
 			)
 		);
 
-		if ( is_wp_error( $temp_post_id ) ) {
+		if ( ! $temp_post_id ) {
 			return null;
 		}
 

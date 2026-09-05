@@ -142,7 +142,7 @@ class Admin_Logs {
 									'format'    => '',
 									'prev_text' => '&laquo;',
 									'next_text' => '&raquo;',
-									'total'     => $num_pages,
+									'total'     => (int) $num_pages,
 									'current'   => $pagenum,
 								)
 							) 
@@ -153,20 +153,5 @@ class Admin_Logs {
 			<?php endif; ?>
 		</div>
 		<?php
-	}
-
-	private static function get_level_color( string $level ): string {
-		switch ( $level ) {
-			case 'error':
-				return '#d63638';
-			case 'warning':
-				return '#ffb900';
-			case 'info':
-				return '#72aee6';
-			case 'success':
-				return '#00a32a';
-			default:
-				return '#646970';
-		}
 	}
 }

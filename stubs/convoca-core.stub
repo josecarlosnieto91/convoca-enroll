@@ -11,6 +11,7 @@ namespace Convoca\Core;
 
 class Upgrade_Manager
 {
+    public function init(): void {}
 }
 
 class Logger
@@ -19,6 +20,7 @@ class Logger
     public static function error( mixed ...$args ): void {}
     public static function warning( mixed ...$args ): void {}
     public static function log( mixed ...$args ): void {}
+    public static function debug( string $message, string $context = 'General' ): void {}
 }
 
 class Utils
@@ -39,6 +41,7 @@ class Utils
     public static function render_diagnostic_panel( mixed ...$args ): mixed { return null; }
     public static function get_persistent_salt( mixed ...$args ): mixed { return null; }
     public static function get_aportacion_label( mixed ...$args ): mixed { return null; }
+    public static function validar_dni( string $dni ): bool { return false; }
 }
 
 class License_Manager
@@ -60,6 +63,8 @@ class Event_Style_Registry
 class Email_Layout
 {
     public static function render( mixed ...$args ): mixed { return null; }
+    public static function meta_table( array $rows ): string { return ''; }
+    public static function button_html( string $url, string $text ): string { return ''; }
 }
 
 class Signature
@@ -72,5 +77,9 @@ class Signature
 
 class Webhook_Manager
 {
-    public function dispatch( mixed ...$args ): void {}
+    public function dispatch( string $event, array $payload = array() ): void {}
+    public static function get_webhooks(): array { return array(); }
+    public static function add_webhook( array $data ): string { return ''; }
 }
+
+function convoca_export_pdf( string $title, array $headers, array $rows, string $filename ): void {}

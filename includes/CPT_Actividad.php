@@ -280,7 +280,7 @@ class CPT_Actividad {
 
 		foreach ( $fields as $key => $sanitizer ) {
 			$raw = $_POST[ 'convoca_enroll_' . $key ] ?? '';
-			$val = is_callable( $sanitizer ) ? $sanitizer( $raw ) : $raw;
+			$val = $sanitizer( $raw );
 			update_post_meta( $post_id, '_convoca_' . $key, $val );
 		}
 
@@ -669,7 +669,7 @@ class CPT_Actividad {
 		$create_album = get_post_meta( $post->ID, '_convoca_google_create_album', true );
 
 		if ( ! $album_id && $create_album !== '0' ) {
-			echo '<p><button type="button" class="button button-primary" onclick="bdeCreateAlbum(' . esc_attr( $post->ID ) . ')">' . esc_html__( 'Crear álbum', 'convoca-enroll' ) . '</button></p>';
+			echo '<p><button type="button" class="button button-primary" onclick="bdeCreateAlbum(' . esc_attr( (string) $post->ID ) . ')">' . esc_html__( 'Crear álbum', 'convoca-enroll' ) . '</button></p>';
 		} elseif ( $album_id ) {
 			echo '<p><strong>' . esc_html__( 'Álbum:', 'convoca-enroll' ) . '</strong> ' . esc_html( $album_id ) . '</p>';
 			if ( $album_url ) {
@@ -678,7 +678,7 @@ class CPT_Actividad {
 			if ( $album_shared ) {
 				echo '<p style="color:green;">' . esc_html__( '✓ Compartido con participantes', 'convoca-enroll' ) . '</p>';
 			} else {
-				echo '<p><button type="button" class="button" onclick="bdeShareAlbum(' . esc_attr( $post->ID ) . ')">Compartir con participantes</button></p>';
+				echo '<p><button type="button" class="button" onclick="bdeShareAlbum(' . esc_attr( (string) $post->ID ) . ')">Compartir con participantes</button></p>';
 			}
 		}
 		?>
@@ -924,7 +924,7 @@ class CPT_Actividad {
 			return '';
 		}
 		$id = get_queried_object_id();
-		if ( ! $id || ! is_numeric( $id ) || $id <= 0 || get_post_type( $id ) !== 'actividad' ) {
+		if ( ! $id || $id <= 0 || get_post_type( $id ) !== 'actividad' ) {
 			return '';
 		}
 		if ( ! shortcode_exists( 'convoca_form_inscripcion' ) ) {
@@ -1007,31 +1007,39 @@ class CPT_Actividad {
 
 		$availability = ( $plazas_dis > 0 ) ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut';
 
-		$precio_socio    = get_post_meta( $post_id, '_convoca_precio_socio', true );
+		$precio_socio     = get_post_meta( $post_id, '_convoca_precio_socio', true );
 		$precio_socio_dia = get_post_meta( $post_id, '_convoca_precio_socio_dia', true );
-		$precio_general  = get_post_meta( $post_id, '_convoca_precio_general', true );
+		$precio_general   = get_post_meta( $post_id, '_convoca_precio_general', true );
 
-		$prices = array_filter( array( $precio_socio, $precio_socio_dia, $precio_general ), function ( $v ) {
-			return '' !== $v && strtolower( $v ) !== 'gratis';
-		} );
-		$lowest_price = ! empty( $prices ) ? min( array_map( function ( $v ) {
-			return (float) preg_replace( '/[^0-9.]/', '', str_replace( ',', '.', $v ) );
-		}, $prices ) ) : 0;
+		$prices       = array_filter(
+			array( $precio_socio, $precio_socio_dia, $precio_general ),
+			function ( $v ) {
+				return '' !== $v && strtolower( $v ) !== 'gratis';
+			} 
+		);
+		$lowest_price = ! empty( $prices ) ? min(
+			array_map(
+				function ( $v ) {
+					return (float) preg_replace( '/[^0-9.]/', '', str_replace( ',', '.', $v ) );
+				},
+				$prices 
+			) 
+		) : 0;
 
 		$schema = array(
-			'@context'    => 'https://schema.org',
-			'@type'       => 'EducationEvent',
-			'name'        => get_the_title( $post_id ),
-			'description' => wp_strip_all_tags( get_the_excerpt( $post_id ) ),
-			'startDate'   => $start_iso,
-			'endDate'     => $end_iso,
-			'eventStatus' => 'https://schema.org/EventScheduled',
+			'@context'            => 'https://schema.org',
+			'@type'               => 'EducationEvent',
+			'name'                => get_the_title( $post_id ),
+			'description'         => wp_strip_all_tags( get_the_excerpt( $post_id ) ),
+			'startDate'           => $start_iso,
+			'endDate'             => $end_iso,
+			'eventStatus'         => 'https://schema.org/EventScheduled',
 			'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
-			'location'    => array(
+			'location'            => array(
 				'@type' => 'Place',
 				'name'  => $location ? $location : get_bloginfo( 'name' ),
 			),
-			'offers'      => array(
+			'offers'              => array(
 				'@type'         => 'Offer',
 				'price'         => (string) $lowest_price,
 				'priceCurrency' => 'EUR',

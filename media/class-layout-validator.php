@@ -46,6 +46,7 @@ class Poster_Layout_Validator {
      * @return array{score: int, issues: array, metrics: array}
      */
     public static function validate( string $html, string $format, int $width, int $height ): array {
+        /** @var array<int, array{type: string, severity: 'error'|'warning'|'info', msg: string}> $issues */
         $issues = [];
         $safe   = self::SAFE_AREAS[ $format ] ?? 80;
         
@@ -94,14 +95,9 @@ class Poster_Layout_Validator {
         
         // Score calculation
         $score = 100;
+        $penalties = [ 'error' => 25, 'warning' => 10, 'info' => 3 ];
         foreach ( $issues as $iss ) {
-            $penalty = match ($iss['severity']) {
-                'error'   => 25,
-                'warning' => 10,
-                'info'    => 3,
-                default   => 5,
-            };
-            $score -= $penalty;
+            $score -= $penalties[ $iss['severity'] ];
         }
         $score = max( 0, min( 100, $score ) );
         
@@ -116,7 +112,7 @@ class Poster_Layout_Validator {
                 'has_hero'   => $has_hero,
                 'has_qr'     => $has_qr,
                 'has_brands' => $has_brands,
-                'emoji'      => $emoji_count ?? 0,
+                'emoji'      => $emoji_count,
             ],
         ];
     }

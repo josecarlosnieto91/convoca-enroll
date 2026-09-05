@@ -1,5 +1,5 @@
-includes:
-    - phpstan-baseline.neon
+# includes:
+#     - phpstan-baseline.neon (comentado durante limpieza de deuda; se eliminará al pasar a 0)
 
 parameters:
     level: 5
@@ -10,9 +10,53 @@ parameters:
             - vendor
             - tests
             - node_modules (?)
+            # Plantillas HTML de pósters: vistas standalone renderizadas con
+            # variables de contexto (extract), no lógica analizable por PHPStan.
+            - templates
     bootstrapFiles:
         - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
         - phpstan-bootstrap.php
     scanFiles:
         - stubs/wp-cli.stub
         - stubs/convoca-core.stub
+        - stubs/google-api.stub
+        - stubs/external-plugins.stub
+    ignoreErrors:
+        -
+            # Falso positivo: require_once de includes de wp-admin (class-wp-list-table.php,
+            # upgrade.php) resueltos contra ABSPATH=/tmp/wp/ del harness. Los
+            # wordpress-stubs no empaquetan esos archivos, pero en producción wp-admin
+            # sí existe y la carga funciona.
+            message: '#Path in require_once\(\) "/tmp/wp/wp-admin/includes/.*" is not a file or it does not exist\.#'
+        -
+            # get_post() puede devolver null en runtime; el ?-> ?? '' es defensivo
+            # correcto, pero el stub de wordpress-stubs declara WP_Post no-null.
+            message: '#Using nullsafe property access "\?->post_title" on left side of \?\? is unnecessary#'
+            identifier: nullsafe.neverNull
+            path: admin/class-admin-page.php
+        -
+            # $temp_post_id se asigna antes del try, pero hooks de save_post pueden
+            # lanzar excepción a mitad de wp_insert_post dejándola sin asignar;
+            # el isset() en el catch es defensivo correcto.
+            message: '#Variable \$temp_post_id in isset\(\) always exists and is not nullable#'
+            identifier: isset.variable
+            path: includes/PDF_Compromiso.php
+        -
+            # queryFontMetrics() de Imagick puede devolver métricas parciales en
+            # algunas versiones; el ?? 0 defensivo evita un offset inexistente.
+            message: '#Offset \x27textWidth\x27 on array\{.*\} on left side of \?\? always exists#'
+            identifier: nullCoalesce.offset
+            path: media/class-poster-engine.php
+        -
+            # method_exists(Imagick, autoOrient) protege servidores con versiones
+            # de Imagick que no implementan autoOrient; el stub actual lo declara.
+            message: '#Call to function method_exists\(\) with Imagick and \x27autoOrient\x27#'
+            identifier: function.alreadyNarrowedType
+            path: media/class-poster-engine.php
+        -
+            # $meta_lines siempre contiene 5+ filas al llegar aquí (se inicializa
+            # con Fecha/Hora/Lugar/Plazas/Precio); el if es defensivo de cara a
+            # futuras refactorizaciones y no rompe nada.
+            message: '#If condition is always true#'
+            identifier: if.alwaysTrue
+            path: media/class-poster-engine.php

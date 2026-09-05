@@ -39,7 +39,7 @@ delete_option( 'convoca_enroll_db_version' );
 delete_option( 'convoca_media_db_version' );
 
 // Delete inscripcion posts.
-$posts = get_posts(
+$inscripcion_posts = get_posts(
 	array(
 		'post_type'      => 'inscripcion',
 		'posts_per_page' => -1,
@@ -47,8 +47,8 @@ $posts = get_posts(
 		'fields'         => 'ids',
 	)
 );
-foreach ( $posts as $id ) {
-	wp_delete_post( $id, true );
+foreach ( $inscripcion_posts as $inscripcion_id ) {
+	wp_delete_post( $inscripcion_id, true );
 }
 
 // Note: we do NOT delete actividad posts — they are user content.

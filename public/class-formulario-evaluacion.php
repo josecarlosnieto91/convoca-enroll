@@ -162,7 +162,7 @@ class Formulario_Evaluacion {
 			<?php /* translators: %s: activity title */ ?>
 			<h3><?php printf( esc_html__( 'Evaluar Actividad: %s', 'convoca-enroll' ), esc_html( get_the_title( $actividad_id ) ) ); ?></h3>
 			<form id="conv-evaluacion-form" method="post">
-				<input type="hidden" name="actividad_id" value="<?php echo esc_attr( $actividad_id ); ?>">
+				<input type="hidden" name="actividad_id" value="<?php echo esc_attr( (string) $actividad_id ); ?>">
 				<input type="hidden" name="action" value="convoca_submit_evaluacion">
 				<?php wp_nonce_field( 'convoca_evaluacion_nonce', 'security' ); ?>
 
@@ -243,7 +243,7 @@ class Formulario_Evaluacion {
 			<label><?php echo esc_html( $label ); ?></label>
 			<div class="star-rating" data-field="<?php echo esc_attr( $field_id ); ?>">
 				<?php for ( $i = 1; $i <= 5; $i++ ) : ?>
-					<span class="star" data-val="<?php echo esc_attr( $i ); ?>" aria-label="<?php echo esc_attr( $i ); ?> estrellas" role="button" tabindex="0">☆</span>
+					<span class="star" data-val="<?php echo esc_attr( (string) $i ); ?>" aria-label="<?php echo esc_attr( (string) $i ); ?> estrellas" role="button" tabindex="0">☆</span>
 				<?php endfor; ?>
 				<input type="hidden" name="<?php echo esc_attr( $field_id ); ?>" id="<?php echo esc_attr( $field_id ); ?>" value="0" required>
 			</div>
@@ -329,7 +329,7 @@ class Formulario_Evaluacion {
 
 		$eval_id = wp_insert_post( $post_data );
 
-		if ( is_wp_error( $eval_id ) ) {
+		if ( ! $eval_id ) {
 			delete_transient( $lock_key );
 			wp_send_json_error( __( 'Error al guardar la evaluación.', 'convoca-enroll' ) );
 		}

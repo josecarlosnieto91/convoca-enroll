@@ -86,10 +86,8 @@ class Checkin_Handler {
 			exit;
 		}
 
-		if ( $checkin_token ) {
-			$this->process_direct_checkin( $checkin_token );
-			exit;
-		}
+		$this->process_direct_checkin( $checkin_token );
+		exit;
 	}
 
 	/**
@@ -495,7 +493,7 @@ class Checkin_Handler {
 	 * Uses SQL transactions and FOR UPDATE to prevent race conditions.
 	 * Is idempotent: returns true if already marked.
 	 */
-	private function mark_as_attended_by_token( string $token ): bool|\WP_Error {
+	public function mark_as_attended_by_token( string $token ): bool|\WP_Error {
 		global $wpdb;
 		$wpdb->query( 'START TRANSACTION' );
 

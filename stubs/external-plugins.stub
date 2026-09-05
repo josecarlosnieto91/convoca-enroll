@@ -1,0 +1,26 @@
+<?php
+/**
+ * PHPStan stubs for sibling Convoca plugins used by convoca-enroll.
+ *
+ * convoca-members y convoca-gateway son plugins separados que no están
+ * presentes en un checkout aislado de CI. Las firmas reflejan los métodos
+ * reales (convoca-members/includes/Member_Auth.php y
+ * convoca-gateway/includes/Payment_Handler.php).
+ */
+
+namespace Convoca\Members;
+
+class Member_Auth
+{
+    public static function is_authenticated(): bool { return false; }
+    public static function get_current_member_id(): int { return 0; }
+    public static function get_current_member_data(): ?array { return null; }
+}
+
+namespace Convoca\Gateway;
+
+class Payment_Handler
+{
+    public static function get_payment_link( int $pago_id, string $token = '', ?int $expires_ts = null ): string { return ''; }
+    public static function create_payment( array $data ): array|\WP_Error { return array(); }
+}

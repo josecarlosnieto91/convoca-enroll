@@ -30,9 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Rest_API {
 
 
-	private const NS                = 'convoca-enroll/v1';
-	private const RATE_LIMIT_MAX    = 5;
-	private const RATE_LIMIT_WINDOW = 3600;
+	private const NS = 'convoca-enroll/v1';
 
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
@@ -203,8 +201,8 @@ class Rest_API {
 		$total = count( CPT_Actividad::get_upcoming( 999 ) );
 
 		$response = new \WP_REST_Response( $items );
-		$response->header( 'X-WP-Total', $total );
-		$response->header( 'X-WP-TotalPages', (int) ceil( $total / $per_page ) );
+		$response->header( 'X-WP-Total', (string) $total );
+		$response->header( 'X-WP-TotalPages', (string) (int) ceil( $total / $per_page ) );
 
 		return $response;
 	}
@@ -480,10 +478,6 @@ class Rest_API {
 			'fecha'        => get_the_date( 'Y-m-d H:i', $p ),
 			// 'checkin_token' => $m('checkin_token'), // HIDDEN for security.
 		);
-	}
-
-	private function check_rate_limit( string $action ): bool {
-		return \Convoca\Core\Utils::check_rate_limit( $action, self::RATE_LIMIT_MAX, self::RATE_LIMIT_WINDOW );
 	}
 
 	/**

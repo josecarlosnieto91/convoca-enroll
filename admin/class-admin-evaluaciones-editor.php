@@ -106,7 +106,7 @@ class Admin_Evaluaciones_Editor {
 
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="conv-form-custom">
 				<input type="hidden" name="action" value="conv_enroll_save_evaluacion_admin">
-				<input type="hidden" name="id" value="<?php echo esc_attr( $post_id ); ?>">
+				<input type="hidden" name="id" value="<?php echo esc_attr( (string) $post_id ); ?>">
 				<?php wp_nonce_field( 'convoca_enroll_save_evaluacion_nonce' ); ?>
 
 				<div class="conv-grid conv-grid--2">
@@ -120,7 +120,7 @@ class Admin_Evaluaciones_Editor {
 								<select name="actividad_id" id="actividad_id" required class="widefat">
 									<option value=""><?php esc_html_e( '— Seleccionar actividad —', 'convoca-enroll' ); ?></option>
 									<?php foreach ( $actividades as $act ) : ?>
-										<option value="<?php echo esc_attr( $act->ID ); ?>" <?php selected( $meta['actividad_id'], $act->ID ); ?>>
+										<option value="<?php echo esc_attr( (string) $act->ID ); ?>" <?php selected( $meta['actividad_id'], $act->ID ); ?>>
 											<?php echo esc_html( $act->post_title ); ?> (<?php echo esc_html( substr( get_post_meta( $act->ID, '_convoca_fecha_inicio', true ), 0, 10 ) ); ?>)
 										</option>
 									<?php endforeach; ?>
@@ -154,7 +154,7 @@ class Admin_Evaluaciones_Editor {
 									<div class="convoca-rating-stars" style="display: flex; gap: 10px; font-size: 24px; cursor: pointer;">
 										<?php for ( $i = 1; $i <= 5; $i++ ) : ?>
 											<label style="cursor: pointer;">
-												<input type="radio" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $i ); ?>" <?php checked( $meta[ $key ], $i ); ?> required style="display: none;">
+												<input type="radio" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( (string) $i ); ?>" <?php checked( $meta[ $key ], $i ); ?> required style="display: none;">
 												<span class="conv-star" style="color: <?php echo ( $meta[ $key ] >= $i ) ? '#f59e0b' : '#d1d5db'; ?>;">★</span>
 											</label>
 										<?php endfor; ?>
@@ -225,8 +225,8 @@ class Admin_Evaluaciones_Editor {
 			$post_id = $result;
 		}
 
-		if ( is_wp_error( $result ) ) {
-			wp_die( esc_html( $result->get_error_message() ) );
+		if ( ! $result ) {
+			wp_die( esc_html__( 'Error al guardar la evaluación.', 'convoca-enroll' ) );
 		}
 
 		// Save Meta.

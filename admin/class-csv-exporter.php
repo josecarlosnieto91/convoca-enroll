@@ -91,9 +91,7 @@ class CSV_Exporter {
 			);
 		}
 
-		if ( $meta_query ) {
-			$args['meta_query'] = array_merge( array( 'relation' => 'AND' ), $meta_query );
-		}
+		$args['meta_query'] = array_merge( array( 'relation' => 'AND' ), $meta_query );
 
 		$posts = get_posts( $args );
 

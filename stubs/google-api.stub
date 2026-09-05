@@ -1,0 +1,90 @@
+<?php
+/**
+ * PHPStan stubs for Google API Client Library symbols (google/apiclient).
+ *
+ * convoca-enroll integra Google Calendar y Google Photos de forma opcional.
+ * La librería no es una dependencia Composer del plugin (se instala aparte
+ * en producción si el usuario activa la integración), por lo que en un
+ * checkout aislado de CI estos símbolos no existen.
+ *
+ * Firmas mínimas fieles a los usos reales en includes/Google_Calendar.php
+ * e includes/Google_Photos.php.
+ */
+
+namespace Google;
+
+class Client
+{
+    public function setClientId( string $client_id ): self { return $this; }
+    public function setClientSecret( string $client_secret ): self { return $this; }
+    public function refreshToken( string $refresh_token ): void {}
+    public function getAccessToken(): mixed { return null; }
+    public function setRedirectUri( string $redirect_uri ): self { return $this; }
+    public function addScope( array $scopes ): self { return $this; }
+    public function setAccessType( string $access_type ): self { return $this; }
+    public function setPrompt( string $prompt ): self { return $this; }
+    public function setState( string $state ): self { return $this; }
+    public function createAuthUrl(): string { return ''; }
+    public function fetchAccessTokenWithAuthCode( string $code ): array { return array(); }
+}
+
+namespace Google\Service;
+
+class Calendar
+{
+    public \Google\Service\Calendar\Events $events;
+
+    public function __construct( \Google\Client $client ) {}
+}
+
+class PhotosLibrary
+{
+    public \Google\Service\PhotosLibrary\Albums $albums;
+
+    public function __construct( \Google\Client $client ) {}
+}
+
+namespace Google\Service\Calendar;
+
+class Event
+{
+    public function __construct( array $data = array() ) {}
+    public function getId(): string { return ''; }
+    public function getHtmlLink(): string { return ''; }
+}
+
+class Events
+{
+    public function delete( string $calendar_id, string $event_id ): void {}
+    public function update( string $calendar_id, string $event_id, Event $event ): Event { return new Event(); }
+    public function insert( string $calendar_id, Event $event ): Event { return new Event(); }
+}
+
+namespace Google\Service\PhotosLibrary;
+
+class Album
+{
+    public function setTitle( string $title ): self { return $this; }
+    public function getId(): string { return ''; }
+    public function getProductUrl(): string { return ''; }
+}
+
+class ShareAlbumRequest
+{
+}
+
+class ShareInfo
+{
+    public function getShareableUrl(): string { return ''; }
+}
+
+class ShareResponse
+{
+    public function getShareInfo(): ShareInfo { return new ShareInfo(); }
+}
+
+class Albums
+{
+    public function create( Album $album ): Album { return new Album(); }
+    public function share( string $album_id, ShareAlbumRequest $request ): ShareResponse { return new ShareResponse(); }
+}

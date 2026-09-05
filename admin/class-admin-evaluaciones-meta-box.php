@@ -78,7 +78,7 @@ class Admin_Evaluaciones_Meta_Box {
 		?>
 		<div class="conv-eval-summary">
 			<p><strong><?php /* translators: %d: number of evaluations */ printf( esc_html__( 'Total evaluaciones: %d', 'convoca-enroll' ), (int) $total_evals ); ?></strong></p>
-			<p><strong><?php esc_html_e( 'Media Global:', 'convoca-enroll' ); ?></strong> <?php self::render_stars( $overall_avg ); ?> (<?php echo esc_html( $overall_avg ); ?>/5)</p>
+			<p><strong><?php esc_html_e( 'Media Global:', 'convoca-enroll' ); ?></strong> <?php self::render_stars( $overall_avg ); ?> (<?php echo esc_html( (string) $overall_avg ); ?>/5)</p>
 			
 			<hr>
 			
@@ -86,19 +86,19 @@ class Admin_Evaluaciones_Meta_Box {
 				<tbody>
 					<tr>
 						<td style="width: 30%;"><strong><?php esc_html_e( 'Gestión y coordinación', 'convoca-enroll' ); ?></strong></td>
-							<td><?php self::render_stars( $avg_gestion ); ?> (<?php echo esc_html( $avg_gestion ); ?>/5)</td>
+							<td><?php self::render_stars( $avg_gestion ); ?> (<?php echo esc_html( (string) $avg_gestion ); ?>/5)</td>
 						</tr>
 						<tr>
 							<td><strong><?php esc_html_e( 'Instalaciones / Espacio', 'convoca-enroll' ); ?></strong></td>
-							<td><?php self::render_stars( $avg_instalaciones ); ?> (<?php echo esc_html( $avg_instalaciones ); ?>/5)</td>
+							<td><?php self::render_stars( $avg_instalaciones ); ?> (<?php echo esc_html( (string) $avg_instalaciones ); ?>/5)</td>
 						</tr>
 						<tr>
 							<td><strong><?php esc_html_e( 'Participantes', 'convoca-enroll' ); ?></strong></td>
-							<td><?php self::render_stars( $avg_participantes ); ?> (<?php echo esc_html( $avg_participantes ); ?>/5)</td>
+							<td><?php self::render_stars( $avg_participantes ); ?> (<?php echo esc_html( (string) $avg_participantes ); ?>/5)</td>
 						</tr>
 						<tr>
 							<td><strong><?php esc_html_e( 'Comunicación', 'convoca-enroll' ); ?></strong></td>
-							<td><?php self::render_stars( $avg_comunicacion ); ?> (<?php echo esc_html( $avg_comunicacion ); ?>/5)</td>
+							<td><?php self::render_stars( $avg_comunicacion ); ?> (<?php echo esc_html( (string) $avg_comunicacion ); ?>/5)</td>
 					</tr>
 				</tbody>
 			</table>

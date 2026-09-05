@@ -62,7 +62,7 @@ class Admin_Evaluacion_Fields {
 			<select name="conv_eval_actividad_id" id="conv_eval_actividad_id" required>
 				<option value=""><?php esc_html_e( '— Seleccionar actividad —', 'convoca-enroll' ); ?></option>
 				<?php foreach ( $actividades as $act ) : ?>
-					<option value="<?php echo esc_attr( $act->ID ); ?>" <?php selected( $actividad_id, $act->ID ); ?>>
+					<option value="<?php echo esc_attr( (string) $act->ID ); ?>" <?php selected( $actividad_id, $act->ID ); ?>>
 						<?php echo esc_html( $act->post_title ); ?>
 					</option>
 				<?php endforeach; ?>
@@ -84,8 +84,8 @@ class Admin_Evaluacion_Fields {
 				<label><?php echo esc_html( $label ); ?></label>
 				<div class="convoca-rating-stars">
 					<?php for ( $i = 1; $i <= 5; $i++ ) : ?>
-						<label class="convoca-rating-star" title="<?php echo esc_attr( $i ); ?>">
-							<input type="radio" name="conv_eval_<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $i ); ?>" <?php checked( $current_val, $i ); ?>>
+						<label class="convoca-rating-star" title="<?php echo esc_attr( (string) $i ); ?>">
+							<input type="radio" name="conv_eval_<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( (string) $i ); ?>" <?php checked( $current_val, $i ); ?>>
 							<span class="convoca-star">★</span>
 						</label>
 					<?php endfor; ?>

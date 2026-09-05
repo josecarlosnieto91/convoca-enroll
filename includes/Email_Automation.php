@@ -27,6 +27,7 @@
 namespace Convoca\Enroll;
 
 use Convoca\Core\Email_Layout;
+use Convoca\Core\Logger;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

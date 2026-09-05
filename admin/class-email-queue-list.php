@@ -50,6 +50,11 @@ class Email_Queue_List extends \WP_List_Table {
 		);
 	}
 
+	/**
+	 * Render row checkbox.
+	 *
+	 * @param object $item Row item (stdClass from wpdb query).
+	 */
 	protected function column_cb( $item ): string {
 		return sprintf( '<input type="checkbox" name="email_ids[]" value="%d">', $item->id );
 	}

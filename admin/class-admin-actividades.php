@@ -133,7 +133,7 @@ class Admin_Actividades {
 		$node    = $wp_admin_bar->get_node( $node_id );
 		if ( $node ) {
 			$node->href = admin_url( 'admin.php?page=convoca-enroll-actividad-editor' );
-			$wp_admin_bar->add_node( $node );
+			$wp_admin_bar->add_node( (array) $node );
 		}
 	}
 
@@ -167,7 +167,7 @@ class Admin_Actividades {
 
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="conv-form-custom">
 				<input type="hidden" name="action" value="conv_enroll_save_actividad_admin">
-				<input type="hidden" name="id" value="<?php echo esc_attr( $post_id ); ?>">
+				<input type="hidden" name="id" value="<?php echo esc_attr( (string) $post_id ); ?>">
 				<?php wp_nonce_field( 'convoca_enroll_save_actividad_nonce' ); ?>
 
 				<div class="conv-grid conv-grid--2">
@@ -300,8 +300,8 @@ class Admin_Actividades {
 			$post_id = $result;
 		}
 
-		if ( is_wp_error( $result ) ) {
-			wp_die( esc_html( $result->get_error_message() ) );
+		if ( ! $result ) {
+			wp_die( esc_html__( 'Error al guardar la actividad.', 'convoca-enroll' ) );
 		}
 
 		// Save Meta.
@@ -358,8 +358,8 @@ class Admin_Actividades {
 			)
 		);
 
-		if ( is_wp_error( $new_id ) ) {
-			wp_die( esc_html( $new_id->get_error_message() ) );
+		if ( ! $new_id ) {
+			wp_die( esc_html__( 'Error al duplicar la actividad.', 'convoca-enroll' ) );
 		}
 
 		// Copy meta keys.

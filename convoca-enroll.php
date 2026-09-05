@@ -45,7 +45,8 @@ if ( file_exists( $composer_autoload ) ) {
 }
 
 /*
-── Convoca Core fallback ────────────────────────── */
+ * ── Convoca Core fallback ──────────────────────────
+ */
 // Core classes auto-loaded via Convoca Core's Composer PSR-4
 
 // Compatibility Check: Ensure Convoca Common is loaded.
@@ -80,7 +81,8 @@ if ( ! defined( 'CONVOCA_ENROLL_URL' ) ) {
 }
 
 /*
-── Autoloader ───────────────────────────────────────────── */
+ * ── Autoloader ─────────────────────────────────────────────
+ */
 // PSR-4 autoloading handled by Composer (vendor/autoload.php)
 
 /* ── Activation ───────────────────────────────────────────── */
@@ -129,7 +131,7 @@ register_activation_hook(
 					'post_name'    => 'panel-reservas',
 				)
 			);
-			if ( $page_id && ! is_wp_error( $page_id ) ) {
+			if ( $page_id ) {
 				update_option( 'convoca_enroll_panel_page_id', $page_id );
 				update_post_meta( $page_id, '_convoca_panel_page', '1' );
 			}
@@ -215,10 +217,8 @@ add_action(
 		}
 
 		// Core.
-		
 		new CPT_Actividad();
 		new CPT_Inscripcion();
-		new Motor_Inscripcion();
 		new Email_Automation();
 		new Google_Photos();
 		new Google_Calendar();
@@ -238,7 +238,6 @@ add_action(
 		// Media & Social Suite.
 		new Media\Media_Upgrade_Manager();
 		new Media\Media_Rest_API();
-		Social\Social_OAuth::class;
 		new Social\Social_Rest_API();
 		Social\Social_Healthcheck::init();
 
