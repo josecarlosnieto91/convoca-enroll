@@ -7,28 +7,10 @@ parameters:
 			path: ../convoca-core/convoca-core.php
 
 		-
-			message: '#^Instantiated class Dompdf\\Options not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../convoca-core/includes/CONV_Signature.php
-
-		-
 			message: '#^Cannot unset offset ''s'' on array\{post_type\: ''inscripcion'', posts_per_page\: \-1, post_status\: array\{''publish'', ''pending'', ''draft'', ''private'', ''future''\}, meta_query\: array\{relation\: ''AND'', 0\: array\{key\: ''_conv_actividad_id'', value\: int\<min, \-1\>\|int\<1, max\>\}, 1\: array\{key\: ''_conv_estado'', value\: ''cancelada'', compare\: ''\!\=''\}\}, orderby\: ''title'', order\: ''ASC''\}\.$#'
 			identifier: unset.offset
 			count: 1
 			path: admin/class-admin-checkin.php
-
-		-
-			message: '#^Function as_schedule_single_action not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: admin/class-admin-media-dashboard.php
-
-		-
-			message: '#^Function as_unschedule_all_actions not found\.$#'
-			identifier: function.notFound
-			count: 3
-			path: admin/class-admin-media-dashboard.php
 
 		-
 			message: '#^Call to an undefined method Convoca\\Enroll\\Admin_Monitor_CRM\:\:render_scripts\(\)\.$#'

@@ -14,6 +14,8 @@ namespace Convoca\Core {
                 return (bool) preg_match('/^(\d{8}|[XYZ]\d{7})[A-Z]$/', strtoupper(trim($dni)));
             }
             public static function validar_dni(string $dni): bool { return self::validate_dni($dni); }
+            public static function do_action(string $new_hook, string $old_hook = '', ...$args): void {}
+            public static function check_rate_limit(string $action, int $max = 10, int $window = 300): bool { return true; }
         }
     }
 }
