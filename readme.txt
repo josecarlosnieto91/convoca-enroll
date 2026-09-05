@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 2.7.0
+Stable tag: 2.7.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,11 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.1 =
+* Security: inscripción serializada — los checks de duplicado (email/DNI) se re-verifican dentro de la transacción con SELECT ... FOR UPDATE sobre la actividad (cierra TOCTOU de doble clic).
+* Fix: confirmar() ya no consume plaza dos veces — solo decrementa al confirmar desde lista_espera (pendiente/pendiente_pago ya consumieron al inscribirse).
+* Security: lock atómico de BD para la creación de pago (antes transient no atómico).
 
 = 2.7.0 =
 * New: Activity API migrated from theme (actividad_meta, inscripcion_actual, %% placeholders, JSON-LD)

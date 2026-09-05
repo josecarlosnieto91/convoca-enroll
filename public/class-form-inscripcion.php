@@ -189,11 +189,10 @@ class Form_Inscripcion {
 
 			// 1. Prevenir doble creación de pago por race condition (doble clic)
 			$lock_key = 'convoca_enroll_payment_creating_' . $result;
-			if ( get_transient( $lock_key ) ) {
+			if ( ! \Convoca\Core\Utils::acquire_lock( $lock_key, 30 ) ) {
 				wp_send_json_error( array( 'errors' => array( 'Ya hay un proceso de pago en curso para esta inscripción. Por favor, espera un momento.' ) ), 429 );
 				return;
 			}
-			set_transient( $lock_key, true, 30 );
 
 			// Set inscription the mount paid to the requested one.
 			update_post_meta( $result, '_convoca_importe_pagado', $amount_cents );
@@ -226,7 +225,8 @@ class Form_Inscripcion {
 					);
 				}
 
-				delete_transient( $lock_key );
+				delete_transient( $lock_key ); // Compat: limpieza si existiera de versiones previas.
+				\Convoca\Core\Utils::release_lock( $lock_key );
 
 				if ( ! is_wp_error( $payment ) ) {
 					update_post_meta( $result, '_convoca_pago_id', $payment['pago_id'] );

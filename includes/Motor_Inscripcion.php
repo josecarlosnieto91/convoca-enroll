@@ -212,6 +212,28 @@ class Motor_Inscripcion {
 		global $wpdb;
 		$wpdb->query( 'START TRANSACTION' );
 
+		// Serializar inscripciones concurrentes sobre la misma actividad:
+		// bloqueamos la fila del post de la actividad (FOR UPDATE) para que dos
+		// peticiones simultáneas del mismo email/DNI no pasen ambos los checks
+		// de duplicado (TOCTOU). El lock se mantiene hasta COMMIT/ROLLBACK.
+		$wpdb->query( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE ID = %d FOR UPDATE", $actividad_id ) );
+
+		// Re-verificar duplicados DENTRO de la transacción (tras adquirir el lock
+		// de la actividad, ningún otro hilo puede insertar una inscripción para
+		// esta actividad hasta que hagamos COMMIT).
+		$existing = get_posts( $dup_query );
+		if ( ! empty( $existing ) ) {
+			$wpdb->query( 'ROLLBACK' );
+			return new \WP_Error( 'duplicate', __( 'Ya estás inscrito/a en esta actividad.', 'convoca-enroll' ) );
+		}
+		if ( $bloquear_dni === '1' && ! empty( $dni ) ) {
+			$existing_dni = get_posts( $dni_query );
+			if ( ! empty( $existing_dni ) ) {
+				$wpdb->query( 'ROLLBACK' );
+				return new \WP_Error( 'duplicate_dni', __( 'Ya existe una inscripción activa para este DNI en esta actividad.', 'convoca-enroll' ) );
+			}
+		}
+
 		try {
 			// Create inscription post FIRST to get an ID.
 			$title_name = $es_menor && $nombre_participante ? $nombre_participante : $nombre;
@@ -389,8 +411,10 @@ class Motor_Inscripcion {
 		$wpdb->query( 'START TRANSACTION' );
 
 		try {
-			// All transitions to 'confirmada' from a non-confirmed state must decrement capacity.
-			if ( in_array( $estado_actual, array( 'pendiente', 'lista_espera', 'pendiente_pago' ), true ) ) {
+			// Solo 'lista_espera' no consumió plaza al inscribirse: al confirmarla,
+			// decrementamos la capacidad UNA vez. 'pendiente' y 'pendiente_pago'
+			// ya consumieron su plaza en inscribir() — decrementar aquí sería doble.
+			if ( 'lista_espera' === $estado_actual ) {
 				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- META_PREFIX is a constant
 				$affected = $wpdb->query(
 					$wpdb->prepare(
