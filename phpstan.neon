@@ -60,3 +60,16 @@ parameters:
             message: '#If condition is always true#'
             identifier: if.alwaysTrue
             path: media/class-poster-engine.php
+
+        # check_admin_referer() hace wp_die si el nonce falla: stub reciente lo tipa
+        # como siempre-true. Patrón WP estándar en admin handlers.
+        -
+            message: '#Right side of && is always true#'
+            identifier: booleanAnd.rightAlwaysTrue
+        # wp_insert_post() con array de postarr: el stub exige shape completo con
+        # todas las claves; en runtime WP acepta arrays parciales (patrón estándar).
+        -
+            message: '#Parameter \#1 \$postarr of function wp_insert_post#'
+            identifier: argument.type
+            path: media/class-blog-post-manager.php
+
