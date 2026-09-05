@@ -80,8 +80,8 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 			<?php if ( $show_plazas ) : ?>
 				<span id="conv-plazas-badge"
 					class="<?php echo $agotada ? 'conv-plazas--agotada' : 'conv-plazas--disponible'; ?>"
-					aria-label="<?php echo $agotada ? 'Plazas agotadas' : $plazas . ' de ' . $total . ' plazas disponibles'; ?>">
-					🎫 <?php echo $agotada ? 'Plazas agotadas' : $plazas . '/' . $total . ' plazas'; ?>
+					aria-label="<?php echo $agotada ? esc_attr__( 'Plazas agotadas', 'convoca-enroll' ) : esc_attr( sprintf( /* translators: 1: plazas disponibles, 2: total plazas */ __( '%1$d de %2$d plazas disponibles', 'convoca-enroll' ), (int) $plazas, (int) $total ) ); ?>">
+					🎫 <?php echo $agotada ? esc_html__( 'Plazas agotadas', 'convoca-enroll' ) : esc_html( sprintf( /* translators: 1: plazas ocupadas, 2: total plazas */ __( '%1$d/%2$d plazas', 'convoca-enroll' ), (int) $plazas, (int) $total ) ); ?>
 				</span>
 			<?php endif; ?>
 		</div>

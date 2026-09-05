@@ -222,7 +222,7 @@ class Admin_Page {
 		}
 
 		if ( isset( $_GET['page'] ) && $_GET['page'] === 'conv-informes' ) {
-			wp_enqueue_script( 'chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '4.4.1', true );
+			wp_enqueue_script( 'chart-js', CONVOCA_ENROLL_URL . 'assets/vendor/chart.umd.min.js', array(), '4.4.1', true );
 		}
 
 		if ( $hook === 'actividad_page_conv-monitor-crm' ) {

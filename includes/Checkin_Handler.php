@@ -44,8 +44,9 @@ class Checkin_Handler {
 			return;
 		}
 
-		wp_enqueue_style( 'convoca-checkin-fonts', 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap', array(), null );
-		wp_enqueue_script( 'convoca-checkin-qrcode', 'https://unpkg.com/html5-qrcode', array(), null, true );
+		// Assets locales (requisito wp.org: prohibido offloading a CDNs externos).
+		wp_enqueue_style( 'convoca-checkin-fonts', CONVOCA_ENROLL_URL . 'assets/css/convoca-checkin-fonts.css', array(), CONVOCA_ENROLL_VERSION );
+		wp_enqueue_script( 'convoca-checkin-qrcode', CONVOCA_ENROLL_URL . 'assets/vendor/html5-qrcode.min.js', array(), '2.3.8', true );
 	}
 
 	/**

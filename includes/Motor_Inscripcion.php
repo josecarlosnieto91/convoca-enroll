@@ -264,14 +264,14 @@ class Motor_Inscripcion {
 					$estado = 'lista_espera';
 				} else {
 					// Atomically decrement plazas for states that consume a spot.
-					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- META_PREFIX is a constant
 					$affected = $wpdb->query(
 						$wpdb->prepare(
 							"UPDATE {$wpdb->postmeta} 
                          SET meta_value = CAST(meta_value AS SIGNED) - 1 
-                         WHERE post_id = %d AND meta_key = '" . CPT_Inscripcion::META_PREFIX . "plazas_disponibles' 
+                         WHERE post_id = %d AND meta_key = %s 
                          AND CAST(meta_value AS SIGNED) > 0",
-							$actividad_id
+							$actividad_id,
+							CPT_Inscripcion::META_PREFIX . 'plazas_disponibles'
 						)
 					);
 
@@ -358,13 +358,13 @@ class Motor_Inscripcion {
 
 				// If nobody was promoted from waitlist, we officially have +1 capacity.
 				if ( ! $promoted ) {
-					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- META_PREFIX is a constant
 					$affected = $wpdb->query(
 						$wpdb->prepare(
 							"UPDATE {$wpdb->postmeta} 
                          SET meta_value = CAST(meta_value AS SIGNED) + 1 
-                         WHERE post_id = %d AND meta_key = '" . CPT_Inscripcion::META_PREFIX . "plazas_disponibles'",
-							$actividad_id
+                         WHERE post_id = %d AND meta_key = %s",
+							$actividad_id,
+							CPT_Inscripcion::META_PREFIX . 'plazas_disponibles'
 						)
 					);
 				}
@@ -416,13 +416,13 @@ class Motor_Inscripcion {
 			// decrementamos la capacidad UNA vez. 'pendiente' y 'pendiente_pago'
 			// ya consumieron su plaza en inscribir() — decrementar aquí sería doble.
 			if ( 'lista_espera' === $estado_actual ) {
-				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- META_PREFIX is a constant
 				$affected = $wpdb->query(
 					$wpdb->prepare(
 						"UPDATE {$wpdb->postmeta} 
-                     SET meta_value = CAST(meta_value AS SIGNED) - 1 
-                     WHERE post_id = %d AND meta_key = '" . CPT_Inscripcion::META_PREFIX . "plazas_disponibles' AND CAST(meta_value AS SIGNED) > 0",
-						$actividad_id
+				SET meta_value = CAST(meta_value AS SIGNED) - 1 
+				WHERE post_id = %d AND meta_key = %s AND CAST(meta_value AS SIGNED) > 0",
+						$actividad_id,
+						CPT_Inscripcion::META_PREFIX . 'plazas_disponibles'
 					)
 				);
 
@@ -487,8 +487,9 @@ class Motor_Inscripcion {
 				$affected = $wpdb->query(
 					$wpdb->prepare(
 						"UPDATE {$wpdb->postmeta} SET meta_value = 'pendiente' 
-                     WHERE post_id = %d AND meta_key = '" . CPT_Inscripcion::META_PREFIX . "estado' AND meta_value = 'lista_espera'",
-						$promoted->ID
+                     WHERE post_id = %d AND meta_key = %s AND meta_value = 'lista_espera'",
+						$promoted->ID,
+						CPT_Inscripcion::META_PREFIX . 'estado'
 					)
 				);
 
