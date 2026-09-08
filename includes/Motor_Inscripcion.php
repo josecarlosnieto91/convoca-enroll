@@ -352,8 +352,13 @@ class Motor_Inscripcion {
 		$wpdb->query( 'START TRANSACTION' );
 
 		try {
-			// If it was holding a spot (was confirmed), free it up.
-			if ( $estado_actual === 'confirmada' ) {
+			// E2E-10: liberar la plaza para CUALQUIER estado que la consumió al
+			// inscribirse ('confirmada', 'pendiente', 'pendiente_pago' — todos
+			// decrementan plazas_disponibles en inscribir()). Antes solo
+			// 'confirmada' liberaba, así que cancelar una 'pendiente' dejaba la
+			// plaza ocupada para siempre.
+			$estados_que_consumen_plaza = array( 'confirmada', 'pendiente', 'pendiente_pago' );
+			if ( in_array( $estado_actual, $estados_que_consumen_plaza, true ) ) {
 				$promoted = self::promote_waitlist( $actividad_id );
 
 				// If nobody was promoted from waitlist, we officially have +1 capacity.
@@ -361,8 +366,8 @@ class Motor_Inscripcion {
 					$affected = $wpdb->query(
 						$wpdb->prepare(
 							"UPDATE {$wpdb->postmeta} 
-                         SET meta_value = CAST(meta_value AS SIGNED) + 1 
-                         WHERE post_id = %d AND meta_key = %s",
+                        SET meta_value = CAST(meta_value AS SIGNED) + 1 
+                        WHERE post_id = %d AND meta_key = %s",
 							$actividad_id,
 							CPT_Inscripcion::META_PREFIX . 'plazas_disponibles'
 						)

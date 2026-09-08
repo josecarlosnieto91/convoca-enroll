@@ -66,9 +66,13 @@ class Payment_Listener {
 		}
 
 		$current_estado = get_post_meta( $origin_id, '_convoca_estado', true );
-		$last_pago_id   = (int) get_post_meta( $origin_id, '_convoca_pago_id', true );
+		// E2E-9: dedupe contra el pago realmente APLICADO, no contra el pago
+		// pre-vinculado al crear la inscripción (_convoca_pago_id). Como el
+		// formulario escribe _convoca_pago_id ANTES de pagar, comparar con él
+		// hacía skip SIEMPRE y la inscripción nunca se confirmaba.
+		$applied_pago_id = (int) get_post_meta( $origin_id, '_convoca_pago_aplicado_id', true );
 
-		if ( $current_estado !== 'pendiente_pago' || $last_pago_id === (int) $pago_id ) {
+		if ( $current_estado !== 'pendiente_pago' || $applied_pago_id === (int) $pago_id ) {
 			\Convoca\Core\Logger::info( "Payment $pago_id skipped - already processed or state is $current_estado", 'Enroll/Payment', $origin_id );
 			return;
 		}
@@ -79,6 +83,8 @@ class Payment_Listener {
 		// Update payment info before confirming.
 		update_post_meta( $origin_id, '_convoca_metodo_pago', $meta['method'] ?? '' );
 		update_post_meta( $origin_id, '_convoca_pago_id', $pago_id );
+		// E2E-9: marcar el pago como aplicado SOLO aquí (tras procesarlo).
+		update_post_meta( $origin_id, '_convoca_pago_aplicado_id', $pago_id );
 
 		// Confirm the inscription (this handles capacity decrement).
 		$result = Motor_Inscripcion::confirmar( $origin_id );
