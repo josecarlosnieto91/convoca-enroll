@@ -132,8 +132,8 @@ class Activity_Reminder_Cron {
 		/* translators: %s: nombre de la persona */
 		$plain_body  = sprintf( __( 'Hola %s,', 'convoca-enroll' ), $nombre );
 		$plain_body .= "\n\n";
-		/* translators: %1$s: actividad, %2$s: fecha, %3$s: hora, %4$s: lugar */
 		$plain_body .= sprintf(
+			/* translators: %1$s: actividad, %2$s: fecha, %3$s: hora, %4$s: lugar */
 			__( 'Te recordamos que la actividad «%1$s» se celebrará el %2$s a las %3$s en %4$s.', 'convoca-enroll' ),
 			$nombre_actividad,
 			$fecha,

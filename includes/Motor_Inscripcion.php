@@ -513,8 +513,8 @@ class Motor_Inscripcion {
 		/* translators: %1$s: nombre, %2$d: número de cancelaciones tardías */
 		$subject = sprintf( __( 'Aviso: %1$s acumula %2$d cancelaciones tardías este año', 'convoca-enroll' ), $nombre, $count );
 
-		/* translators: %1$s: nombre, %2$s: email, %3$d: número de cancelaciones tardías */
 		$body = sprintf(
+			/* translators: %1$s: nombre, %2$s: email, %3$d: número de cancelaciones tardías */
 			__( 'La persona %1$s (%2$s) ha acumulado %3$d cancelaciones tardías en el año natural. Revisa su historial de inscripciones.', 'convoca-enroll' ),
 			$nombre,
 			$email,
