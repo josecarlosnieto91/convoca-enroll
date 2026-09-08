@@ -156,6 +156,13 @@ class Admin_Settings {
 		</div>
 
 		<div class="convoca-field">
+			<label for="cancel_window_hours"><?php esc_html_e( 'Ventana de cancelación (horas)', 'convoca-enroll' ); ?></label>
+			<input type="number" id="cancel_window_hours" name="conv[cancel_window_hours]" min="0"
+				value="<?php echo esc_attr( $s['cancel_window_hours'] ?? '24' ); ?>">
+			<small class="convoca-small"><?php esc_html_e( 'Horas mínimas antes del inicio para que un participante pueda cancelar por autoservicio. A menos horas solo podrá cancelar la organización.', 'convoca-enroll' ); ?></small>
+		</div>
+
+		<div class="convoca-field">
 			<label for="url_panel_reservas"><?php esc_html_e( 'URL Panel de Reservas', 'convoca-enroll' ); ?></label>
 			<input type="url" id="url_panel_reservas" name="conv[url_panel_reservas]"
 				value="<?php echo esc_attr( $s['url_panel_reservas'] ?? home_url( '/panel-de-reservas/' ) ); ?>">
@@ -735,6 +742,7 @@ class Admin_Settings {
 			$settings['permitir_menores']       = ! empty( $conv['permitir_menores'] ) ? 1 : 0;
 			$settings['bloquear_dni_duplicado'] = ! empty( $conv['bloquear_dni_duplicado'] ) ? '1' : '0';
 			$settings['plazas_por_defecto']     = absint( $conv['plazas_por_defecto'] ?? 20 );
+			$settings['cancel_window_hours']    = absint( $conv['cancel_window_hours'] ?? 24 );
 			$settings['url_panel_reservas']     = esc_url_raw( $conv['url_panel_reservas'] ?? '' );
 			$settings['sheets_enabled']         = absint( $conv['sheets_enabled'] ?? 0 );
 			if ( ! defined( 'CONV_ENROLL_GOOGLE_SHEETS_API_KEY' ) ) {

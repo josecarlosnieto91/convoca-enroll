@@ -45,6 +45,7 @@ class CPT_Actividad {
 		'reminder_7dias',
 		'reminder_1dia',
 		'reminder_1hora',
+		'reminder_hours',       // Horas de antelación del recordatorio configurable (D27).
 		'reminder_post_evento',
 		'google_create_album',
 		'google_album_id',
@@ -122,7 +123,7 @@ class CPT_Actividad {
 				array(
 					'show_in_rest' => true,
 					'single'       => true,
-					'type'         => in_array( $key, array( 'plazas_totales', 'plazas_disponibles', 'requiere_pago', 'actividad_externa', 'reminder_7dias', 'reminder_1dia', 'reminder_1hora', 'reminder_post_evento', 'google_create_album', 'google_calendar_sync' ) ) ? 'integer' : 'string',
+					'type'         => in_array( $key, array( 'plazas_totales', 'plazas_disponibles', 'requiere_pago', 'actividad_externa', 'reminder_7dias', 'reminder_1dia', 'reminder_1hora', 'reminder_hours', 'reminder_post_evento', 'google_create_album', 'google_calendar_sync' ) ) ? 'integer' : 'string',
 				)
 			);
 		}
@@ -183,6 +184,14 @@ class CPT_Actividad {
 				</label>
 				<input type="number" id="conv_enroll_plazas_totales" name="conv_enroll_plazas_totales" min="0"
 					value="<?php echo esc_attr( $m( 'plazas_totales' ) ); ?>">
+			</div>
+			<div class="convoca-field">
+				<label for="conv_enroll_reminder_hours">
+					<?php esc_html_e( 'Recordatorio (horas antes)', 'convoca-enroll' ); ?>
+				</label>
+				<input type="number" id="conv_enroll_reminder_hours" name="conv_enroll_reminder_hours" min="0"
+					value="<?php echo esc_attr( $m( 'reminder_hours' ) ?: '24' ); ?>">
+				<p class="description" style="margin-top:4px;"><?php esc_html_e( 'Horas de antelación para el recordatorio automático de actividad (0 = 24h por defecto).', 'convoca-enroll' ); ?></p>
 			</div>
 			<div class="convoca-field">
 				<label for="conv_enroll_precio_socio">
@@ -271,6 +280,7 @@ class CPT_Actividad {
 			'reminder_7dias'       => 'absint',
 			'reminder_1dia'        => 'absint',
 			'reminder_1hora'       => 'absint',
+			'reminder_hours'       => 'absint',
 			'reminder_post_evento' => 'absint',
 			'google_create_album'  => 'absint',
 			'google_calendar_sync' => 'absint',

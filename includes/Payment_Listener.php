@@ -35,6 +35,7 @@ class Payment_Listener {
 	public function __construct() {
 		// Only listen to the new unified hook to avoid duplication.
 		add_action( 'convoca_gateway_payment_completed', array( $this, 'on_payment_completed' ), 10, 5 );
+		add_action( 'convoca_gateway_payment_failed', array( $this, 'on_payment_failed' ), 10, 2 );
 	}
 
 	/**
@@ -97,6 +98,47 @@ class Payment_Listener {
 			// Mark as needs manual review.
 			update_post_meta( $origin_id, '_convoca_needs_manual_review', '1' );
 			update_post_meta( $origin_id, '_convoca_review_note', 'Error en confirmación automática tras pago: ' . $result->get_error_message() );
+		}
+	}
+
+	/**
+	 * Handle a failed payment from the gateway (D10).
+	 *
+	 * El hook convoca_gateway_payment_failed solo recibe ($pago_id, $response_code);
+	 * el origin/origin_id se leen del propio post de pago. Si la inscripción sigue
+	 * en 'pendiente_pago', liberamos la plaza y la pasamos a 'cancelada' con motivo
+	 * 'pago fallido'.
+	 *
+	 * @param int    $pago_id       Payment post ID.
+	 * @param string $response_code Código de respuesta/rechazo del gateway.
+	 */
+	public function on_payment_failed( $pago_id, $response_code ): void {
+		$origin    = (string) get_post_meta( $pago_id, '_convoca_origin', true );
+		$origin_id = (int) get_post_meta( $pago_id, '_convoca_origin_id', true );
+
+		// Solo nos interesan los pagos de inscripciones de enroll.
+		if ( 'enroll' !== $origin || ! $origin_id ) {
+			return;
+		}
+
+		$inscripcion = get_post( $origin_id );
+		if ( ! $inscripcion || $inscripcion->post_type !== 'inscripcion' ) {
+			\Convoca\Core\Logger::warning( "Pago $pago_id fallido pero la inscripción #$origin_id no existe o fue eliminada.", 'Enroll/Payment', $origin_id );
+			return;
+		}
+
+		$current_estado = get_post_meta( $origin_id, '_convoca_estado', true );
+		if ( 'pendiente_pago' !== $current_estado ) {
+			\Convoca\Core\Logger::info( "Pago $pago_id fallido (código $response_code) ignorado — estado actual de la inscripción: $current_estado.", 'Enroll/Payment', $origin_id );
+			return;
+		}
+
+		// D10: liberar la plaza y cancelar con motivo 'pago fallido'.
+		// $force=true evita que la ventana de cancelación bloquee la liberación de la plaza.
+		$result = Motor_Inscripcion::cancelar( $origin_id, __( 'Cancelada automáticamente: pago fallido.', 'convoca-enroll' ), true, false );
+
+		if ( is_wp_error( $result ) ) {
+			\Convoca\Core\Logger::error( "No se pudo cancelar la inscripción #$origin_id tras pago $pago_id fallido (código $response_code): " . $result->get_error_message(), 'Enroll/Payment', $origin_id );
 		}
 	}
 }

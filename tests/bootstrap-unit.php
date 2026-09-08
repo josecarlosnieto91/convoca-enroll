@@ -18,6 +18,14 @@ namespace Convoca\Core {
             public static function check_rate_limit(string $action, int $max = 10, int $window = 300): bool { return true; }
         }
     }
+    if (!class_exists('Logger')) {
+        class Logger {
+            public static function info(string $message, string $context = '', int $id = 0): void {}
+            public static function warning(string $message, string $context = '', int $id = 0): void {}
+            public static function error(string $message, string $context = '', int $id = 0): void {}
+            public static function log(string $message, string $level = 'info', string $context = '', int $id = 0): void {}
+        }
+    }
 }
 
 namespace { // global namespace for all stubs
@@ -27,6 +35,7 @@ $GLOBALS['_wp_stores'] = [
     'post_meta'  => [],
     'transients' => [],
     'user_meta'  => [],
+    'sent_mail'  => [],
 ];
 
 if (!defined('ABSPATH')) { define('ABSPATH', dirname(__DIR__) . '/'); }
@@ -66,6 +75,13 @@ if (!function_exists('get_post_meta')) {
 // Core WP
 if (!function_exists('__')) { function __($t, $d = 'default') { return $t; } }
 if (!function_exists('_e')) { function _e($t, $d = 'default') { echo $t; } }
+if (!function_exists('is_email')) { function is_email($e) { return (bool) filter_var($e, FILTER_VALIDATE_EMAIL); } }
+if (!function_exists('wp_mail')) {
+    function wp_mail($to, $subject, $message, $headers = '', $attachments = array()) {
+        $GLOBALS['_wp_stores']['sent_mail'][] = array('to' => $to, 'subject' => $subject, 'message' => $message);
+        return true;
+    }
+}
 if (!function_exists('esc_html')) { function esc_html($t) { return htmlspecialchars($t, ENT_QUOTES, 'UTF-8'); } }
 if (!function_exists('esc_attr')) { function esc_attr($t) { return htmlspecialchars($t, ENT_QUOTES, 'UTF-8'); } }
 if (!function_exists('esc_url')) { function esc_url($u) { return filter_var($u, FILTER_SANITIZE_URL); } }
@@ -168,6 +184,7 @@ if (!class_exists('WP_Post')) {
     class WP_Post {
         public $ID = 0; public $post_title = ''; public $post_type = 'post';
         public $post_status = 'publish'; public $post_content = '';
+        public $post_date = '';
     }
 }
 

@@ -332,8 +332,14 @@ class Motor_Inscripcion {
 
 	/**
 	 * Cancel an inscription and promote waitlist.
+	 *
+	 * @param int    $inscripcion_id Inscription post ID.
+	 * @param string $nota           Optional note stored on the inscription.
+	 * @param bool   $force          Bypass the cancellation window (D9).
+	 * @param bool   $contar_tardia  Whether a late cancellation increments the counter (D9).
+	 * @return bool|\WP_Error
 	 */
-	public static function cancelar( int $inscripcion_id, string $nota = '' ): bool|\WP_Error {
+	public static function cancelar( int $inscripcion_id, string $nota = '', bool $force = false, bool $contar_tardia = true ): bool|\WP_Error {
 
 		$post = get_post( $inscripcion_id );
 		if ( ! $post || $post->post_type !== 'inscripcion' ) {
@@ -346,6 +352,21 @@ class Motor_Inscripcion {
 		}
 
 		$actividad_id = (int) CPT_Inscripcion::get_meta( $inscripcion_id, 'actividad_id' );
+
+		// D9: ventana de cancelación configurable (convoca_enroll_settings.cancel_window_hours).
+		$settings     = get_option( 'convoca_enroll_settings', array() );
+		$window_hours = absint( $settings['cancel_window_hours'] ?? 24 );
+		$fecha_inicio = (string) get_post_meta( $actividad_id, '_convoca_fecha_inicio', true );
+		$now          = time();
+		$privilegiado = $force || current_user_can( 'manage_options' ) || current_user_can( 'convoca_manage_enroll' );
+
+		$ventana = self::validar_ventana_cancelacion( $fecha_inicio, $window_hours, $now, $privilegiado );
+		if ( is_wp_error( $ventana ) ) {
+			return $ventana;
+		}
+
+		// ¿La cancelación ocurre dentro de la ventana (cancelación tardía)?
+		$es_tardia = self::es_cancelacion_tardia( $fecha_inicio, $window_hours, $now );
 
 		// Use transaction for atomicity.
 		global $wpdb;
@@ -385,6 +406,11 @@ class Motor_Inscripcion {
 				CPT_Inscripcion::update_meta( $inscripcion_id, 'notas', $nota );
 			}
 
+			// D9: contador de cancelaciones tardías por persona (avisa al admin al llegar a 3/año).
+			if ( $es_tardia && $contar_tardia ) {
+				self::registrar_cancelacion_tardia( $inscripcion_id, $now );
+			}
+
 			$wpdb->query( 'COMMIT' );
 
 			\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_cancelada', 'convoca_inscripcion_cancelada', $inscripcion_id, $actividad_id );
@@ -395,6 +421,107 @@ class Motor_Inscripcion {
 			\Convoca\Core\Logger::error( 'Transaction failed in cancelar: ' . $e->getMessage(), 'Enroll/Motor', $inscripcion_id );
 			return new \WP_Error( 'cancel_failed', __( 'Error al cancelar la inscripción.', 'convoca-enroll' ) );
 		}
+	}
+
+	/**
+	 * ¿La cancelación ocurre dentro de la ventana configurada (cancelación tardía)?
+	 *
+	 * @param string $fecha_inicio Fecha/hora de inicio de la actividad.
+	 * @param int    $window_hours Ventana en horas.
+	 * @param int    $now          Timestamp actual.
+	 * @return bool
+	 */
+	public static function es_cancelacion_tardia( string $fecha_inicio, int $window_hours, int $now ): bool {
+		if ( empty( $fecha_inicio ) ) {
+			return false;
+		}
+
+		$start_ts = strtotime( $fecha_inicio );
+		if ( ! $start_ts ) {
+			return false;
+		}
+
+		return ( $start_ts - $now ) < ( $window_hours * HOUR_IN_SECONDS );
+	}
+
+	/**
+	 * Valida si una cancelación está permitida según la ventana configurada (D9).
+	 *
+	 * @param string $fecha_inicio Fecha/hora de inicio de la actividad.
+	 * @param int    $window_hours Ventana en horas.
+	 * @param int    $now          Timestamp actual.
+	 * @param bool   $privilegiado True si el llamante es admin o se fuerza la cancelación.
+	 * @return true|\WP_Error
+	 */
+	public static function validar_ventana_cancelacion( string $fecha_inicio, int $window_hours, int $now, bool $privilegiado ): true|\WP_Error {
+		if ( $privilegiado || ! self::es_cancelacion_tardia( $fecha_inicio, $window_hours, $now ) ) {
+			return true;
+		}
+
+		return new \WP_Error(
+			'cancel_window_closed',
+			sprintf(
+				/* translators: %d: horas mínimas de antelación */
+				__( 'No se puede cancelar a menos de %d horas del inicio. Contacta con la organización.', 'convoca-enroll' ),
+				$window_hours
+			)
+		);
+	}
+
+	/**
+	 * Registra una cancelación tardía para la persona y avisa al admin al llegar a 3 en el año natural.
+	 *
+	 * @param int $inscripcion_id Inscription post ID.
+	 * @param int $now            Timestamp actual.
+	 * @return int Número de cancelaciones tardías acumuladas este año.
+	 */
+	public static function registrar_cancelacion_tardia( int $inscripcion_id, int $now ): int {
+		$year   = gmdate( 'Y', $now );
+		$key    = '_convoca_late_cancellations_' . $year;
+		$anchor = (int) get_post_meta( $inscripcion_id, '_convoca_member_id', true );
+		$target = $anchor ? $anchor : $inscripcion_id;
+
+		$count = (int) get_post_meta( $target, $key, true );
+		++$count;
+		update_post_meta( $target, $key, $count );
+
+		if ( $count >= 3 ) {
+			self::notificar_admin_cancelaciones_tardias( $inscripcion_id, $count );
+		}
+
+		return $count;
+	}
+
+	/**
+	 * Avisa por email al administrador cuando una persona acumula cancelaciones tardías.
+	 *
+	 * @param int $inscripcion_id Inscription post ID.
+	 * @param int $count          Número de cancelaciones tardías acumuladas.
+	 */
+	private static function notificar_admin_cancelaciones_tardias( int $inscripcion_id, int $count ): void {
+		$settings    = get_option( 'convoca_enroll_settings', array() );
+		$admin_email = ! empty( $settings['admin_email'] ) ? $settings['admin_email'] : get_option( 'admin_email' );
+		$admin_email = apply_filters( 'convoca_enroll_late_cancel_admin_email', $admin_email, $inscripcion_id, $count );
+
+		if ( empty( $admin_email ) || ! is_email( $admin_email ) ) {
+			return;
+		}
+
+		$nombre = CPT_Inscripcion::get_meta( $inscripcion_id, 'nombre' );
+		$email  = CPT_Inscripcion::get_meta( $inscripcion_id, 'email' );
+
+		/* translators: %1$s: nombre, %2$d: número de cancelaciones tardías */
+		$subject = sprintf( __( 'Aviso: %1$s acumula %2$d cancelaciones tardías este año', 'convoca-enroll' ), $nombre, $count );
+
+		/* translators: %1$s: nombre, %2$s: email, %3$d: número de cancelaciones tardías */
+		$body = sprintf(
+			__( 'La persona %1$s (%2$s) ha acumulado %3$d cancelaciones tardías en el año natural. Revisa su historial de inscripciones.', 'convoca-enroll' ),
+			$nombre,
+			$email,
+			$count
+		);
+
+		wp_mail( $admin_email, $subject, $body );
 	}
 
 	/**
@@ -467,7 +594,7 @@ class Motor_Inscripcion {
 		$waitlist = get_posts(
 			array(
 				'post_type'      => 'inscripcion',
-				'posts_per_page' => 1,
+				'posts_per_page' => -1,
 				'post_status'    => 'publish',
 				'orderby'        => 'date',
 				'order'          => 'ASC',
@@ -486,6 +613,10 @@ class Motor_Inscripcion {
 		);
 
 		if ( ! empty( $waitlist ) ) {
+			// D8: prioridad de socio (es_socio DESC) y, dentro del mismo grupo,
+			// por orden de inscripción (post_date ASC).
+			$waitlist = self::sort_waitlist( $waitlist );
+
 			global $wpdb;
 			foreach ( $waitlist as $promoted ) {
 				// Atomic update to ensure only one process promotes this specific record.
@@ -508,6 +639,82 @@ class Motor_Inscripcion {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Ordena la lista de espera: socios activos primero (es_socio DESC) y, dentro
+	 * del mismo grupo, por orden de inscripción (post_date ASC).
+	 *
+	 * @param \WP_Post[] $waitlist Lista de inscripciones en lista_espera.
+	 * @return \WP_Post[]
+	 */
+	public static function sort_waitlist( array $waitlist ): array {
+		usort(
+			$waitlist,
+			static function ( $a, $b ): int {
+				$socio_a = self::es_socio_activo( (int) $a->ID ) ? 1 : 0;
+				$socio_b = self::es_socio_activo( (int) $b->ID ) ? 1 : 0;
+
+				if ( $socio_a === $socio_b ) {
+					return strcmp( (string) $a->post_date, (string) $b->post_date );
+				}
+
+				return $socio_b - $socio_a;
+			}
+		);
+
+		return $waitlist;
+	}
+
+	/**
+	 * ¿Es la inscripción de un socio con prioridad (cuota al día)?
+	 *
+	 * @param int $inscripcion_id Inscription post ID.
+	 * @return bool
+	 */
+	public static function es_socio_activo( int $inscripcion_id ): bool {
+		$es_socio = CPT_Inscripcion::get_meta( $inscripcion_id, 'es_socio' );
+		if ( '1' !== (string) $es_socio ) {
+			return false;
+		}
+
+		// Si convoca-members está activo, refinamos con el estado de cuota.
+		if ( class_exists( '\Convoca\Members\Process_Member' ) ) {
+			$member_id = (int) get_post_meta( $inscripcion_id, '_convoca_member_id', true );
+
+			if ( ! $member_id ) {
+				$email = CPT_Inscripcion::get_meta( $inscripcion_id, 'email' );
+				if ( $email ) {
+					$members = get_posts(
+						array(
+							'post_type'      => 'miembro',
+							'posts_per_page' => 1,
+							'post_status'    => 'any',
+							'fields'         => 'ids',
+							'meta_query'     => array(
+								array(
+									'key'   => '_convoca_email',
+									'value' => $email,
+								),
+							),
+						)
+					);
+					if ( ! empty( $members ) ) {
+						$member_id = (int) $members[0];
+					}
+				}
+			}
+
+			if ( $member_id ) {
+				return 'activa' === get_post_meta( $member_id, '_convoca_estado_cuota', true );
+			}
+
+			// Socio sin miembro vinculado: no se puede verificar la cuota → sin prioridad.
+			return false;
+		}
+
+		// Sin members activo, es_socio '1' ya implica prioridad (no hay cuota que verificar).
+		return true;
 	}
 
 	/**

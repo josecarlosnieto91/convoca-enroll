@@ -182,6 +182,9 @@ register_activation_hook(
 		if ( ! wp_next_scheduled( 'convoca_enroll_cleanup_orphan_codes' ) ) {
 			wp_schedule_event( time(), 'daily', 'convoca_enroll_cleanup_orphan_codes' );
 		}
+		if ( ! wp_next_scheduled( 'convoca_enroll_activity_reminder' ) ) {
+			wp_schedule_event( time(), 'hourly', 'convoca_enroll_activity_reminder' );
+		}
 
 		// Save initial DB version.
 		add_option( 'convoca_enroll_db_version', CONVOCA_ENROLL_DB_VERSION, '', false );
@@ -202,6 +205,7 @@ register_deactivation_hook(
 		wp_clear_scheduled_hook( 'convoca_enroll_process_webhook_queue' );
 		wp_clear_scheduled_hook( 'convoca_enroll_eval_reminder' );
 		wp_clear_scheduled_hook( 'convoca_enroll_daily_maintenance' );
+		wp_clear_scheduled_hook( 'convoca_enroll_activity_reminder' );
 		flush_rewrite_rules();
 	}
 );
@@ -230,6 +234,7 @@ add_action(
 		Volunteer_Hour_Tracker::init();
 		CPT_Evaluacion::init();
 		Eval_Reminder_Cron::init();
+		Activity_Reminder_Cron::init();
 		PDF_Compromiso::init();
 
 		// Upgrade Manager (checks for DB version upgrades on admin_init).
