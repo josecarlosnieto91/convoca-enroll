@@ -219,6 +219,7 @@ class Form_Inscripcion {
 							'amount_cents' => $amount_cents,
 							'origin'       => 'enroll',
 							'origin_id'    => $result,
+							'method'       => 'any', // El inscrito elige metodo en la pagina de pago.
 							'product_desc' => mb_substr( 'Aportación para ' . ( $actividad->post_title ?? '' ), 0, 125 ),
 						)
 					);
