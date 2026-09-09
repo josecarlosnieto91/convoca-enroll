@@ -157,7 +157,7 @@ class CPT_Inscripcion {
 					'read_private_posts' => 'manage_inscripciones',
 					'create_posts'       => 'manage_inscripciones',
 				),
-				'map_meta_cap'    => true,
+				'map_meta_cap'    => false, // WP7 arma $post_type_meta_caps['manage_inscripciones']='delete_post' con true → la cap global se re-mapea a do_not_allow siempre. El CPT es interno (show_ui=false); todas sus operaciones usan manage_inscripciones directamente.
 				'has_archive'     => false,
 				'rewrite'         => false,
 			)
