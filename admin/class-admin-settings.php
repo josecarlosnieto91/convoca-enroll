@@ -46,7 +46,7 @@ class Admin_Settings {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Error crítico: El motor de inscripciones no parece estar registrado correctamente.', 'convoca-enroll' ) . '</p></div>';
 		}
 
-		if ( ! \Convoca\Core\Utils::is_plugin_active_safe( 'convoca-common/convoca-common.php' ) ) {
+		if ( ! \Convoca\Core\Utils::is_plugin_active_safe( 'convoca-core/convoca-core.php' ) ) {
 			echo '<div class="notice notice-warning"><p>⚠️ ' . esc_html__( 'Convoca Common no está activo. Algunas funciones podrían no estar disponibles.', 'convoca-enroll' ) . '</p></div>';
 		}
 
