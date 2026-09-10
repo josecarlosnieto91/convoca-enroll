@@ -30,10 +30,10 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 //   1. La constante CONVOCA_KEEP_DATA_ON_UNINSTALL en wp-config.php (para despliegues).
 //   2. El ajuste de la interfaz, guardado en la opción convoca_uninstall_keep_data.
 // Sirve para desinstalar y volver a instalar sin perder la configuración.
-$convoca_conservar = ( defined( 'CONVOCA_KEEP_DATA_ON_UNINSTALL' ) && CONVOCA_KEEP_DATA_ON_UNINSTALL )
-	|| 1 === (int) get_option( 'convoca_uninstall_keep_data', 0 );
-
-if ( $convoca_conservar ) {
+if (
+	( defined( 'CONVOCA_KEEP_DATA_ON_UNINSTALL' ) && CONVOCA_KEEP_DATA_ON_UNINSTALL )
+	|| 1 === (int) get_option( 'convoca_uninstall_keep_data', 0 )
+) {
 	return;
 }
 
