@@ -860,8 +860,8 @@ class Email_Automation {
 			'{estado}'          => 'Confirmada',
 			'{plazas_restantes}' => '4',
 			'{url_cancelar}'    => '#',
-			'{url_panel}'       => '#',
-			'{panel_reservas}'  => '#',
+			'{url_panel}'       => 'https://ejemplo.test/mi-panel/',
+			'{panel_reservas}'  => 'https://ejemplo.test/mis-reservas/',
 			'{codigo_reserva}'  => 'ABC12345',
 			'{qr_code}'         => 'https://ejemplo.test/qr/ABC12345',
 			'{url_checkin}'     => 'https://ejemplo.test/checkin/ABC12345',
@@ -893,6 +893,10 @@ class Email_Automation {
 			}
 		}
 
-		return Email_Layout::render( $body, (string) ( $tpl['subject'] ?? '' ), $opts );
+		return Email_Layout::render(
+			$body,
+			str_replace( array_keys( $vars ), array_values( $vars ), (string) ( $tpl['subject'] ?? '' ) ),
+			$opts
+		);
 	}
 }
