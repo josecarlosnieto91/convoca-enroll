@@ -219,6 +219,8 @@ class Form_Inscripcion {
 							'amount_cents' => $amount_cents,
 							'origin'       => 'enroll',
 							'origin_id'    => $result,
+							// El correo del formulario: con él se envía el recibo y se avisa de la caducidad.
+							'payer_email'  => $email,
 							'method'       => 'any', // El inscrito elige metodo en la pagina de pago.
 							'product_desc' => mb_substr( 'Aportación para ' . ( $actividad->post_title ?? '' ), 0, 125 ),
 						)

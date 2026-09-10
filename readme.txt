@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.7.5
+Stable tag: 2.7.6
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.6 =
+* Al generar el pago de una inscripción se entrega el correo que dejó el inscrito, para que reciba el recibo y el aviso de caducidad del enlace.
 
 = 2.7.1 =
 * Security: inscripción serializada — los checks de duplicado (email/DNI) se re-verifican dentro de la transacción con SELECT ... FOR UPDATE sobre la actividad (cierra TOCTOU de doble clic).
