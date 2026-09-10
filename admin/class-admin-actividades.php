@@ -45,7 +45,7 @@ class Admin_Actividades {
 		add_action( 'load-post-new.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'load-post.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'admin_bar_menu', array( $this, 'customize_admin_bar' ), 80 );
-		add_action( 'admin_post_convoca_duplicate_actividad', array( $this, 'handle_duplicate' ) );
+		add_action( 'admin_post_convoca_enroll_duplicate_actividad', array( $this, 'handle_duplicate' ) );
 	}
 
 	public function add_menu() {
