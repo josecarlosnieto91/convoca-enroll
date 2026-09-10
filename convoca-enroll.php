@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Enroll
  * Plugin URI:        https://getconvoca.app
  * Description:       Centralized activity enrollment system.
- * Version:           2.7.2
+ * Version:           2.7.3
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1

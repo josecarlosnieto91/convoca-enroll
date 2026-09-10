@@ -97,6 +97,9 @@ class Email_Automation {
 		// Cache cleanup.
 		add_action( 'updated_post_meta', array( $this, 'clear_panel_cache' ), 10, 3 );
 		add_action( 'deleted_post_meta', array( $this, 'clear_panel_cache' ), 10, 3 );
+
+		// Corrección de plantillas guardadas por versiones anteriores.
+		add_action( 'admin_init', array( __CLASS__, 'maybe_migrate' ) );
 	}
 
 	/**
@@ -567,13 +570,30 @@ class Email_Automation {
 		$body    = str_replace( array_keys( $vars ), array_values( $vars ), $tpl['body'] );
 
 		// Wrap in premium Convoca HTML layout.
-		$html_body = Email_Layout::render(
-			$body,
-			$subject,
-			array(
-				'footer_text' => __( 'Has recibido este email porque estás inscrito en una de nuestras actividades.', 'convoca-enroll' ),
-			)
+		$layout_opts = array(
+			'footer_text' => __( 'Has recibido este email porque estás inscrito en una de nuestras actividades.', 'convoca-enroll' ),
 		);
+
+		// CTA: si la plantilla no trae botón, se añade uno (varias plantillas
+		// guardadas vienen de versiones anteriores sin acción).
+		if ( false === strpos( $body, 'email-btn' ) ) {
+			$cta = self::default_cta( $slug );
+			if ( $cta ) {
+				$cta_url  = strtr( (string) $cta[0], $vars );
+				$cta_text = (string) $cta[1];
+
+				if ( '' === trim( $cta_url ) || '#' === trim( $cta_url ) ) {
+					$cta_url = (string) ( $vars['{panel_reservas}'] ?? '' );
+				}
+
+				if ( '' !== trim( $cta_url ) && '' !== $cta_text ) {
+					$layout_opts['button_url']  = $cta_url;
+					$layout_opts['button_text'] = $cta_text;
+				}
+			}
+		}
+
+		$html_body = Email_Layout::render( $body, $subject, $layout_opts );
 
 		$attachments = array();
 		if ( in_array( $slug, self::ATTACHMENT_SLUGS ) ) {
@@ -732,6 +752,76 @@ class Email_Automation {
 
 
 
+	/* ── CTA por defecto y migración ───────────────────── */
+
+	/**
+	 * Acción por defecto de cada plantilla: [url_placeholder, texto].
+	 * Se usa solo si el cuerpo no incluye ya un botón.
+	 *
+	 * @return array<int,string>
+	 */
+	private static function default_cta( string $slug ): array {
+		$panel = array( '{panel_reservas}', __( 'Ver mis reservas', 'convoca-enroll' ) );
+		$ctas  = array(
+			'lista_espera'                   => array( '{panel_reservas}', __( 'Ver mi inscripción', 'convoca-enroll' ) ),
+			'promocion_lista_espera'         => array( '{panel_reservas}', __( 'Confirmar mi plaza', 'convoca-enroll' ) ),
+			'confirmacion_plaza'             => array( '{panel_reservas}', __( 'Ver mi reserva', 'convoca-enroll' ) ),
+			'google_photos_album_creado'     => array( '{album_url}', __( 'Subir fotos', 'convoca-enroll' ) ),
+			'google_photos_album_compartido' => array( '{album_url}', __( 'Ver fotos', 'convoca-enroll' ) ),
+		);
+
+		return $ctas[ $slug ] ?? $panel;
+	}
+
+	const TEMPLATES_VERSION_OPTION = 'convoca_enroll_email_templates_version';
+	const TEMPLATES_VERSION        = '2026-09-10';
+
+	/**
+	 * Corrige las plantillas ya guardadas: enlaces con el placeholder sin llaves
+	 * (`http://panel_reservas` → `{panel_reservas}`), que dejaban los botones
+	 * apuntando a una URL inexistente, y emails fijos → variable del email del
+	 * sitio.
+	 */
+	public static function maybe_migrate(): void {
+		if ( self::TEMPLATES_VERSION === get_option( self::TEMPLATES_VERSION_OPTION ) ) {
+			return;
+		}
+
+		$templates = get_option( self::OPTION );
+
+		if ( is_array( $templates ) && ! empty( $templates ) ) {
+			$map = array(
+				'http://panel_reservas'  => '{panel_reservas}',
+				'http://album_url'       => '{album_url}',
+				'http://qr_code'         => '{qr_code}',
+				'http://url_checkin'     => '{url_checkin}',
+				'http://calendario_link' => '{calendario_link}',
+				'http://codigo_reserva'  => '{codigo_reserva}',
+			);
+
+			foreach ( $templates as $slug => $tpl ) {
+				foreach ( array( 'subject', 'body' ) as $field ) {
+					if ( ! isset( $tpl[ $field ] ) ) {
+						continue;
+					}
+
+					$text = str_replace( array_keys( $map ), array_values( $map ), (string) $tpl[ $field ] );
+					$text = preg_replace(
+						'/[a-z0-9._%+\-]+@(?:getconvoca\.app|biodevas\.org|unbosquepamaria\.org)/i',
+						'{admin_email}',
+						$text
+					);
+
+					$templates[ $slug ][ $field ] = $text;
+				}
+			}
+
+			update_option( self::OPTION, $templates );
+		}
+
+		update_option( self::TEMPLATES_VERSION_OPTION, self::TEMPLATES_VERSION );
+	}
+
 	/* ── Admin getters ─────────────────────────── */
 
 	public static function get_templates(): array {
@@ -783,51 +873,26 @@ class Email_Automation {
 		$body = str_replace( array_keys( $vars ), array_values( $vars ), $body );
 		$body = wpautop( $body );
 
-		// Wrap in basic HTML structure.
-		ob_start();
-		?>
-		<!DOCTYPE html>
-		<html>
+		// Mismo layout que el email real (antes era un HTML propio: el ejemplo no
+		// se parecía al email ni incluía el CTA).
+		$opts = array(
+			'footer_text' => __( 'Has recibido este email porque estás inscrito en una de nuestras actividades.', 'convoca-enroll' ),
+		);
 
-		<head>
-			<meta charset="UTF-8">
-			<style>
-				body {
-					font-family: sans-serif;
-					line-height: 1.6;
-					color: #333;
-					max-width: 600px;
-					margin: 20px auto;
-					border: 1px solid #eee;
-					padding: 20px;
+		if ( false === strpos( $body, 'email-btn' ) ) {
+			$cta = self::default_cta( $slug );
+			if ( $cta ) {
+				$cta_url = strtr( (string) $cta[0], $vars );
+				if ( '' === trim( $cta_url ) || '#' === trim( $cta_url ) ) {
+					$cta_url = (string) ( $vars['{panel_reservas}'] ?? '' );
 				}
-
-				h1 {
-					color: #2c3e50;
+				if ( '' !== trim( $cta_url ) ) {
+					$opts['button_url']  = $cta_url;
+					$opts['button_text'] = (string) $cta[1];
 				}
+			}
+		}
 
-				.footer {
-					margin-top: 30px;
-					font-size: 12px;
-					color: #777;
-					border-top: 1px solid #eee;
-					padding-top: 10px;
-				}
-			</style>
-		</head>
-
-		<body>
-			<div style="background: #f8f9fa; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
-				<strong>Asunto:</strong> <?php echo esc_html( $tpl['subject'] ); ?>
-			</div>
-			<?php echo wp_kses_post( $body ); ?>
-			<div class="footer">
-				&copy; <?php echo esc_html( get_bloginfo( 'name' ) ); ?>. Este es un email automático de prueba.
-			</div>
-		</body>
-
-		</html>
-		<?php
-		return ob_get_clean();
+		return Email_Layout::render( $body, (string) ( $tpl['subject'] ?? '' ), $opts );
 	}
 }
