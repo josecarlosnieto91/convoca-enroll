@@ -40,7 +40,7 @@ class Admin_Page {
 		add_action( 'admin_notices', array( $this, 'notices' ) );
 		add_filter( 'parent_file', array( $this, 'fix_menu_highlight' ) );
 		add_filter( 'submenu_file', array( $this, 'fix_submenu_highlight' ) );
-		add_action( 'admin_post_convoca_export_inscripciones_pdf', array( $this, 'handle_export_inscripciones_pdf' ) );
+		add_action( 'admin_post_convoca_enroll_export_inscripciones_pdf', array( $this, 'handle_export_inscripciones_pdf' ) );
 		add_action( 'admin_post_convoca_retry_email', array( $this, 'handle_retry_email' ) );
 		add_action( 'wp_ajax_convoca_save_nota', array( $this, 'ajax_save_nota' ) );
 	}
