@@ -756,21 +756,28 @@ class Email_Automation {
 
 		$body = $tpl['body'];
 
-		// Mock variables.
+		// Mock variables. `{importe}` sin símbolo: el € (si va) lo añade la plantilla,
+		// incluirlo aquí lo duplicaba en la vista previa (`5,00€€`).
 		$vars = array(
-			'{nombre}'         => 'Usuario de Prueba',
-			'{email}'          => 'prueba@ejemplo.com',
-			'{telefono}'       => '600000000',
-			'{actividad}'      => 'Taller de Bosque Comestible',
-			'{fecha}'          => '15 de Mayo, 10:00h',
-			'{hora}'           => '10:00',
-			'{ubicacion}'      => get_bloginfo( 'name' ) . ' - Vivero',
-			'{notas}'          => 'Alguna nota de ejemplo.',
-			'{url_cancelar}'   => '#',
-			'{url_panel}'      => '#',
-			'{codigo_reserva}' => 'ABC12345',
-			'{panel_reservas}' => '#',
-			'{importe}'        => '5,00€',
+			'{nombre}'          => 'Usuario de Prueba',
+			'{email}'           => 'prueba@ejemplo.com',
+			'{telefono}'        => '600000000',
+			'{actividad}'       => 'Taller de Bosque Comestible',
+			'{fecha}'           => '15 de Mayo, 10:00h',
+			'{hora}'            => '10:00',
+			'{ubicacion}'       => get_bloginfo( 'name' ) . ' - Vivero',
+			'{notas}'           => 'Alguna nota de ejemplo.',
+			'{estado}'          => 'Confirmada',
+			'{plazas_restantes}' => '4',
+			'{url_cancelar}'    => '#',
+			'{url_panel}'       => '#',
+			'{panel_reservas}'  => '#',
+			'{codigo_reserva}'  => 'ABC12345',
+			'{qr_code}'         => 'https://ejemplo.test/qr/ABC12345',
+			'{url_checkin}'     => 'https://ejemplo.test/checkin/ABC12345',
+			'{album_url}'       => 'https://photos.app.goo.gl/ejemplo',
+			'{calendario_link}' => 'https://ejemplo.test/calendario.ics',
+			'{importe}'         => '5,00',
 		);
 
 		$body = str_replace( array_keys( $vars ), array_values( $vars ), $body );

@@ -337,13 +337,17 @@ class Admin_Settings {
 
 	private static function render_tab_emails( array $templates ): void {
 		$labels = array(
-			'recepcion'              => __( 'Inscripción recibida', 'convoca-enroll' ),
-			'lista_espera'           => 'En lista de espera',
-			'promocion_lista_espera' => __( 'Promoción de lista de espera', 'convoca-enroll' ),
-			'confirmacion_plaza'     => __( 'Confirmación de plaza', 'convoca-enroll' ),
-			'cancelacion_reserva'    => __( 'Cancelación de reserva', 'convoca-enroll' ),
-			'recordatorio_24h'       => 'Recordatorio 24h',
-			'feedback_post'          => __( 'Post-evento (feedback)', 'convoca-enroll' ),
+			'recepcion'                     => __( 'Inscripción recibida', 'convoca-enroll' ),
+			'lista_espera'                  => __( 'En lista de espera', 'convoca-enroll' ),
+			'promocion_lista_espera'        => __( 'Promoción de lista de espera', 'convoca-enroll' ),
+			'confirmacion_plaza'            => __( 'Confirmación de plaza', 'convoca-enroll' ),
+			'cancelacion_reserva'           => __( 'Cancelación de reserva', 'convoca-enroll' ),
+			'recordatorio_7dias'            => __( 'Recordatorio 7 días', 'convoca-enroll' ),
+			'recordatorio_24h'              => __( 'Recordatorio 24h', 'convoca-enroll' ),
+			'recordatorio_1hora'            => __( 'Recordatorio 1 hora', 'convoca-enroll' ),
+			'feedback_post'                 => __( 'Post-evento (feedback)', 'convoca-enroll' ),
+			'google_photos_album_creado'    => __( 'Álbum de Google Photos creado', 'convoca-enroll' ),
+			'google_photos_album_compartido' => __( 'Álbum de Google Photos compartido', 'convoca-enroll' ),
 		);
 		?>
 		<p>Variables disponibles:
