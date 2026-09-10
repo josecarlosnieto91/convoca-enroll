@@ -34,7 +34,7 @@ convoca-core, WordPress 6.4+, PHP 8.1+
 
 ## Version
 
-2.5.0
+2.7.5
 
 ### 2.6.1
 - docs: add MANUAL_USUARIO.md with 12-section admin guide
@@ -74,4 +74,34 @@ Prueba Convoca sin instalar nada:
 - [Convoca Gateway](https://github.com/josecarlosnieto91/convoca-gateway)
 - [Convoca Shifts](https://github.com/josecarlosnieto91/convoca-shifts)
 - [Convoca Publisher](https://github.com/josecarlosnieto91/convoca-publisher)
+
+## 🧑‍💻 Developer Guide — Hooks & Filters
+
+La API pública de Convoca para desarrolladores son los **hooks y filtros** que emiten los plugins. La referencia completa, generada desde el código, vive en [`convoca-core/HOOKS.md`](https://github.com/josecarlosnieto91/convoca-core/blob/main/HOOKS.md).
+
+### Acciones principales
+
+| Hook | Descripción |
+|------|-------------|
+| `convoca_enroll_inscripcion_nueva` | Se crea una nueva inscripción. |
+| `convoca_enroll_inscripcion_confirmada` | Una inscripción se confirma (plaza adjudicada). |
+| `convoca_enroll_inscripcion_cancelada` | Una inscripción se cancela. |
+| `convoca_enroll_inscripcion_promovida` | Un inscrito pasa de lista de espera a confirmado. |
+| `convoca_enroll_asistencia_cambiada` | Cambia la asistencia (check-in / no-show). |
+| `convoca_evaluacion_completada` | Un participante completa la evaluación de una actividad. |
+
+### Filtros
+
+| Filtro | Descripción |
+|--------|-------------|
+| `convoca_enroll_aportacion_label` | Personaliza la etiqueta de la aportación económica. |
+| `convoca_enroll_late_cancel_admin_email` | Email de aviso ante cancelaciones tardías. |
+
+## Pruebas
+
+```bash
+composer install
+composer test          # phpcs + phpstan + phpunit
+vendor/bin/phpunit     # solo unit tests
+```
 
