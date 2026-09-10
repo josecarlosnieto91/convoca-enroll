@@ -336,6 +336,14 @@ class Admin_Settings {
 	/* ── Tab: Emails ──────────────────────────── */
 
 	private static function render_tab_emails( array $templates ): void {
+		/**
+		 * Etiquetas legibles por slug.
+		 *
+		 * Cubre las 11 plantillas; `?? $slug` deja pasar sin romper cualquier
+		 * plantilla que se añada en el futuro sin etiqueta.
+		 *
+		 * @var array<string, string> $labels
+		 */
 		$labels = array(
 			'recepcion'                     => __( 'Inscripción recibida', 'convoca-enroll' ),
 			'lista_espera'                  => __( 'En lista de espera', 'convoca-enroll' ),

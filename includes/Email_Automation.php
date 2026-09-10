@@ -884,7 +884,9 @@ class Email_Automation {
 			if ( $cta ) {
 				$cta_url = strtr( (string) $cta[0], $vars );
 				if ( '' === trim( $cta_url ) || '#' === trim( $cta_url ) ) {
-					$cta_url = (string) ( $vars['{panel_reservas}'] ?? '' );
+					// El mock de la vista previa siempre define el panel, así que
+					// no hace falta un ?? defensivo aquí.
+					$cta_url = (string) $vars['{panel_reservas}'];
 				}
 				if ( '' !== trim( $cta_url ) ) {
 					$opts['button_url']  = $cta_url;
