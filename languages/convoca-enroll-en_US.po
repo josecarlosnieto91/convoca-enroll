@@ -1,0 +1,2778 @@
+# Copyright (C) 2026 Jose Carlos Nieto Ramos
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Convoca Enroll 2.7.6\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-enroll\n"
+"POT-Creation-Date: 2026-09-11T11:41:17+00:00\n"
+"PO-Revision-Date: 2026-09-11 12:00+0200\n"
+"Last-Translator: Jose Carlos Nieto Ramos\n"
+"Language-Team: English (United States)\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: manual\n"
+"X-Domain: convoca-enroll\n"
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: convoca-enroll.php
+msgid "Convoca Enroll"
+msgstr "Convoca Enroll"
+
+#. Description of the plugin
+#: convoca-enroll.php
+msgid "https://getconvoca.app"
+msgstr "https://getconvoca.app"
+
+#. Author of the plugin
+#: convoca-enroll.php
+msgid "Centralized activity enrollment system."
+msgstr "Centralized activity enrollment system."
+
+#: admin/class-admin-actividades.php:54
+#: admin/class-admin-actividades.php:55
+#: admin/class-admin-page.php:111
+#: includes/CPT_Actividad.php:96
+msgid "Jose Carlos Nieto Ramos"
+msgstr "Jose Carlos Nieto Ramos"
+
+#: admin/class-admin-actividades.php:63
+#: includes/CPT_Actividad.php:99
+msgid "Actividades"
+msgstr "Activities"
+
+#: admin/class-admin-actividades.php:64
+#: admin/class-admin-actividades.php:78
+#: includes/CPT_Evaluacion.php:36
+msgid "Añadir nueva actividad"
+msgstr "Add New Activity"
+
+#: admin/class-admin-actividades.php:76
+#: admin/class-admin-page.php:349
+msgid "Añadir nueva"
+msgstr "Add New"
+
+#: admin/class-admin-actividades.php:85
+#: includes/CPT_Actividad.php:102
+msgid "Gestión de Actividades"
+msgstr "Activity Management"
+
+#: admin/class-admin-actividades.php:161
+msgid "Buscar actividades"
+msgstr "Search activities"
+
+#: admin/class-admin-actividades.php:161
+msgid "Editar Actividad"
+msgstr "Edit Activity"
+
+#: admin/class-admin-actividades.php:176
+msgid "Nueva Actividad"
+msgstr "New Activity"
+
+#: admin/class-admin-actividades.php:180
+msgid "Información Principal"
+msgstr "Main Information"
+
+#: admin/class-admin-actividades.php:185
+msgid "Título de la Actividad"
+msgstr "Activity Title"
+
+#: admin/class-admin-actividades.php:190
+msgid "Descripción Completa"
+msgstr "Full Description"
+
+#: admin/class-admin-actividades.php:198
+msgid "Resumen Corto (para listados)"
+msgstr "Short Summary (for listings)"
+
+#: admin/class-admin-actividades.php:203
+msgid "Configuración y Logística"
+msgstr "Configuration & Logistics"
+
+#: admin/class-admin-actividades.php:207
+#: includes/CPT_Actividad.php:170
+msgid "Fecha y Hora Inicio"
+msgstr "Start Date & Time"
+
+#: admin/class-admin-actividades.php:213
+#: includes/CPT_Actividad.php:177
+msgid "Fecha y Hora Fin"
+msgstr "End Date & Time"
+
+#: admin/class-admin-actividades.php:219
+#: includes/CPT_Actividad.php:183
+msgid "Ubicación / Punto de encuentro"
+msgstr "Location / Meeting point"
+
+#: admin/class-admin-actividades.php:223
+msgid "Plazas Totales"
+msgstr "Total Seats"
+
+#: admin/class-admin-actividades.php:231
+#: includes/CPT_Actividad.php:206
+msgid "Precio Socio (€)"
+msgstr "Member Price (€)"
+
+#: admin/class-admin-actividades.php:238
+#: includes/CPT_Actividad.php:212
+msgid "Requiere pago previo"
+msgstr "Requires advance payment"
+
+#: admin/class-admin-actividades.php:243
+#: includes/CPT_Actividad.php:217
+msgid "Es una actividad externa"
+msgstr "This is an external activity"
+
+#: admin/class-admin-actividades.php:261
+msgid "Monitores / Responsables"
+msgstr "Monitors / Organizers"
+
+#: admin/class-admin-actividades.php:263
+msgid "Guardar Actividad"
+msgstr "Save Activity"
+
+#: admin/class-admin-actividades.php:265
+#: admin/class-admin-evaluaciones-editor.php:185
+msgid "Duplicar"
+msgstr "Duplicate"
+
+#: admin/class-admin-actividades.php:279
+#: admin/class-admin-evaluaciones-editor.php:205
+msgid "Cancelar"
+msgstr "Cancel"
+
+#: admin/class-admin-actividades.php:304
+msgid "No tienes permisos para realizar esta acción."
+msgstr "You do not have permission to perform this action."
+
+#: admin/class-admin-actividades.php:339
+#: admin/class-admin-monitor-crm.php:71
+#: admin/class-admin-page.php:766
+#: admin/class-admin-page.php:815
+msgid "Error al guardar la actividad."
+msgstr "Error saving the activity."
+
+#: admin/class-admin-actividades.php:342
+#: admin/class-admin-monitor-crm.php:126
+#: admin/class-admin-page.php:769
+#: admin/class-admin-page.php:818
+#: admin/class-admin-page.php:841
+#: admin/class-admin-settings.php:851
+msgid "Nonce inválido."
+msgstr "Invalid nonce."
+
+#: admin/class-admin-actividades.php:347
+#: admin/class-admin-monitor-crm.php:364
+#: includes/Motor_Inscripcion.php:62
+#: includes/PDF_Compromiso.php:91
+#: includes/Rest_API.php:217
+#: media/class-blog-post-manager.php:67
+#: public/class-form-inscripcion.php:66
+msgid "No tienes permisos."
+msgstr "You do not have permission."
+
+#: admin/class-admin-actividades.php:362
+msgid "Actividad no encontrada."
+msgstr "Activity not found."
+
+#: admin/class-admin-checkin.php:65
+msgid "Error al duplicar la actividad."
+msgstr "Error duplicating the activity."
+
+#: admin/class-admin-checkin.php:67
+msgid "No tienes permiso para ver inscripciones de esta actividad."
+msgstr "You do not have permission to view enrollments for this activity."
+
+#: admin/class-admin-checkin.php:68
+msgid "Volver al listado"
+msgstr "Back to list"
+
+#: admin/class-admin-checkin.php:118
+msgid "Acceso denegado"
+msgstr "Access denied"
+
+#: admin/class-admin-checkin.php:131
+msgid "Check-in de Actividades"
+msgstr "Activity Check-in"
+
+#: admin/class-admin-checkin.php:133
+msgid "Seleccionar actividad:"
+msgstr "Select activity:"
+
+#: admin/class-admin-checkin.php:145
+msgid "— Seleccionar —"
+msgstr "— Select —"
+
+#: admin/class-admin-checkin.php:146
+#: admin/class-admin-reports.php:937
+#: admin/class-email-queue-list.php:191
+msgid "Buscar participante..."
+msgstr "Search participant..."
+
+#: admin/class-admin-checkin.php:163
+msgid "Filtrar"
+msgstr "Filter"
+
+#: admin/class-admin-checkin.php:171
+#: admin/class-admin-monitor-crm.php:525
+msgid "Asistencia:"
+msgstr "Attendance:"
+
+#: admin/class-admin-checkin.php:172
+#: admin/class-admin-monitor-crm.php:527
+#: admin/class-admin-page.php:780
+#: admin/class-admin-settings.php:64
+#: admin/class-email-queue-list.php:46
+#: includes/Email_Automation.php:143
+msgid "Participante"
+msgstr "Participant"
+
+#: admin/class-admin-checkin.php:173
+msgid "Estado"
+msgstr "Status"
+
+#: admin/class-admin-checkin.php:174
+#: admin/class-admin-monitor-crm.php:532
+#: admin/class-admin-page.php:143
+#: admin/class-admin-page.php:144
+#: includes/Checkin_PWA.php:86
+msgid "Pago"
+msgstr "Payment"
+
+#: admin/class-admin-checkin.php:179
+msgid "Check-in"
+msgstr "Check-in"
+
+#: admin/class-admin-checkin.php:197
+msgid "No hay inscripciones para esta actividad."
+msgstr "There are no enrollments for this activity."
+
+#: admin/class-admin-checkin.php:217
+#: admin/class-admin-page.php:729
+msgid "Ver ficha"
+msgstr "View record"
+
+#: admin/class-admin-checkin.php:217
+#: admin/class-admin-inscripciones.php:132
+#: admin/class-admin-page.php:729
+#: includes/CPT_Inscripcion.php:73
+msgid "Registrado"
+msgstr "Registered"
+
+#: admin/class-admin-checkin.php:226
+msgid "Pendiente"
+msgstr "Pending"
+
+#: admin/class-admin-evaluacion-fields.php:34
+msgid "Selecciona una actividad para comenzar el check-in."
+msgstr "Select an activity to begin check-in."
+
+#: admin/class-admin-evaluacion-fields.php:61
+#: admin/class-admin-evaluaciones-editor.php:119
+msgid "Detalles de la Evaluación"
+msgstr "Evaluation Details"
+
+#: admin/class-admin-evaluacion-fields.php:63
+#: admin/class-admin-evaluaciones-editor.php:121
+msgid "Actividad evaluada"
+msgstr "Activity evaluated"
+
+#: admin/class-admin-evaluacion-fields.php:74
+#: admin/class-admin-evaluaciones-editor.php:144
+#: admin/class-admin-evaluaciones-meta-box.php:88
+#: public/class-formulario-evaluacion.php:173
+msgid "— Seleccionar actividad —"
+msgstr "— Select activity —"
+
+#: admin/class-admin-evaluacion-fields.php:75
+#: admin/class-admin-evaluaciones-editor.php:145
+#: admin/class-admin-evaluaciones-meta-box.php:92
+#: public/class-formulario-evaluacion.php:174
+msgid "Gestión y coordinación"
+msgstr "Management & coordination"
+
+#: admin/class-admin-evaluacion-fields.php:76
+#: admin/class-admin-evaluaciones-editor.php:146
+#: admin/class-admin-evaluaciones-meta-box.php:96
+#: admin/class-admin-reports.php:963
+msgid "Instalaciones / Espacio"
+msgstr "Facilities / Venue"
+
+#: admin/class-admin-evaluacion-fields.php:77
+#: admin/class-admin-evaluaciones-editor.php:147
+#: admin/class-admin-evaluaciones-meta-box.php:100
+#: admin/class-admin-reports.php:964
+msgid "Participantes"
+msgstr "Participants"
+
+#: admin/class-admin-evaluaciones-editor.php:42
+#: admin/class-admin-evaluaciones-editor.php:43
+msgid "Comunicación"
+msgstr "Communication"
+
+#: admin/class-admin-evaluaciones-editor.php:101
+msgid "Añadir evaluación"
+msgstr "Add evaluation"
+
+#: admin/class-admin-evaluaciones-editor.php:101
+msgid "Editar Evaluación"
+msgstr "Edit Evaluation"
+
+#: admin/class-admin-evaluaciones-editor.php:115
+msgid "Nueva Evaluación"
+msgstr "New Evaluation"
+
+#: admin/class-admin-evaluaciones-editor.php:131
+msgid "Actividad y Comentarios"
+msgstr "Activity & Comments"
+
+#: admin/class-admin-evaluaciones-editor.php:139
+msgid "Comentarios / Observaciones"
+msgstr "Comments / Notes"
+
+#: admin/class-admin-evaluaciones-editor.php:184
+msgid "Puntuaciones (1-5)"
+msgstr "Ratings (1-5)"
+
+#: admin/class-admin-evaluaciones-editor.php:229
+#: public/class-formulario-evaluacion.php:334
+msgid "Guardar Evaluación"
+msgstr "Save Evaluation"
+
+#: admin/class-admin-evaluaciones-list.php:37
+#: admin/class-admin-page.php:355
+msgid "Error al guardar la evaluación."
+msgstr "Error saving the evaluation."
+
+#: admin/class-admin-evaluaciones-list.php:38
+#: admin/class-admin-monitor-crm.php:160
+#: admin/class-admin-page.php:780
+#: admin/class-admin-reports.php:958
+#: includes/CPT_Actividad.php:97
+#: includes/Email_Automation.php:127
+#: includes/Email_Automation.php:167
+#: includes/Email_Automation.php:186
+#: includes/Email_Automation.php:212
+#: includes/Email_Automation.php:247
+#: includes/Email_Automation.php:270
+#: includes/Email_Automation.php:300
+#: includes/Email_Automation.php:327
+#: media/class-poster-engine.php:322
+#: media/class-poster-engine.php:493
+msgid "Título"
+msgstr "Title"
+
+#: admin/class-admin-evaluaciones-list.php:39
+msgid "Actividad"
+msgstr "Activity"
+
+#: admin/class-admin-evaluaciones-list.php:40
+msgid "Evaluador"
+msgstr "Evaluator"
+
+#: admin/class-admin-evaluaciones-list.php:41
+#: admin/class-admin-monitor-crm.php:161
+#: admin/class-admin-page.php:355
+#: includes/Email_Automation.php:131
+#: includes/Email_Automation.php:190
+#: includes/Email_Automation.php:216
+#: includes/Email_Automation.php:251
+#: includes/Email_Automation.php:274
+#: includes/Email_Automation.php:304
+#: media/class-blog-post-manager.php:200
+#: media/class-poster-engine.php:501
+msgid "Puntuación Media"
+msgstr "Average Rating"
+
+#: admin/class-admin-evaluaciones-list.php:66
+msgid "Fecha"
+msgstr "Date"
+
+#: admin/class-admin-evaluaciones-list.php:127
+#: admin/class-admin-reports.php:930
+msgid "Usuario eliminado"
+msgstr "Deleted user"
+
+#: admin/class-admin-evaluaciones-meta-box.php:33
+msgid "Todas las actividades"
+msgstr "All activities"
+
+#: admin/class-admin-evaluaciones-meta-box.php:55
+msgid "Evaluaciones de la Actividad"
+msgstr "Activity Evaluations"
+
+#. translators: %d: number of evaluations
+#: admin/class-admin-evaluaciones-meta-box.php:80
+#, php-format
+msgid "No hay evaluaciones para esta actividad todavía."
+msgstr "There are no evaluations for this activity yet."
+
+#. translators: %d: number of evaluations
+#: admin/class-admin-evaluaciones-meta-box.php:81
+msgid "Total evaluaciones: %d"
+msgstr "Total evaluations: %d"
+
+#: admin/class-admin-evaluaciones-meta-box.php:108
+msgid "Media Global:"
+msgstr "Overall Average:"
+
+#: admin/class-admin-inscripcion-form.php:73
+#: admin/class-admin-page.php:134
+#: admin/class-admin-page.php:135
+msgid "Ver todas las evaluaciones"
+msgstr "View all evaluations"
+
+#: admin/class-admin-inscripcion-form.php:79
+msgid "Añadir inscripción"
+msgstr "Add enrollment"
+
+#: admin/class-admin-inscripcion-form.php:246
+#: admin/class-admin-page.php:717
+#: admin/class-admin-page.php:750
+msgid "Nueva Inscripción Manual"
+msgstr "New Manual Enrollment"
+
+#: admin/class-admin-inscripcion-form.php:252
+msgid "Sin permisos."
+msgstr "No permissions."
+
+#: admin/class-admin-inscripciones.php:62
+msgid "No eres responsable de esta actividad."
+msgstr "You are not the organizer of this activity."
+
+#: admin/class-admin-inscripciones.php:87
+msgid "<input type=\"checkbox\" />"
+msgstr "<input type=\"checkbox\" />"
+
+#: admin/class-admin-inscripciones.php:101
+msgid "Confirmar plazas"
+msgstr "Confirm seats"
+
+#: admin/class-admin-inscripciones.php:121
+msgid "— Estado —"
+msgstr "— Status —"
+
+#: admin/class-admin-inscripciones.php:131
+msgid "— Actividad —"
+msgstr "— Activity —"
+
+#: admin/class-admin-inscripciones.php:133
+msgid "— Doc. Voluntario —"
+msgstr "— Vol. Doc. —"
+
+#: admin/class-admin-inscripciones.php:335
+msgid "Firmado"
+msgstr "Signed"
+
+#: admin/class-admin-inscripciones.php:348
+msgid "Ver detalle"
+msgstr "View details"
+
+#: admin/class-admin-inscripciones.php:357
+msgid "Tarjeta Socio"
+msgstr "Member Card"
+
+#: admin/class-admin-inscripciones.php:360
+msgid "Asistió"
+msgstr "Attended"
+
+#: admin/class-admin-inscripciones.php:362
+msgid "No asistió"
+msgstr "Did not attend"
+
+#: admin/class-admin-inscripciones.php:401
+msgid "Sin registrar"
+msgstr "Not recorded"
+
+#: admin/class-admin-inscripciones.php:419
+msgid "✅ Firmado"
+msgstr "✅ Signed"
+
+#: admin/class-admin-inscripciones.php:422
+msgid "⏳ Pendiente"
+msgstr "⏳ Pending"
+
+#: admin/class-admin-inscripciones.php:448
+msgid "❌ N/A"
+msgstr "❌ N/A"
+
+#: admin/class-admin-logs.php:86
+msgid "No"
+msgstr "No"
+
+#: admin/class-admin-logs.php:87
+msgid "¿Estás seguro de que quieres borrar todos los logs de Enroll?"
+msgstr "Are you sure you want to delete all Enroll logs?"
+
+#: admin/class-admin-monitor-crm.php:45
+#: admin/class-admin-monitor-crm.php:46
+msgid "Borrar logs de Enroll"
+msgstr "Delete Enroll logs"
+
+#: admin/class-admin-monitor-crm.php:62
+msgid "Mis actividades"
+msgstr "My activities"
+
+#: admin/class-admin-monitor-crm.php:77
+msgid "No tienes permisos suficientes."
+msgstr "You do not have sufficient permissions."
+
+#: admin/class-admin-monitor-crm.php:93
+msgid "No tienes permiso para gestionar esta inscripción."
+msgstr "You do not have permission to manage this enrollment."
+
+#: admin/class-admin-monitor-crm.php:136
+#: admin/class-csv-exporter.php:53
+msgid "Cancelada desde el panel de monitor."
+msgstr "Canceled from the monitor panel."
+
+#: admin/class-admin-monitor-crm.php:162
+#: admin/class-admin-page.php:780
+msgid "No tienes permiso para exportar datos de esta actividad."
+msgstr "You do not have permission to export data for this activity."
+
+#: admin/class-admin-monitor-crm.php:163
+#: admin/class-admin-page.php:780
+msgid "Nombre"
+msgstr "Name"
+
+#: admin/class-admin-monitor-crm.php:164
+msgid "Email"
+msgstr "Email"
+
+#: admin/class-admin-monitor-crm.php:165
+msgid "Teléfono"
+msgstr "Phone"
+
+#: admin/class-admin-monitor-crm.php:166
+msgid "Estado Inscripción"
+msgstr "Enrollment Status"
+
+#: admin/class-admin-monitor-crm.php:167
+msgid "Asistencia"
+msgstr "Attendance"
+
+#: admin/class-admin-monitor-crm.php:228
+msgid "Token Check-in"
+msgstr "Check-in Token"
+
+#: admin/class-admin-monitor-crm.php:237
+msgid "Permission denied"
+msgstr "Permission denied"
+
+#: admin/class-admin-monitor-crm.php:277
+msgid "No responsable"
+msgstr "Not responsible"
+
+#: admin/class-admin-monitor-crm.php:281
+msgid "Panel de Control - Monitores"
+msgstr "Control Panel - Monitors"
+
+#: admin/class-admin-monitor-crm.php:302
+msgid "Escáner QR Móvil"
+msgstr "Mobile QR Scanner"
+
+#: admin/class-admin-monitor-crm.php:341
+msgid "No tienes actividades asignadas actualmente."
+msgstr "You currently have no assigned activities."
+
+#: admin/class-admin-monitor-crm.php:346
+msgid "Inscritos:"
+msgstr "Enrolled:"
+
+#: admin/class-admin-monitor-crm.php:351
+msgid "En espera:"
+msgstr "Waitlisted:"
+
+#: admin/class-admin-monitor-crm.php:370
+msgid "Gestionar Actividad"
+msgstr "Manage Activity"
+
+#: admin/class-admin-monitor-crm.php:381
+msgid "No tienes permiso para ver esta actividad."
+msgstr "You do not have permission to view this activity."
+
+#: admin/class-admin-monitor-crm.php:383
+msgid "Volver"
+msgstr "Back"
+
+#: admin/class-admin-monitor-crm.php:385
+msgid "Panel normal"
+msgstr "Standard panel"
+
+#: admin/class-admin-monitor-crm.php:394
+msgid "Modo Check-in Rápido"
+msgstr "Quick Check-in Mode"
+
+#: admin/class-admin-monitor-crm.php:415
+msgid "plazas"
+msgstr "seats"
+
+#: admin/class-admin-monitor-crm.php:416
+msgid "Exportar Asistentes"
+msgstr "Export Attendees"
+
+#: admin/class-admin-monitor-crm.php:469
+msgid "Exportar Todas"
+msgstr "Export All"
+
+#: admin/class-admin-monitor-crm.php:470
+msgid "Confirmados"
+msgstr "Confirmed"
+
+#: admin/class-admin-monitor-crm.php:471
+msgid "Asistieron"
+msgstr "Attended"
+
+#: admin/class-admin-monitor-crm.php:472
+msgid "Faltaron"
+msgstr "No-shows"
+
+#: admin/class-admin-monitor-crm.php:477
+msgid "Pendientes"
+msgstr "Pending"
+
+#: admin/class-admin-monitor-crm.php:479
+msgid "Check-in de Participantes"
+msgstr "Participant Check-in"
+
+#: admin/class-admin-monitor-crm.php:488
+msgid "No hay inscripciones confirmadas aún."
+msgstr "There are no confirmed enrollments yet."
+
+#: admin/class-admin-monitor-crm.php:497
+#: admin/class-admin-page.php:793
+msgid "Confirmar"
+msgstr "Confirm"
+
+#: admin/class-admin-monitor-crm.php:505
+msgid "Listado de Inscripciones"
+msgstr "Enrollment List"
+
+#: admin/class-admin-monitor-crm.php:518
+msgid "Lista de Espera"
+msgstr "Waitlist"
+
+#: admin/class-admin-monitor-crm.php:526
+msgid "No hay registros en esta sección."
+msgstr "There are no records in this section."
+
+#: admin/class-admin-monitor-crm.php:529
+msgid "Contacto"
+msgstr "Contact"
+
+#: admin/class-admin-monitor-crm.php:534
+#: admin/class-email-queue-list.php:49
+msgid "Posición"
+msgstr "Position"
+
+#: admin/class-admin-monitor-crm.php:573
+msgid "Acciones"
+msgstr "Actions"
+
+#: admin/class-admin-monitor-crm.php:592
+msgid "&mdash;"
+msgstr "&mdash;"
+
+#: admin/class-admin-monitor-crm.php:592
+msgid "Promover"
+msgstr "Promote"
+
+#: admin/class-admin-page.php:78
+msgid "Validar"
+msgstr "Validate"
+
+#: admin/class-admin-page.php:82
+msgid "Error: La fecha de fin no puede ser anterior a la de inicio. Se ha ajustado automáticamente."
+msgstr "Error: The end date cannot be earlier than the start date. It has been adjusted automatically."
+
+#: admin/class-admin-page.php:86
+msgid "Google Photos: La integración no está configurada o activada. Se ha desactivado la creación del álbum."
+msgstr "Google Photos: The integration is not configured or enabled. Album creation has been disabled."
+
+#: admin/class-admin-page.php:90
+msgid "Google Calendar: La integración no está configurada o activada. Se ha desactivado la sincronización."
+msgstr "Google Calendar: The integration is not configured or enabled. Synchronization has been disabled."
+
+#: admin/class-admin-page.php:110
+#: admin/class-admin-page.php:244
+msgid "Aviso: Las plazas disponibles no pueden superar las totales. Se han ajustado automáticamente."
+msgstr "Notice: Available seats cannot exceed total seats. They have been adjusted automatically."
+
+#: admin/class-admin-page.php:125
+#: admin/class-admin-page.php:126
+#: admin/class-admin-page.php:327
+#: includes/CPT_Inscripcion.php:141
+msgid "Inscripciones Convoca"
+msgstr "Convoca Enrollments"
+
+#: admin/class-admin-page.php:152
+#: admin/class-admin-page.php:153
+#: admin/class-admin-reports.php:42
+#: includes/CPT_Evaluacion.php:32
+#: includes/CPT_Evaluacion.php:34
+msgid "Inscripciones"
+msgstr "Enrollments"
+
+#: admin/class-admin-page.php:164
+#: admin/class-admin-page.php:165
+msgid "Evaluaciones"
+msgstr "Evaluations"
+
+#: admin/class-admin-page.php:173
+msgid "Informes"
+msgstr "Reports"
+
+#: admin/class-admin-page.php:174
+msgid "Ajustes"
+msgstr "Settings"
+
+#: admin/class-admin-page.php:182
+#: admin/class-admin-page.php:183
+msgid "Configuración"
+msgstr "Configuration"
+
+#: admin/class-admin-page.php:191
+#: admin/class-admin-page.php:192
+#: admin/class-admin-page.php:802
+msgid "Logs"
+msgstr "Logs"
+
+#: admin/class-admin-page.php:249
+msgid "Cola de Correos"
+msgstr "Email Queue"
+
+#: admin/class-admin-page.php:328
+msgid "El sistema de inscripciones no está activo."
+msgstr "The enrollment system is not active."
+
+#: admin/class-admin-page.php:329
+#: admin/class-admin-reports.php:953
+msgid "+ Nueva inscripción"
+msgstr "+ New enrollment"
+
+#: admin/class-admin-page.php:331
+msgid "Exportar CSV"
+msgstr "Export CSV"
+
+#: admin/class-admin-page.php:333
+msgid "Exportar PDF"
+msgstr "Export PDF"
+
+#: admin/class-admin-page.php:341
+#: admin/class-admin-page.php:805
+msgid "Exportar PDF (PRO)"
+msgstr "Export PDF (PRO)"
+
+#: admin/class-admin-page.php:350
+msgid "Buscar"
+msgstr "Search"
+
+#: admin/class-admin-page.php:355
+msgid "Usa el menú estándar de WordPress para gestionar las actividades o mira el resumen aquí."
+msgstr "Use the standard WordPress menu to manage activities or review the summary here."
+
+#: admin/class-admin-page.php:355
+#: includes/CPT_Actividad.php:583
+#: includes/Email_Automation.php:139
+#: includes/Email_Automation.php:198
+#: includes/Email_Automation.php:224
+#: includes/Email_Automation.php:282
+#: includes/Email_Automation.php:312
+#: includes/Email_Automation.php:335
+#: media/class-blog-post-manager.php:206
+msgid "Aforo"
+msgstr "Capacity"
+
+#: admin/class-admin-page.php:378
+msgid "Ubicación"
+msgstr "Location"
+
+#: admin/class-admin-page.php:392
+msgid "No tienes permisos para acceder a esta página."
+msgstr "You do not have permission to access this page."
+
+#: admin/class-admin-page.php:418
+msgid "Configuración de Delegados"
+msgstr "Delegate Settings"
+
+#. translators: %d: number of confirmed enrollments
+#: admin/class-admin-page.php:465
+#, php-format
+msgid "Guardar Asignaciones"
+msgstr "Save Assignments"
+
+#. translators: %1$d: skipped due to capacity, %2$d: skipped due to non-confirmable state
+#: admin/class-admin-page.php:472
+#, php-format
+msgid "%d inscripciones confirmadas."
+msgstr "%d enrollments confirmed."
+
+#: admin/class-admin-page.php:486
+#: includes/Motor_Inscripcion.php:346
+#: includes/Motor_Inscripcion.php:873
+msgid "(%1$d saltadas por falta de aforo, %2$d por estado no confirmable)."
+msgstr "(%1$d skipped due to lack of capacity, %2$d due to non-confirmable status)."
+
+#: admin/class-admin-page.php:621
+msgid "Inscripción no encontrada."
+msgstr "Enrollment not found."
+
+#: admin/class-admin-page.php:624
+msgid "Notas internas"
+msgstr "Internal notes"
+
+#: admin/class-admin-page.php:640
+msgid "Guardar nota"
+msgstr "Save note"
+
+#: admin/class-admin-page.php:643
+msgid "Guardando..."
+msgstr "Saving..."
+
+#: admin/class-admin-page.php:643
+msgid "✓ Guardado"
+msgstr "✓ Saved"
+
+#: admin/class-admin-page.php:644
+msgid "Error"
+msgstr "Error"
+
+#: admin/class-admin-page.php:669
+msgid "Error de conexión"
+msgstr "Connection error"
+
+#: admin/class-admin-page.php:677
+msgid "Sin permisos para esta inscripción."
+msgstr "No permissions for this enrollment."
+
+#: admin/class-admin-page.php:709
+#: admin/class-admin-page.php:742
+msgid "Estado no válido."
+msgstr "Invalid status."
+
+#: admin/class-admin-page.php:758
+msgid "ID de inscripción no válido."
+msgstr "Invalid enrollment ID."
+
+#: admin/class-admin-page.php:760
+msgid "Email enviado correctamente."
+msgstr "Email sent successfully."
+
+#: admin/class-admin-page.php:846
+msgid "Error al enviar el email."
+msgstr "Error sending the email."
+
+#: admin/class-admin-reports.php:37
+#: includes/CPT_Actividad.php:584
+msgid "Nota guardada."
+msgstr "Note saved."
+
+#: admin/class-admin-reports.php:38
+msgid "Ocupación"
+msgstr "Occupancy"
+
+#: admin/class-admin-reports.php:39
+#: includes/CPT_Inscripcion.php:77
+msgid "Gráficos"
+msgstr "Charts"
+
+#: admin/class-admin-reports.php:40
+msgid "Lista de espera"
+msgstr "Waitlist"
+
+#: admin/class-admin-reports.php:41
+msgid "Financiero"
+msgstr "Financial"
+
+#: admin/class-admin-reports.php:47
+msgid "Actividad Monitores"
+msgstr "Monitor Activity"
+
+#: admin/class-admin-reports.php:102
+msgid "Memoria Actividades"
+msgstr "Activity Report"
+
+#: admin/class-admin-reports.php:928
+msgid "Informes de Inscripciones"
+msgstr "Enrollment Reports"
+
+#: admin/class-admin-reports.php:959
+msgid "Actividad:"
+msgstr "Activity:"
+
+#: admin/class-admin-reports.php:960
+msgid "Nº Evals"
+msgstr "No. of Evals"
+
+#: admin/class-admin-reports.php:961
+msgid "Media Global"
+msgstr "Overall Average"
+
+#: admin/class-admin-reports.php:962
+msgid "Gestión"
+msgstr "Management"
+
+#: admin/class-admin-reports.php:969
+msgid "Instalaciones"
+msgstr "Facilities"
+
+#: admin/class-admin-reports.php:1079
+msgid "No hay evaluaciones registradas."
+msgstr "There are no evaluations recorded."
+
+#: admin/class-admin-settings.php:46
+msgid "Enlace de exportación inválido o caducado."
+msgstr "Invalid or expired export link."
+
+#: admin/class-admin-settings.php:50
+msgid "Error crítico: El motor de inscripciones no parece estar registrado correctamente."
+msgstr "Critical error: The enrollment engine does not appear to be registered correctly."
+
+#: admin/class-admin-settings.php:57
+msgid "Convoca Common no está activo. Algunas funciones podrían no estar disponibles."
+msgstr "Convoca Common is not active. Some features may not be available."
+
+#: admin/class-admin-settings.php:58
+msgid "General"
+msgstr "General"
+
+#: admin/class-admin-settings.php:59
+msgid "Normas de inscripción"
+msgstr "Enrollment rules"
+
+#: admin/class-admin-settings.php:60
+msgid "Protección de datos"
+msgstr "Data protection"
+
+#: admin/class-admin-settings.php:61
+msgid "Emails"
+msgstr "Emails"
+
+#: admin/class-admin-settings.php:62
+#: includes/CPT_Actividad.php:655
+msgid "Recordatorios de evaluación"
+msgstr "Evaluation reminders"
+
+#: admin/class-admin-settings.php:63
+msgid "Google Photos"
+msgstr "Google Photos"
+
+#: admin/class-admin-settings.php:71
+msgid "Google Calendar"
+msgstr "Google Calendar"
+
+#: admin/class-admin-settings.php:72
+msgid "Ajustes de Inscripciones"
+msgstr "Enrollment Settings"
+
+#: admin/class-admin-settings.php:105
+msgid "Gestión de actividades y motor de reservas"
+msgstr "Activity management and booking engine"
+
+#: admin/class-admin-settings.php:116
+msgid "Guardar ajustes"
+msgstr "Save Settings"
+
+#: admin/class-admin-settings.php:119
+msgid "Configuración General"
+msgstr "General Settings"
+
+#: admin/class-admin-settings.php:125
+msgid "Email del administrador"
+msgstr "Administrator email"
+
+#: admin/class-admin-settings.php:133
+msgid "Versión RGPD"
+msgstr "GDPR version"
+
+#: admin/class-admin-settings.php:140
+msgid "Cada persona adulta solo puede hacer una reserva de taller"
+msgstr "Each adult can only make one workshop booking"
+
+#: admin/class-admin-settings.php:147
+msgid "Permitir que un adulto inscriba a menores o personas a su cargo"
+msgstr "Allow an adult to enroll minors or dependents"
+
+#: admin/class-admin-settings.php:152
+msgid "Evitar que se inscriba el mismo DNI más de una vez en la misma actividad"
+msgstr "Prevent the same ID from enrolling more than once in the same activity"
+
+#: admin/class-admin-settings.php:155
+msgid "Plazas por defecto"
+msgstr "Default seats"
+
+#: admin/class-admin-settings.php:159
+msgid "Plazas que se asignarán por defecto al crear una nueva actividad."
+msgstr "Seats assigned by default when creating a new activity."
+
+#: admin/class-admin-settings.php:162
+msgid "Ventana de cancelación (horas)"
+msgstr "Cancellation window (hours)"
+
+#: admin/class-admin-settings.php:166
+msgid "Horas mínimas antes del inicio para que un participante pueda cancelar por autoservicio. A menos horas solo podrá cancelar la organización."
+msgstr "Minimum hours before the start for a participant to self-cancel. With fewer hours, only the organization can cancel."
+
+#: admin/class-admin-settings.php:169
+msgid "URL Panel de Reservas"
+msgstr "Booking Panel URL"
+
+#: admin/class-admin-settings.php:172
+msgid "Enlace a la página donde está incrustado el shortcode [convoca_panel_reservas]."
+msgstr "Link to the page where the [convoca_panel_reservas] shortcode is embedded."
+
+#: admin/class-admin-settings.php:176
+msgid "Webhooks"
+msgstr "Webhooks"
+
+#: admin/class-admin-settings.php:179
+msgid "URL del Webhook"
+msgstr "Webhook URL"
+
+#: admin/class-admin-settings.php:183
+msgid "URL a la que se enviarán peticiones POST (make.com, zapier, etc.) al cambiar el estado de las inscripciones."
+msgstr "URL to which POST requests will be sent (make.com, zapier, etc.) when enrollment status changes."
+
+#: admin/class-admin-settings.php:186
+msgid "Secreto del Webhook"
+msgstr "Webhook Secret"
+
+#: admin/class-admin-settings.php:195
+msgid "Firma opcional que se enviará en la cabecera X-Convoca-Signature con el hash SHA-256 del payload crudo."
+msgstr "Optional signature sent in the X-Convoca-Signature header with the SHA-256 hash of the raw payload."
+
+#: admin/class-admin-settings.php:198
+msgid "Google Sheets"
+msgstr "Google Sheets"
+
+#: admin/class-admin-settings.php:200
+msgid "Activar sincronización"
+msgstr "Enable synchronization"
+
+#: admin/class-admin-settings.php:201
+msgid "Desactivado"
+msgstr "Disabled"
+
+#: admin/class-admin-settings.php:206
+msgid "Activado"
+msgstr "Enabled"
+
+#: admin/class-admin-settings.php:214
+msgid "API Key de Google Sheets"
+msgstr "Google Sheets API Key"
+
+#: admin/class-admin-settings.php:216
+msgid "Definida vía constante en wp-config.php."
+msgstr "Defined via constant in wp-config.php."
+
+#: admin/class-admin-settings.php:217
+msgid "Los datos personales se enviarán a Google. Asegúrate de cumplir la RGPD."
+msgstr "Personal data will be sent to Google. Make sure you comply with the GDPR."
+
+#: admin/class-admin-settings.php:221
+msgid "Recomendación: define CONV_ENROLL_GOOGLE_SHEETS_API_KEY en tu wp-config.php."
+msgstr "Recommendation: define CONV_ENROLL_GOOGLE_SHEETS_API_KEY in your wp-config.php."
+
+#: admin/class-admin-settings.php:224
+msgid "Mantenimiento y Logs"
+msgstr "Maintenance & Logs"
+
+#: admin/class-admin-settings.php:227
+msgid "Retención de logs (días)"
+msgstr "Log retention (days)"
+
+#: admin/class-admin-settings.php:231
+msgid "Días que se conservarán los logs antes de ser eliminados automáticamente."
+msgstr "Number of days logs are kept before being automatically deleted."
+
+#: admin/class-admin-settings.php:233
+msgid "Integridad de datos"
+msgstr "Data integrity"
+
+#: admin/class-admin-settings.php:235
+msgid "Validar integridad"
+msgstr "Validate integrity"
+
+#: admin/class-admin-settings.php:236
+msgid "Esto borrará inscripciones huérfanas y recontará plazas. ¿Continuar?"
+msgstr "This will delete orphaned enrollments and recount seats. Continue?"
+
+#: admin/class-admin-settings.php:245
+msgid "Reparar integridad"
+msgstr "Repair integrity"
+
+#. translators: %s: number of orphan records
+#: admin/class-admin-settings.php:247
+#, php-format
+msgid "Resultados de validación:"
+msgstr "Validation results:"
+
+#. translators: %s: number of capacity mismatches
+#: admin/class-admin-settings.php:248
+#, php-format
+msgid "Huérfanos: %s"
+msgstr "Orphans: %s"
+
+#: admin/class-admin-settings.php:301
+msgid "Descuadres de plazas: %s"
+msgstr "Seat mismatches: %s"
+
+#: admin/class-admin-settings.php:314
+msgid "conv[normas_inscripcion]"
+msgstr "conv[normas_inscripcion]"
+
+#: admin/class-admin-settings.php:317
+msgid "URL Política de Privacidad"
+msgstr "Privacy Policy URL"
+
+#: admin/class-admin-settings.php:321
+msgid "Enlace a la página de política de privacidad."
+msgstr "Link to the privacy policy page."
+
+#: admin/class-admin-settings.php:324
+msgid "URL Uso de Imágenes"
+msgstr "Image Usage URL"
+
+#: admin/class-admin-settings.php:328
+msgid "Enlace a la información de uso de imágenes/contenido gráfico."
+msgstr "Link to the image/graphic content usage information."
+
+#: admin/class-admin-settings.php:331
+msgid "Enlace «aquí» (protección de datos)"
+msgstr "\"Here\" link (data protection)"
+
+#: admin/class-admin-settings.php:348
+msgid "URL a la que apunta «aquí» en la frase «Puedes consultar la información completa sobre protección de datos y uso de imágenes aquí.»"
+msgstr "URL that \"here\" points to in the sentence \"You can view the full information about data protection and image usage here.\""
+
+#: admin/class-admin-settings.php:349
+msgid "Inscripción recibida"
+msgstr "Enrollment received"
+
+#: admin/class-admin-settings.php:350
+msgid "En lista de espera"
+msgstr "On waitlist"
+
+#: admin/class-admin-settings.php:351
+msgid "Promoción de lista de espera"
+msgstr "Waitlist promotion"
+
+#: admin/class-admin-settings.php:352
+msgid "Confirmación de plaza"
+msgstr "Seat confirmation"
+
+#: admin/class-admin-settings.php:353
+msgid "Cancelación de reserva"
+msgstr "Booking cancellation"
+
+#: admin/class-admin-settings.php:354
+msgid "Recordatorio 7 días"
+msgstr "7-day reminder"
+
+#: admin/class-admin-settings.php:355
+msgid "Recordatorio 24h"
+msgstr "24h reminder"
+
+#: admin/class-admin-settings.php:356
+msgid "Recordatorio 1 hora"
+msgstr "1-hour reminder"
+
+#: admin/class-admin-settings.php:357
+msgid "Post-evento (feedback)"
+msgstr "Post-event (feedback)"
+
+#: admin/class-admin-settings.php:358
+msgid "Álbum de Google Photos creado"
+msgstr "Google Photos album created"
+
+#: admin/class-admin-settings.php:398
+msgid "Álbum de Google Photos compartido"
+msgstr "Google Photos album shared"
+
+#: admin/class-admin-settings.php:399
+msgid "Seleccionar archivo"
+msgstr "Select file"
+
+#: admin/class-admin-settings.php:400
+msgid "Quitar"
+msgstr "Remove"
+
+#: admin/class-admin-settings.php:856
+msgid "Ninguno"
+msgstr "None"
+
+#: admin/class-admin-settings.php:896
+msgid "Plantilla no válida."
+msgstr "Invalid template."
+
+#. translators: %s: plugin name
+#: admin/class-admin-settings.php:932
+#, php-format
+msgid "Estado del Sistema"
+msgstr "System Status"
+
+#: admin/class-admin-settings.php:934
+msgid "Plugin: %s"
+msgstr "Plugin: %s"
+
+#: admin/class-admin-settings.php:934
+msgid "Activo y funcionando."
+msgstr "Active and working."
+
+#. translators: %s: plugin name
+#: admin/class-admin-settings.php:936
+#, php-format
+msgid "Plugin no detectado o inactivo."
+msgstr "Plugin not detected or inactive."
+
+#: admin/class-admin-settings.php:943
+msgid "Instala y activa el plugin %s."
+msgstr "Install and activate the %s plugin."
+
+#: admin/class-admin-settings.php:944
+msgid "Página: Calendario de Actividades"
+msgstr "Page: Activity Calendar"
+
+#: admin/class-admin-settings.php:945
+msgid "[convoca_calendario]"
+msgstr "[convoca_calendario]"
+
+#: admin/class-admin-settings.php:948
+msgid "Crea una página con el shortcode [convoca_calendario] para mostrar el listado de actividades."
+msgstr "Create a page with the [convoca_calendario] shortcode to display the list of activities."
+
+#: admin/class-admin-settings.php:949
+msgid "Página: Mis Inscripciones"
+msgstr "Page: My Enrollments"
+
+#: admin/class-admin-settings.php:950
+msgid "[convoca_mis_inscripciones]"
+msgstr "[convoca_mis_inscripciones]"
+
+#: admin/class-admin-settings.php:953
+msgid "Crea una página con el shortcode [convoca_mis_inscripciones] para que los usuarios vean sus reservas."
+msgstr "Create a page with the [convoca_mis_inscripciones] shortcode so users can view their bookings."
+
+#: admin/class-admin-settings.php:955
+msgid "Página: Control de Asistencia (Check-in)"
+msgstr "Page: Attendance Control (Check-in)"
+
+#: admin/class-admin-settings.php:958
+msgid "Crea una página con el shortcode [convoca_checkin] para que los monitores registren la asistencia."
+msgstr "Create a page with the [convoca_checkin] shortcode so monitors can record attendance."
+
+#: admin/class-admin-settings.php:959
+msgid "Página: Pago de Actividad"
+msgstr "Page: Activity Payment"
+
+#: admin/class-admin-settings.php:960
+msgid "[convoca_pago_actividad]"
+msgstr "[convoca_pago_actividad]"
+
+#: admin/class-admin-settings.php:963
+msgid "Crea una página con el shortcode [convoca_pago_actividad] para procesar los pagos de inscripción."
+msgstr "Create a page with the [convoca_pago_actividad] shortcode to process enrollment payments."
+
+#: admin/class-admin-settings.php:964
+msgid "Página: Formulario de Evaluación"
+msgstr "Page: Evaluation Form"
+
+#: admin/class-admin-settings.php:965
+msgid "[formulario_evaluacion]"
+msgstr "[formulario_evaluacion]"
+
+#. translators: %s: page title
+#: admin/class-admin-settings.php:975
+#, php-format
+msgid "Crea una página con el shortcode [formulario_evaluacion] para que los monitores evalúen las actividades."
+msgstr "Create a page with the [formulario_evaluacion] shortcode so monitors can evaluate activities."
+
+#. translators: %s: page title
+#: admin/class-admin-settings.php:975
+msgid "Detectada: %s"
+msgstr "Detected: %s"
+
+#: admin/class-csv-exporter.php:42
+msgid "No se ha encontrado ninguna página con este shortcode."
+msgstr "No page with this shortcode was found."
+
+#: admin/class-csv-exporter.php:43
+#: admin/class-csv-exporter.php:54
+#: includes/Checkin_Handler.php:82
+msgid "No tienes permisos suficientes para exportar inscripciones."
+msgstr "You do not have sufficient permissions to export enrollments."
+
+#: admin/class-email-queue-list.php:43
+msgid "Acceso Denegado"
+msgstr "Access Denied"
+
+#: admin/class-email-queue-list.php:44
+msgid "<input type=\"checkbox\">"
+msgstr "<input type=\"checkbox\">"
+
+#: admin/class-email-queue-list.php:45
+msgid "Destinatario"
+msgstr "Recipient"
+
+#: admin/class-email-queue-list.php:47
+msgid "Asunto"
+msgstr "Subject"
+
+#: admin/class-email-queue-list.php:48
+msgid "Reintentos"
+msgstr "Retries"
+
+#: admin/class-email-queue-list.php:103
+msgid "Creado"
+msgstr "Created"
+
+#: admin/class-email-queue-list.php:104
+msgid "Reenviar seleccionados"
+msgstr "Resend selected"
+
+#: admin/class-email-queue-list.php:182
+msgid "Eliminar seleccionados"
+msgstr "Delete selected"
+
+#: convoca-enroll.php:101
+msgid "Todos"
+msgstr "All"
+
+#: convoca-enroll.php:132
+msgid "Convoca Enroll requires Convoca Core to be active. Please activate Convoca Core first."
+msgstr "Convoca Enroll requires Convoca Core to be active. Please activate Convoca Core first."
+
+#: convoca-enroll.php:152
+#: convoca-enroll.php:263
+msgid "<!-- wp:shortcode -->[convoca_panel_reservas]<!-- /wp:shortcode -->"
+msgstr "<!-- wp:shortcode -->[convoca_panel_reservas]<!-- /wp:shortcode -->"
+
+#: convoca-enroll.php:408
+msgid "Monitor de Actividad"
+msgstr "Activity Monitor"
+
+#: convoca-enroll.php:414
+msgid "Cada minuto"
+msgstr "Every minute"
+
+#. translators: %s: nombre de la actividad
+#: includes/Activity_Reminder_Cron.php:130
+#, php-format
+msgid "Cada 7 días"
+msgstr "Every 7 days"
+
+#. translators: %s: nombre de la persona
+#: includes/Activity_Reminder_Cron.php:133
+#, php-format
+msgid "Recordatorio: %s"
+msgstr "Reminder: %s"
+
+#. translators: %1$s: actividad, %2$s: fecha, %3$s: hora, %4$s: lugar
+#: includes/Activity_Reminder_Cron.php:137
+#, php-format
+msgid "Hola %s,"
+msgstr "Hello %s,"
+
+#: includes/Block_Inscripcion.php:120
+msgid "Te recordamos que la actividad «%1$s» se celebrará el %2$s a las %3$s en %4$s."
+msgstr "This is a reminder that the activity \"%1$s\" will take place on %2$s at %3$s at %4$s."
+
+#: includes/Block_Inscripcion.php:160
+msgid "Selecciona una actividad en el editor."
+msgstr "Select an activity in the editor."
+
+#. translators: %d: number of people in waiting list
+#: includes/Block_Inscripcion.php:167
+#, php-format
+msgid "Sin lista de espera"
+msgstr "No waitlist"
+
+#: includes/Checkin_Handler.php:82
+#: includes/Checkin_Handler.php:614
+msgid "%d persona esperando plaza"
+msgid_plural "%d personas esperando plaza"
+msgstr[0] "%d person waiting for a seat"
+msgstr[1] "%d people waiting for a seat"
+
+#: includes/Checkin_Handler.php:104
+#: includes/Checkin_Handler.php:246
+#: includes/Checkin_PWA.php:85
+msgid "No tienes permisos para realizar check-in."
+msgstr "You do not have permission to perform check-in."
+
+#: includes/Checkin_Handler.php:247
+msgid "Check-in Convoca"
+msgstr "Convoca Check-in"
+
+#: includes/Checkin_Handler.php:254
+#: includes/Checkin_Handler.php:327
+#: includes/Checkin_Handler.php:354
+msgid "Escáner de Asistencia"
+msgstr "Attendance Scanner"
+
+#: includes/Checkin_Handler.php:271
+msgid "Escaneando..."
+msgstr "Scanning..."
+
+#: includes/Checkin_Handler.php:297
+msgid "Siguiente Escaneo"
+msgstr "Next Scan"
+
+#: includes/Checkin_Handler.php:518
+#: includes/Checkin_Handler.php:535
+msgid "Procesando..."
+msgstr "Processing..."
+
+#: includes/Checkin_Handler.php:541
+msgid "Token de check-in no válido."
+msgstr "Invalid check-in token."
+
+#: includes/Checkin_Handler.php:563
+msgid "La inscripción no está confirmada."
+msgstr "The enrollment is not confirmed."
+
+#: includes/Checkin_Handler.php:574
+msgid "Error al procesar el check-in."
+msgstr "Error processing check-in."
+
+#. translators: %1$s: participant name, %2$s: activity title
+#: includes/Checkin_Handler.php:594
+#, php-format
+msgid "Error de Check-in"
+msgstr "Check-in Error"
+
+#: includes/Checkin_Handler.php:598
+msgid "Check-in confirmado para %1$s en \"%2$s\"."
+msgstr "Check-in confirmed for %1$s in \"%2$s\"."
+
+#: includes/Checkin_Handler.php:640
+#: includes/Rest_API.php:291
+msgid "Check-in Exitoso"
+msgstr "Check-in Successful"
+
+#: includes/Checkin_Handler.php:647
+msgid "No tienes permiso para gestionar esta actividad."
+msgstr "You do not have permission to manage this activity."
+
+#: includes/Checkin_PWA.php:87
+msgid "Asistencia confirmada"
+msgstr "Attendance confirmed"
+
+#: includes/Checkin_PWA.php:98
+msgid "Escáner QR de asistencia para monitores de Convoca"
+msgstr "QR attendance scanner for Convoca monitors"
+
+#: includes/Checkin_PWA.php:99
+msgid "Escáner QR"
+msgstr "QR Scanner"
+
+#: includes/CPT_Actividad.php:61
+msgid "Escanear"
+msgstr "Scan"
+
+#: includes/CPT_Actividad.php:62
+msgid "7 días antes"
+msgstr "7 days before"
+
+#: includes/CPT_Actividad.php:63
+msgid "1 día antes"
+msgstr "1 day before"
+
+#: includes/CPT_Actividad.php:64
+msgid "1 hora antes"
+msgstr "1 hour before"
+
+#: includes/CPT_Actividad.php:98
+msgid "Seguimiento post-evento"
+msgstr "Post-event follow-up"
+
+#: includes/CPT_Actividad.php:100
+msgid "Añadir actividad"
+msgstr "Add activity"
+
+#: includes/CPT_Actividad.php:101
+msgid "Editar actividad"
+msgstr "Edit activity"
+
+#: includes/CPT_Actividad.php:103
+msgid "Ver actividad"
+msgstr "View activity"
+
+#: includes/CPT_Actividad.php:148
+msgid "No se encontraron actividades"
+msgstr "No activities found"
+
+#: includes/CPT_Actividad.php:163
+msgid "Datos de la actividad"
+msgstr "Activity data"
+
+#: includes/CPT_Actividad.php:190
+msgid "Fecha y Hora Inicio *"
+msgstr "Start Date & Time *"
+
+#: includes/CPT_Actividad.php:194
+msgid "Recordatorio (horas antes)"
+msgstr "Reminder (hours before)"
+
+#: includes/CPT_Actividad.php:581
+msgid "Horas de antelación para el recordatorio automático de actividad (0 = 24h por defecto)."
+msgstr "Hours in advance for the automatic activity reminder (0 = 24h by default)."
+
+#: includes/CPT_Actividad.php:582
+msgid "Fecha Actividad"
+msgstr "Activity Date"
+
+#: includes/CPT_Actividad.php:666
+msgid "Responsables"
+msgstr "Organizers"
+
+#: includes/CPT_Actividad.php:672
+msgid "La integración con Google Photos está desactivada."
+msgstr "The Google Photos integration is disabled."
+
+#: includes/CPT_Actividad.php:672
+msgid "Google Photos no está configurado."
+msgstr "Google Photos is not configured."
+
+#: includes/CPT_Actividad.php:682
+msgid "Configurar"
+msgstr "Configure"
+
+#: includes/CPT_Actividad.php:684
+msgid "Crear álbum"
+msgstr "Create album"
+
+#: includes/CPT_Actividad.php:686
+msgid "Álbum:"
+msgstr "Album:"
+
+#: includes/CPT_Actividad.php:689
+msgid "Ver álbum"
+msgstr "View album"
+
+#: includes/CPT_Actividad.php:715
+msgid "✓ Compartido con participantes"
+msgstr "✓ Shared with participants"
+
+#: includes/CPT_Actividad.php:780
+#: includes/CPT_Actividad.php:805
+msgid "¿Compartir el álbum con todos los participantes confirmados?"
+msgstr "Share the album with all confirmed participants?"
+
+#: includes/CPT_Actividad.php:788
+msgid "Sin permisos"
+msgstr "No permissions"
+
+#: includes/CPT_Actividad.php:813
+msgid "No se pudo compartir el álbum"
+msgstr "The album could not be shared"
+
+#: includes/CPT_Actividad.php:834
+#: includes/CPT_Actividad.php:859
+msgid "No se pudo crear el álbum"
+msgstr "The album could not be created"
+
+#: includes/CPT_Actividad.php:839
+#: includes/CPT_Actividad.php:864
+msgid "Permisos insuficientes."
+msgstr "Insufficient permissions."
+
+#: includes/CPT_Actividad.php:847
+msgid "La integración con Google Calendar no está configurada."
+msgstr "The Google Calendar integration is not configured."
+
+#: includes/CPT_Actividad.php:869
+msgid "Error al sincronizar con Google Calendar."
+msgstr "Error syncing with Google Calendar."
+
+#: includes/CPT_Actividad.php:881
+msgid "No hay un evento asociado a esta actividad."
+msgstr "There is no event associated with this activity."
+
+#: includes/CPT_Actividad.php:932
+msgid "Error al eliminar el evento: "
+msgstr "Error deleting the event: "
+
+#: includes/CPT_Evaluacion.php:33
+#: includes/CPT_Evaluacion.php:35
+msgid "💡 Este shortcode debe usarse en la página de una actividad."
+msgstr "💡 This shortcode must be used on an activity page."
+
+#: includes/CPT_Evaluacion.php:37
+msgid "Evaluación"
+msgstr "Evaluation"
+
+#: includes/CPT_Evaluacion.php:38
+msgid "Añadir nueva evaluación"
+msgstr "Add new evaluation"
+
+#: includes/CPT_Evaluacion.php:39
+msgid "Nueva evaluación"
+msgstr "New evaluation"
+
+#: includes/CPT_Evaluacion.php:40
+msgid "Editar evaluación"
+msgstr "Edit evaluation"
+
+#: includes/CPT_Evaluacion.php:41
+msgid "Ver evaluación"
+msgstr "View evaluation"
+
+#: includes/CPT_Evaluacion.php:42
+msgid "Todas las evaluaciones"
+msgstr "All evaluations"
+
+#: includes/CPT_Evaluacion.php:43
+msgid "Buscar evaluaciones"
+msgstr "Search evaluations"
+
+#: includes/CPT_Evaluacion.php:44
+msgid "No se encontraron evaluaciones."
+msgstr "No evaluations found."
+
+#: includes/CPT_Inscripcion.php:74
+#: public/class-form-inscripcion.php:238
+msgid "No se encontraron evaluaciones en la papelera."
+msgstr "No evaluations found in trash."
+
+#: includes/CPT_Inscripcion.php:75
+msgid "Pendiente de aportación"
+msgstr "Pending contribution"
+
+#: includes/CPT_Inscripcion.php:76
+msgid "Confirmada"
+msgstr "Confirmed"
+
+#: includes/CPT_Inscripcion.php:78
+msgid "Pagada (especial)"
+msgstr "Paid (special)"
+
+#: includes/CPT_Inscripcion.php:142
+msgid "Cancelada"
+msgstr "Canceled"
+
+#: includes/Email_Automation.php:120
+msgid "Inscripción"
+msgstr "Enrollment"
+
+#: includes/Email_Automation.php:121
+#: includes/Email_Automation.php:161
+#: includes/Email_Automation.php:242
+#: includes/Email_Automation.php:295
+#: includes/Email_Automation.php:348
+msgid "Inscripción recibida — {actividad}"
+msgstr "Enrollment received — {actividad}"
+
+#: includes/Email_Automation.php:122
+msgid "<h1>Hola {nombre},</h1>"
+msgstr "<h1>Hi {nombre},</h1>"
+
+#: includes/Email_Automation.php:123
+msgid "<p>Hemos recibido tu inscripción para <strong>{actividad}</strong>.</p>"
+msgstr "<p>We have received your enrollment for <strong>{actividad}</strong>.</p>"
+
+#: includes/Email_Automation.php:135
+#: includes/Email_Automation.php:194
+#: includes/Email_Automation.php:220
+#: includes/Email_Automation.php:255
+#: includes/Email_Automation.php:278
+#: includes/Email_Automation.php:308
+#: includes/Email_Automation.php:331
+#: media/class-poster-engine.php:502
+msgid "<p>Tu aportación se encuentra actualmente <strong>pendiente de validación</strong>. Te confirmaremos tu plaza lo antes posible.</p>"
+msgstr "<p>Your contribution is currently <strong>pending validation</strong>. We will confirm your seat as soon as possible.</p>"
+
+#: includes/Email_Automation.php:147
+#: includes/Email_Automation.php:228
+#: includes/Utils.php:39
+msgid "Hora"
+msgstr "Time"
+
+#: includes/Email_Automation.php:151
+#: includes/Email_Automation.php:171
+#: includes/Email_Automation.php:232
+#: includes/Email_Automation.php:286
+#: includes/Email_Automation.php:339
+msgid "Aportación"
+msgstr "Contribution"
+
+#: includes/Email_Automation.php:156
+msgid "Reserva"
+msgstr "Booking"
+
+#: includes/Email_Automation.php:157
+#: includes/Email_Automation.php:176
+#: includes/Email_Automation.php:238
+#: includes/Email_Automation.php:764
+msgid "<p>Guarda tu código de reserva para consultar o cancelar tu inscripción.</p>"
+msgstr "<p>Keep your booking code to view or cancel your enrollment.</p>"
+
+#: includes/Email_Automation.php:160
+msgid "Ver mis reservas"
+msgstr "View my bookings"
+
+#: includes/Email_Automation.php:162
+msgid "En lista de espera — {actividad}"
+msgstr "On waitlist — {actividad}"
+
+#: includes/Email_Automation.php:163
+msgid "<p>Te has apuntado a <strong>{actividad}</strong> pero has quedado en <strong>lista de espera</strong>, ya que el aforo está completo.</p>"
+msgstr "<p>You have signed up for <strong>{actividad}</strong> but you are on the <strong>waitlist</strong>, as the activity is at full capacity.</p>"
+
+#: includes/Email_Automation.php:179
+msgid "<p>Te avisaremos por correo si se libera una plaza.</p>"
+msgstr "<p>We will email you if a seat becomes available.</p>"
+
+#: includes/Email_Automation.php:180
+msgid "¡Tienes una plaza disponible! — {actividad}"
+msgstr "A seat is available for you! — {actividad}"
+
+#: includes/Email_Automation.php:181
+msgid "<h1>¡Buenas noticias, {nombre}! 🎉</h1>"
+msgstr "<h1>Good news, {nombre}! 🎉</h1>"
+
+#: includes/Email_Automation.php:182
+msgid "<p>Se ha liberado una plaza para <strong>{actividad}</strong> y se te ha asignado automáticamente.</p>"
+msgstr "<p>A seat for <strong>{actividad}</strong> has become available and has been automatically assigned to you.</p>"
+
+#: includes/Email_Automation.php:205
+msgid "<p>Tu inscripción se encuentra ahora <strong>pendiente de validación</strong>. Te confirmaremos tu plaza definitiva lo antes posible.</p>"
+msgstr "<p>Your enrollment is now <strong>pending validation</strong>. We will confirm your final seat as soon as possible.</p>"
+
+#: includes/Email_Automation.php:206
+msgid "¡Plaza confirmada! — {actividad}"
+msgstr "Seat confirmed! — {actividad}"
+
+#: includes/Email_Automation.php:207
+msgid "<h1>¡Plaza confirmada, {nombre}! 🎉</h1>"
+msgstr "<h1>Seat confirmed, {nombre}! 🎉</h1>"
+
+#: includes/Email_Automation.php:208
+msgid "<p>Tu plaza para <strong>{actividad}</strong> está confirmada.</p>"
+msgstr "<p>Your seat for <strong>{actividad}</strong> is confirmed.</p>"
+
+#: includes/Email_Automation.php:237
+msgid "<p>Hemos recibido correctamente tu aportación.</p>"
+msgstr "<p>We have successfully received your contribution.</p>"
+
+#: includes/Email_Automation.php:241
+msgid "<p>Adjuntamos tu código QR y un enlace al calendario.</p>"
+msgstr "<p>We have attached your QR code and a calendar link.</p>"
+
+#: includes/Email_Automation.php:243
+msgid "Reserva cancelada — {actividad}"
+msgstr "Booking canceled — {actividad}"
+
+#: includes/Email_Automation.php:263
+msgid "<p>Tu reserva para <strong>{actividad}</strong> ha sido cancelada.</p>"
+msgstr "<p>Your booking for <strong>{actividad}</strong> has been canceled.</p>"
+
+#: includes/Email_Automation.php:264
+msgid "¡Esta semana! {actividad}"
+msgstr "This week! {actividad}"
+
+#: includes/Email_Automation.php:265
+msgid "<h1>¡Hola {nombre}!</h1>"
+msgstr "<h1>Hi {nombre}!</h1>"
+
+#: includes/Email_Automation.php:266
+msgid "<p>¡Esta semana tenemos <strong>{actividad}</strong>! 🎉</p>"
+msgstr "<p>This week we have <strong>{actividad}</strong>! 🎉</p>"
+
+#: includes/Email_Automation.php:294
+msgid "<p>Te esperamos. Aquí tienes los detalles:</p>"
+msgstr "<p>We look forward to seeing you. Here are the details:</p>"
+
+#: includes/Email_Automation.php:296
+msgid "Recordatorio: {actividad} es mañana"
+msgstr "Reminder: {actividad} is tomorrow"
+
+#: includes/Email_Automation.php:317
+msgid "<p>Te recordamos que <strong>mañana</strong> tienes la actividad <strong>{actividad}</strong>.</p>"
+msgstr "<p>This is a reminder that you have the activity <strong>{actividad}</strong> <strong>tomorrow</strong>.</p>"
+
+#: includes/Email_Automation.php:318
+msgid "<p>Si no puedes asistir, cancela tu inscripción para liberar la plaza.</p>"
+msgstr "<p>If you cannot attend, cancel your enrollment to free up the seat.</p>"
+
+#: includes/Email_Automation.php:321
+msgid "Gestionar reserva"
+msgstr "Manage booking"
+
+#: includes/Email_Automation.php:322
+msgid "{actividad} comienza en 1 hora"
+msgstr "{actividad} starts in 1 hour"
+
+#: includes/Email_Automation.php:323
+msgid "<h1>¡Ya casi, {nombre}!</h1>"
+msgstr "<h1>Almost there, {nombre}!</h1>"
+
+#: includes/Email_Automation.php:347
+msgid "<p>La actividad <strong>{actividad}</strong> comienza en <strong>1 hora</strong>.</p>"
+msgstr "<p>The activity <strong>{actividad}</strong> starts in <strong>1 hour</strong>.</p>"
+
+#: includes/Email_Automation.php:349
+msgid "¿Qué te pareció \"{actividad}\"?"
+msgstr "What did you think of \"{actividad}\"?"
+
+#: includes/Email_Automation.php:350
+msgid "<p>¿Qué tal la experiencia en <strong>{actividad}</strong>? Nos encantaría conocer tu opinión.</p>"
+msgstr "<p>How was your experience at <strong>{actividad}</strong>? We would love to hear your feedback.</p>"
+
+#: includes/Email_Automation.php:355
+msgid "<p>Puedes respondernos directamente a este email con tus comentarios.</p>"
+msgstr "<p>You can reply directly to this email with your comments.</p>"
+
+#: includes/Email_Automation.php:356
+msgid "<h1>Nuevo álbum disponible</h1>"
+msgstr "<h1>New album available</h1>"
+
+#: includes/Email_Automation.php:357
+#: includes/Email_Automation.php:769
+msgid "<p>Se ha creado un álbum de Google Photos para la actividad <strong>{actividad}</strong>.</p>"
+msgstr "<p>A Google Photos album has been created for the activity <strong>{actividad}</strong>.</p>"
+
+#: includes/Email_Automation.php:362
+msgid "Subir fotos"
+msgstr "Upload photos"
+
+#: includes/Email_Automation.php:363
+msgid "<h1>¡Ya puedes ver las fotos! 🎉</h1>"
+msgstr "<h1>You can now view the photos! 🎉</h1>"
+
+#: includes/Email_Automation.php:364
+msgid "<p>Ya están disponibles las fotos de la actividad <strong>{actividad}</strong>.</p>"
+msgstr "<p>The photos of the activity <strong>{actividad}</strong> are now available.</p>"
+
+#: includes/Email_Automation.php:365
+#: includes/Email_Automation.php:770
+msgid "<p>Hemos subido un álbum con los mejores momentos.</p>"
+msgstr "<p>We have uploaded an album with the best moments.</p>"
+
+#: includes/Email_Automation.php:574
+#: includes/Email_Automation.php:663
+#: includes/Email_Automation.php:879
+msgid "Ver fotos"
+msgstr "View photos"
+
+#: includes/Email_Automation.php:766
+msgid "Has recibido este email porque estás inscrito en una de nuestras actividades."
+msgstr "You are receiving this email because you are enrolled in one of our activities."
+
+#: includes/Email_Automation.php:767
+msgid "Ver mi inscripción"
+msgstr "View my enrollment"
+
+#: includes/Email_Automation.php:768
+msgid "Confirmar mi plaza"
+msgstr "Confirm my seat"
+
+#: includes/Google_Calendar.php:330
+msgid "Ver mi reserva"
+msgstr "View my booking"
+
+#: includes/Google_Photos.php:257
+msgid "Error al generar el archivo de calendario."
+msgstr "Error generating the calendar file."
+
+#: includes/Google_Photos.php:258
+msgid "Álbum de fotos"
+msgstr "Photo album"
+
+#: includes/Google_Photos.php:311
+msgid ""
+"Hola,\n"
+"\n"
+"Se ha creado un álbum de Google Photos para la actividad \"{actividad}\".\n"
+"\n"
+"Puedes acceder y subir fotos aquí:\n"
+"{album_url}\n"
+"\n"
+"Una vez el evento haya terminado, puedes compartir el álbum con los participantes desde este mismo panel.\n"
+"\n"
+"— Equipo Convoca"
+msgstr "Hello,\n\nA Google Photos album has been created for the activity \"{actividad}\".\n\nYou can access it and upload photos here:\n{album_url}\n\nOnce the event has ended, you can share the album with participants from this same panel.\n\n— Convoca Team"
+
+#: includes/Google_Photos.php:312
+msgid "Fotos de la actividad"
+msgstr "Activity photos"
+
+#: includes/Motor_Inscripcion.php:57
+#: public/class-formulario-evaluacion.php:258
+msgid ""
+"Hola,\n"
+"\n"
+"¡Ya puedes ver las fotos de la actividad \"{actividad}\"!\n"
+"\n"
+"Hemos subido un álbum con los mejores momentos. Puedes verlo aquí:\n"
+"{album_url}\n"
+"\n"
+"¡Gracias por participar en nuestras actividades!\n"
+"\n"
+"— Equipo Convoca"
+msgstr "Hello,\n\nYou can now view the photos of the activity \"{actividad}\"!\n\nWe have uploaded an album with the best moments. You can view it here:\n{album_url}\n\nThank you for taking part in our activities!\n\n— Convoca Team"
+
+#: includes/Motor_Inscripcion.php:68
+msgid "Demasiados intentos. Inténtalo de nuevo más tarde."
+msgstr "Too many attempts. Please try again later."
+
+#: includes/Motor_Inscripcion.php:93
+msgid "Esta actividad ya ha finalizado."
+msgstr "This activity has already ended."
+
+#: includes/Motor_Inscripcion.php:96
+msgid "El nombre es obligatorio."
+msgstr "Name is required."
+
+#: includes/Motor_Inscripcion.php:102
+msgid "El email no es válido."
+msgstr "Email is invalid."
+
+#: includes/Motor_Inscripcion.php:106
+msgid "El dominio del email no es válido."
+msgstr "Email domain is invalid."
+
+#: includes/Motor_Inscripcion.php:117
+msgid "El DNI/NIE no es válido."
+msgstr "The ID number is invalid."
+
+#: includes/Motor_Inscripcion.php:127
+msgid "Debes aceptar la política de privacidad."
+msgstr "You must accept the privacy policy."
+
+#: includes/Motor_Inscripcion.php:175
+#: includes/Motor_Inscripcion.php:228
+msgid "La edad del menor debe estar entre 0 y 17 años."
+msgstr "The minor's age must be between 0 and 17 years."
+
+#: includes/Motor_Inscripcion.php:205
+#: includes/Motor_Inscripcion.php:234
+msgid "Ya estás inscrito/a en esta actividad."
+msgstr "You are already enrolled in this activity."
+
+#: includes/Motor_Inscripcion.php:251
+msgid "Ya existe una inscripción activa para este DNI en esta actividad."
+msgstr "There is already an active enrollment for this ID in this activity."
+
+#: includes/Motor_Inscripcion.php:280
+msgid "No se pudo crear la inscripción."
+msgstr "The enrollment could not be created."
+
+#: includes/Motor_Inscripcion.php:329
+msgid "No hay plazas disponibles."
+msgstr "There are no seats available."
+
+#: includes/Motor_Inscripcion.php:422
+msgid "Error al procesar la inscripción."
+msgstr "Error processing the enrollment."
+
+#. translators: %d: horas mínimas de antelación
+#: includes/Motor_Inscripcion.php:465
+#, php-format
+msgid "Error al cancelar la inscripción."
+msgstr "Error canceling the enrollment."
+
+#. translators: %1$s: nombre, %2$d: número de cancelaciones tardías
+#: includes/Motor_Inscripcion.php:514
+#, php-format
+msgid "No se puede cancelar a menos de %d horas del inicio. Contacta con la organización."
+msgstr "You cannot cancel less than %d hours before the start. Contact the organization."
+
+#. translators: %1$s: nombre, %2$s: email, %3$d: número de cancelaciones tardías
+#: includes/Motor_Inscripcion.php:518
+#, php-format
+msgid "Aviso: %1$s acumula %2$d cancelaciones tardías este año"
+msgstr "Notice: %1$s has accumulated %2$d late cancellations this year"
+
+#: includes/Motor_Inscripcion.php:537
+msgid "La persona %1$s (%2$s) ha acumulado %3$d cancelaciones tardías en el año natural. Revisa su historial de inscripciones."
+msgstr "The person %1$s (%2$s) has accumulated %3$d late cancellations in the current calendar year. Review their enrollment history."
+
+#: includes/Motor_Inscripcion.php:563
+msgid "Solo se pueden confirmar inscripciones pendientes o en lista de espera."
+msgstr "Only pending or waitlisted enrollments can be confirmed."
+
+#: includes/Motor_Inscripcion.php:584
+msgid "No hay plazas disponibles para confirmar esta inscripción."
+msgstr "There are no seats available to confirm this enrollment."
+
+#: includes/Motor_Inscripcion.php:759
+msgid "Error al confirmar la inscripción."
+msgstr "Error confirming the enrollment."
+
+#: includes/Motor_Inscripcion.php:878
+msgid "Ya tienes una reserva activa. Cada persona solo puede realizar una única reserva de taller. Si quieres inscribir a un menor o persona a tu cargo, marca la opción correspondiente."
+msgstr "You already have an active booking. Each person can only make one workshop booking. If you want to enroll a minor or a dependent, check the corresponding option."
+
+#: includes/Payment_Listener.php:138
+msgid "Estado de asistencia no válido. Valores permitidos: si, no, no_registrada."
+msgstr "Invalid attendance status. Allowed values: si, no, no_registrada."
+
+#: includes/PDF_Compromiso.php:50
+msgid "Cancelada automáticamente: pago fallido."
+msgstr "Automatically canceled: payment failed."
+
+#: includes/PDF_Compromiso.php:63
+msgid "Error en la generación del Compromiso de Acción Voluntaria:"
+msgstr "Error generating the Voluntary Action Commitment:"
+
+#: includes/PDF_Compromiso.php:136
+msgid "Usuario no encontrado."
+msgstr "User not found."
+
+#: includes/Rest_API.php:183
+#: includes/Rest_API.php:212
+#: public/class-formulario-evaluacion.php:38
+msgid "La clase de firma digital no se encuentra disponible."
+msgstr "The digital signature class is not available."
+
+#: includes/Rest_API.php:226
+msgid "Demasiadas peticiones."
+msgstr "Too many requests."
+
+#: includes/Rest_API.php:322
+msgid "Too many requests"
+msgstr "Too many requests"
+
+#: includes/Rest_API.php:346
+msgid "No tienes permiso para ver estadísticas de esta actividad."
+msgstr "You do not have permission to view statistics for this activity."
+
+#: includes/Rest_API.php:365
+msgid "Token required"
+msgstr "Token required"
+
+#: includes/Rest_API.php:375
+msgid "Invalid token"
+msgstr "Invalid token"
+
+#: includes/Rest_API.php:384
+msgid "No tienes permiso para realizar check-in en esta actividad."
+msgstr "You do not have permission to perform check-in for this activity."
+
+#: includes/Rest_API.php:386
+msgid "Inscription not confirmed"
+msgstr "Enrollment not confirmed"
+
+#: includes/Rest_API.php:412
+msgid "Solo se pueden confirmar asistentes con reserva confirmada."
+msgstr "Only attendees with a confirmed booking can be checked in."
+
+#: includes/Rest_API.php:412
+msgid "Esta reserva ya había sido escaneada."
+msgstr "This booking had already been scanned."
+
+#: includes/Rest_API.php:427
+msgid "Check-in realizado correctamente."
+msgstr "Check-in completed successfully."
+
+#: includes/Rest_API.php:436
+msgid "No encontrado."
+msgstr "Not found."
+
+#: includes/Rest_API.php:444
+msgid "Acceso denegado."
+msgstr "Access denied."
+
+#: includes/Rest_API.php:449
+msgid "Token de seguridad inválido."
+msgstr "Invalid security token."
+
+#: includes/Utils.php:43
+msgid "Tipo de post no válido."
+msgstr "Invalid post type."
+
+#: includes/Utils.php:46
+msgid "Aportaciones"
+msgstr "Contributions"
+
+#: includes/Utils.php:49
+msgid "Aportación socio"
+msgstr "Member contribution"
+
+#: includes/Utils.php:52
+msgid "Aportación Trasgu"
+msgstr "Trasgu contribution"
+
+#: includes/Utils.php:55
+msgid "Aportación sugerida para socios"
+msgstr "Suggested contribution for members"
+
+#: media/class-blog-post-manager.php:99
+msgid "Aportación sugerida para no socios"
+msgstr "Suggested contribution for non-members"
+
+#: media/class-blog-post-manager.php:203
+msgid "No se pudo crear la entrada del blog."
+msgstr "The blog post could not be created."
+
+#: media/class-blog-post-manager.php:209
+#: media/class-poster-engine.php:504
+msgid "Fin"
+msgstr "End"
+
+#: media/class-blog-post-manager.php:212
+msgid "Plazas"
+msgstr "Seats"
+
+#: media/class-blog-post-manager.php:231
+msgid "Precio socio"
+msgstr "Member price"
+
+#: media/class-event-style-registry.php:52
+msgid "Inscríbete en esta actividad"
+msgstr "Enroll in this activity"
+
+#: media/class-event-style-registry.php:55
+msgid "Naturaleza"
+msgstr "Nature"
+
+#: media/class-event-style-registry.php:58
+msgid "Familiar"
+msgstr "Family"
+
+#: media/class-event-style-registry.php:61
+msgid "Formación"
+msgstr "Training"
+
+#: media/class-event-style-registry.php:64
+msgid "Adultos"
+msgstr "Adults"
+
+#: media/class-event-style-registry.php:67
+msgid "Voluntariado"
+msgstr "Volunteering"
+
+#: media/class-event-style-registry.php:70
+msgid "Infantil"
+msgstr "Children"
+
+#: media/class-event-style-registry.php:73
+msgid "Online"
+msgstr "Online"
+
+#: media/class-event-style-registry.php:76
+msgid "Ruta interpretada"
+msgstr "Interpretive route"
+
+#: media/class-event-style-registry.php:79
+msgid "Taller"
+msgstr "Workshop"
+
+#: media/class-event-style-registry.php:82
+msgid "Exclusiva socios"
+msgstr "Members only"
+
+#: media/class-layout-validator.php:68
+msgid "Especial"
+msgstr "Special"
+
+#: media/class-layout-validator.php:93
+msgid "No collaborator logos"
+msgstr "No collaborator logos"
+
+#: media/class-media-rest-api.php:138
+msgid "Missing box-sizing:border-box"
+msgstr "Missing box-sizing:border-box"
+
+#: media/class-poster-engine.php:51
+msgid "Template not found"
+msgstr "Template not found"
+
+#: media/class-poster-engine.php:177
+msgid "Imagick no está disponible. Instala/activa la extensión PHP Imagick para generar carteles."
+msgstr "Imagick is not available. Install/enable the PHP Imagick extension to generate posters."
+
+#: media/class-poster-engine.php:270
+#: media/class-poster-engine.php:518
+msgid "Actividad no encontrada o tipo incorrecto."
+msgstr "Activity not found or wrong type."
+
+#: media/class-poster-engine.php:352
+msgid "Gratuito"
+msgstr "Free"
+
+#: media/class-poster-engine.php:486
+msgid "rgba(255,255,255,0.94)"
+msgstr "rgba(255,255,255,0.94)"
+
+#. translators: %d: number of available spots
+#: media/class-poster-engine.php:501
+#: media/class-poster-engine.php:502
+#: media/class-poster-engine.php:503
+#: media/class-poster-engine.php:504
+#: media/class-poster-engine.php:505
+msgid "Imagen de la actividad"
+msgstr "Activity image"
+
+#: media/class-poster-engine.php:503
+msgid "Por confirmar"
+msgstr "To be confirmed"
+
+#. translators: %d: number of available spots
+#: media/class-poster-engine.php:504
+#, php-format
+msgid "Lugar"
+msgstr "Venue"
+
+#. translators: %d: number of available spots
+#: media/class-poster-engine.php:505
+msgid "%d plaza"
+msgid_plural "%d plazas"
+msgstr[0] "%d seat"
+msgstr[1] "%d seats"
+
+#: media/class-poster-engine.php:507
+msgid "Precio"
+msgstr "Price"
+
+#: media/class-poster-engine.php:508
+msgid "Organiza"
+msgstr "Organized by"
+
+#: media/class-poster-engine.php:517
+msgid "Edad"
+msgstr "Age"
+
+#. translators: %s: error message
+#: media/class-poster-engine.php:532
+#, php-format
+msgid "Apúntate"
+msgstr "Sign up"
+
+#: media/class-poster-engine.php:535
+msgid "Error generando el cartel: %s"
+msgstr "Error generating the poster: %s"
+
+#: media/class-template-defaults.php:77
+msgid "No se pudo guardar el cartel generado."
+msgstr "The generated poster could not be saved."
+
+#: media/class-template-defaults.php:100
+msgid "Gran imagen protagonista con acentos verdes. Ideal para rutas, naturaleza y actividades al aire libre."
+msgstr "Large hero image with green accents. Ideal for hikes, nature, and outdoor activities."
+
+#: media/class-template-defaults.php:100
+msgid "0,2,4,rgba(0,0,0,0.3)"
+msgstr "0,2,4,rgba(0,0,0,0.3)"
+
+#: media/class-template-defaults.php:233
+msgid "0,4,12,rgba(0,0,0,0.15)"
+msgstr "0,4,12,rgba(0,0,0,0.15)"
+
+#: media/class-template-manager.php:114
+msgid "Estilo profesional con bloques de color y tipografía limpia. Ideal para ONGs y entidades sociales."
+msgstr "Professional style with color blocks and clean typography. Ideal for NGOs and social organizations."
+
+#: media/class-template-manager.php:117
+msgid "Las dimensiones (width/height) son obligatorias."
+msgstr "Dimensions (width/height) are required."
+
+#. translators: %d: layer number
+#: media/class-template-manager.php:123
+#, php-format
+msgid "Debe definir al menos una capa."
+msgstr "You must define at least one layer."
+
+#: media/class-template-manager.php:136
+msgid "Capa #%d: falta el tipo."
+msgstr "Layer #%d: missing type."
+
+#: media/class-template-manager.php:153
+msgid "Plantilla no encontrada."
+msgstr "Template not found."
+
+#: media/class-template-manager.php:156
+msgid "El JSON debe contener name y config."
+msgstr "The JSON must contain name and config."
+
+#. translators: %s: PDF generation error message
+#: public/class-form-inscripcion.php:247
+#, php-format
+msgid "config debe contener un array de layers."
+msgstr "config must contain an array of layers."
+
+#: public/class-form-inscripcion.php:263
+msgid "La inscripción se ha iniciado, pero hubo un problema al generar el documento de compromiso: %s. Podrás completarlo más tarde."
+msgstr "Your enrollment has started, but there was a problem generating the commitment document: %s. You will be able to complete it later."
+
+#. translators: %s: PDF generation error message
+#: public/class-form-inscripcion.php:286
+#, php-format
+msgid "La inscripción está registrada pero el pago no se pudo procesar automáticamente. Por favor, contacta con nosotros para completar la aportación."
+msgstr "Your enrollment is registered but the payment could not be processed automatically. Please contact us to complete the contribution."
+
+#: public/class-formulario-evaluacion.php:72
+#: public/class-formulario-evaluacion.php:274
+msgid "Inscripción realizada, pero hubo un problema al generar el documento de compromiso: %s. Por favor, contacta con nosotros si lo necesitas."
+msgstr "Enrollment completed, but there was a problem generating the commitment document: %s. Please contact us if you need it."
+
+#: public/class-formulario-evaluacion.php:77
+#: public/class-formulario-evaluacion.php:279
+msgid "ID de actividad no válido o inexistente."
+msgstr "Invalid or nonexistent activity ID."
+
+#: public/class-formulario-evaluacion.php:81
+msgid "Esta actividad aún no ha finalizado y no puede ser evaluada."
+msgstr "This activity has not ended yet and cannot be evaluated."
+
+#: public/class-formulario-evaluacion.php:105
+msgid "Debes iniciar sesión para evaluar esta actividad."
+msgstr "You must log in to evaluate this activity."
+
+#: public/class-formulario-evaluacion.php:156
+msgid "Ya has enviado una evaluación para esta actividad. ¡Gracias!"
+msgstr "You have already submitted an evaluation for this activity. Thank you!"
+
+#. translators: %s: activity title
+#: public/class-formulario-evaluacion.php:163
+#, php-format
+msgid "No tienes permisos para evaluar esta actividad o no consta tu asistencia."
+msgstr "You do not have permission to evaluate this activity or your attendance is not recorded."
+
+#: public/class-formulario-evaluacion.php:170
+msgid "Evaluar Actividad: %s"
+msgstr "Evaluate Activity: %s"
+
+#: public/class-formulario-evaluacion.php:171
+msgid "1. Valoraciones numéricas"
+msgstr "1. Numeric ratings"
+
+#: public/class-formulario-evaluacion.php:175
+msgid "Valora del 1 al 5 (1 = Muy insatisfecho, 5 = Muy satisfecho)"
+msgstr "Rate from 1 to 5 (1 = Very dissatisfied, 5 = Very satisfied)"
+
+#: public/class-formulario-evaluacion.php:176
+msgid "Grupo participante"
+msgstr "Participant group"
+
+#: public/class-formulario-evaluacion.php:180
+msgid "Comunicación con el equipo"
+msgstr "Communication with the team"
+
+#: public/class-formulario-evaluacion.php:183
+msgid "2. Comentarios y sugerencias"
+msgstr "2. Comments and suggestions"
+
+#: public/class-formulario-evaluacion.php:188
+msgid "Cuéntanos brevemente tu experiencia"
+msgstr "Briefly tell us about your experience"
+
+#: public/class-formulario-evaluacion.php:193
+msgid "¿Has necesitado algo que no te hayan facilitado?"
+msgstr "Was there anything you needed that was not provided?"
+
+#: public/class-formulario-evaluacion.php:198
+msgid "¿Qué mejorarías en la gestión?"
+msgstr "What would you improve about the management?"
+
+#: public/class-formulario-evaluacion.php:203
+msgid "¿Qué mejorarías del espacio/instalaciones?"
+msgstr "What would you improve about the venue/facilities?"
+
+#: public/class-formulario-evaluacion.php:208
+msgid "Comentarios sobre el público o dinámica"
+msgstr "Comments about the audience or dynamics"
+
+#: public/class-formulario-evaluacion.php:213
+msgid "Aspectos positivos (lo mejor de la actividad)"
+msgstr "Positive aspects (the best of the activity)"
+
+#: public/class-formulario-evaluacion.php:218
+msgid "Aspectos a mejorar"
+msgstr "Aspects to improve"
+
+#. translators: %s: site name
+#: public/class-formulario-evaluacion.php:226
+#, php-format
+msgid "Otros comentarios o sugerencias"
+msgstr "Other comments or suggestions"
+
+#: public/class-formulario-evaluacion.php:231
+msgid "Acepto que mi evaluación sea tratada según la política de privacidad de %s. Los datos se utilizarán internamente para mejorar las actividades."
+msgstr "I agree that my evaluation will be handled according to %s's privacy policy. The data will be used internally to improve the activities."
+
+#: public/class-formulario-evaluacion.php:262
+msgid "Enviar Evaluación"
+msgstr "Submit Evaluation"
+
+#: public/class-formulario-evaluacion.php:269
+msgid "Debes iniciar sesión."
+msgstr "You must log in."
+
+#: public/class-formulario-evaluacion.php:301
+msgid "Actividad no válida."
+msgstr "Invalid activity."
+
+#: public/class-formulario-evaluacion.php:307
+msgid "Ya has enviado una evaluación para esta actividad."
+msgstr "You have already submitted an evaluation for this activity."
+
+#: public/class-formulario-evaluacion.php:317
+msgid "Estamos procesando tu solicitud, por favor espera."
+msgstr "We are processing your request, please wait."
+
+#: public/class-formulario-evaluacion.php:364
+msgid "Por favor, completa todas las valoraciones numéricas (de 1 a 5 estrellas)."
+msgstr "Please complete all numeric ratings (from 1 to 5 stars)."
+
+#: public/class-pagina-inscripcion.php:57
+msgid "Evaluación enviada con éxito. ¡Gracias por tu colaboración!"
+msgstr "Evaluation submitted successfully. Thank you for your collaboration!"
+
+#: public/class-pagina-inscripcion.php:61
+msgid "Ir a mi Panel de Reservas"
+msgstr "Go to my Booking Panel"
+
+#: public/class-panel-reservas.php:68
+msgid "Actividades Disponibles"
+msgstr "Available Activities"
+
+#: public/class-panel-reservas.php:75
+#: templates/panel-reservas.php:51
+msgid "Demasiados intentos. Inténtalo de nuevo en 10 minutos."
+msgstr "Too many attempts. Try again in 10 minutes."
+
+#: public/class-panel-reservas.php:79
+#: templates/panel-reservas.php:58
+msgid "Introduce un email válido."
+msgstr "Enter a valid email."
+
+#: public/class-panel-reservas.php:85
+msgid "Introduce tu código de reserva."
+msgstr "Enter your booking code."
+
+#: public/class-panel-reservas.php:105
+msgid "No se encontró ninguna reserva con ese email y código. Revisa los datos e inténtalo de nuevo."
+msgstr "No booking was found with that email and code. Check the details and try again."
+
+#: public/class-panel-reservas.php:113
+msgid "Demasiados intentos de cancelación. Inténtalo de nuevo en una hora."
+msgstr "Too many cancellation attempts. Try again in one hour."
+
+#: public/class-panel-reservas.php:121
+msgid "Datos de sesión no válidos."
+msgstr "Invalid session data."
+
+#: public/class-panel-reservas.php:127
+msgid "No tienes permiso para cancelar esta reserva o el código es incorrecto."
+msgstr "You do not have permission to cancel this booking or the code is incorrect."
+
+#: public/class-panel-reservas.php:131
+msgid "Esta reserva ya está cancelada."
+msgstr "This booking is already canceled."
+
+#: public/class-panel-reservas.php:142
+msgid "Cancelada por el usuario desde el panel de reservas."
+msgstr "Canceled by the user from the booking panel."
+
+#: public/class-panel-reservas.php:180
+msgid "Tu reserva ha sido cancelada correctamente. Recibirás un email de confirmación."
+msgstr "Your booking has been canceled successfully. You will receive a confirmation email."
+
+#: social/class-gbp-provider.php:48
+msgid "Actividad no disponible"
+msgstr "Activity not available"
+
+#: social/class-gbp-provider.php:57
+msgid "Usa los endpoints REST /social/auth/google"
+msgstr "Use the REST endpoints /social/auth/google"
+
+#: social/class-gbp-provider.php:69
+msgid "Lock activo para este contenido en GBP."
+msgstr "Active lock for this content in GBP."
+
+#: social/class-gbp-provider.php:73
+#: social/class-meta-provider.php:82
+msgid "[DRY-RUN] Simulated GBP"
+msgstr "[DRY-RUN] Simulated GBP"
+
+#: social/class-gbp-provider.php:84
+msgid "Token no disponible. Reconecta la cuenta."
+msgstr "Token unavailable. Reconnect the account."
+
+#: social/class-gbp-provider.php:139
+msgid "GBP: No hay location_id. Reconecta la cuenta."
+msgstr "GBP: No location_id. Reconnect the account."
+
+#: social/class-meta-provider.php:50
+msgid "Publicado en Google Business Profile"
+msgstr "Published to Google Business Profile"
+
+#: social/class-meta-provider.php:64
+msgid "Usa los endpoints REST /social/auth/meta"
+msgstr "Use the REST endpoints /social/auth/meta"
+
+#: social/class-meta-provider.php:78
+msgid "Ya hay una publicación en curso para este contenido (lock activo)."
+msgstr "There is already a publication in progress for this content (active lock)."
+
+#: social/class-meta-provider.php:146
+msgid "[DRY-RUN] Simulated"
+msgstr "[DRY-RUN] Simulated"
+
+#: social/class-meta-provider.php:168
+msgid "Facebook: "
+msgstr "Facebook: "
+
+#: social/class-meta-provider.php:179
+msgid "Facebook OK"
+msgstr "Facebook OK"
+
+#: social/class-meta-provider.php:193
+#: social/class-meta-provider.php:218
+msgid "Instagram: no hay cuenta de Instagram Business vinculada a esta página."
+msgstr "Instagram: there is no Instagram Business account linked to this page."
+
+#: social/class-meta-provider.php:203
+msgid "Instagram: "
+msgstr "Instagram: "
+
+#: social/class-meta-provider.php:226
+msgid "Instagram: no se obtuvo ID del media container."
+msgstr "Instagram: media container ID was not obtained."
+
+#: social/class-social-healthcheck.php:77
+msgid "Instagram OK"
+msgstr "Instagram OK"
+
+#: social/class-social-healthcheck.php:77
+msgid "Convoca Media Suite: La conexión con"
+msgstr "Convoca Media Suite: The connection with"
+
+#: social/class-social-healthcheck.php:78
+msgid "ha expirado."
+msgstr "has expired."
+
+#: social/class-social-healthcheck.php:78
+msgid "Por favor, ve a"
+msgstr "Please go to"
+
+#: social/class-social-healthcheck.php:78
+msgid "Media → Redes Sociales"
+msgstr "Media → Social Networks"
+
+#: social/class-social-publisher.php:47
+msgid "y vuelve a conectar la cuenta."
+msgstr "and reconnect the account."
+
+#: social/class-social-publisher.php:108
+msgid "Cuenta no encontrada o token expirado."
+msgstr "Account not found or token expired."
+
+#: social/class-social-publisher.php:119
+msgid "Publicado en Facebook"
+msgstr "Published to Facebook"
+
+#: social/class-social-publisher.php:145
+msgid "Instagram requiere una imagen."
+msgstr "Instagram requires an image."
+
+#: social/class-social-publisher.php:169
+msgid "No se obtuvo ID del media container."
+msgstr "Media container ID was not obtained."
+
+#: social/class-social-publisher.php:219
+msgid "Publicado en Instagram"
+msgstr "Published to Instagram"
+
+#: templates/form-inscripcion.php:52
+msgid "Publicado en Google"
+msgstr "Published to Google"
+
+#. translators: 1: plazas disponibles, 2: total plazas
+#: templates/form-inscripcion.php:83
+#: templates/form-inscripcion.php:84
+msgid "📋 Normas de inscripción"
+msgstr "📋 Enrollment rules"
+
+#. translators: 1: plazas disponibles, 2: total plazas
+#: templates/form-inscripcion.php:83
+#, php-format
+msgid "Plazas agotadas"
+msgstr "Sold out"
+
+#. translators: 1: plazas ocupadas, 2: total plazas
+#: templates/form-inscripcion.php:84
+#, php-format
+msgid "%1$d de %2$d plazas disponibles"
+msgstr "%1$d of %2$d seats available"
+
+#: templates/panel-reservas.php:32
+msgid "%1$d/%2$d plazas"
+msgstr "%1$d/%2$d seats"
+
+#: templates/panel-reservas.php:40
+msgid "Panel de reservas"
+msgstr "Booking panel"
+
+#: templates/panel-reservas.php:41
+msgid "Consultar mis reservas"
+msgstr "View my bookings"
+
+#: templates/panel-reservas.php:42
+msgid "Introduce tu email y código de reserva para acceder a tus inscripciones."
+msgstr "Enter your email and booking code to access your enrollments."
+
+#: templates/panel-reservas.php:48
+msgid "El código lo recibiste en el email de confirmación de tu inscripción."
+msgstr "You received the code in your enrollment confirmation email."
+
+#: templates/panel-reservas.php:54
+msgid "Correo electrónico"
+msgstr "Email address"
+
+#: templates/panel-reservas.php:62
+msgid "Código de reserva"
+msgstr "Booking code"
+
+#: templates/panel-reservas.php:70
+msgid "Consultar reservas"
+msgstr "View bookings"
+
+#: templates/panel-reservas.php:73
+msgid "Mis reservas"
+msgstr "My bookings"
+
+#: templates/panel-reservas.php:82
+msgid "Cerrar sesión"
+msgstr "Log out"
+
+#: templates/panel-reservas.php:90
+msgid "No tienes reservas registradas con este email."
+msgstr "You have no bookings registered with this email."
+
+#: templates/panel-reservas.php:91
+msgid "Cancelar reserva"
+msgstr "Cancel booking"
+
+#: templates/panel-reservas.php:94
+msgid "¿Estás seguro de que quieres cancelar esta reserva? Se liberará tu plaza."
+msgstr "Are you sure you want to cancel this booking? Your seat will be released."
+
+#: templates/panel-reservas.php:97
+msgid "Sí, cancelar reserva"
+msgstr "Yes, cancel booking"
+
+#: blocks/evaluacion/index.js:18
+msgid "No, mantener"
+msgstr "No, keep it"
+
+#: blocks/evaluacion/index.js:20
+msgid "Ajustes de Evaluación"
+msgstr "Evaluation Settings"
+
+#: blocks/evaluacion/index.js:30
+msgid "ID de la Actividad"
+msgstr "Activity ID"
+
+#: blocks/evaluacion/index.js:33
+msgid "Formulario de Evaluación (Convoca)"
+msgstr "Evaluation Form (Convoca)"
+
+#: blocks/evaluacion/index.js:37
+msgid "Mostrando evaluación para la actividad ID:"
+msgstr "Showing evaluation for activity ID:"
+
+#: blocks/evaluacion/index.js:38
+msgid "Por favor, configura el ID de la actividad en el panel lateral."
+msgstr "Please set the activity ID in the sidebar panel."
+
+#: blocks/evaluacion/block.json
+msgid "Este bloque se renderizará dinámicamente en el frontend según los permisos del usuario."
+msgstr "This block will render dynamically on the frontend based on the user's permissions."
+
+#: blocks/evaluacion/block.json
+msgctxt "block title"
+msgid "Convoca: Formulario de Evaluación"
+msgstr "Convoca: Evaluation Form"
+
+#: blocks/inscripcion/block.json
+msgctxt "block description"
+msgid "Muestra un formulario de evaluación para una actividad finalizada."
+msgstr "Displays an evaluation form for a finished activity."
+
+#: blocks/inscripcion/block.json
+msgctxt "block title"
+msgid "Formulario de Inscripción Convoca"
+msgstr "Convoca Enrollment Form"
+
+#: blocks/inscripcion/block.json
+#: blocks/pagina-inscripcion/block.json
+#: blocks/panel-reservas/block.json
+msgctxt "block description"
+msgid "Formulario de inscripción dinámico vinculado a una actividad."
+msgstr "Dynamic enrollment form linked to an activity."
+
+#: blocks/inscripcion/block.json
+msgctxt "block keyword"
+msgid "convoca"
+msgstr "convoca"
+
+#: blocks/inscripcion/block.json
+msgctxt "block keyword"
+msgid "inscripción"
+msgstr "enrollment"
+
+#: blocks/inscripcion/block.json
+msgctxt "block keyword"
+msgid "actividad"
+msgstr "activity"
+
+#: blocks/pagina-inscripcion/block.json
+msgctxt "block keyword"
+msgid "formulario"
+msgstr "form"
+
+#: blocks/pagina-inscripcion/block.json
+msgctxt "block title"
+msgid "Página de Inscripción Convoca"
+msgstr "Convoca Enrollment Page"
+
+#: blocks/pagina-inscripcion/block.json
+msgctxt "block description"
+msgid "Página completa con formulario y datos de la actividad."
+msgstr "Full page with the form and activity data."
+
+#: blocks/pagina-inscripcion/block.json
+msgctxt "block keyword"
+msgid "inscripciones"
+msgstr "enrollments"
+
+#: blocks/pagina-inscripcion/block.json
+msgctxt "block keyword"
+msgid "actividades"
+msgstr "activities"
+
+#: blocks/panel-reservas/block.json
+msgctxt "block keyword"
+msgid "listado"
+msgstr "listing"
+
+#: blocks/panel-reservas/block.json
+msgctxt "block title"
+msgid "Panel de Reservas Convoca"
+msgstr "Convoca Booking Panel"
+
+#: blocks/panel-reservas/block.json
+msgctxt "block description"
+msgid "Panel de reservas donde los usuarios pueden consultar y gestionar sus reservas mediante email y código."
+msgstr "Booking panel where users can view and manage their bookings via email and code."
+
+#: blocks/panel-reservas/block.json
+msgctxt "block keyword"
+msgid "reservas"
+msgstr "bookings"
+
+#: blocks/panel-reservas/block.json
+msgctxt "block keyword"
+msgid "panel"
+msgstr "panel"
+
+msgctxt "block keyword"
+msgid "consultar"
+msgstr "view"
