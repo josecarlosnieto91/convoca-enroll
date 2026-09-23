@@ -534,7 +534,7 @@ class Admin_Settings {
 				<th><label for="eval_reminder_link_base">URL base para el formulario</label></th>
 				<td>
 					<input type="url" id="eval_reminder_link_base" name="conv[eval_reminder][link_base]" value="<?php echo esc_attr( $link_base ); ?>" class="regular-text">
-					<p class="description">Página donde has colocado el shortcode <code>[formulario_evaluacion]</code>. Si lo dejas en blanco, se usará el enlace de la propia actividad más el parámetro <code>?evaluar=1</code>.</p>
+					<p class="description">Página donde has colocado el shortcode <code>[convoca_evaluacion]</code>. Si lo dejas en blanco, se usará el enlace de la propia actividad más el parámetro <code>?evaluar=1</code>.</p>
 				</td>
 			</tr>
 		</table>
@@ -937,32 +937,25 @@ class Admin_Settings {
 			);
 		}
 
-		// 2. Pages
+		// 2. Pages. Los shortcodes deben ser los REALES de Enroll: recomendar uno
+		// que nadie registra hace que el admin publique una página con el texto
+		// literal a la vista del visitante (pasaba con [convoca_mis_inscripciones],
+		// [convoca_checkin] y [convoca_pago_actividad]).
 		$required_pages = array(
-			'convoca_calendario'        => array(
-				'title'     => __( 'Página: Calendario de Actividades', 'convoca-enroll' ),
-				'shortcode' => __( '[convoca_calendario]', 'convoca-enroll' ),
-				'fix'       => __( 'Crea una página con el shortcode [convoca_calendario] para mostrar el listado de actividades.', 'convoca-enroll' ),
+			'convoca_inscripcion_page' => array(
+				'title'     => __( 'Página: Actividades', 'convoca-enroll' ),
+				'shortcode' => '[convoca_inscripcion_page]',
+				'fix'       => __( 'Crea una página con el shortcode [convoca_inscripcion_page] para mostrar el listado de actividades.', 'convoca-enroll' ),
 			),
-			'convoca_mis_inscripciones' => array(
+			'convoca_panel_reservas'   => array(
 				'title'     => __( 'Página: Mis Inscripciones', 'convoca-enroll' ),
-				'shortcode' => __( '[convoca_mis_inscripciones]', 'convoca-enroll' ),
-				'fix'       => __( 'Crea una página con el shortcode [convoca_mis_inscripciones] para que los usuarios vean sus reservas.', 'convoca-enroll' ),
+				'shortcode' => '[convoca_panel_reservas]',
+				'fix'       => __( 'Crea una página con el shortcode [convoca_panel_reservas] para que los usuarios vean sus reservas.', 'convoca-enroll' ),
 			),
-			'convoca_checkin'           => array(
-				'title'     => __( 'Página: Control de Asistencia (Check-in)', 'convoca-enroll' ),
-				'shortcode' => '[convoca_checkin]',
-				'fix'       => __( 'Crea una página con el shortcode [convoca_checkin] para que los monitores registren la asistencia.', 'convoca-enroll' ),
-			),
-			'convoca_pago_actividad'    => array(
-				'title'     => __( 'Página: Pago de Actividad', 'convoca-enroll' ),
-				'shortcode' => __( '[convoca_pago_actividad]', 'convoca-enroll' ),
-				'fix'       => __( 'Crea una página con el shortcode [convoca_pago_actividad] para procesar los pagos de inscripción.', 'convoca-enroll' ),
-			),
-			'formulario_evaluacion'     => array(
+			'convoca_evaluacion'       => array(
 				'title'     => __( 'Página: Formulario de Evaluación', 'convoca-enroll' ),
-				'shortcode' => __( '[formulario_evaluacion]', 'convoca-enroll' ),
-				'fix'       => __( 'Crea una página con el shortcode [formulario_evaluacion] para que los monitores evalúen las actividades.', 'convoca-enroll' ),
+				'shortcode' => '[convoca_evaluacion]',
+				'fix'       => __( 'Crea una página con el shortcode [convoca_evaluacion] para que los monitores evalúen las actividades.', 'convoca-enroll' ),
 			),
 		);
 
@@ -976,6 +969,20 @@ class Admin_Settings {
 				'fix'     => ! $page ? $data['fix'] : '',
 			);
 		}
+
+		// 3. Check-in. NO es una página con shortcode: es la ruta /checkin/ que
+		// registra Checkin_Handler por rewrite rule (+ PWA). Buscar una página con
+		// un shortcode inexistente daba un error permanente e inarreglable.
+		$rules      = (array) get_option( 'rewrite_rules' );
+		$checkin_ok = isset( $rules['^checkin/?$'] );
+		$checks[]   = array(
+			'title'   => __( 'Ruta: Control de Asistencia (Check-in)', 'convoca-enroll' ),
+			'status'  => $checkin_ok ? 'ok' : 'warning',
+			'message' => $checkin_ok
+				? sprintf( /* translators: %s: URL */ __( 'Activa en %s', 'convoca-enroll' ), home_url( '/checkin/' ) )
+				: __( 'No se encuentra la regla de reescritura /checkin/.', 'convoca-enroll' ),
+			'fix'     => $checkin_ok ? '' : __( 'Guarda Ajustes → Enlaces permanentes para regenerar las reglas (el check-in no funciona con enlaces simples).', 'convoca-enroll' ),
+		);
 
 		update_option(
 			self::CACHE_KEY,

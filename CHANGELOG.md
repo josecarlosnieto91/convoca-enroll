@@ -1,5 +1,11 @@
 # Changelog — convoca-enroll
 
+## v2.7.7 (2026-09-23)
+
+### 🐛 Correcciones
+- Ajustes → Salud: la lista de páginas del sistema recomendaba shortcodes que no existen en el plugin (`[convoca_mis_inscripciones]`, `[convoca_checkin]`, `[convoca_pago_actividad]`, `[formulario_evaluacion]`), así que el admin que seguía el aviso publicaba páginas con el texto literal a la vista del visitante. Ahora comprueba los shortcodes reales (`[convoca_inscripcion_page]`, `[convoca_panel_reservas]`, `[convoca_evaluacion]`).
+- El control de asistencia se comprueba donde de verdad vive: la ruta `/checkin/` por regla de reescritura (antes buscaba una página con un shortcode inexistente, lo que daba un error permanente e inarreglable).
+
 ## v2.7.6 (2026-09-11)
 
 ### ✨ Nuevas funcionalidades
