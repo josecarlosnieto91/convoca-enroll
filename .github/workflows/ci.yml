@@ -87,9 +87,18 @@ jobs:
       - name: Run unit tests
         run: vendor/bin/phpunit -c phpunit-unit.xml --log-junit build/junit.xml
       - name: Run integration tests
-        # Requiere WordPress real (bootstrap.php → wp-load.php); se ejecuta solo
-        # en entornos con WP instalado. No bloquea el CI unitario.
-        run: vendor/bin/phpunit --testsuite integration --coverage-clover build/clover-integration.xml --log-junit build/junit-integration.xml || true
+        # La suite de integración necesita WordPress real (bootstrap.php → wp-load.php).
+        # Antes llevaba un `|| true`: no podía fallar nunca, así que el paso no
+        # comprobaba nada (un rojo real se leía como verde). Ahora se salta con un
+        # aviso VISIBLE si no hay WordPress, y si lo hay, se ejecuta de verdad y
+        # puede fallar. El escenario con WP se cubre además en el job de health
+        # check local (levanta un WordPress de prueba) y en local.
+        run: |
+          if [ ! -f /tmp/wp/wp-load.php ] && [ ! -f "$GITHUB_WORKSPACE/../wp/wp-load.php" ]; then
+            echo "::notice::Sin WordPress en el runner: la suite de integración no aplica en este job (se cubre en el health check local)."
+            exit 0
+          fi
+          vendor/bin/phpunit --testsuite integration --coverage-clover build/clover-integration.xml --log-junit build/junit-integration.xml
       - uses: actions/upload-artifact@v4
         if: always()
         with:
