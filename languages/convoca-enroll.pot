@@ -1248,44 +1248,16 @@ msgstr ""
 msgid "Página: Mis Inscripciones"
 msgstr ""
 
-#: admin/class-admin-settings.php:949
-msgid "[convoca_mis_inscripciones]"
-msgstr ""
-
-#: admin/class-admin-settings.php:950
-msgid "Crea una página con el shortcode [convoca_mis_inscripciones] para que los usuarios vean sus reservas."
-msgstr ""
-
 #: admin/class-admin-settings.php:953
 msgid "Página: Control de Asistencia (Check-in)"
-msgstr ""
-
-#: admin/class-admin-settings.php:955
-msgid "Crea una página con el shortcode [convoca_checkin] para que los monitores registren la asistencia."
 msgstr ""
 
 #: admin/class-admin-settings.php:958
 msgid "Página: Pago de Actividad"
 msgstr ""
 
-#: admin/class-admin-settings.php:959
-msgid "[convoca_pago_actividad]"
-msgstr ""
-
-#: admin/class-admin-settings.php:960
-msgid "Crea una página con el shortcode [convoca_pago_actividad] para procesar los pagos de inscripción."
-msgstr ""
-
 #: admin/class-admin-settings.php:963
 msgid "Página: Formulario de Evaluación"
-msgstr ""
-
-#: admin/class-admin-settings.php:964
-msgid "[formulario_evaluacion]"
-msgstr ""
-
-#: admin/class-admin-settings.php:965
-msgid "Crea una página con el shortcode [formulario_evaluacion] para que los monitores evalúen las actividades."
 msgstr ""
 
 #. translators: %s: page title

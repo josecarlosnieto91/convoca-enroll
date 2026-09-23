@@ -1249,47 +1249,17 @@ msgstr "Create a page with the [convoca_calendario] shortcode to display the lis
 msgid "Página: Mis Inscripciones"
 msgstr "Page: My Enrollments"
 
-#: admin/class-admin-settings.php:950
-msgid "[convoca_mis_inscripciones]"
-msgstr "[convoca_mis_inscripciones]"
-
-#: admin/class-admin-settings.php:953
-msgid "Crea una página con el shortcode [convoca_mis_inscripciones] para que los usuarios vean sus reservas."
-msgstr "Create a page with the [convoca_mis_inscripciones] shortcode so users can view their bookings."
-
 #: admin/class-admin-settings.php:955
 msgid "Página: Control de Asistencia (Check-in)"
 msgstr "Page: Attendance Control (Check-in)"
-
-#: admin/class-admin-settings.php:958
-msgid "Crea una página con el shortcode [convoca_checkin] para que los monitores registren la asistencia."
-msgstr "Create a page with the [convoca_checkin] shortcode so monitors can record attendance."
 
 #: admin/class-admin-settings.php:959
 msgid "Página: Pago de Actividad"
 msgstr "Page: Activity Payment"
 
-#: admin/class-admin-settings.php:960
-msgid "[convoca_pago_actividad]"
-msgstr "[convoca_pago_actividad]"
-
-#: admin/class-admin-settings.php:963
-msgid "Crea una página con el shortcode [convoca_pago_actividad] para procesar los pagos de inscripción."
-msgstr "Create a page with the [convoca_pago_actividad] shortcode to process enrollment payments."
-
 #: admin/class-admin-settings.php:964
 msgid "Página: Formulario de Evaluación"
 msgstr "Page: Evaluation Form"
-
-#: admin/class-admin-settings.php:965
-msgid "[formulario_evaluacion]"
-msgstr "[formulario_evaluacion]"
-
-#. translators: %s: page title
-#: admin/class-admin-settings.php:975
-#, php-format
-msgid "Crea una página con el shortcode [formulario_evaluacion] para que los monitores evalúen las actividades."
-msgstr "Create a page with the [formulario_evaluacion] shortcode so monitors can evaluate activities."
 
 #. translators: %s: page title
 #: admin/class-admin-settings.php:975
