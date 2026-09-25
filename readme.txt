@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.7.7
+Stable tag: 2.7.8
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,10 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.8 =
+* **Corregido:** las horas de voluntariado acreditadas por Enroll no llegaban a contar. El vínculo con el socio se escribía con una clave equivocada (`" _convoca_miembro_id"`, con espacio inicial y en español) mientras Members lee `_convoca_member_id`, así que las horas quedaban invisibles: la renovación por voluntariado no las veía y los certificados no las sumaban.
+* Migración incluida: las filas de horas ya registradas se normalizan a la clave correcta (sin duplicar datos).
 
 = 2.7.7 =
 * Ajustes → Salud: las páginas que comprobaba apuntaban a shortcodes que no existen (`[convoca_mis_inscripciones]`, `[convoca_checkin]`, `[convoca_pago_actividad]`, `[formulario_evaluacion]` y el calendario, que es de Shifts). Ahora comprueba los reales: `[convoca_inscripcion_page]`, `[convoca_panel_reservas]` y `[convoca_evaluacion]`, y avisa de la ruta `/checkin/` (que es una regla de reescritura, no una página).

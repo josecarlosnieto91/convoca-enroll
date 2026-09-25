@@ -1,5 +1,12 @@
 # Changelog — convoca-enroll
 
+## v2.7.8 (2026-09-25)
+
+### Corregido
+- Las horas acreditadas por Enroll no llegaban a Members: la clave de enlace al socio se escribía como `' _convoca_miembro_id'` (espacio inicial + español) y Members lee `_convoca_member_id`. Renovación por horas y certificados quedaban sin esas horas.
+- Migración 1.4.0: normaliza las filas históricas de las dos grafías antiguas.
+- Test de regresión `VolunteerHourKeyTest`.
+
 ## v2.7.7 (2026-09-23)
 
 ### 🐛 Correcciones
