@@ -50,8 +50,21 @@ class Volunteer_Hour_Tracker {
 			return;
 		}
 
-		// Check if user is a volunteer.
-		if ( ! in_array( 'voluntario_aprobado', (array) $user->roles ) && ! $user->has_cap( 'gestionar_mis_turnos' ) && ! get_user_meta( $user->ID, '_convoca_es_voluntario', true ) ) {
+		// Regla única y compartida (convoca-members): el compromiso del alta es una solicitud y las
+		// horas exigen aprobación. La fuente de verdad es el usuario (rol o meta), que es donde
+		// escribe la aprobación. Antes se aceptaba además la clave `_convoca_es_voluntario` en el
+		// usuario — que nadie escribe y se confunde con el meta del mismo nombre en la ficha —, así
+		// que un socio con el compromiso marcado podía acreditar horas sin aprobación (o al revés,
+		// parecía habilitado cuando no lo estaba).
+		if ( class_exists( '\Convoca\Members\Admin_Voluntariado' ) ) {
+			if ( ! \Convoca\Members\Admin_Voluntariado::puede_acreditar_horas( (int) $user->ID ) ) {
+				return;
+			}
+		} elseif (
+			! in_array( 'voluntario_aprobado', (array) $user->roles, true )
+			&& '1' !== (string) get_user_meta( $user->ID, '_convoca_voluntario_aprobado', true )
+			&& ! $user->has_cap( 'gestionar_mis_turnos' )
+		) {
 			return;
 		}
 
