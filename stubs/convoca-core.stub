@@ -60,6 +60,23 @@ class Event_Style_Registry
     public static function get( mixed ...$args ): mixed { return null; }
 }
 
+class Email_Copy
+{
+    public static function enabled(): bool { return true; }
+
+    /** @return array<int, string> */
+    public static function activity_monitors( int $actividad_id ): array { return array(); }
+
+    /**
+     * @param array<string, mixed> $context
+     * @return array<int, string>
+     */
+    public static function recipients( array $context = array() ): array { return array(); }
+
+    /** @param array<string, mixed> $context */
+    public static function maybe_copy( array $context ): bool { return true; }
+}
+
 class Email_Layout
 {
     public static function render( mixed ...$args ): mixed { return null; }

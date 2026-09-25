@@ -229,6 +229,24 @@ class Email_Queue {
 					}
 
 					\Convoca\Core\Logger::log( 'Email enviado: ' . $email->recipient . ' (ID: ' . $email->id . ')', 'info', 'Enroll/Email', (int) $email->inscripcion_id );
+
+					// Copia informativa: si el correo es de una actividad, a sus monitores
+					// (responsables); si no hay monitor, al correo de administración.
+					$inscripcion_id = (int) $email->inscripcion_id;
+					\Convoca\Core\Email_Copy::maybe_copy(
+						array(
+							'to'              => array( (string) $email->recipient ),
+							'subject'         => (string) $email->subject,
+							'body'            => (string) $email->body_html,
+							'plugin'          => 'convoca-enroll',
+							'inscripcion_id'  => $inscripcion_id,
+							'actividad_id'    => $inscripcion_id ? (int) get_post_meta( $inscripcion_id, '_convoca_actividad_id', true ) : 0,
+							'has_attachments' => ! empty( $attachments ),
+							'send'            => static function ( array $to, string $copy_subject, string $copy_body, array $copy_headers ): bool {
+								return (bool) wp_mail( $to, $copy_subject, $copy_body, $copy_headers );
+							},
+						)
+					);
 				} else {
 					$new_retries = $email->retries + 1;
 					$status      = ( $new_retries >= $max_retries ) ? 'failed' : 'pending';

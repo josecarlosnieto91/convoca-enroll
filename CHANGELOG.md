@@ -1,5 +1,13 @@
 # Changelog — convoca-enroll
 
+## v2.7.9 (2026-09-25)
+
+### Añadido
+- Los correos de inscripciones y actividades se copian a los **monitores** (responsables) de la
+  actividad; si la actividad no tiene responsables, la copia va al correo de administración
+  (`Convoca\Core\Email_Copy`).
+
+
 ## v2.7.8 (2026-09-25)
 
 ### Corregido
