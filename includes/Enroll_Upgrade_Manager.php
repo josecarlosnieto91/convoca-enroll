@@ -67,6 +67,81 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 			'1.2.0' => array( $this, 'upgrade_to_1_2_0' ),
 			'1.3.0' => array( $this, 'upgrade_to_1_3_0' ),
 			'1.4.0' => array( $this, 'upgrade_to_1_4_0' ),
+			'1.5.0' => array( $this, 'upgrade_to_1_5_0' ),
+		);
+	}
+
+	/**
+	 * Migración 1.5.0: enlaza los registros de horas históricos con su inscripción.
+	 *
+	 * Hasta 2.7.9 el `registro_hora` no guardaba a qué inscripción pertenecía, así que retirar
+	 * una asistencia no podía invalidar su acreditación y volver a marcarla creaba otra. La
+	 * corrección añade el vínculo (`_convoca_origen` / `_convoca_origen_id`) a los registros
+	 * nuevos; esta migración se lo añade a los históricos **solo cuando la correspondencia es
+	 * inequívoca** (exactamente una inscripción de ese voluntario a esa actividad).
+	 *
+	 * No borra ni cambia el estado de nada: los registros legítimos siguen acreditados. Los casos
+	 * ambiguos (0 o varias candidatas) se dejan intactos y quedan contados en el log.
+	 *
+	 * Idempotente: solo toca los registros que aún no tienen vínculo.
+	 */
+	protected function upgrade_to_1_5_0(): void {
+		global $wpdb;
+
+		$registros = $wpdb->get_results(
+			"SELECT p.ID, a.meta_value AS actividad_id, u.meta_value AS usuario_id
+			 FROM {$wpdb->posts} p
+			 JOIN {$wpdb->postmeta} a ON a.post_id = p.ID AND a.meta_key = '_convoca_actividad_id'
+			 LEFT JOIN {$wpdb->postmeta} u ON u.post_id = p.ID AND u.meta_key = '_convoca_usuario_id'
+			 LEFT JOIN {$wpdb->postmeta} oi ON oi.post_id = p.ID AND oi.meta_key = '_convoca_origen_id'
+			 WHERE p.post_type = 'registro_hora'
+			   AND a.meta_value > 0
+			   AND oi.meta_id IS NULL"
+		);
+
+		$enlazados = 0;
+		$ambiguos  = 0;
+		$sin_datos = 0;
+
+		foreach ( $registros as $registro ) {
+			$usuario_id = (int) $registro->usuario_id;
+			$user       = $usuario_id ? get_userdata( $usuario_id ) : false;
+
+			if ( ! $user ) {
+				$sin_datos++;
+				continue;
+			}
+
+			$inscripciones = $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT p.ID FROM {$wpdb->posts} p
+					 JOIN {$wpdb->postmeta} a ON a.post_id = p.ID AND a.meta_key = '_convoca_actividad_id' AND a.meta_value = %d
+					 JOIN {$wpdb->postmeta} e ON e.post_id = p.ID AND e.meta_key = '_convoca_email' AND e.meta_value = %s
+					 WHERE p.post_type = 'inscripcion'",
+					(int) $registro->actividad_id,
+					$user->user_email
+				)
+			);
+
+			if ( count( $inscripciones ) !== 1 ) {
+				count( $inscripciones ) > 1 ? $ambiguos++ : $sin_datos++;
+				continue;
+			}
+
+			update_post_meta( (int) $registro->ID, '_convoca_origen', \Convoca\Core\Hour_Ledger::ORIGEN_INSCRIPCION );
+			update_post_meta( (int) $registro->ID, '_convoca_origen_id', (int) $inscripciones[0] );
+			$enlazados++;
+		}
+
+		\Convoca\Core\Logger::info(
+			sprintf(
+				'Upgrade 1.5.0: vínculo inscripción↔registro_hora — enlazados %d, ambiguos %d, sin datos suficientes %d (de %d registros sin vínculo).',
+				$enlazados,
+				$ambiguos,
+				$sin_datos,
+				count( $registros )
+			),
+			'Enroll/Upgrade'
 		);
 	}
 

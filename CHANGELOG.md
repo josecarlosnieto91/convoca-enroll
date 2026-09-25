@@ -1,5 +1,21 @@
 # Changelog — convoca-enroll
 
+## v2.7.10 (2026-09-25)
+
+### Corregido
+- **`convoca-enroll#2`**: retirar la asistencia no descontaba las horas y volver a marcarla las
+  duplicaba (Members llegó a ver 26 h donde había 25). El `registro_hora` no guardaba a qué
+  inscripción pertenecía, así que la retirada no podía invalidarlo y la re-marcación creaba otro.
+  Ahora la acreditación pasa por `Convoca\Core\Hour_Ledger`: un único registro por asistencia, que
+  se invalida al retirar y se reactiva al volver a marcar. El agregado del usuario se ajusta con
+  las horas realmente acreditadas.
+
+### Migración
+- `Upgrade_Manager` 1.5.0: enlaza los registros históricos con su inscripción **solo** cuando la
+  correspondencia es inequívoca; los ambiguos se dejan intactos y quedan contados en el log. No
+  borra nada ni cambia estados.
+
+
 ## v2.7.9 (2026-09-25)
 
 ### Añadido

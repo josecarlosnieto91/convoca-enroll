@@ -83,40 +83,43 @@ class Volunteer_Hour_Tracker {
 	}
 
 	/**
-	 * Subtract hours when attendance is changed from 'si' to 'no '
+	 * Retira las horas acreditadas cuando la asistencia deja de estar marcada.
+	 *
+	 * La acreditación se **invalida** (no se borra) a través del libro de horas común, así que
+	 * deja de contar en Members, certificados y renovación; y volver a marcar reactiva el MISMO
+	 * registro en lugar de crear otro. El agregado del usuario se ajusta con las horas que
+	 * realmente se habían acreditado, no con las que la actividad tenga ahora.
 	 */
 	private static function subtract_hours( int $inscripcion_id, $user ): void {
-		$actividad_id = CPT_Inscripcion::get_meta( $inscripcion_id, 'actividad_id' );
-		$meta_act     = CPT_Actividad::get_meta( $actividad_id );
+		$log_id = \Convoca\Core\Hour_Ledger::find( \Convoca\Core\Hour_Ledger::ORIGEN_INSCRIPCION, $inscripcion_id );
+		$hours  = $log_id ? (float) get_post_meta( $log_id, '_convoca_horas', true ) : 0.0;
 
-		$fecha_inicio = $meta_act['fecha_inicio'] ?? '';
-		$fecha_fin    = $meta_act['fecha_fin'] ?? '';
+		// 1) Invalida la acreditación de ESTA asistencia (las de otras actividades no se tocan).
+		\Convoca\Core\Hour_Ledger::revoke(
+			\Convoca\Core\Hour_Ledger::ORIGEN_INSCRIPCION,
+			$inscripcion_id,
+			__( 'Asistencia retirada', 'convoca-enroll' )
+		);
 
-		if ( empty( $fecha_inicio ) || empty( $fecha_fin ) ) {
-			return;
-		}
-
-		$hours = self::calculate_hours( $fecha_inicio, $fecha_fin );
-		if ( $hours <= 0 ) {
-			return;
-		}
-
+		// 2) Ajusta el agregado del voluntario y libera el marcador de la inscripción.
 		global $wpdb;
 		$meta_key_total = '_convoca_horas_voluntariado_total';
 
 		$wpdb->query( 'START TRANSACTION' );
 
 		try {
-			$wpdb->query(
-				$wpdb->prepare(
-					"UPDATE {$wpdb->usermeta} 
-                 SET meta_value = GREATEST(0, CAST(meta_value AS DECIMAL(10,2)) - %f) 
-                 WHERE user_id = %d AND meta_key = %s",
-					$hours,
-					$user->ID,
-					$meta_key_total
-				)
-			);
+			if ( $hours > 0 ) {
+				$wpdb->query(
+					$wpdb->prepare(
+						"UPDATE {$wpdb->usermeta} 
+	                 SET meta_value = GREATEST(0, CAST(meta_value AS DECIMAL(10,2)) - %f) 
+	                 WHERE user_id = %d AND meta_key = %s",
+						$hours,
+						$user->ID,
+						$meta_key_total
+					)
+				);
+			}
 
 			delete_post_meta( $inscripcion_id, '_convoca_horas_contadas' );
 
@@ -134,8 +137,6 @@ class Volunteer_Hour_Tracker {
 		if ( $hours <= 0 ) {
 			return;
 		}
-
-		$email = $user->user_email;
 
 		global $wpdb;
 		$meta_key_total   = '_convoca_horas_voluntariado_total';
@@ -206,49 +207,19 @@ class Volunteer_Hour_Tracker {
 			return;
 		}
 
-		if ( post_type_exists( 'registro_hora' ) ) {
-			$log_id = wp_insert_post(
-				array(
-					'post_type'   => 'registro_hora',
-					'post_title'  => sprintf( 'Horas Actividad #%d - %s', $actividad_id, $user->display_name ),
-					'post_status' => 'publish',
-					'post_author' => $user->ID,
-				)
-			);
-
-			if ( $log_id ) {
-				$members = get_posts(
-					array(
-						'post_type'      => 'miembro',
-						'meta_key'       => '_convoca_email',
-						'meta_value'     => $email,
-						'posts_per_page' => 1,
-						'fields'         => 'ids',
-					)
-				);
-
-				if ( ! empty( $members ) ) {
-					// Clave del contrato entre plugins: `_convoca_member_id` (inglesa, sin espacio).
-					// Members la exige en Voluntariado_Manager::get_horas_aprobadas_desde();
-					// antes se escribía `' _convoca_miembro_id'` (con espacio inicial y en
-					// español), así que las horas de Enroll nunca llegaban a contar.
-					update_post_meta( $log_id, '_convoca_member_id', $members[0] );
-				}
-
-				update_post_meta( $log_id, '_convoca_usuario_id', $user->ID );
-				update_post_meta( $log_id, '_convoca_fecha', wp_date( 'Y-m-d' ) );
-				update_post_meta( $log_id, '_convoca_horas', $hours );
-				update_post_meta( $log_id, '_convoca_actividad_id', $actividad_id );
-				update_post_meta( $log_id, '_convoca_estado', 'aprobada' );
-				update_post_meta( $log_id, '_convoca_tareas', 'Asistencia a actividad programada' );
-			}
-		} else {
-			\Convoca\Core\Logger::warning(
-				"Horas de voluntariado no registradas: CPT 'registro_hora' no disponible. Activa convoca-members.",
-				'Enroll/Volunteer',
-				$actividad_id
-			);
-		}
+		// Un único registro por asistencia: si ya existe (marcada antes y retirada), se
+		// reactiva en lugar de crear otro, así que marcar/desmarcar no acumula horas.
+		\Convoca\Core\Hour_Ledger::credit(
+			\Convoca\Core\Hour_Ledger::ORIGEN_INSCRIPCION,
+			$inscripcion_id,
+			(int) $user->ID,
+			$hours,
+			array(
+				'title'        => sprintf( 'Horas Actividad #%d - %s', $actividad_id, $user->display_name ),
+				'tareas'       => 'Asistencia a actividad programada',
+				'actividad_id' => $actividad_id,
+			)
+		);
 
 		\Convoca\Core\Logger::info(
 			sprintf( 'Sumadas %.2f horas al voluntario ID %d por actividad %d', $hours, $user->ID, $actividad_id ),

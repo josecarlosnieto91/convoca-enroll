@@ -36,13 +36,34 @@ class VolunteerHourKeyTest extends TestCase {
 		);
 	}
 
-	/** El tracker SÍ debe escribir la clave que Members consulta. */
-	public function test_el_tracker_escribe_la_clave_que_members_lee(): void {
+	/**
+	 * El tracker delega el ciclo de la acreditación en el libro de horas común: escribir las
+	 * metas por su cuenta fue justo lo que hizo que la retirada no pudiera deshacer nada.
+	 */
+	public function test_el_tracker_delega_en_el_libro_de_horas(): void {
 		$src = $this->fuente( 'includes/Volunteer_Hour_Tracker.php' );
 		$this->assertStringContainsString(
-			"update_post_meta( \$log_id, '_convoca_member_id'",
+			'Hour_Ledger::credit',
 			$src,
-			'El vínculo al socio debe usar _convoca_member_id.'
+			'La acreditación de una asistencia debe registrarse por el libro común.'
+		);
+		$this->assertStringContainsString(
+			'Hour_Ledger::revoke',
+			$src,
+			'Retirar la asistencia debe invalidar su acreditación en el libro común.'
+		);
+	}
+
+	/** El libro de horas es quien escribe la clave que Members consulta. */
+	public function test_el_libro_de_horas_escribe_la_clave_que_members_lee(): void {
+		$core = dirname( __DIR__, 3 ) . '/convoca-core/includes/Hour_Ledger.php';
+		if ( ! file_exists( $core ) ) {
+			$this->markTestSkipped( 'convoca-core no está junto a este repo.' );
+		}
+		$this->assertStringContainsString(
+			"'_convoca_member_id'",
+			(string) file_get_contents( $core ),
+			'El vínculo con el socio debe usar la clave que Members lee.'
 		);
 	}
 
