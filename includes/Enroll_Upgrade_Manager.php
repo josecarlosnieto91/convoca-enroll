@@ -66,6 +66,43 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 		return array(
 			'1.2.0' => array( $this, 'upgrade_to_1_2_0' ),
 			'1.3.0' => array( $this, 'upgrade_to_1_3_0' ),
+			'1.4.0' => array( $this, 'upgrade_to_1_4_0' ),
+		);
+	}
+
+	/**
+	 * Migración 1.4.0: normaliza la clave de enlace al socio en `registro_hora`.
+	 *
+	 * `Volunteer_Hour_Tracker` escribía la clave `' _convoca_miembro_id'` (con
+	 * espacio inicial y en español), que Members nunca lee: usa
+	 * `_convoca_member_id` en `Voluntariado_Manager::get_horas_aprobadas_desde()`
+	 * y en `Certificate_Generator`. Resultado: las horas acreditadas por Enroll
+	 * no contaban para la renovación ni para los certificados.
+	 *
+	 * Se migran las filas históricas (las dos grafías antiguas) sin crear claves
+	 * duplicadas: si la fila ya tiene la clave correcta, se descarta la antigua.
+	 */
+	protected function upgrade_to_1_4_0(): void {
+		global $wpdb;
+
+		$antiguas = $wpdb->get_results(
+			"SELECT post_id, meta_value FROM {$wpdb->postmeta}
+			 WHERE meta_key IN (' _convoca_miembro_id', '_convoca_miembro_id')"
+		);
+
+		$migradas = 0;
+		foreach ( $antiguas as $fila ) {
+			if ( get_post_meta( (int) $fila->post_id, '_convoca_member_id', true ) === '' ) {
+				update_post_meta( (int) $fila->post_id, '_convoca_member_id', $fila->meta_value );
+				$migradas++;
+			}
+			delete_post_meta( (int) $fila->post_id, ' _convoca_miembro_id' );
+			delete_post_meta( (int) $fila->post_id, '_convoca_miembro_id' );
+		}
+
+		\Convoca\Core\Logger::info(
+			'Upgrade 1.4.0: clave de socio en registro_hora normalizada a _convoca_member_id (filas migradas: ' . $migradas . ').',
+			'Enroll/Upgrade'
 		);
 	}
 

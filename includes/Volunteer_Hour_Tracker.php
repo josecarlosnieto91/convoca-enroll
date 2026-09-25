@@ -228,7 +228,11 @@ class Volunteer_Hour_Tracker {
 				);
 
 				if ( ! empty( $members ) ) {
-					update_post_meta( $log_id, ' _convoca_miembro_id', $members[0] );
+					// Clave del contrato entre plugins: `_convoca_member_id` (inglesa, sin espacio).
+					// Members la exige en Voluntariado_Manager::get_horas_aprobadas_desde();
+					// antes se escribía `' _convoca_miembro_id'` (con espacio inicial y en
+					// español), así que las horas de Enroll nunca llegaban a contar.
+					update_post_meta( $log_id, '_convoca_member_id', $members[0] );
 				}
 
 				update_post_meta( $log_id, '_convoca_usuario_id', $user->ID );
