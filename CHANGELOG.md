@@ -1,5 +1,16 @@
 # Changelog — convoca-enroll
 
+## v2.7.11 (2026-09-25)
+
+### Cambiado
+- El motor de horas aplica la **regla de voluntariado de Members** (`puede_acreditar_horas`), con la
+  misma condición de reserva si Members no está activo. Se retira la clave `_convoca_es_voluntario`
+  del usuario: nadie la escribía y se confundía con el meta del mismo nombre en la ficha del socio,
+  de modo que el compromiso del alta parecía habilitar las horas sin aprobación.
+- El permiso se exige para **acreditar** horas, no para **retirarlas**: retirar una asistencia debe
+  funcionar siempre (si no, revocar el voluntariado dejaría horas atascadas).
+
+
 ## v2.7.10 (2026-09-25)
 
 ### Corregido

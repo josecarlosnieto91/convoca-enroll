@@ -50,26 +50,27 @@ class Volunteer_Hour_Tracker {
 			return;
 		}
 
-		// Regla única y compartida (convoca-members): el compromiso del alta es una solicitud y las
-		// horas exigen aprobación. La fuente de verdad es el usuario (rol o meta), que es donde
-		// escribe la aprobación. Antes se aceptaba además la clave `_convoca_es_voluntario` en el
-		// usuario — que nadie escribe y se confunde con el meta del mismo nombre en la ficha —, así
-		// que un socio con el compromiso marcado podía acreditar horas sin aprobación (o al revés,
-		// parecía habilitado cuando no lo estaba).
-		if ( class_exists( '\Convoca\Members\Admin_Voluntariado' ) ) {
-			if ( ! \Convoca\Members\Admin_Voluntariado::puede_acreditar_horas( (int) $user->ID ) ) {
+		// El permiso se exige para ACREDITAR horas, no para retirarlas: retirar una asistencia es
+		// una corrección y debe funcionar siempre (si no, revocar el voluntariado dejaría horas
+		// atascadas para siempre). Ver el bloque del caso 'si'.
+		if ( $asistencia === 'si' ) {
+			// Regla única y compartida (convoca-members): el compromiso del alta es una solicitud y
+			// las horas exigen aprobación. La fuente de verdad es el usuario (rol o meta), que es
+			// donde escribe la aprobación. Antes se aceptaba además la clave
+			// `_convoca_es_voluntario` en el usuario — que nadie escribe y se confunde con el meta
+			// del mismo nombre en la ficha —, así que el compromiso parecía habilitar las horas.
+			if ( class_exists( '\Convoca\Members\Admin_Voluntariado' ) ) {
+				if ( ! \Convoca\Members\Admin_Voluntariado::puede_acreditar_horas( (int) $user->ID ) ) {
+					return;
+				}
+			} elseif (
+				! in_array( 'voluntario_aprobado', (array) $user->roles, true )
+				&& '1' !== (string) get_user_meta( $user->ID, '_convoca_voluntario_aprobado', true )
+				&& ! $user->has_cap( 'gestionar_mis_turnos' )
+			) {
 				return;
 			}
-		} elseif (
-			! in_array( 'voluntario_aprobado', (array) $user->roles, true )
-			&& '1' !== (string) get_user_meta( $user->ID, '_convoca_voluntario_aprobado', true )
-			&& ! $user->has_cap( 'gestionar_mis_turnos' )
-		) {
-			return;
-		}
 
-		// Case 1: Attendance changed to 'si' - add hours.
-		if ( $asistencia === 'si' ) {
 			$actividad_id = CPT_Inscripcion::get_meta( $inscripcion_id, 'actividad_id' );
 			$meta_act     = CPT_Actividad::get_meta( $actividad_id );
 			$fecha_inicio = $meta_act['fecha_inicio'] ?? '';
