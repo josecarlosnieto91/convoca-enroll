@@ -26,7 +26,20 @@ siembra el fixture con `npm run test:seed`, que se ejecuta **dentro** del conten
 | `media-api.spec.js` | Plantillas reales, generación del cartel, PNG servido, caché y regenerado. |
 | `user-journey-media.spec.js` | El recorrido completo: cerrado sin identificarse, abierto con credenciales. |
 | `visual-regression.spec.js` | Los píxeles del cartel contra la línea base de `tests/snapshots/posters.json`. |
-| `user-journey-social.spec.js` | Comprobaciones públicas de la API social. |
+| `user-journey-social.spec.js` | El módulo social por su API: permiso exigido, cuentas conectadas (ninguna inventada), OAuth que redirige sin romper y callback sin código. |
+
+## Por qué el social se prueba así
+
+El módulo social **no está huérfano** y por eso no se retira: expone seis rutas bajo
+`convoca/v1/social/*`, tiene un healthcheck semanal del token (`convoca_social_token_healthcheck`)
+y publica por evento de cron (`convoca_social_publish` → `Social_Scheduler::process()`). Lo que no
+tiene es pantalla, como el módulo de medios, así que se prueba por la API.
+
+Lo que **no** se prueba es la conexión real con Meta o Google: no hay credenciales en el entorno de
+desarrollo y no se le piden a nadie. Se comprueba la única parte que depende de este código, que es
+la respuesta que da al arrancar el OAuth y al recibir un callback sin código — en los dos casos una
+redirección, nunca un 500. Por eso esas dos pruebas van con `maxRedirects: 0`: seguir la
+redirección llevaría a Meta y la prueba dejaría de medir lo nuestro.
 
 ## Dos cosas que cuestan media hora si no se saben
 
