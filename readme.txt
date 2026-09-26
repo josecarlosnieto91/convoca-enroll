@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.7.16
+Stable tag: 2.7.17
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.17 =
+* La ruta del check-in no llevaba al escaner: las reglas de reescritura apuntaban a una query var con otro nombre que la registrada, asi que /checkin/ respondia con la web normal y la asistencia no se registraba. Al actualizar, guarda Ajustes -> Enlaces permanentes para regenerar las reglas.
 
 = 2.7.16 =
 * Cinco acciones AJAX del JavaScript publicaban a nombres que el PHP no registraba: el panel de reservas respondia «Error desconocido.» al consultar o cancelar, y fallaban el cambio de estado, el check-in y el reenvio de correo en la administracion.

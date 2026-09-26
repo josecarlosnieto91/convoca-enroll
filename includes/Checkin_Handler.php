@@ -53,8 +53,14 @@ class Checkin_Handler {
 	 * Register rewrite rules for /checkin/ and /checkin/{id}/
 	 */
 	public function register_rewrite_rules(): void {
-		add_rewrite_rule( '^checkin/([^/]+)/?', 'index.php?conv_enroll_checkin=$matches[1]', 'top' );
-		add_rewrite_rule( '^checkin/?$', 'index.php?conv_enroll_checkin_page=1', 'top' );
+		// Los nombres tienen que ser EXACTAMENTE los de la query var registrada abajo
+		// (`convoca_enroll_checkin*`). Estaban como `conv_enroll_checkin*`, así que
+		// `/checkin/` y `/checkin/<token>/` no rellenaban ninguna query var, el handler
+		// no se ejecutaba y la página del escáner —con su cámara y su PWA— era
+		// inalcanzable por su propia URL (verificado: 200 con la web normal en vez del
+		// 403 del handler).
+		add_rewrite_rule( '^checkin/([^/]+)/?', 'index.php?convoca_enroll_checkin=$matches[1]', 'top' );
+		add_rewrite_rule( '^checkin/?$', 'index.php?convoca_enroll_checkin_page=1', 'top' );
 
 		add_filter(
 			'query_vars',

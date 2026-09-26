@@ -1,5 +1,22 @@
 # Changelog — convoca-enroll
 
+## v2.7.17 (2026-09-26)
+
+### Corregido — la ruta del check-in no llevaba al escáner
+- Encontrado abriendo el QR del correo de confirmación como lo abriría un móvil: la página
+  respondía con la web normal (HTTP 200) y **la asistencia no se registraba**
+  (`_convoca_asistencia` seguía en `no_registrada`).
+- Las reglas de reescritura ponían `conv_enroll_checkin` / `conv_enroll_checkin_page`, pero la
+  query var registrada —y la que lee el handler— es `convoca_enroll_checkin[ _page]`. Al no
+  coincidir los nombres, `/checkin/` y `/checkin/<token>/` no rellenaban nada, el handler salía
+  por su primer `return` y el escáner (cámara + PWA) era **inalcanzable por su propia URL**.
+- Es un contrato entre tres sitios del mismo fichero (`add_rewrite_rule`, filtro `query_vars`,
+  `get_query_var`) que ningún lint ve: lo fija ahora `CheckinRutasTest`.
+- El diagnóstico de Ajustes daba «Activa» porque solo miraba que la regla existiera, no a dónde
+  apunta; ahora comprueba el destino.
+- **Al desplegar hay que vaciar la caché de reglas** (`wp rewrite flush`): la regla vive en la
+  base de datos y no cambia sola.
+
 ## v2.7.16 (2026-09-26)
 
 ### Corregido — cinco acciones AJAX publicadas desde el JS no existían en el PHP

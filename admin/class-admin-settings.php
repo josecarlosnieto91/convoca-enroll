@@ -974,7 +974,11 @@ class Admin_Settings {
 		// registra Checkin_Handler por rewrite rule (+ PWA). Buscar una página con
 		// un shortcode inexistente daba un error permanente e inarreglable.
 		$rules      = (array) get_option( 'rewrite_rules' );
-		$checkin_ok = isset( $rules['^checkin/?$'] );
+		$regla      = (string) ( $rules['^checkin/?$'] ?? '' );
+		// No basta con que la regla exista: si apunta a una query var que el handler no
+		// lee, `/checkin/` responde con la web normal y el escáner queda inalcanzable
+		// mientras este diagnóstico decía «Activa». Hay que comprobar el destino.
+		$checkin_ok = str_contains( $regla, 'convoca_enroll_checkin_page' );
 		$checks[]   = array(
 			'title'   => __( 'Ruta: Control de Asistencia (Check-in)', 'convoca-enroll' ),
 			'status'  => $checkin_ok ? 'ok' : 'warning',
