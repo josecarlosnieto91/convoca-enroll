@@ -6,6 +6,12 @@
 .env
 auth.json
 tests/results/
+playwright-report/
+
+# Fixture de los E2E (lo escribe tests/e2e/seed.php) y líneas base de comparación.
+# La línea base SI se commitea: tests/snapshots/posters.json
+tests/e2e/.fixture.json
+probe-nonce.js
 
 
 # Translation files (user-generated)
