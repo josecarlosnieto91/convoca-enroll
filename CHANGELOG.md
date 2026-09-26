@@ -1,5 +1,36 @@
 # Changelog — convoca-enroll
 
+## v2.7.18 (2026-09-26)
+
+### Añadido — el enlace del QR ya le sirve a quien recibe el QR
+- El check-in directo lo puede hacer el personal **y quien recibe el QR**, con la firma `h`
+  que ya viajaba en el correo. Antes esa firma **se generaba y no se verificaba en ningún
+  sitio**, y el handler exigía permisos de administración: el enlace del socio no funcionaba
+  para el socio. La firma autoriza **esa inscripción y ninguna otra**, y no concede ningún
+  permiso: un socio no puede marcar la asistencia de otro.
+- La firma se calcula con la **sal persistente** del sitio (estable, no rota al cambiar las
+  claves de WordPress), así que un QR enviado ayer sigue valiendo hoy.
+
+### Corregido — el QR del correo se pinta en casa
+- La imagen se le pedía a **quickchart.io** con la URL de check-in dentro, de modo que el
+  **token del socio —su credencial de check-in— viajaba a un tercero** para devolvernos un
+  PNG que el plugin sabe pintar con `chillerlan/php-qrcode`. Ahora se genera en local
+  (`QR_Generator::url_for()`), y si el generador falla el correo sale **sin imagen**: nunca
+  se delega fuera.
+- `Checkin_Link` es el único sitio que construye y valida el enlace, para que el correo y
+  el handler no vuelvan a discrepar: el correo escribía `/checkin/?token=…` y el handler
+  esperaba `/checkin/<token>/`.
+
+### Corregido — un enlace que no vale ya no dice «500»
+- Cualquier error de check-in salía como **HTTP 500** («el servidor se rompió») aunque lo
+  que pasaba era que el enlace no valía. Ahora: token inexistente → **404**, inscripción sin
+  confirmar → **409**, resto → **400**.
+
+### Pruebas
+- `CheckinLinkTest`, `CheckinPermisosTest` (la firma sirve para una inscripción y no para
+  otra; el socio no es personal; códigos HTTP) y `QrLocalTest` (guarda contra quickchart y
+  contra que el render del QR se duplique). Enroll 113/113, comprobados en negativo.
+
 ## v2.7.17 (2026-09-26)
 
 ### Corregido — la ruta del check-in no llevaba al escáner

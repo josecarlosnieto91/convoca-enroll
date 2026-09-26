@@ -16,6 +16,9 @@ namespace Convoca\Core {
             public static function validar_dni(string $dni): bool { return self::validate_dni($dni); }
             public static function do_action(string $new_hook, string $old_hook = '', ...$args): void {}
             public static function check_rate_limit(string $action, int $max = 10, int $window = 300): bool { return true; }
+            // Sal persistente del sitio: la firma del enlace de check-in se calcula con
+            // ella, así que la prueba la puede fijar para comprobar el positivo y el negativo.
+            public static function get_persistent_salt(): string { return (string) ($GLOBALS['convoca_test_salt'] ?? 'sal-de-prueba'); }
         }
     }
     if (!class_exists('Logger')) {
@@ -163,7 +166,26 @@ if (!function_exists('get_queried_object_id')) { function get_queried_object_id(
 if (!function_exists('current_theme_supports')) { function current_theme_supports($f = '') { return (bool) $GLOBALS['convoca_test_query']['tema_soporta']; } }
 
 // Auth
-if (!function_exists('current_user_can')) { function current_user_can($c, ...$a) { return true; } }
+// Los permisos se pueden fijar por prueba: por defecto se mantiene el «todo permitido»
+// de siempre para no cambiar el sentido de los tests que ya existían.
+$GLOBALS['convoca_test_caps']  = array();
+$GLOBALS['convoca_test_roles'] = array();
+if (!function_exists('current_user_can')) {
+    function current_user_can($c, ...$a) {
+        if (array_key_exists($c, $GLOBALS['convoca_test_caps'])) {
+            return (bool) $GLOBALS['convoca_test_caps'][$c];
+        }
+        return true;
+    }
+}
+if (!function_exists('wp_get_current_user')) {
+    function wp_get_current_user() {
+        $u = new WP_User();
+        $u->ID = 0;
+        $u->roles = (array) $GLOBALS['convoca_test_roles'];
+        return $u;
+    }
+}
 if (!function_exists('get_current_user_id')) { function get_current_user_id() { return 1; } }
 if (!function_exists('wp_create_nonce')) { function wp_create_nonce($a = -1) { return 'test_nonce'; } }
 if (!function_exists('wp_verify_nonce')) { function wp_verify_nonce($n, $a = -1) { return true; } }

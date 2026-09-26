@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.7.17
+Stable tag: 2.7.18
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,11 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.18 =
+* El enlace del QR ya le sirve a quien recibe el QR: el check-in directo se autoriza con la firma del correo, que antes se generaba y no se comprobaba en ningun sitio. No concede permisos y solo vale para esa inscripcion.
+* El QR del correo se genera en local: antes se le pedia la imagen a quickchart.io con el token del socio dentro, asi que ese token viajaba a un tercero.
+* Un enlace que no vale responde 404 (o 409 si la inscripcion no esta confirmada) en vez de 500.
 
 = 2.7.17 =
 * La ruta del check-in no llevaba al escaner: las reglas de reescritura apuntaban a una query var con otro nombre que la registrada, asi que /checkin/ respondia con la web normal y la asistencia no se registraba. Al actualizar, guarda Ajustes -> Enlaces permanentes para regenerar las reglas.

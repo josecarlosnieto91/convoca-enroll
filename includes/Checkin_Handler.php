@@ -76,25 +76,93 @@ class Checkin_Handler {
 	 * Handle the check-in page or direct check-in link.
 	 */
 	public function handle_checkin_page(): void {
-		$checkin_token   = get_query_var( 'convoca_enroll_checkin' );
-		$is_scanner_page = get_query_var( 'convoca_enroll_checkin_page' );
+		$checkin_token   = (string) get_query_var( 'convoca_enroll_checkin' );
+		$is_scanner_page = (bool) get_query_var( 'convoca_enroll_checkin_page' );
 
-		if ( ! $checkin_token && ! $is_scanner_page ) {
+		if ( '' === $checkin_token && ! $is_scanner_page ) {
 			return;
 		}
 
-		// Allow administrators, editors, and approved volunteers to access the check-in interface.
-		if ( ! current_user_can( 'manage_inscripciones' ) && ! in_array( 'voluntario_aprobado', (array) wp_get_current_user()->roles, true ) ) {
-			wp_die( esc_html__( 'No tienes permisos para realizar check-in.', 'convoca-enroll' ), esc_html__( 'Acceso Denegado', 'convoca-enroll' ), array( 'response' => 403 ) );
-		}
-
+		// El escáner es herramienta de trabajo: solo personal.
 		if ( $is_scanner_page ) {
+			if ( ! $this->es_personal() ) {
+				$this->denegar();
+			}
+
 			$this->render_scanner_page();
 			exit;
 		}
 
+		// Check-in directo: el personal puede con cualquier enlace, y quien recibe el QR
+		// puede con su firma. Así la URL del QR le sirve a quien la recibe, sin concederle
+		// permisos de administración.
+		$inscripcion_id = Checkin_Link::id_for_token( $checkin_token );
+		$firma          = sanitize_text_field( wp_unslash( $_GET['h'] ?? '' ) );
+
+		if ( ! $this->puede_checkin_directo( $inscripcion_id, $firma ) ) {
+			$this->denegar();
+		}
+
 		$this->process_direct_checkin( $checkin_token );
 		exit;
+	}
+
+	/**
+	 * ¿Es personal con permiso para el escáner de check-in?
+	 *
+	 * @return bool
+	 */
+	public function es_personal(): bool {
+		return current_user_can( 'manage_inscripciones' )
+			|| in_array( 'voluntario_aprobado', (array) wp_get_current_user()->roles, true );
+	}
+
+	/**
+	 * ¿Puede hacerse el check-in directo de esa inscripción?
+	 *
+	 * Decisión pura (sin consultas ni salidas) para poder probarla sin arrancar WordPress.
+	 *
+	 * @param int    $inscripcion_id Inscripción a la que pertenece el token (0 si no existe).
+	 * @param string $firma          Parámetro `h` recibido.
+	 * @return bool
+	 */
+	public function puede_checkin_directo( int $inscripcion_id, string $firma ): bool {
+		if ( $this->es_personal() ) {
+			return true;
+		}
+
+		return Checkin_Link::verify( $inscripcion_id, $firma );
+	}
+
+	/**
+	 * Código HTTP que corresponde a un error de check-in.
+	 *
+	 * Antes cualquier error salía como 500, que significa «el servidor se rompió» cuando en
+	 * realidad lo que no valía era el enlace.
+	 *
+	 * @param WP_Error $error Error del motor.
+	 * @return int
+	 */
+	public function status_para_error( WP_Error $error ): int {
+		switch ( $error->get_error_code() ) {
+			case 'invalid_token':
+				return 404;
+			case 'not_confirmed':
+				return 409;
+			default:
+				return 400;
+		}
+	}
+
+	/**
+	 * Corta la petición por falta de permiso.
+	 */
+	private function denegar(): void {
+		wp_die(
+			esc_html__( 'No tienes permisos para realizar check-in.', 'convoca-enroll' ),
+			esc_html__( 'Acceso Denegado', 'convoca-enroll' ),
+			array( 'response' => 403 )
+		);
 	}
 
 	/**
@@ -577,7 +645,11 @@ class Checkin_Handler {
 		$result = $this->mark_as_attended_by_token( $token );
 
 		if ( is_wp_error( $result ) ) {
-			wp_die( esc_html( $result->get_error_message() ), esc_html__( 'Error de Check-in', 'convoca-enroll' ) );
+			wp_die(
+				esc_html( $result->get_error_message() ),
+				esc_html__( 'Error de Check-in', 'convoca-enroll' ),
+				array( 'response' => $this->status_para_error( $result ) )
+			);
 		}
 
 		// Get info for the message.
@@ -589,6 +661,15 @@ class Checkin_Handler {
 				'posts_per_page' => 1,
 			)
 		);
+
+		if ( empty( $inscriptions ) ) {
+			wp_die(
+				esc_html__( 'No se ha encontrado la inscripción de este código.', 'convoca-enroll' ),
+				esc_html__( 'Error de Check-in', 'convoca-enroll' ),
+				array( 'response' => 404 )
+			);
+		}
+
 		$id           = $inscriptions[0]->ID;
 		$nombre       = get_post_meta( $id, '_convoca_nombre', true );
 		$act_id       = (int) get_post_meta( $id, '_convoca_actividad_id', true );

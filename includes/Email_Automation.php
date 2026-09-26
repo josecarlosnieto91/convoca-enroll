@@ -28,6 +28,7 @@ namespace Convoca\Enroll;
 
 use Convoca\Core\Email_Layout;
 use Convoca\Core\Logger;
+use Convoca\Enroll\Media\QR_Generator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -732,14 +733,30 @@ class Email_Automation {
 		);
 	}
 
+	/**
+	 * Imagen del QR del check-in, pintada en LOCAL.
+	 *
+	 * Antes se le pedía a quickchart.io con la URL de check-in dentro: el token del socio
+	 * (que es su credencial de check-in) viajaba a un tercero para que le devolviera un
+	 * PNG que sabemos pintar aquí con chillerlan/php-qrcode. Si el generador local falla,
+	 * se devuelve cadena vacía y el correo sale sin imagen: nunca se delega fuera.
+	 *
+	 * @param int $inscripcion_id Inscripción.
+	 * @return string URL de la imagen, o cadena vacía.
+	 */
 	private function generate_qr_url( int $inscripcion_id ): string {
 		$url = $this->get_checkin_url( $inscripcion_id );
-		return 'https://quickchart.io/qr?text=' . urlencode( $url ) . '&size=200';
+		if ( '' === $url ) {
+			return '';
+		}
+
+		$imagen = QR_Generator::url_for( 'inscripcion-' . $inscripcion_id, $url, array( 'size' => 300 ) );
+
+		return $imagen ? $imagen : '';
 	}
 
 	private function get_checkin_url( int $inscripcion_id ): string {
-		$token = get_post_meta( $inscripcion_id, '_convoca_checkin_token', true );
-		return home_url( '/checkin/?token=' . $token . '&h=' . hash_hmac( 'sha256', (string) $inscripcion_id, wp_salt( 'nonce' ) ) );
+		return Checkin_Link::url( $inscripcion_id );
 	}
 
 	private function get_ics_link( int $inscripcion_id ): string {

@@ -71,29 +71,7 @@ class QR_Generator {
 		$filename = 'qr-actividad-' . $actividad_id . '.png';
 		$filepath = $qr_dir . $filename;
 
-		try {
-			// Scale: modules are about 33 wide for a URL, scale=10 gives ~330px
-			$scale = max( 3, (int) round( $size / 33 ) );
-
-			$qrOptions = new QROptions(
-				array(
-					'outputInterface'  => QRGdImagePNG::class,
-					'eccLevel'         => EccLevel::M,
-					'scale'            => $scale,
-					'addQuietzone'     => true,
-					'quietzoneSize'    => 2,
-					'outputBase64'     => false,
-					'imageTransparent' => false,
-				) 
-			);
-
-			$qrcode = new QRCode( $qrOptions );
-			$result = $qrcode->render( $url, $filepath );
-
-			if ( ! file_exists( $filepath ) ) {
-				return null;
-			}
-		} catch ( \Throwable $e ) {
+		if ( ! self::render( $url, $filepath, $size ) ) {
 			return null;
 		}
 
@@ -112,6 +90,109 @@ class QR_Generator {
 		}
 		$upload_dir = wp_upload_dir();
 		return str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], $path );
+	}
+
+	/**
+	 * Genera el QR de una URL cualquiera (no solo de la ficha de una actividad).
+	 *
+	 * Lo usa el check-in: el QR del correo tiene que apuntar a la URL de check-in de esa
+	 * inscripción, no a la actividad. Se pinta en local, con la misma biblioteca que el
+	 * resto, en vez de pedirle la imagen a un servicio externo —que se llevaría el token
+	 * de check-in del socio a un tercero—.
+	 *
+	 * @param string $clave   Identificador estable para el nombre del fichero (p. ej. «inscripcion-12»).
+	 * @param string $url     URL que debe codificar el QR.
+	 * @param array  $options Overrides: { size }.
+	 * @return string|null Ruta del PNG, o null si no se pudo generar.
+	 */
+	public static function generate_for_url( string $clave, string $url, array $options = array() ): ?string {
+		if ( '' === $url ) {
+			return null;
+		}
+
+		$cache_key = 'qr_' . md5( $clave . $url . wp_json_encode( $options ) );
+		$cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+		if ( $cached && file_exists( $cached ) ) {
+			return $cached;
+		}
+
+		$size       = min( max( $options['size'] ?? 300, 100 ), 1000 );
+		$upload_dir = wp_upload_dir();
+		$qr_dir     = $upload_dir['basedir'] . '/convoca-qr/';
+
+		if ( ! is_dir( $qr_dir ) ) {
+			wp_mkdir_p( $qr_dir );
+		}
+
+		$filepath = $qr_dir . 'qr-' . sanitize_file_name( $clave ) . '-' . substr( md5( $url ), 0, 8 ) . '.png';
+
+		// Si ya está en disco con el mismo contenido, no se vuelve a pintar.
+		if ( file_exists( $filepath ) ) {
+			wp_cache_set( $cache_key, $filepath, self::CACHE_GROUP, HOUR_IN_SECONDS );
+			return $filepath;
+		}
+
+		if ( ! self::render( $url, $filepath, $size ) ) {
+			return null;
+		}
+
+		wp_cache_set( $cache_key, $filepath, self::CACHE_GROUP, HOUR_IN_SECONDS );
+
+		return $filepath;
+	}
+
+	/**
+	 * URL pública del QR de una URL cualquiera.
+	 *
+	 * @param string $clave   Identificador estable para el fichero.
+	 * @param string $url     URL que debe codificar el QR.
+	 * @param array  $options Overrides: { size }.
+	 * @return string|null URL pública, o null si no se pudo generar.
+	 */
+	public static function url_for( string $clave, string $url, array $options = array() ): ?string {
+		$path = self::generate_for_url( $clave, $url, $options );
+		if ( ! $path ) {
+			return null;
+		}
+
+		$upload_dir = wp_upload_dir();
+
+		return str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], $path );
+	}
+
+	/**
+	 * Pinta el PNG del QR. Un solo sitio dibuja códigos: lo comparten la ficha de la
+	 * actividad y el enlace de check-in.
+	 *
+	 * @param string $url      Contenido del QR.
+	 * @param string $filepath Fichero de destino.
+	 * @param int    $size     Lado aproximado en píxeles.
+	 * @return bool
+	 */
+	private static function render( string $url, string $filepath, int $size ): bool {
+		try {
+			// Los módulos ocupan unas 33 columnas en una URL: escala 10 da ~330 px.
+			$scale = max( 3, (int) round( $size / 33 ) );
+
+			$qrOptions = new QROptions(
+				array(
+					'outputInterface'  => QRGdImagePNG::class,
+					'eccLevel'         => EccLevel::M,
+					'scale'            => $scale,
+					'addQuietzone'     => true,
+					'quietzoneSize'    => 2,
+					'outputBase64'     => false,
+					'imageTransparent' => false,
+				)
+			);
+
+			$qrcode = new QRCode( $qrOptions );
+			$qrcode->render( $url, $filepath );
+
+			return file_exists( $filepath );
+		} catch ( \Throwable $e ) {
+			return false;
+		}
 	}
 
 	/**
