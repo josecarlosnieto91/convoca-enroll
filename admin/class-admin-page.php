@@ -62,7 +62,8 @@ class Admin_Page {
 	public function fix_submenu_highlight( $submenu_file ) {
 		global $current_screen;
 		if ( $current_screen->post_type === 'convoca_evaluacion' ) {
-			return 'conv-evaluaciones';
+			// El submenú apunta al listado del CPT, no a una página propia.
+			return 'edit.php?post_type=convoca_evaluacion';
 		}
 		return $submenu_file;
 	}
@@ -147,13 +148,17 @@ class Admin_Page {
 			array( Admin_Checkin::class, 'render' )
 		);
 
+		// La lista de evaluaciones es la del propio CPT: se enlaza directamente en vez
+		// de registrar una página que reenvía. Un `wp_safe_redirect()` dentro del
+		// callback de una página se ejecuta con las cabeceras YA enviadas: el 302 no
+		// sale, el `exit` corta el render y el admin se queda con una pantalla en
+		// blanco (verificado en la demo: HTTP 200 y sin cabecera `Location`).
 		add_submenu_page(
 			'convoca-enroll',
 			__( 'Evaluaciones', 'convoca-enroll' ),
 			__( 'Evaluaciones', 'convoca-enroll' ),
 			$cap,
-			'conv-evaluaciones',
-			array( $this, 'render_evaluaciones' )
+			'edit.php?post_type=convoca_evaluacion'
 		);
 
 		// Note: "Añadir evaluación" submenu is registered.
@@ -306,13 +311,6 @@ class Admin_Page {
 	}
 
 	/* ── List pages ────────────────────────────── */
-
-	public function render_evaluaciones(): void {
-		// Redirect to the standard WP evaluation list,
-		// which already has custom columns and filters via Admin_Evaluaciones_List.
-		wp_safe_redirect( admin_url( 'edit.php?post_type=convoca_evaluacion' ) );
-		exit;
-	}
 
 	public function render_inscripciones(): void {
 		// Handle bulk actions.
@@ -503,7 +501,7 @@ class Admin_Page {
 				<?php echo esc_html( $m( 'nombre' ) ?: $post->post_title ); ?> —
 				<?php echo wp_kses_post( CPT_Inscripcion::badge( $estado ) ); ?>
 			</h1>
-			<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-core-enroll' ) ); ?>">&larr; Volver al listado</a>
+			<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-enroll' ) ); ?>">&larr; Volver al listado</a>
 			</p>
 
 			<div class="conv-detail-grid">

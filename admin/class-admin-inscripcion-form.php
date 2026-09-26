@@ -173,7 +173,7 @@ class Admin_Inscripcion_Form {
 					</div>
 
 					<div style="margin-top: 40px; display: flex; justify-content: flex-end; gap: 15px; align-items: center;">
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-core-enroll' ) ); ?>" class="convoca-btn convoca-btn-outline">
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-enroll' ) ); ?>" class="convoca-btn convoca-btn-outline">
 							&larr; Volver al listado
 						</a>
 						<button type="submit" class="convoca-btn convoca-btn-primary">
@@ -326,7 +326,7 @@ class Admin_Inscripcion_Form {
 			CPT_Inscripcion::update_meta( $result, 'pagado', '1' );
 		}
 
-		$detail_url = admin_url( 'admin.php?page=convoca-core-enroll&inscripcion_id=' . $result );
+		$detail_url = admin_url( 'admin.php?page=convoca-enroll&inscripcion_id=' . $result );
 
 		wp_send_json_success(
 			array(

@@ -133,6 +133,19 @@ if (!function_exists('get_posts')) { function get_posts($a) { return []; } }
 // URLs
 if (!function_exists('home_url')) { function home_url($p = '') { return "https://example.com$p"; } }
 if (!function_exists('admin_url')) { function admin_url($p = '') { return "/wp-admin/$p"; } }
+
+// Registro de menús: se captura en vez de pintarse, para poder comprobar a qué
+// pantalla apunta cada entrada sin arrancar WordPress.
+$GLOBALS['_convoca_menu_prueba']    = array();
+$GLOBALS['_convoca_submenu_prueba'] = array();
+if (!function_exists('add_menu_page')) {
+    function add_menu_page(...$a) { $GLOBALS['_convoca_menu_prueba'][] = $a; return (string) ($a[3] ?? ''); }
+}
+if (!function_exists('add_submenu_page')) {
+    function add_submenu_page(...$a) { $GLOBALS['_convoca_submenu_prueba'][] = $a; return (string) ($a[4] ?? ''); }
+}
+if (!function_exists('wp_safe_redirect')) { function wp_safe_redirect($u, $s = 302) { $GLOBALS['_convoca_redirects'][] = array($u, $s); return true; } }
+if (!function_exists('wp_redirect')) { function wp_redirect($u, $s = 302) { $GLOBALS['_convoca_redirects'][] = array($u, $s); return true; } }
 if (!function_exists('plugin_basename')) { function plugin_basename($f) { return basename($f); } }
 if (!function_exists('plugin_dir_path')) { function plugin_dir_path($f) { return dirname($f) . '/'; } }
 if (!function_exists('plugin_dir_url')) { function plugin_dir_url($f) { return 'https://example.com/wp-content/plugins/' . basename(dirname($f)) . '/'; } }

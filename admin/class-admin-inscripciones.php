@@ -327,7 +327,7 @@ class Inscriptions_List extends \WP_List_Table {
 
 	public function column_nombre( $item ): string {
 		$nombre = CPT_Inscripcion::get_meta( $item->ID, 'nombre' ) ?: $item->post_title;
-		$url    = admin_url( 'admin.php?page=convoca-core-enroll&inscripcion_id=' . $item->ID );
+		$url    = admin_url( 'admin.php?page=convoca-enroll&inscripcion_id=' . $item->ID );
 		$link   = '<a href="' . esc_url( $url ) . '"><strong>' . esc_html( $nombre ) . '</strong></a>';
 
 		// Row actions.

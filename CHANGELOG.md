@@ -1,5 +1,30 @@
 # Changelog — convoca-enroll
 
+## v2.7.12 (2026-09-26)
+
+### Corregido — siete enlaces de administración llevaban a una pantalla de error
+- **`conv-evaluaciones` dejaba la pantalla en blanco.** El submenú «Evaluaciones» registraba una
+  página cuyo callback solo hacía `wp_safe_redirect()` + `exit`. El callback de una página corre con
+  las cabeceras YA enviadas: el 302 no sale (verificado en la demo: HTTP 200 y **sin** cabecera
+  `Location`) y el `exit` corta el render. Ahora el submenú enlaza directamente al listado del CPT
+  `convoca_evaluacion`, que ya tiene sus columnas y filtros.
+- **`admin.php?page=convoca-core-enroll` no existe** (el slug es `convoca-enroll`) y se usaba en cinco
+  sitios: al guardar una actividad, al abrir una inscripción desde el editor clásico, en el enlace
+  «Ver» de **cada fila** del listado de inscripciones, en los «Cancelar» del formulario de actividad
+  y del de inscripción, en «Volver al listado» del detalle y en el `$detail_url` que se devuelve al
+  crear una inscripción. Todos aterrizaban en «Sorry, you are not allowed to access this page».
+- **La acción «Inscripciones» de cada actividad** enlazaba a `conv-inscripciones`, otra página
+  inexistente, y con el parámetro equivocado: el listado filtra por `actividad_filter`, no por
+  `actividad_id`.
+
+### Pruebas
+- `tests/Unit/AdminMenuTest.php`: fija que Evaluaciones enlace al CPT, que no vuelva a existir la
+  página que reenviaba, que ningún callback `render_*` reenvíe, que ningún fichero del plugin use el
+  slug inexistente y que **todo** `admin.php?page=<slug>` del plugin sea una página que el plugin
+  registre (o una de otro plugin enlazada a propósito). El arnés de pruebas ahora captura
+  `add_menu_page`/`add_submenu_page` en vez de pintarlos.
+
+
 ## v2.7.11 (2026-09-25)
 
 ### Cambiado

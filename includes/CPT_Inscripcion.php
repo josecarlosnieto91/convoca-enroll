@@ -125,7 +125,8 @@ class CPT_Inscripcion {
 		if ( $typenow === 'inscripcion' ) {
 			$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
 			if ( $post_id > 0 ) {
-				wp_safe_redirect( admin_url( 'admin.php?page=convoca-core-enroll&inscripcion_id=' . $post_id ) );
+				// El slug apuntaba a una página inexistente; el real es `convoca-enroll`.
+				wp_safe_redirect( admin_url( 'admin.php?page=convoca-enroll&inscripcion_id=' . $post_id ) );
 			} else {
 				wp_safe_redirect( admin_url( 'admin.php?page=conv-nueva-inscripcion' ) );
 			}

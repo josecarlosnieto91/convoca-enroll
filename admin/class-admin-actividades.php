@@ -262,7 +262,7 @@ class Admin_Actividades {
 					<?php if ( $post_id ) : ?>
 						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_duplicate_actividad&id=' . $post_id ), 'convoca_enroll_duplicate_' . $post_id ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📋 <?php esc_html_e( 'Duplicar', 'convoca-enroll' ); ?></a>
 					<?php endif; ?>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-core-enroll' ) ); ?>" class="convoca-btn convoca-btn-outline"><?php esc_html_e( 'Cancelar', 'convoca-enroll' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-enroll' ) ); ?>" class="convoca-btn convoca-btn-outline"><?php esc_html_e( 'Cancelar', 'convoca-enroll' ); ?></a>
 				</div>
 			</form>
 		</div>
@@ -326,7 +326,10 @@ class Admin_Actividades {
 		$responsables = isset( $_POST['responsables'] ) ? array_map( 'intval', $_POST['responsables'] ) : array();
 		update_post_meta( $post_id, '_convoca_responsables', implode( ',', $responsables ) );
 
-		wp_redirect( admin_url( 'admin.php?page=convoca-core-enroll&message=saved' ) );
+		// El slug apuntaba a una página que no existe: el admin aterrizaba en
+		// «Sorry, you are not allowed to access this page» justo después de guardar
+		// la actividad (verificado con HTTP real). El slug del menú es `convoca-enroll`.
+		wp_redirect( admin_url( 'admin.php?page=convoca-enroll&message=saved' ) );
 		exit;
 	}
 
@@ -526,7 +529,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 		$actions   = array();
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=conv-checkin&actividad_id=' . $item->ID ) ), 'Check-in' );
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_duplicate_actividad&id=' . $item->ID ), 'convoca_enroll_duplicate_' . $item->ID ) ), 'Duplicar' );
-		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=conv-inscripciones&actividad_id=' . $item->ID ) ), 'Inscripciones' );
+		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=convoca-enroll&actividad_filter=' . $item->ID ) ), 'Inscripciones' );
 
 		return implode( ' | ', $actions );
 	}

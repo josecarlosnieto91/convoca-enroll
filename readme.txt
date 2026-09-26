@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.7.11
+Stable tag: 2.7.12
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.12 =
+* Siete enlaces de administración apuntaban a páginas inexistentes y llevaban a «Sorry, you are not allowed to access this page»: el menú Evaluaciones (que además quedaba en blanco), el enlace «Ver» de cada inscripción, los «Cancelar» de los formularios, «Volver al listado» y la acción «Inscripciones» de cada actividad.
 
 = 2.7.8 =
 * **Corregido:** las horas de voluntariado acreditadas por Enroll no llegaban a contar. El vínculo con el socio se escribía con una clave equivocada (`" _convoca_miembro_id"`, con espacio inicial y en español) mientras Members lee `_convoca_member_id`, así que las horas quedaban invisibles: la renovación por voluntariado no las veía y los certificados no las sumaban.
