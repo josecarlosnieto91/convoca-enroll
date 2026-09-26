@@ -1,5 +1,15 @@
 # Changelog — convoca-enroll
 
+## v2.7.14 (2026-09-26)
+
+### Corregido
+- **El formulario de inscripción no puede salir dos veces en la misma petición.** El plugin lo añade
+  al contenido de la ficha y un tema puede pintar además el shortcode en su plantilla — la copia 2.7.0
+  del tema lo hace en `templates/single-actividad.html`, así que el socio habría visto dos formularios
+  idénticos para la misma actividad. El shortcode se pinta una vez por petición; el filtro
+  `convoca_enroll_form_repetido` permite forzar la repetición si algún día hace falta.
+
+
 ## v2.7.13 (2026-09-26)
 
 ### Añadido — el formulario de inscripción viaja con el plugin, no con el tema

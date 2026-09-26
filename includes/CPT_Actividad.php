@@ -65,6 +65,9 @@ class CPT_Actividad {
 		);
 	}
 
+	/** Evita pintar el formulario de inscripción dos veces en la misma petición. */
+	private static $formulario_pintado = false;
+
 	public function __construct() {
 		add_action( 'init', array( __CLASS__, 'register' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_metabox' ) );
@@ -989,7 +992,22 @@ class CPT_Actividad {
 		if ( ! shortcode_exists( 'convoca_form_inscripcion' ) ) {
 			return '';
 		}
-		return do_shortcode( '[convoca_form_inscripcion id="' . (int) $id . '"]' );
+
+		// Una sola vez por petición: el plugin añade la sección al contenido y un tema
+		// puede pintarla además en su plantilla. Con dos, el socio vería dos formularios
+		// idénticos apuntándose a la misma actividad. El filtro permite forzar la
+		// repetición si algún día hace falta.
+		if ( self::$formulario_pintado && ! apply_filters( 'convoca_enroll_form_repetido', false, (int) $id ) ) {
+			return '';
+		}
+
+		$html = do_shortcode( '[convoca_form_inscripcion id="' . (int) $id . '"]' );
+
+		if ( '' !== trim( $html ) ) {
+			self::$formulario_pintado = true;
+		}
+
+		return $html;
 	}
 
 	/**

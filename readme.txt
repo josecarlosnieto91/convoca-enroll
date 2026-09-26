@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.7.13
+Stable tag: 2.7.14
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.14 =
+* El formulario de inscripcion ya no puede aparecer dos veces en la misma ficha cuando el tema tambien lo pinta en su plantilla.
 
 = 2.7.13 =
 * La ficha de una actividad incluye ya la sección de inscripción: antes dependia de un patron del tema y en temas de terceros la actividad se quedaba sin forma de apuntarse. Se puede delegar al tema con add_theme_support( 'convoca-actividad-form' ) o desactivar con el filtro convoca_enroll_form_en_ficha.

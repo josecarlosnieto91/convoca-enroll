@@ -1,6 +1,6 @@
 <?php
 /**
- * La ficha de una actividad ofrece el formulario de inscripción.
+ * La ficha de una actividad ofrece el formulario de inscripción, y una sola vez.
  *
  * Defecto real, visto en la demo: la ficha servía la actividad con el título y el
  * «Related content» pero **sin formulario ni enlace para inscribirse**. La sección de
@@ -8,8 +8,9 @@
  * en un sitio cuyo tema no sea el de Convoca (Lugg usa `sculpt`) la actividad se queda
  * literalmente sin forma de apuntarse.
  *
- * El formulario viaja ahora con el plugin y el tema puede tomar el relevo declarando
- * `add_theme_support( 'convoca-actividad-form' )`.
+ * El formulario viaja ahora con el plugin. Un tema que ya lo pinte puede tomar el relevo
+ * declarando `add_theme_support( 'convoca-actividad-form' )`, y en cualquier caso nunca
+ * sale dos veces en la misma petición.
  *
  * @package       Convoca\Enroll\Tests
  *
@@ -20,6 +21,7 @@ namespace Convoca\Enroll\Tests;
 
 use Convoca\Enroll\CPT_Actividad;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 
 /**
  * Tests del formulario en la ficha de actividad.
@@ -29,9 +31,21 @@ class FichaActividadFormTest extends TestCase
 	/** Marca que devuelve el doble del formulario. */
 	private const MARCA = '<form class="convoca-form-de-prueba"></form>';
 
+	/**
+	 * Aísla cada test: el formulario se pinta una vez por PETICIÓN, así que el estático
+	 * que lo controla tiene que volver a cero entre pruebas.
+	 */
+	private function reiniciarEstado(): void {
+		$pintado = new ReflectionProperty( CPT_Actividad::class, 'formulario_pintado' );
+		$pintado->setAccessible( true );
+		$pintado->setValue( null, false );
+	}
+
 	private function preparar( int $actividad = 812 ): CPT_Actividad {
-		$GLOBALS['_wp_shortcodes']   = array();
-		$GLOBALS['_wp_filters']      = array();
+		$this->reiniciarEstado();
+
+		$GLOBALS['_wp_shortcodes']     = array();
+		$GLOBALS['_wp_filters']        = array();
 		$GLOBALS['convoca_test_tipos'] = array( $actividad => 'actividad' );
 		$GLOBALS['convoca_test_query'] = array(
 			'es_singular' => true, 'en_loop' => true, 'principal' => true,
@@ -86,13 +100,13 @@ class FichaActividadFormTest extends TestCase
 	}
 
 	public function test_el_filtro_recibe_el_id_de_la_actividad(): void {
-		$cpt     = $this->preparar( 830 );
+		$cpt      = $this->preparar( 830 );
 		$recibido = array();
 		add_filter(
 			'convoca_enroll_form_en_ficha',
 			static function ( $poner, $id ) use ( &$recibido ): bool {
 				$recibido[] = $id;
-				return $poner;
+				return (bool) $poner;
 			},
 			10,
 			2
@@ -114,7 +128,30 @@ class FichaActividadFormTest extends TestCase
 		$this->assertSame( 'contenido', $cpt->append_registration_form( 'contenido' ) );
 	}
 
+	public function test_el_formulario_no_sale_dos_veces_en_la_misma_peticion(): void {
+		// El plugin lo añade al contenido y un tema puede pintar el shortcode en su
+		// plantilla (la copia 2.7.0 del tema lo hace): con dos, el socio vería dos
+		// formularios idénticos para la misma actividad.
+		$cpt = $this->preparar();
+
+		$primero = $cpt->append_registration_form( 'contenido' );
+		$this->assertStringContainsString( self::MARCA, $primero, 'La primera vez tiene que salir.' );
+
+		$this->assertSame( '', $cpt->shortcode_inscripcion_actual(), 'La segunda vez no debe repetirse.' );
+	}
+
+	public function test_la_repeticion_se_puede_forzar_con_el_filtro(): void {
+		$cpt = $this->preparar();
+		$cpt->shortcode_inscripcion_actual();
+
+		$this->assertSame( '', $cpt->shortcode_inscripcion_actual(), 'Por defecto no se repite.' );
+
+		add_filter( 'convoca_enroll_form_repetido', '__return_true' );
+		$this->assertStringContainsString( self::MARCA, $cpt->shortcode_inscripcion_actual() );
+	}
+
 	public function test_sin_formulario_no_se_deja_un_contenedor_vacio(): void {
+		$this->reiniciarEstado();
 		$GLOBALS['_wp_shortcodes']     = array();
 		$GLOBALS['_wp_filters']        = array();
 		$GLOBALS['convoca_test_tipos'] = array( 812 => 'actividad' );
@@ -123,6 +160,7 @@ class FichaActividadFormTest extends TestCase
 			'queried_id' => 812, 'tema_soporta' => false,
 		);
 		$cpt = new CPT_Actividad();
+
 		// El shortcode `convoca_form_inscripcion` no está registrado en este escenario, así
 		// que el de la ficha no pinta nada.
 		$salida = $cpt->append_registration_form( 'contenido' );
