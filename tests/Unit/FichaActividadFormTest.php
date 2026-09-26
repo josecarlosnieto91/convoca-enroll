@@ -36,9 +36,9 @@ class FichaActividadFormTest extends TestCase
 	 * que lo controla tiene que volver a cero entre pruebas.
 	 */
 	private function reiniciarEstado(): void {
-		$pintado = new ReflectionProperty( CPT_Actividad::class, 'formulario_pintado' );
-		$pintado->setAccessible( true );
-		$pintado->setValue( null, false );
+		// Sin setAccessible(): desde PHP 8.1 no hace nada (y desde 8.5 está deprecado),
+		// porque las propiedades privadas ya se leen y escriben por reflexión.
+		( new ReflectionProperty( CPT_Actividad::class, 'formulario_pintado' ) )->setValue( null, false );
 	}
 
 	private function preparar( int $actividad = 812, string $fecha_inicio = '+30 days' ): CPT_Actividad {
