@@ -99,12 +99,35 @@ class Checkin_Handler {
 		$inscripcion_id = Checkin_Link::id_for_token( $checkin_token );
 		$firma          = sanitize_text_field( wp_unslash( $_GET['h'] ?? '' ) );
 
-		if ( ! $this->puede_checkin_directo( $inscripcion_id, $firma ) ) {
-			$this->denegar();
+		switch ( $this->respuesta_checkin_directo( $inscripcion_id, $firma ) ) {
+			case 200:
+				$this->process_direct_checkin( $checkin_token );
+				exit;
+			case 404:
+				$this->no_encontrado();
+				break;
+			default:
+				$this->denegar();
+		}
+	}
+
+	/**
+	 * Qué se responde a un intento de check-in directo.
+	 *
+	 * Decisión pura, sin consultas ni salidas, para poder probarla sin arrancar WordPress:
+	 * un enlace que no corresponde a ninguna inscripción no es un problema de permisos —es
+	 * que no existe—, y decir «Acceso Denegado» ahí confunde a quien lo recibe.
+	 *
+	 * @param int    $inscripcion_id Inscripción del token (0 si no existe).
+	 * @param string $firma          Parámetro `h` recibido.
+	 * @return int 200 se hace, 404 el enlace no existe, 403 no es suyo.
+	 */
+	public function respuesta_checkin_directo( int $inscripcion_id, string $firma ): int {
+		if ( $inscripcion_id <= 0 ) {
+			return 404;
 		}
 
-		$this->process_direct_checkin( $checkin_token );
-		exit;
+		return $this->puede_checkin_directo( $inscripcion_id, $firma ) ? 200 : 403;
 	}
 
 	/**
@@ -162,6 +185,17 @@ class Checkin_Handler {
 			esc_html__( 'No tienes permisos para realizar check-in.', 'convoca-enroll' ),
 			esc_html__( 'Acceso Denegado', 'convoca-enroll' ),
 			array( 'response' => 403 )
+		);
+	}
+
+	/**
+	 * Corta la petición porque el enlace no corresponde a ninguna inscripción.
+	 */
+	private function no_encontrado(): void {
+		wp_die(
+			esc_html__( 'Este enlace de check-in no corresponde a ninguna inscripción. Comprueba que has escaneado el código correcto.', 'convoca-enroll' ),
+			esc_html__( 'Enlace no válido', 'convoca-enroll' ),
+			array( 'response' => 404 )
 		);
 	}
 

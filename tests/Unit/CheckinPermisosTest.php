@@ -101,4 +101,23 @@ class CheckinPermisosTest extends TestCase
 		$this->assertSame( 409, $this->handler->status_para_error( new WP_Error( 'not_confirmed', 'La inscripción no está confirmada.' ) ) );
 		$this->assertSame( 400, $this->handler->status_para_error( new WP_Error( 'checkin_error', 'Error al procesar el check-in.' ) ) );
 	}
+
+	public function test_un_enlace_que_no_existe_responde_404_no_403(): void
+	{
+		$this->socio();
+
+		// No es un problema de permisos: es que ese enlace no es de nadie.
+		$this->assertSame( 404, $this->handler->respuesta_checkin_directo( 0, 'lo-que-sea' ) );
+		$this->assertSame( 403, $this->handler->respuesta_checkin_directo( 77, 'firma-inventada' ) );
+		$this->assertSame( 200, $this->handler->respuesta_checkin_directo( 77, Checkin_Link::hmac( 77 ) ) );
+	}
+
+	public function test_el_personal_entra_aunque_el_token_no_le_pertenezca(): void
+	{
+		$GLOBALS['convoca_test_caps'] = array( 'manage_inscripciones' => true );
+
+		$this->assertSame( 200, $this->handler->respuesta_checkin_directo( 88, '' ) );
+		// Pero un enlace que no corresponde a ninguna inscripción sigue siendo 404.
+		$this->assertSame( 404, $this->handler->respuesta_checkin_directo( 0, '' ) );
+	}
 }
