@@ -91,11 +91,72 @@ if (!function_exists('sanitize_email')) { function sanitize_email($e) { return f
 if (!function_exists('absint')) { function absint($v) { return abs((int)$v); } }
 if (!function_exists('wp_unslash')) { function wp_unslash($s) { return is_string($s) ? stripslashes($s) : $s; } }
 
-// Hooks
-if (!function_exists('apply_filters')) { function apply_filters($t, $v, ...$a) { return $v; } }
+// Hooks — registro REAL de filtros: con un `apply_filters` que devolvía el valor tal
+// cual, cualquier contrato basado en filtros pasaba sin comprobar nada (y `add_filter`
+// era un no-op). Un check que no puede fallar no es un check.
+$GLOBALS['_wp_filters'] = array();
+if (!function_exists('apply_filters')) {
+    function apply_filters($t, $v, ...$x) {
+        foreach ($GLOBALS['_wp_filters'][$t] ?? array() as $nivel) {
+            ksort($nivel);
+            foreach ($nivel as $cb) { $v = $cb($v, ...$x); }
+        }
+        return $v;
+    }
+}
+if (!function_exists('remove_all_filters')) { function remove_all_filters($t) { unset($GLOBALS['_wp_filters'][$t]); } }
+if (!function_exists('__return_false')) { function __return_false() { return false; } }
+if (!function_exists('__return_true')) { function __return_true() { return true; } }
 if (!function_exists('do_action')) { function do_action($t, ...$a) {} }
 if (!function_exists('add_action')) { function add_action($t, $c, $p = 10, $a = 1) { return true; } }
-if (!function_exists('add_filter')) { function add_filter($t, $c, $p = 10, $a = 1) { return true; } }
+if (!function_exists('add_filter')) { function add_filter($t, $c, $p = 10, $a = 1) { $GLOBALS['_wp_filters'][$t][$p][] = $c; return true; } }
+
+// Shortcodes — registro mínimo pero real, para poder comprobar qué se pinta.
+$GLOBALS['_wp_shortcodes'] = array();
+if (!function_exists('add_shortcode')) { function add_shortcode($t, $cb) { $GLOBALS['_wp_shortcodes'][$t] = $cb; return true; } }
+if (!function_exists('shortcode_exists')) { function shortcode_exists($t) { return isset($GLOBALS['_wp_shortcodes'][$t]); } }
+if (!function_exists('has_shortcode')) {
+    function has_shortcode($c, $t) { return is_string($c) && (bool) preg_match('/\[' . preg_quote($t, '/') . '[\s\]]/', $c); }
+}
+if (!function_exists('do_shortcode')) {
+    function do_shortcode($c) {
+        return preg_replace_callback('/\[([a-z0-9_]+)([^\]]*)\]/i', function ($m) {
+            if (!isset($GLOBALS['_wp_shortcodes'][$m[1]])) { return $m[0]; }
+            $atts = array();
+            if (preg_match_all('/([a-z0-9_]+)="([^"]*)"/i', $m[2], $pares, PREG_SET_ORDER)) {
+                foreach ($pares as $par) { $atts[$par[1]] = $par[2]; }
+            }
+            return (string) call_user_func($GLOBALS['_wp_shortcodes'][$m[1]], $atts, '', '');
+        }, (string) $c);
+    }
+}
+
+// Contexto de consulta: cada test decide si está en una ficha, en el bucle principal, etc.
+$GLOBALS['convoca_test_query'] = array(
+    'es_singular' => false, 'en_loop' => true, 'principal' => true, 'queried_id' => 0, 'tema_soporta' => false,
+);
+if (!function_exists('is_singular')) { function is_singular($t = '') { return (bool) $GLOBALS['convoca_test_query']['es_singular']; } }
+
+// Tipos de los posts usados en los tests: id => post_type.
+$GLOBALS['convoca_test_tipos'] = array();
+if (!function_exists('get_post_type')) {
+    function get_post_type($post = null) {
+        $id = is_object($post) ? (int) $post->ID : (int) $post;
+        return $GLOBALS['convoca_test_tipos'][$id] ?? false;
+    }
+}
+if (!function_exists('shortcode_atts')) {
+    function shortcode_atts($pairs, $atts, $shortcode = '') {
+        $atts = (array) $atts;
+        $out = array();
+        foreach ($pairs as $name => $default) { $out[$name] = array_key_exists($name, $atts) ? $atts[$name] : $default; }
+        return $out;
+    }
+}
+if (!function_exists('in_the_loop')) { function in_the_loop() { return (bool) $GLOBALS['convoca_test_query']['en_loop']; } }
+if (!function_exists('is_main_query')) { function is_main_query() { return (bool) $GLOBALS['convoca_test_query']['principal']; } }
+if (!function_exists('get_queried_object_id')) { function get_queried_object_id() { return (int) $GLOBALS['convoca_test_query']['queried_id']; } }
+if (!function_exists('current_theme_supports')) { function current_theme_supports($f = '') { return (bool) $GLOBALS['convoca_test_query']['tema_soporta']; } }
 
 // Auth
 if (!function_exists('current_user_can')) { function current_user_can($c, ...$a) { return true; } }

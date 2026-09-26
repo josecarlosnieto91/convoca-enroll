@@ -1,5 +1,29 @@
 # Changelog — convoca-enroll
 
+## v2.7.13 (2026-09-26)
+
+### Añadido — el formulario de inscripción viaja con el plugin, no con el tema
+- **La ficha pública de una actividad no ofrecía forma de inscribirse.** Verificado en la demo: la
+  página servía el título y el «Related content», y su único `<form>` era el **buscador**; el enlace
+  «Inscríbete» llevaba a `/inscribete/`, que tampoco tenía formulario. La sección de inscripción
+  vivía solo en un patrón del tema, y el plugin no la ponía por su cuenta: en un sitio cuyo tema no
+  sea el de Convoca (Lugg usa `sculpt`) la actividad se queda sin forma de apuntarse.
+- `CPT_Actividad::append_registration_form()` añade la sección al contenido de la ficha (solo en
+  `is_singular('actividad')`, en el bucle principal) reutilizando `[convoca_inscripcion_actual]`.
+- **No duplica**: si el contenido ya trae `[convoca_inscripcion_actual]` o `[convoca_form_inscripcion]`,
+  no se añade nada. **No ensucia**: si el formulario no pinta nada, no se deja un contenedor vacío.
+- **Se puede delegar**: un tema que ya pinte el formulario lo desactiva con
+  `add_theme_support( 'convoca-actividad-form' )`; un sitio, con el filtro
+  `convoca_enroll_form_en_ficha` (recibe el ID de la actividad, para decidir por actividad).
+
+### Pruebas
+- `tests/Unit/FichaActividadFormTest.php`: 8 casos (se añade, no toca otras páginas, no duplica, el
+  tema puede tomarlo, el filtro lo desactiva y recibe el ID, fuera del bucle no se toca, sin
+  formulario no hay contenedor vacío). Comprobado **en negativo**.
+- El arnés de pruebas registra filtros y shortcodes de verdad: `apply_filters` devolvía el valor tal
+  cual y `add_filter` era un no-op, así que ningún contrato basado en filtros se podía comprobar.
+
+
 ## v2.7.12 (2026-09-26)
 
 ### Corregido — siete enlaces de administración llevaban a una pantalla de error

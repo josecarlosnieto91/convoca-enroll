@@ -84,6 +84,55 @@ class CPT_Actividad {
 		add_action( 'wp_head', array( $this, 'output_event_schema' ) );
 		add_shortcode( 'convoca_actividad_meta', array( $this, 'shortcode_actividad_meta' ) );
 		add_shortcode( 'convoca_inscripcion_actual', array( $this, 'shortcode_inscripcion_actual' ) );
+		// El formulario de inscripción viaja con el PLUGIN, no con el tema: si depende
+		// de una plantilla, en un sitio cuyo tema sea otro (Lugg usa `sculpt`) la ficha
+		// de la actividad se queda sin ninguna forma de apuntarse.
+		add_filter( 'the_content', array( $this, 'append_registration_form' ), 20 );
+	}
+
+	/**
+	 * Añade la sección de inscripción a la ficha de una actividad.
+	 *
+	 * Verificado en la demo: la ficha servía la actividad sin formulario ni enlace para
+	 * inscribirse, porque la sección vivía solo en un patrón del tema.
+	 *
+	 * Un tema que ya pinte el formulario puede desactivarlo con
+	 * `add_theme_support( 'convoca-actividad-form' )`; un sitio, con el filtro
+	 * `convoca_enroll_form_en_ficha` (recibe el ID de la actividad).
+	 *
+	 * @param string $content Contenido de la entrada.
+	 * @return string
+	 */
+	public function append_registration_form( $content ) {
+		if ( ! is_singular( 'actividad' ) || ! in_the_loop() || ! is_main_query() ) {
+			return $content;
+		}
+
+		$actividad_id = (int) get_queried_object_id();
+
+		if ( ! apply_filters( 'convoca_enroll_form_en_ficha', true, $actividad_id ) ) {
+			return $content;
+		}
+		if ( current_theme_supports( 'convoca-actividad-form' ) ) {
+			return $content;
+		}
+		// Si el contenido de la actividad ya trae el formulario, no se duplica.
+		if ( has_shortcode( $content, 'convoca_inscripcion_actual' ) || has_shortcode( $content, 'convoca_form_inscripcion' ) ) {
+			return $content;
+		}
+		if ( ! shortcode_exists( 'convoca_inscripcion_actual' ) ) {
+			return $content;
+		}
+
+		$formulario = do_shortcode( '[convoca_inscripcion_actual]' );
+
+		// Si no hay formulario que pintar (actividad sin datos, sin plazas…) no se deja
+		// un contenedor vacío.
+		if ( '' === trim( $formulario ) ) {
+			return $content;
+		}
+
+		return $content . '<div class="convoca-ficha-form">' . $formulario . '</div>';
 	}
 
 	/* ── Register CPT ──────────────────────────── */
