@@ -45,6 +45,27 @@ class Motor_Inscripcion {
 	}
 
 	/**
+	 * ¿Se puede inscribir todavía en esta actividad?
+	 *
+	 * Una sola regla, compartida por el motor y por la ficha: se inscribe hasta que
+	 * empieza la actividad (`fecha_inicio`). Sin fecha, no se bloquea. Se pintaba el
+	 * formulario en actividades ya terminadas, así que el visitante lo rellenaba entero
+	 * para recibir «Esta actividad ya ha finalizado.».
+	 *
+	 * @param int $actividad_id ID de la actividad.
+	 * @return bool
+	 */
+	public static function esta_abierta( int $actividad_id ): bool {
+		$fecha_inicio = get_post_meta( $actividad_id, CPT_Actividad::META_PREFIX . 'fecha_inicio', true );
+
+		if ( empty( $fecha_inicio ) ) {
+			return true;
+		}
+
+		return strtotime( (string) $fecha_inicio ) >= time();
+	}
+
+	/**
 	 * Create a new inscription.
 	 *
 	 * @param int   $actividad_id  Activity post ID.
@@ -63,8 +84,7 @@ class Motor_Inscripcion {
 		}
 
 		// Prevent enrollment in past activities.
-		$fecha_inicio = get_post_meta( $actividad_id, CPT_Actividad::META_PREFIX . 'fecha_inicio', true );
-		if ( ! empty( $fecha_inicio ) && strtotime( $fecha_inicio ) < time() ) {
+		if ( ! self::esta_abierta( $actividad_id ) ) {
 			return new \WP_Error( 'activity_ended', __( 'Esta actividad ya ha finalizado.', 'convoca-enroll' ) );
 		}
 

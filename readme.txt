@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.7.14
+Stable tag: 2.7.15
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.15 =
+* La ficha de una actividad ya terminada no ofrece el formulario de inscripcion (que el servidor rechazaba con «Esta actividad ya ha finalizado») y en su lugar explica el motivo. La regla de actividad abierta es una sola, compartida por el motor y la ficha.
 
 = 2.7.14 =
 * El formulario de inscripcion ya no puede aparecer dos veces en la misma ficha cuando el tema tambien lo pinta en su plantilla.

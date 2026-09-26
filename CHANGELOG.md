@@ -1,5 +1,25 @@
 # Changelog — convoca-enroll
 
+## v2.7.15 (2026-09-26)
+
+### Corregido — la ficha de una actividad terminada ya no ofrece un formulario inútil
+- Verificado recorriendo el alta como una persona en la demo: la actividad había terminado el 10 de
+  septiembre y su ficha pintaba el formulario. Al rellenarlo entero y enviarlo, el servidor respondía
+  `{"success":false,"data":{"errors":["Esta actividad ya ha finalizado."]}}`. El visitante hacía todo el
+  trabajo para que se lo rechazaran al final.
+- La regla pasa a `Motor_Inscripcion::esta_abierta()`, **una sola** para el motor y la ficha (se
+  inscribe hasta que empieza la actividad; sin fecha, no se bloquea). El motor la usa en `inscribir()`
+  en lugar de su comprobación propia.
+- La ficha no pinta el formulario cuando la actividad ya empezó y, en su lugar, **explica** el motivo
+  con el mismo aviso del shortcode: ni formulario que va a fallar ni silencio.
+
+### Pruebas
+- `MotorActividadAbiertaTest`: la regla (sin fecha, futura, pasada) y que **el motor la usa de verdad**
+  (`inscribir()` devuelve `activity_ended`).
+- `FichaActividadFormTest`: la actividad terminada no ofrece formulario y sí explica el motivo; una
+  actividad de hoy sigue ofreciéndolo. Enroll 93/93, comprobado en negativo.
+
+
 ## v2.7.14 (2026-09-26)
 
 ### Corregido

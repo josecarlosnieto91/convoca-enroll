@@ -113,6 +113,15 @@ class CPT_Actividad {
 
 		$actividad_id = (int) get_queried_object_id();
 
+		// Una actividad ya empezada no debe ofrecer un formulario que siempre va a fallar:
+		// el visitante lo rellena entero y recibe «ya ha finalizado». Ni formulario ni
+		// silencio: se explica, con el mismo aviso que da el shortcode.
+		if ( ! Motor_Inscripcion::esta_abierta( $actividad_id ) ) {
+			$aviso = do_shortcode( '[convoca_inscripcion_actual]' );
+
+			return '' === trim( $aviso ) ? $content : $content . '<div class="convoca-ficha-form">' . $aviso . '</div>';
+		}
+
 		if ( ! apply_filters( 'convoca_enroll_form_en_ficha', true, $actividad_id ) ) {
 			return $content;
 		}
@@ -989,6 +998,13 @@ class CPT_Actividad {
 		if ( ! $id || $id <= 0 || get_post_type( $id ) !== 'actividad' ) {
 			return '';
 		}
+
+		// Un formulario que ya no puede tramitarse no se pinta: se dice por qué. Va antes
+		// de comprobar el formulario para que el aviso salga aunque no esté registrado.
+		if ( ! Motor_Inscripcion::esta_abierta( (int) $id ) ) {
+			return '<div class="convoca-alert convoca-alert--info" style="display:block;padding:15px;margin:10px 0;">' . esc_html__( 'Esta actividad ya ha finalizado.', 'convoca-enroll' ) . '</div>';
+		}
+
 		if ( ! shortcode_exists( 'convoca_form_inscripcion' ) ) {
 			return '';
 		}

@@ -41,7 +41,7 @@ class FichaActividadFormTest extends TestCase
 		$pintado->setValue( null, false );
 	}
 
-	private function preparar( int $actividad = 812 ): CPT_Actividad {
+	private function preparar( int $actividad = 812, string $fecha_inicio = '+30 days' ): CPT_Actividad {
 		$this->reiniciarEstado();
 
 		$GLOBALS['_wp_shortcodes']     = array();
@@ -51,11 +51,42 @@ class FichaActividadFormTest extends TestCase
 			'es_singular' => true, 'en_loop' => true, 'principal' => true,
 			'queried_id' => $actividad, 'tema_soporta' => false,
 		);
+		// La ficha de una actividad ya empezada no ofrece formulario, así que la fecha
+		// forma parte del escenario: por defecto, futura.
+		$GLOBALS['_wp_stores']['post_meta'][ $actividad ]['_convoca_fecha_inicio'] =
+			( new \DateTimeImmutable( $fecha_inicio ) )->format( 'Y-m-d H:i:s' );
 
 		// Doble del formulario real: el shortcode de la ficha delega en él.
 		add_shortcode( 'convoca_form_inscripcion', static fn(): string => self::MARCA );
 
 		return new CPT_Actividad();
+	}
+
+	public function test_una_actividad_ya_empezada_no_ofrece_formulario(): void {
+		// Visto en la demo: la ficha pintaba el formulario en una actividad terminada y el
+		// visitante lo rellenaba entero para recibir «Esta actividad ya ha finalizado.».
+		$cpt = $this->preparar( 812, '-3 days' );
+
+		$salida = $cpt->append_registration_form( 'contenido' );
+
+		$this->assertStringContainsString( 'contenido', $salida, 'No debe perderse el contenido.' );
+		$this->assertStringNotContainsString( self::MARCA, $salida, 'No debe ofrecerse un formulario que va a fallar.' );
+		$this->assertStringContainsString( 'ya ha finalizado', $salida, 'Ni formulario ni silencio: debe explicarse.' );
+	}
+
+	public function test_el_shortcode_avisa_en_vez_de_pintar_un_formulario_inutil(): void {
+		$cpt = $this->preparar( 812, '-3 days' );
+
+		$salida = $cpt->shortcode_inscripcion_actual();
+
+		$this->assertStringNotContainsString( self::MARCA, $salida, 'No debe pintar el formulario.' );
+		$this->assertStringContainsString( 'ya ha finalizado', $salida, 'Debe decir por qué no se puede.' );
+	}
+
+	public function test_una_actividad_de_hoy_sigue_abierta(): void {
+		$cpt = $this->preparar( 812, '+2 hours' );
+
+		$this->assertStringContainsString( self::MARCA, $cpt->append_registration_form( 'contenido' ) );
 	}
 
 	public function test_la_ficha_recibe_el_formulario(): void {

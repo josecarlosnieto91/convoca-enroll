@@ -74,6 +74,10 @@ if (!function_exists('get_post_meta')) {
 
 // Core WP
 if (!function_exists('__')) { function __($t, $d = 'default') { return $t; } }
+if (!function_exists('esc_html__')) { function esc_html__($t, $d = 'default') { return htmlspecialchars((string) $t, ENT_QUOTES); } }
+if (!function_exists('esc_attr__')) { function esc_attr__($t, $d = 'default') { return htmlspecialchars((string) $t, ENT_QUOTES); } }
+if (!function_exists('esc_html_e')) { function esc_html_e($t, $d = 'default') { echo htmlspecialchars((string) $t, ENT_QUOTES); } }
+if (!function_exists('esc_attr_e')) { function esc_attr_e($t, $d = 'default') { echo htmlspecialchars((string) $t, ENT_QUOTES); } }
 if (!function_exists('_e')) { function _e($t, $d = 'default') { echo $t; } }
 if (!function_exists('is_email')) { function is_email($e) { return (bool) filter_var($e, FILTER_VALIDATE_EMAIL); } }
 if (!function_exists('wp_mail')) {
@@ -185,7 +189,18 @@ if (!function_exists('wp_timezone_string')) { function wp_timezone_string() { re
 // Posts
 if (!function_exists('get_the_title')) { function get_the_title($id) { return "Post $id"; } }
 if (!function_exists('get_post_status')) { function get_post_status($id) { return 'publish'; } }
-if (!function_exists('get_post')) { function get_post($id = null) { if (!$id) return null; $p = new stdClass(); $p->ID = $id; $p->post_type = 'post'; $p->post_status = 'publish'; return $p; } }
+if (!function_exists('get_post')) {
+    // El tipo se puede fijar por id con `$GLOBALS['convoca_test_post_types']`; por
+    // defecto sigue siendo 'post', como antes.
+    function get_post($id = null) {
+        if (!$id) return null;
+        $p = new stdClass();
+        $p->ID = $id;
+        $p->post_type = $GLOBALS['convoca_test_post_types'][$id] ?? 'post';
+        $p->post_status = 'publish';
+        return $p;
+    }
+}
 if (!function_exists('post_type_exists')) { function post_type_exists($t) { return in_array($t, ['post','page','actividad','miembro'], true); } }
 if (!function_exists('wp_insert_post')) { function wp_insert_post($d) { static $c = 100; $c++; return $c; } }
 if (!function_exists('wp_update_post')) { function wp_update_post($d) { return $d['ID'] ?? wp_insert_post($d); } }
