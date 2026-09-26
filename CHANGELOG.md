@@ -1,5 +1,24 @@
 # Changelog — convoca-enroll
 
+## v2.7.16 (2026-09-26)
+
+### Corregido — cinco acciones AJAX publicadas desde el JS no existían en el PHP
+- Encontrado recorriendo el alta como una persona: tras confirmar la reserva, el panel respondía
+  **«Error desconocido.»**. El JS publicaba a `conv_enroll_panel_login` y el PHP registraba
+  `convoca_panel_login`, así que la llamada nunca llegaba. El mismo desajuste dejaba muertas:
+  - `conv_enroll_panel_login` → `convoca_panel_login` (**consultar reservas**, público)
+  - `conv_enroll_panel_cancelar` → `convoca_panel_cancelar` (**cancelar** desde el panel)
+  - `conv_enroll_change_state` → `convoca_change_state` (cambio de estado en la administración)
+  - `conv_enroll_toggle_checkin` → `convoca_toggle_checkin` (check-in manual)
+  - `conv_enroll_resend_email` → `convoca_resend_email` (reenviar correo)
+- El nombre del AJAX es un contrato entre dos ficheros: cada lado es válido por separado, así que ni
+  el lint ni el CI lo ven. Ahora lo comprueba `AjaxAccionesTest`.
+
+### Pruebas
+- `AjaxAccionesTest`: toda acción publicada desde `assets/js/*.js` tiene que estar registrada en el
+  PHP del plugin, y no puede quedar ninguna con el prefijo viejo. Comprobado **en negativo**. 95/95.
+
+
 ## v2.7.15 (2026-09-26)
 
 ### Corregido — la ficha de una actividad terminada ya no ofrece un formulario inútil

@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.7.15
+Stable tag: 2.7.16
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.16 =
+* Cinco acciones AJAX del JavaScript publicaban a nombres que el PHP no registraba: el panel de reservas respondia «Error desconocido.» al consultar o cancelar, y fallaban el cambio de estado, el check-in y el reenvio de correo en la administracion.
 
 = 2.7.15 =
 * La ficha de una actividad ya terminada no ofrece el formulario de inscripcion (que el servidor rechazaba con «Esta actividad ya ha finalizado») y en su lugar explica el motivo. La regla de actividad abierta es una sola, compartida por el motor y la ficha.

@@ -44,7 +44,7 @@
 
         const nonce = window.bdePanel?.nonce || '';
 
-        conv.ajaxPost('conv_enroll_panel_login', fd, nonce,
+        conv.ajaxPost('convoca_panel_login', fd, nonce,
             (res) => {
                 sessionEmail = email;
                 sessionCodigo = codigo;
@@ -148,7 +148,7 @@
 
         const nonce = window.bdePanel?.nonce || '';
 
-        conv.ajaxPost('conv_enroll_panel_cancelar', fd, nonce,
+        conv.ajaxPost('convoca_panel_cancelar', fd, nonce,
             (res) => {
                 modal.style.display = 'none';
                 conv.setLoading(confirmBtn, false, 'Sí, cancelar reserva');

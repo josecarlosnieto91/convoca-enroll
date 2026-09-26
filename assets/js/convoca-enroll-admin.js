@@ -26,7 +26,7 @@
             const fd = new FormData(stateForm);
             const nonce = window.bdeAdmin?.nonce || '';
 
-            convAdmin.ajaxPost('conv_enroll_change_state', fd, nonce,
+            convAdmin.ajaxPost('convoca_change_state', fd, nonce,
                 (res) => { location.reload(); },
                 (res) => {
                     alert(res.data?.message || res.data || 'Error al cambiar el estado.');
@@ -51,7 +51,7 @@
             const nonce = window.bdeAdmin?.nonce || '';
             const payload = { inscripcion_id: id };
 
-            convAdmin.ajaxPost('conv_enroll_toggle_checkin', payload, nonce,
+            convAdmin.ajaxPost('convoca_toggle_checkin', payload, nonce,
                 (res) => {
                     this.disabled = false;
                     this.style.opacity = '1';
@@ -94,7 +94,7 @@
         const nonce = window.bdeAdmin?.nonce || '';
         const payload = { inscripcion_id: id };
 
-        convAdmin.ajaxPost('conv_enroll_resend_email', payload, nonce,
+        convAdmin.ajaxPost('convoca_resend_email', payload, nonce,
             (res) => {
                 btn.disabled = false;
                 btn.style.opacity = '1';
