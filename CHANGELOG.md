@@ -1,5 +1,18 @@
 # Changelog — convoca-enroll
 
+## v2.7.20 (2026-09-27)
+
+### Retirado — el CSS huérfano de esa misma UI (cierra la retirada de la 2.7.19)
+
+`assets/css/media-admin.css` era la hoja de estilo del editor de carteles retirado en la 2.7.19:
+**nadie la encolaba** (cero referencias, misma fecha que aquellos dos JS) y no la usaba ninguna otra
+pantalla. Se retira con la misma copia previa (`~/backups-convoca/js-retirado/`, con su md5 en el
+LEEME; en el historial de este repositorio; y en `/var/tmp/retirados-*` de cada sitio).
+
+La funcionalidad de carteles sigue intacta y se sirve por la API REST (`/media/poster/render`,
+`/media/poster/regenerate`, `/media/templates`, `/media/blog/create`) y por el **Poster Engine**
+(§15 de la wiki), que es lo que se usa de verdad.
+
 ## v2.7.19 (2026-09-27)
 
 ### Retirado — el JS de la UI de carteles que nunca llegó a tener servidor
