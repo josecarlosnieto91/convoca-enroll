@@ -1,5 +1,34 @@
 # Changelog — convoca-enroll
 
+## v2.7.19 (2026-09-27)
+
+### Retirado — el JS de la UI de carteles que nunca llegó a tener servidor
+
+`assets/js/media-admin.js` y `assets/js/convoca-editor.js` eran la interfaz de un **editor de
+carteles que no se llegó a construir**. Se retiran **con copia previa** (en `~/backups-convoca/`
+y en el historial de este repositorio); no se borra nada irrecuperable.
+
+Comprobado uno por uno antes de retirarlos:
+
+- **A `media-admin.js` no lo engancha nadie**: cero referencias en PHP. Espera un metabox
+  (`.convoca-media-metabox`) y dos acciones AJAX (`convoca_render_poster`, `convoca_create_blog_post`)
+  que **no existen en ningún fichero** de ningún plugin.
+- **`convoca-editor.js` espera una página de administración** `admin.php?page=convoca-media-editor`
+  (`#convoca-editor-app`, `convocaEditor`) que **no está registrada** en ningún sitio. En Lugg solo
+  aparecía dentro de copias de backwpup, nunca en código vivo.
+- El **resto de JS del plugin sí está enganchado** (1-3 referencias en PHP cada uno): no es una
+  retirada en bloque, son estos dos.
+- **La funcionalidad no se pierde: está en la API REST**, y completa:
+  `POST /convoca/v1/media/poster/render` (lo que era `convoca_render_poster`),
+  `/media/poster/regenerate`, `GET /media/templates[/{id}]` (el selector de plantilla) y
+  `POST /media/blog/create` (lo que era `convoca_create_blog_post`).
+- Los ficheros son de junio y el motor de carteles (`class-poster-engine.php`) y el gestor de
+  entradas (`class-blog-post-manager.php`) son de agosto y septiembre: **la API sustituyó a esa
+  interfaz**, no al revés.
+
+Si algún día se quiere una interfaz para generar carteles a mano, es un **envoltorio fino** sobre
+esos cuatro endpoints: el motor no hay que rehacerlo.
+
 ## v2.7.18 (2026-09-26)
 
 ### Añadido — el enlace del QR ya le sirve a quien recibe el QR

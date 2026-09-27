@@ -3,9 +3,10 @@
 /**
  * Lo que comparten los tests E2E: el fixture y las llamadas a la API.
  *
- * El módulo de medios se prueba por su interfaz real, que es la API REST: la UI del
- * metabox (assets/js/media-admin.js) no está enganchada a ningún PHP, así que no hay
- * pantalla que pulsar.
+ * El módulo de medios se prueba por su interfaz real, que es la API REST. Aquella UI de
+ * metabox (assets/js/media-admin.js) nunca llegó a tener PHP detrás —nadie la encolaba y la
+ * acción convoca_render_poster no tenía handler— y se retiró como código muerto en la 2.7.19,
+ * así que no hay pantalla que pulsar.
  */
 
 const fs = require('fs');

@@ -5,12 +5,13 @@ const { defineConfig } = require('@playwright/test');
 /**
  * Destino del E2E.
  *
- * El módulo de medios se prueba por su API REST, que es su interfaz real: la UI del metabox
- * (`assets/js/media-admin.js`, `convoca-editor.js`) no está enganchada a ningún PHP —nadie
- * la encola y su acción `convoca_render_poster` no tiene handler—, así que no hay pantalla
- * que pulsar. La suite ESCRIBE (genera carteles y toca una actividad de fixture), por eso el
- * destino por defecto es el contenedor de desarrollo y nunca un sitio en vivo: apuntarla a
- * un dominio real se hace a propósito, con E2E_BASE_URL.
+ * El módulo de medios se prueba por su API REST, que es su interfaz real: aquella UI de metabox y
+ * editor (`assets/js/media-admin.js`, `convoca-editor.js`) nunca llegó a tener PHP detrás —nadie la
+ * encolaba, `convoca_render_poster` no tenía handler y la página `convoca-media-editor` no estaba
+ * registrada— y se retiró como código muerto en la 2.7.19, así que no hay pantalla que pulsar. La
+ * suite ESCRIBE (genera carteles y toca una actividad de fixture), por eso el destino por defecto es
+ * el contenedor de desarrollo y nunca un sitio en vivo: apuntarla a un dominio real se hace a
+ * propósito, con E2E_BASE_URL.
  */
 const baseURL = process.env.E2E_BASE_URL || 'http://localhost:8080';
 

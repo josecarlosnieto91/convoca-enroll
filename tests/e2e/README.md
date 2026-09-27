@@ -1,9 +1,10 @@
 # Tests E2E (Playwright)
 
 Prueban el **módulo de medios** (carteles, plantillas, social) por su interfaz real: la API REST.
-No hay pantalla que pulsar —la UI del metabox (`assets/js/media-admin.js`, `convoca-editor.js`) no
-está enganchada a ningún PHP: nadie la encola y su acción `convoca_render_poster` no tiene handler—,
-así que el recorrido se hace con llamadas a la API.
+No hay pantalla que pulsar: aquella UI de metabox/editor (`assets/js/media-admin.js` y
+`convoca-editor.js`) nunca llegó a tener PHP detrás —nadie la encolaba, `convoca_render_poster` no
+tenía handler y la página `convoca-media-editor` no estaba registrada— y se retiró como código muerto
+en la **2.7.19** (hay copia y explicación en el CHANGELOG). El recorrido se hace con llamadas a la API.
 
 ## Cómo se ejecuta
 

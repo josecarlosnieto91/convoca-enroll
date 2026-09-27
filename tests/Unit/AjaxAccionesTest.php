@@ -58,11 +58,22 @@ class AjaxAccionesTest extends TestCase
 	}
 
 	public function test_toda_accion_publicada_desde_el_js_esta_registrada_en_php(): void {
-		// Lo que publica el JavaScript.
+		// Lo que publica el JavaScript. Se miran DOS formas de llamar, porque la primera versión de
+		// esta prueba solo veía la primera y por ahí se colaron dos ficheros que publicaban acciones
+		// inexistentes durante meses sin que nadie se enterara:
+		//   1. el ayudante del plugin:  ajaxPost('convoca_accion', …)
+		//   2. jQuery/fetch a pelo:      $.post(url, { action: 'convoca_accion', … })
 		$publicadas = array();
 		foreach ( (array) glob( $this->raiz() . '/assets/js/*.js' ) as $js ) {
-			if ( preg_match_all( "/ajaxPost\(\s*'([a-z0-9_]+)'/", (string) file_get_contents( $js ), $m ) ) {
+			$contenido = (string) file_get_contents( $js );
+			if ( preg_match_all( "/ajaxPost\(\s*'([a-z0-9_]+)'/", $contenido, $m ) ) {
 				foreach ( $m[1] as $accion ) {
+					$publicadas[ $accion ] = basename( $js );
+				}
+			}
+			// Solo el prefijo del plugin: así no se confunde con un `action` que no sea una acción AJAX.
+			if ( preg_match_all( "/action:\s*['\"](convoca_[a-z0-9_]+)['\"]/", $contenido, $m2 ) ) {
+				foreach ( $m2[1] as $accion ) {
 					$publicadas[ $accion ] = basename( $js );
 				}
 			}
