@@ -62,7 +62,10 @@ foreach ( $convoca_enroll_options as $convoca_enroll_option ) {
 
 // ─── 2. Tablas propias ───
 // Antes faltaban las seis: el plugin desinstalado dejaba sus tablas huérfanas en la base.
+// La séptima, la cola de correo (`Email_Queue::TABLE_NAME`), también: verificado desinstalando en
+// un WordPress limpio (09/10/2026) — quedaba `wp_convoca_enroll_email_queue` huérfana.
 $convoca_enroll_tables = array(
+	'convoca_enroll_email_queue',
 	'convoca_reservation_codes',
 	'convoca_enroll_webhook_queue',
 	'convoca_media_logs',
