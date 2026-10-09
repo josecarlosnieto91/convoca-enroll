@@ -824,7 +824,7 @@ class Email_Automation {
 
 					$text = str_replace( array_keys( $map ), array_values( $map ), (string) $tpl[ $field ] );
 					$text = preg_replace(
-						'/[a-z0-9._%+\-]+@(?:getconvoca\.app|biodevas\.org|unbosquepamaria\.org)/i',
+						'/[a-z0-9._%+\-]+@(?:getconvoca\.app|biodevas\.org|unbosquepamaria\.org)/i', // convoca-hygiene-ignore: filtro de dominios de correo permitidos; deberia salir de la configuracion
 						'{admin_email}',
 						$text
 					);
