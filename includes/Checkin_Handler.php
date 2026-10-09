@@ -687,7 +687,7 @@ class Checkin_Handler {
 			wp_die(
 				esc_html( $result->get_error_message() ),
 				esc_html__( 'Error de Check-in', 'convoca-enroll' ),
-				array( 'response' => $estado )
+				array( 'response' => absint( $estado ) )
 			);
 		}
 
