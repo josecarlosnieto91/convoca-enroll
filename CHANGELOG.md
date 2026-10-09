@@ -1,5 +1,26 @@
 # Changelog — convoca-enroll
 
+## v2.7.21 (2026-10-09)
+
+### Corregido
+- **La cola de correo no se borraba al desinstalar.** Quedaba la tabla
+  `wp_convoca_enroll_email_queue` huérfana (el resto de tablas sí se borraban). Ahora se elimina.
+- **Los avisos por correo al administrador pasan por el punto único del núcleo** (`Convoca\Core\Mailer`)
+  con la identidad visual común y sin copia.
+- **Ajustes para el Plugin Check de WordPress.org** en `wp_die`: el estado sale de `$this` y se pasa
+  por `absint()` —es un código HTTP—, que es lo correcto y además satisface al comprobador.
+
+### Añadido
+- **Los dominios de correo del equipo salen del código y pasan a Ajustes**, con el mismo criterio que
+  el resto del ecosistema: valor por defecto automático y patrón saneado.
+
+### Cambiado
+- Higiene del producto: retirados el nombre del cliente y el de la asociación de textos y muestras.
+
+### Internamente
+- Comandos del CI alineados con los reales, configuración de pruebas corregida e higiene de cadenas
+  marcada.
+
 ## v2.7.20 (2026-09-27)
 
 ### Retirado — el CSS huérfano de esa misma UI (cierra la retirada de la 2.7.19)
