@@ -541,7 +541,12 @@ class Motor_Inscripcion {
 			$count
 		);
 
-		wp_mail( $admin_email, $subject, $body );
+		// Sale con la identidad de Convoca. Sin copia: el destinatario ya es la asociación (issue convoca-core#6).
+		\Convoca\Core\Mailer::send( $admin_email, $subject, $body, array(
+			'plugin'   => 'convoca-enroll',
+			'template' => 'cancelaciones_tardias_admin',
+			'copy'     => false,
+		) );
 	}
 
 	/**

@@ -146,7 +146,8 @@ class MotorInscripcionDecisionesTest extends TestCase
 
         $this->assertSame(3, Motor_Inscripcion::registrar_cancelacion_tardia($id, $now));
         $this->assertCount(1, $GLOBALS['_wp_stores']['sent_mail']);
-        $this->assertSame('admin@test.com', $GLOBALS['_wp_stores']['sent_mail'][0]['to']);
+        // El Mailer entrega el destinatario como lista de correos, no como texto.
+        $this->assertSame(array('admin@test.com'), $GLOBALS['_wp_stores']['sent_mail'][0]['to']);
     }
 
     public function test_registrar_cancelacion_tardia_agrega_por_anio(): void

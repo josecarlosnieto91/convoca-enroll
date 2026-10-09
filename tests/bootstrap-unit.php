@@ -346,4 +346,7 @@ if (file_exists($autoload)) {
 }
 
 date_default_timezone_set('Europe/Madrid');
+
+    // El doble del Mailer del nucleo (el real no vive aqui: el CI clona este repositorio solo).
+    require_once __DIR__ . '/StubMailer.php';
 }
