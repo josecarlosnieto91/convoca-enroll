@@ -117,3 +117,15 @@ class Webhook_Manager
 }
 
 function convoca_export_pdf( string $title, array $headers, array $rows, string $filename ): void {}
+
+class Mailer
+{
+    /**
+     * Punto unico de salida de los correos del ecosistema. El destinatario llega como
+     * texto o como lista, y el destinatario real se normaliza dentro.
+     *
+     * @param string|array<int, string> $to
+     * @param array<string, mixed>      $args
+     */
+    public static function send( $to, string $subject, string $body, array $args = array() ): bool { return true; }
+}
