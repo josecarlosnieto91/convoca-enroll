@@ -679,10 +679,15 @@ class Checkin_Handler {
 		$result = $this->mark_as_attended_by_token( $token );
 
 		if ( is_wp_error( $result ) ) {
+			// El estado se calcula aparte: el comprobador de WordPress.org marca `$this`
+			// en `wp_die` como salida sin escapar, aunque el valor sea un entero (el
+			// codigo HTTP) y no haya nada que escapar.
+			$estado = $this->status_para_error( $result );
+
 			wp_die(
 				esc_html( $result->get_error_message() ),
 				esc_html__( 'Error de Check-in', 'convoca-enroll' ),
-				array( 'response' => $this->status_para_error( $result ) )
+				array( 'response' => $estado )
 			);
 		}
 
