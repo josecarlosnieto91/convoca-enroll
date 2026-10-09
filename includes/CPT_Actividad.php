@@ -88,7 +88,7 @@ class CPT_Actividad {
 		add_shortcode( 'convoca_actividad_meta', array( $this, 'shortcode_actividad_meta' ) );
 		add_shortcode( 'convoca_inscripcion_actual', array( $this, 'shortcode_inscripcion_actual' ) );
 		// El formulario de inscripción viaja con el PLUGIN, no con el tema: si depende
-		// de una plantilla, en un sitio cuyo tema sea otro (Lugg usa `sculpt`) la ficha
+		// de una plantilla, en un sitio cuyo tema sea otro (Ejemplo usa `sculpt`) la ficha
 		// de la actividad se queda sin ninguna forma de apuntarse.
 		add_filter( 'the_content', array( $this, 'append_registration_form' ), 20 );
 	}

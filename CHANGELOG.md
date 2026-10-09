@@ -27,7 +27,7 @@ Comprobado uno por uno antes de retirarlos:
   (`.convoca-media-metabox`) y dos acciones AJAX (`convoca_render_poster`, `convoca_create_blog_post`)
   que **no existen en ningún fichero** de ningún plugin.
 - **`convoca-editor.js` espera una página de administración** `admin.php?page=convoca-media-editor`
-  (`#convoca-editor-app`, `convocaEditor`) que **no está registrada** en ningún sitio. En Lugg solo
+  (`#convoca-editor-app`, `convocaEditor`) que **no está registrada** en ningún sitio. En Ejemplo solo
   aparecía dentro de copias de backwpup, nunca en código vivo.
 - El **resto de JS del plugin sí está enganchado** (1-3 referencias en PHP cada uno): no es una
   retirada en bloque, son estos dos.
@@ -146,7 +146,7 @@ esos cuatro endpoints: el motor no hay que rehacerlo.
   página servía el título y el «Related content», y su único `<form>` era el **buscador**; el enlace
   «Inscríbete» llevaba a `/inscribete/`, que tampoco tenía formulario. La sección de inscripción
   vivía solo en un patrón del tema, y el plugin no la ponía por su cuenta: en un sitio cuyo tema no
-  sea el de Convoca (Lugg usa `sculpt`) la actividad se queda sin forma de apuntarse.
+  sea el de Convoca (Ejemplo usa `sculpt`) la actividad se queda sin forma de apuntarse.
 - `CPT_Actividad::append_registration_form()` añade la sección al contenido de la ficha (solo en
   `is_singular('actividad')`, en el bucle principal) reutilizando `[convoca_inscripcion_actual]`.
 - **No duplica**: si el contenido ya trae `[convoca_inscripcion_actual]` o `[convoca_form_inscripcion]`,

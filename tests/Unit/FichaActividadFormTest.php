@@ -5,7 +5,7 @@
  * Defecto real, visto en la demo: la ficha servía la actividad con el título y el
  * «Related content» pero **sin formulario ni enlace para inscribirse**. La sección de
  * inscripción vivía solo en un patrón del tema, y el plugin no la ponía por su cuenta;
- * en un sitio cuyo tema no sea el de Convoca (Lugg usa `sculpt`) la actividad se queda
+ * en un sitio cuyo tema no sea el de Convoca (Ejemplo usa `sculpt`) la actividad se queda
  * literalmente sin forma de apuntarse.
  *
  * El formulario viaja ahora con el plugin. Un tema que ya lo pinte puede tomar el relevo
