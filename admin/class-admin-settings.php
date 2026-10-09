@@ -122,6 +122,13 @@ class Admin_Settings {
 		</div>
 
 		<div class="convoca-field">
+			<label for="admin_email_domains"><?php esc_html_e( 'Dominios de correo del equipo', 'convoca-enroll' ); ?></label>
+			<input type="text" id="admin_email_domains" name="conv[admin_email_domains]"
+				value="<?php echo esc_attr( $s['admin_email_domains'] ?? '' ); ?>">
+			<small class="convoca-small"><?php esc_html_e( 'Separados por «|». Las plantillas que nombran un correo de estos dominios lo sustituyen por el email configurado arriba. Vacío = el dominio de ese email.', 'convoca-enroll' ); ?></small>
+		</div>
+
+		<div class="convoca-field">
 			<label for="rgpd_version"><?php esc_html_e( 'Versión RGPD', 'convoca-enroll' ); ?></label>
 			<input type="text" id="rgpd_version" name="conv[rgpd_version]"
 				value="<?php echo esc_attr( $s['rgpd_version'] ?? '1.0' ); ?>">

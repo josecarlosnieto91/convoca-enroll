@@ -777,6 +777,35 @@ class Email_Automation {
 	 *
 	 * @return array<int,string>
 	 */
+	/**
+	 * Dominios de correo que se consideran del equipo: los que las plantillas nombran a mano
+	 * («escribe a coordinacion@…») y hay que sustituir por el email configurado en WordPress.
+	 *
+	 * Se configuran en Convoca → Inscripciones → Ajustes. El valor por defecto reproduce el que
+	 * estaba fijo en el código, así que una instalación que no lo toque no cambia de comportamiento.
+	 */
+	private static function dominios_de_correo(): string {
+		$s        = get_option( 'convoca_enroll_settings', array() );
+		$dominios = trim( (string) ( $s['admin_email_domains'] ?? '' ) );
+
+		if ( '' === $dominios ) {
+			// Por defecto, el dominio del propio sitio (el del email configurado arriba): así cada
+			// instalación reconoce los suyos y el código no lleva el nombre de ninguna asociación.
+			$propio   = (string) substr( strrchr( (string) ( $s['admin_email'] ?? get_option( 'admin_email' ) ), '@' ), 1 );
+			$dominios = 'getconvoca.app' . ( '' !== $propio ? '|' . $propio : '' );
+		}
+
+		// Solo lo que puede formar parte del patrón: fuera metacaracteres.
+		$dominios = (string) preg_replace( '/[^a-z0-9._|\-]/i', '', $dominios );
+		$dominios = trim( $dominios, '|' );
+		if ( '' === $dominios ) {
+			$dominios = 'getconvoca.app';
+		}
+
+		// El punto separa dominios: en un patrón tiene que ir escapado.
+		return str_replace( '.', '\.', $dominios );
+	}
+
 	private static function default_cta( string $slug ): array {
 		$panel = array( '{panel_reservas}', __( 'Ver mis reservas', 'convoca-enroll' ) );
 		$ctas  = array(
@@ -824,7 +853,7 @@ class Email_Automation {
 
 					$text = str_replace( array_keys( $map ), array_values( $map ), (string) $tpl[ $field ] );
 					$text = preg_replace(
-						'/[a-z0-9._%+\-]+@(?:getconvoca\.app|biodevas\.org|unbosquepamaria\.org)/i', // convoca-hygiene-ignore: filtro de dominios de correo permitidos; deberia salir de la configuracion
+						'/[a-z0-9._%+\-]+@(?:' . self::dominios_de_correo() . ')/i',
 						'{admin_email}',
 						$text
 					);
