@@ -417,6 +417,54 @@ class Admin_Page {
 		echo '</form></div>';
 	}
 
+	/**
+	 * IDs de inscripción seleccionados en la acción masiva.
+	 *
+	 * La tabla emite los checkboxes como `ids[]` (`Inscriptions_List::column_cb`),
+	 * pero el manejador leía `$_GET['inscripcion']`: el array llegaba SIEMPRE vacío y
+	 * la acción «Confirmar plazas» no hacía nada al seleccionar filas, sin ningún
+	 * error a la vista. Se aceptan los dos nombres.
+	 *
+	 * @param array $peticion Normalmente `$_GET`.
+	 * @return int[] IDs saneados (sin ceros ni duplicados).
+	 */
+	public static function ids_de_la_peticion( array $peticion ): array {
+		$crudos = $peticion['ids'] ?? $peticion['inscripcion'] ?? array();
+		$ids    = array_map( 'intval', (array) $crudos );
+		$ids    = array_filter( $ids, static fn( $id ) => $id > 0 );
+		return array_values( array_unique( $ids ) );
+	}
+
+	/**
+	 * ¿Cabe otra inscripción confirmada en esta actividad?
+	 *
+	 * El aforo máximo es `_convoca_plazas_totales`, la clave que usa el CPT de
+	 * actividades para todo lo demás: `_convoca_aforo` no existe en ninguna
+	 * instalación (0 filas en toda la base de la demo).
+	 *
+	 * La ocupación se **cuenta**, no se lee de `_convoca_plazas_ocupadas`: ese meta
+	 * no lo escribe nadie en todo el ecosistema (solo se leía aquí), así que valía
+	 * siempre 0. Con los dos ceros la comprobación daba `0 >= 0` y la acción masiva
+	 * saltaba TODAS las inscripciones por «falta de aforo» sin confirmar ninguna.
+	 *
+	 * @param int $actividad_id Actividad a comprobar.
+	 * @return bool True si hay sitio (o si la actividad no tiene aforo configurado).
+	 */
+	public static function hay_aforo( int $actividad_id ): bool {
+		$aforo_max = (int) get_post_meta( $actividad_id, '_convoca_plazas_totales', true );
+		if ( $aforo_max <= 0 ) {
+			// Compatibilidad con instalaciones que sí declaren `_convoca_aforo`.
+			$aforo_max = (int) get_post_meta( $actividad_id, '_convoca_aforo', true );
+		}
+		if ( $aforo_max <= 0 ) {
+			// Sin aforo configurado no hay tope: no se salta nada por capacidad.
+			return true;
+		}
+
+		$stats = CPT_Inscripcion::count_by_activity( $actividad_id );
+		return (int) ( $stats['confirmada'] ?? 0 ) < $aforo_max;
+	}
+
 	private function handle_bulk_actions(): void {
 		$action = wp_unslash( $_GET['action'] ?? $_GET['action2'] ?? '' );
 		if ( $action !== 'confirmar_plazas' ) {
@@ -425,7 +473,7 @@ class Admin_Page {
 
 		check_admin_referer( 'bulk-inscripciones' );
 
-		$ids = array_map( 'intval', (array) ( $_GET['inscripcion'] ?? array() ) );
+		$ids = self::ids_de_la_peticion( $_GET );
 		if ( empty( $ids ) ) {
 			return;
 		}
@@ -444,10 +492,8 @@ class Admin_Page {
 			}
 
 			$actividad_id = (int) CPT_Inscripcion::get_meta( $id, 'actividad_id' );
-			$aforo_actual = (int) get_post_meta( $actividad_id, '_convoca_plazas_ocupadas', true );
-			$aforo_max    = (int) get_post_meta( $actividad_id, '_convoca_aforo', true );
 
-			if ( $aforo_actual >= $aforo_max ) {
+			if ( ! self::hay_aforo( $actividad_id ) ) {
 				++$skipped_capacity;
 				continue;
 			}

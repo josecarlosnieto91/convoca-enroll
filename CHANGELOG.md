@@ -1,5 +1,23 @@
 # Changelog — convoca-enroll
 
+## v2.7.24 (2026-10-11)
+
+### Arreglado
+- **La acción masiva «Confirmar plazas» no hacía nada**, por dos defectos encadenados:
+  1. La tabla emite los checkboxes como `name="ids[]"` (`Inscriptions_List::column_cb`), pero
+     el manejador leía `$_GET['inscripcion']`: el array llegaba **siempre vacío** y la acción
+     salía sin hacer nada, sin ningún error a la vista. Ahora se leen los dos nombres
+     (`Admin_Page::ids_de_la_peticion()`).
+  2. La comprobación de aforo comparaba `_convoca_plazas_ocupadas` (que **no lo escribe nadie**
+     en todo el ecosistema: solo se leía ahí) contra `_convoca_aforo` (clave que **no existe en
+     ninguna instalación**; medido: 0 filas en toda la base de la demo). Con los dos ceros daba
+     `0 >= 0` → TRUE → saltaba **todas** las inscripciones por «falta de aforo». Ahora el aforo
+     máximo es `_convoca_plazas_totales` (con `_convoca_aforo` como compatibilidad) y la
+     ocupación se **cuenta** (`CPT_Inscripcion::count_by_activity()`). Sin aforo configurado ya
+     no hay tope.
+
+  Cubierto por `tests/Unit/BulkAforoTest.php` (10 casos). Suite de unidad: 134/134.
+
 ## v2.7.23 (2026-10-11)
 
 ### Arreglado
