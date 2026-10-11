@@ -108,7 +108,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 			$user       = $usuario_id ? get_userdata( $usuario_id ) : false;
 
 			if ( ! $user ) {
-				$sin_datos++;
+				++$sin_datos;
 				continue;
 			}
 
@@ -130,7 +130,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 
 			update_post_meta( (int) $registro->ID, '_convoca_origen', \Convoca\Core\Hour_Ledger::ORIGEN_INSCRIPCION );
 			update_post_meta( (int) $registro->ID, '_convoca_origen_id', (int) $inscripciones[0] );
-			$enlazados++;
+			++$enlazados;
 		}
 
 		\Convoca\Core\Logger::info(
@@ -169,7 +169,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 		foreach ( $antiguas as $fila ) {
 			if ( get_post_meta( (int) $fila->post_id, '_convoca_member_id', true ) === '' ) {
 				update_post_meta( (int) $fila->post_id, '_convoca_member_id', $fila->meta_value );
-				$migradas++;
+				++$migradas;
 			}
 			delete_post_meta( (int) $fila->post_id, ' _convoca_miembro_id' );
 			delete_post_meta( (int) $fila->post_id, '_convoca_miembro_id' );

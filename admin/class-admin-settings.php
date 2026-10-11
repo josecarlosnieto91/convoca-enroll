@@ -352,16 +352,16 @@ class Admin_Settings {
 		 * @var array<string, string> $labels
 		 */
 		$labels = array(
-			'recepcion'                     => __( 'Inscripción recibida', 'convoca-enroll' ),
-			'lista_espera'                  => __( 'En lista de espera', 'convoca-enroll' ),
-			'promocion_lista_espera'        => __( 'Promoción de lista de espera', 'convoca-enroll' ),
-			'confirmacion_plaza'            => __( 'Confirmación de plaza', 'convoca-enroll' ),
-			'cancelacion_reserva'           => __( 'Cancelación de reserva', 'convoca-enroll' ),
-			'recordatorio_7dias'            => __( 'Recordatorio 7 días', 'convoca-enroll' ),
-			'recordatorio_24h'              => __( 'Recordatorio 24h', 'convoca-enroll' ),
-			'recordatorio_1hora'            => __( 'Recordatorio 1 hora', 'convoca-enroll' ),
-			'feedback_post'                 => __( 'Post-evento (feedback)', 'convoca-enroll' ),
-			'google_photos_album_creado'    => __( 'Álbum de Google Photos creado', 'convoca-enroll' ),
+			'recepcion'                      => __( 'Inscripción recibida', 'convoca-enroll' ),
+			'lista_espera'                   => __( 'En lista de espera', 'convoca-enroll' ),
+			'promocion_lista_espera'         => __( 'Promoción de lista de espera', 'convoca-enroll' ),
+			'confirmacion_plaza'             => __( 'Confirmación de plaza', 'convoca-enroll' ),
+			'cancelacion_reserva'            => __( 'Cancelación de reserva', 'convoca-enroll' ),
+			'recordatorio_7dias'             => __( 'Recordatorio 7 días', 'convoca-enroll' ),
+			'recordatorio_24h'               => __( 'Recordatorio 24h', 'convoca-enroll' ),
+			'recordatorio_1hora'             => __( 'Recordatorio 1 hora', 'convoca-enroll' ),
+			'feedback_post'                  => __( 'Post-evento (feedback)', 'convoca-enroll' ),
+			'google_photos_album_creado'     => __( 'Álbum de Google Photos creado', 'convoca-enroll' ),
 			'google_photos_album_compartido' => __( 'Álbum de Google Photos compartido', 'convoca-enroll' ),
 		);
 		?>
@@ -980,8 +980,8 @@ class Admin_Settings {
 		// 3. Check-in. NO es una página con shortcode: es la ruta /checkin/ que
 		// registra Checkin_Handler por rewrite rule (+ PWA). Buscar una página con
 		// un shortcode inexistente daba un error permanente e inarreglable.
-		$rules      = (array) get_option( 'rewrite_rules' );
-		$regla      = (string) ( $rules['^checkin/?$'] ?? '' );
+		$rules = (array) get_option( 'rewrite_rules' );
+		$regla = (string) ( $rules['^checkin/?$'] ?? '' );
 		// No basta con que la regla exista: si apunta a una query var que el handler no
 		// lee, `/checkin/` responde con la web normal y el escáner queda inalcanzable
 		// mientras este diagnóstico decía «Activa». Hay que comprobar el destino.

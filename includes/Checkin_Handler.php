@@ -709,10 +709,10 @@ class Checkin_Handler {
 			);
 		}
 
-		$id           = $inscriptions[0]->ID;
-		$nombre       = get_post_meta( $id, '_convoca_nombre', true );
-		$act_id       = (int) get_post_meta( $id, '_convoca_actividad_id', true );
-		$act_title    = get_the_title( $act_id );
+		$id        = $inscriptions[0]->ID;
+		$nombre    = get_post_meta( $id, '_convoca_nombre', true );
+		$act_id    = (int) get_post_meta( $id, '_convoca_actividad_id', true );
+		$act_title = get_the_title( $act_id );
 
 		wp_die(
 			sprintf(
