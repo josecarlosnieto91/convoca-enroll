@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.7.21
+Stable tag: 2.7.22
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.22 =
+* Los avisos por correo y la sincronización con Sheets de una inscripción dejaron de registrar un aviso de deprecación: escuchaban nombres de hook retirados en la 1.1.0. Se corrigen los tres eventos (confirmada, promovida y cancelada). No cambia lo que se envía.
 
 = 2.7.18 =
 * El enlace del QR ya le sirve a quien recibe el QR: el check-in directo se autoriza con la firma del correo, que antes se generaba y no se comprobaba en ningun sitio. No concede permisos y solo vale para esa inscripcion.
