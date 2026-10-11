@@ -37,9 +37,9 @@ class Google_Sheets {
 		}
 
 		add_action( 'convoca_enroll_inscripcion_nueva', array( $this, 'on_inscription' ), 20, 2 );
-		add_action( 'convoca_inscripcion_confirmada', array( $this, 'on_state_change' ), 20, 2 );
-		add_action( 'convoca_inscripcion_cancelada', array( $this, 'on_state_change' ), 20, 2 );
-		add_action( 'convoca_inscripcion_promovida', array( $this, 'on_state_change' ), 20, 2 );
+		add_action( 'convoca_enroll_inscripcion_confirmada', array( $this, 'on_state_change' ), 20, 2 );
+		add_action( 'convoca_enroll_inscripcion_cancelada', array( $this, 'on_state_change' ), 20, 2 );
+		add_action( 'convoca_enroll_inscripcion_promovida', array( $this, 'on_state_change' ), 20, 2 );
 	}
 
 	/**

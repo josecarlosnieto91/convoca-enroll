@@ -1,5 +1,16 @@
 # Changelog — convoca-enroll
 
+## v2.7.22 (2026-10-11)
+
+### Corregido
+- **Cada inscripción confirmada dejaba un aviso de deprecación en el log** (cierra #4).
+  `Email_Automation` y `Google_Sheets` escuchaban `convoca_inscripcion_confirmada`,
+  `convoca_inscripcion_promovida` y `convoca_inscripcion_cancelada`, nombres retirados en
+  la 1.1.0. Ahora usan `convoca_enroll_inscripcion_*`. Medido en la demo: 14 líneas
+  `PHP Deprecated` en `debug.log` del par de confirmada (los otros dos pares no se habían
+  ejercitado, pero avisaban en cuanto se usaran). El envío de correos y la sincronización
+  con Sheets no cambian: mismos argumentos y mismas prioridades.
+
 ## v2.7.21 (2026-10-09)
 
 ### Corregido

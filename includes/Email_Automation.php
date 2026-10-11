@@ -84,9 +84,9 @@ class Email_Automation {
 	public function __construct() {
 		// Event-driven triggers.
 		add_action( 'convoca_enroll_inscripcion_nueva', array( $this, 'on_nueva' ), 10, 3 );
-		add_action( 'convoca_inscripcion_confirmada', array( $this, 'on_confirmada' ), 10, 2 );
-		add_action( 'convoca_inscripcion_promovida', array( $this, 'on_promovida' ), 10, 2 );
-		add_action( 'convoca_inscripcion_cancelada', array( $this, 'on_cancelada' ), 10, 2 );
+		add_action( 'convoca_enroll_inscripcion_confirmada', array( $this, 'on_confirmada' ), 10, 2 );
+		add_action( 'convoca_enroll_inscripcion_promovida', array( $this, 'on_promovida' ), 10, 2 );
+		add_action( 'convoca_enroll_inscripcion_cancelada', array( $this, 'on_cancelada' ), 10, 2 );
 
 		// Cron triggers.
 		add_action( 'convoca_enroll_reminder_7dias', array( $this, 'cron_reminder_7dias' ) );
