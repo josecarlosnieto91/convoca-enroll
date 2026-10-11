@@ -105,7 +105,11 @@ class Social_Payload {
 	}
 
 	private static function get_meta_price( int $post_id ): string {
-		$p = get_post_meta( $post_id, '_convoca_precio_socio', true ) ?: get_post_meta( $post_id, '_convoca_precio_socio', true );
+		// El segundo término era la MISMA clave que el primero, así que el `?:` no
+		// hacía nada: una actividad con precio general pero sin precio de socio se
+		// quedaba sin precio en la publicación de redes. Cae al general, igual que
+		// hace el cartel (`Poster_Engine::price_label`).
+		$p = get_post_meta( $post_id, '_convoca_precio_socio', true ) ?: get_post_meta( $post_id, '_convoca_precio_general', true );
 		return $p ? "{$p}€" : ( self::is_free( $post_id ) ? 'Gratuito' : '' );
 	}
 

@@ -1,5 +1,17 @@
 # Changelog — convoca-enroll
 
+## v2.7.23 (2026-10-11)
+
+### Arreglado
+- **Precio de socio en la publicación de redes**: `Social_Payload::get_meta_price()` leía dos
+  veces la misma clave —
+  `get_post_meta( $id, '_convoca_precio_socio', true ) ?: get_post_meta( $id, '_convoca_precio_socio', true )` —
+  así que el `?:` no hacía nada. Una actividad con **precio general pero sin precio de socio**
+  salía **sin precio** en el mensaje de redes (o como «Gratuito» si el de socio era `0`) en vez
+  de caer al general, que es lo que sí hacía el cartel (`Poster_Engine::price_label`). Ahora cae
+  al general. Cubierto por `tests/Unit/SocialPayloadPrecioTest.php`, probado **en negativo**
+  (sin el arreglo fallan 2 de los 4 casos).
+
 ## v2.7.22 (2026-10-11)
 
 ### Corregido
