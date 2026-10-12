@@ -1,5 +1,14 @@
 # Changelog — convoca-enroll
 
+## v2.7.30 (2026-10-12)
+
+### Cambiado
+- La consulta del recuento lleva ahora **siempre** un marcador: la base de los filtros era el
+  literal `1=1` y pasa a `%d = 1` (con el valor en los argumentos), y en el informe de
+  evaluaciones la base pasa a `%s`/`%s`. Asi `wpdb::prepare()` se llama siempre, siempre con
+  marcador, y **nada queda sin parametrizar**: el primer intento quitaba el aviso pero
+  ejecutaba la consulta sin preparar, y Plugin Check lo caza con razon.
+
 ## v2.7.29 (2026-10-12)
 
 ### Arreglado
