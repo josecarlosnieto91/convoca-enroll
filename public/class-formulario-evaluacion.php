@@ -112,10 +112,10 @@ class Formulario_Evaluacion {
 			$can_evaluate = true;
 		} else {
 			// Is monitor?
-			$is_monitor       = in_array( 'monitor_actividad', (array) $user->roles , true);
+			$is_monitor       = in_array( 'monitor_actividad', (array) $user->roles, true );
 			$responsables_raw = get_post_meta( $actividad_id, '_convoca_responsables', true );
 			$responsables     = is_array( $responsables_raw ) ? $responsables_raw : explode( ',', (string) $responsables_raw );
-			if ( in_array( $user->ID, array_map( 'intval', $responsables ) , true) ) {
+			if ( in_array( $user->ID, array_map( 'intval', $responsables ), true ) ) {
 				$is_monitor = true;
 			}
 
@@ -123,7 +123,7 @@ class Formulario_Evaluacion {
 				$can_evaluate = true;
 			} else {
 				// Is volunteer?
-				$is_volunteer = in_array( 'voluntario_aprobado', (array) $user->roles , true) || current_user_can( 'gestionar_mis_turnos' );
+				$is_volunteer = in_array( 'voluntario_aprobado', (array) $user->roles, true ) || current_user_can( 'gestionar_mis_turnos' );
 				if ( $is_volunteer ) {
 					// Did attend?
 					$inscriptions = get_posts(

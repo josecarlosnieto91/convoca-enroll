@@ -597,7 +597,7 @@ class Email_Automation {
 		$html_body = Email_Layout::render( $body, $subject, $layout_opts );
 
 		$attachments = array();
-		if ( in_array( $slug, self::ATTACHMENT_SLUGS , true) ) {
+		if ( in_array( $slug, self::ATTACHMENT_SLUGS, true ) ) {
 			$attachments = $this->get_attachments( $slug );
 		}
 

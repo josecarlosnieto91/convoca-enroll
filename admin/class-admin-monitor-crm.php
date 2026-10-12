@@ -456,7 +456,7 @@ class Admin_Monitor_CRM {
 				} else {
 					++$no_marcados;
 				}
-			} elseif ( in_array( $estado, array( 'pendiente', 'pendiente_pago' ) , true) ) {
+			} elseif ( in_array( $estado, array( 'pendiente', 'pendiente_pago' ), true ) ) {
 				++$pendientes;
 				$list_p[] = $ins;
 			} elseif ( $estado === 'lista_espera' ) {
@@ -617,7 +617,7 @@ class Admin_Monitor_CRM {
 				} elseif ( $asistencia === '0' ) {
 					++$faltaron;
 				}
-			} elseif ( in_array( $estado, array( 'pendiente', 'pendiente_pago' ) , true) ) {
+			} elseif ( in_array( $estado, array( 'pendiente', 'pendiente_pago' ), true ) ) {
 				++$pendientes;
 			}
 		}
