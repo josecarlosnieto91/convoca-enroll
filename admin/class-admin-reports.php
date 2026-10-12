@@ -1000,7 +1000,7 @@ endif;
 			$args[]        = $actividad_id;
 		}
 
-		$sql = 			"SELECT 
+		$sql = "SELECT 
                 pm_act.meta_value AS actividad_id,
                 p.post_title,
                 COUNT(*) AS count,
@@ -1017,7 +1017,7 @@ endif;
             WHERE $where_clause
             GROUP BY pm_act.meta_value, p.post_title
             ORDER BY count DESC
-            LIMIT 100",;
+            LIMIT 100";
 		// Solo se prepara si hay algo que parametrizar: con la vista por defecto
 		// `$where_clause` es fijo (sin `%`) y `prepare()` avisaria en cada carga.
 		if ( $args ) {
