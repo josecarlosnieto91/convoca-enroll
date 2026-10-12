@@ -112,7 +112,7 @@ class Webhook_Dispatcher {
 					);
 					return true;
 				} catch ( \Throwable $e ) {
-					error_log( 'BD VWebhook_Dispatcher error: ' . $e->getMessage() );
+					\Convoca\Core\Logger::error( 'BD VWebhook_Dispatcher error: ' . $e->getMessage(), 'Webhooks' );
 				}
 			}
 		}

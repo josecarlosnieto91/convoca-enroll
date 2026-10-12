@@ -102,7 +102,7 @@ class Google_Photos {
 		delete_transient( 'convoca_enroll_oauth_state_' . get_current_user_id() );
 
 		if ( empty( $expected_state ) || ! hash_equals( $expected_state, $received_state ) ) {
-			error_log( '[Google Photos] OAuth State mismatch or expired.' );
+			\Convoca\Core\Logger::error( '[Google Photos] OAuth State mismatch or expired.', 'Google Photos' );
 			return false;
 		}
 
@@ -158,7 +158,7 @@ class Google_Photos {
 				'url' => $created->getProductUrl(),
 			);
 		} catch ( \Exception $e ) {
-			error_log( '[Google Photos] Error creating album: ' . $e->getMessage() );
+			\Convoca\Core\Logger::error( '[Google Photos] Error creating album: ' . $e->getMessage(), 'Google Photos' );
 			return null;
 		}
 	}
@@ -189,7 +189,7 @@ class Google_Photos {
 
 			return $shareable_url;
 		} catch ( \Exception $e ) {
-			error_log( '[Google Photos] Error sharing album: ' . $e->getMessage() );
+			\Convoca\Core\Logger::error( '[Google Photos] Error sharing album: ' . $e->getMessage(), 'Google Photos' );
 			return null;
 		}
 	}

@@ -374,7 +374,7 @@ class Admin_Monitor_CRM {
 		$fecha = get_post_meta( $actividad_id, '_convoca_fecha', true );
 		$total = (int) get_post_meta( $actividad_id, '_convoca_plazas_totales', true );
 
-		$checkin_mode = isset( $_GET['checkin'] ) && $_GET['checkin'] == 1;
+		$checkin_mode = isset( $_GET['checkin'] ) && '1' === $_GET['checkin'];
 
 		// Nav.
 		echo '<div style="margin-bottom: 20px; display: flex; gap: 10px;">';

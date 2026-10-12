@@ -97,7 +97,7 @@ class Email_Queue {
 
 	public function process_queue(): void {
 		$start_time = microtime( true );
-		$max_exec   = (int) @ini_get( 'max_execution_time' );
+		$max_exec   = (int) ini_get( 'max_execution_time' );
 		if ( $max_exec <= 0 ) {
 			$max_exec = 30;
 		}

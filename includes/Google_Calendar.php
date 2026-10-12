@@ -76,7 +76,7 @@ class Google_Calendar {
 				$this->service = new GoogleCalendarService( $this->client );
 			}
 		} catch ( \Exception $e ) {
-			error_log( '[Google Calendar] Client Init Error: ' . $e->getMessage() );
+			\Convoca\Core\Logger::error( '[Google Calendar] Client Init Error: ' . $e->getMessage(), 'Google Calendar' );
 		}
 	}
 
@@ -126,7 +126,7 @@ class Google_Calendar {
 		delete_transient( 'convoca_enroll_oauth_state_' . get_current_user_id() );
 
 		if ( empty( $expected_state ) || ! hash_equals( $expected_state, $received_state ) ) {
-			error_log( '[Google Calendar] OAuth State mismatch or expired.' );
+			\Convoca\Core\Logger::error( '[Google Calendar] OAuth State mismatch or expired.', 'Google Calendar' );
 			return false;
 		}
 
@@ -144,7 +144,7 @@ class Google_Calendar {
 				return true;
 			}
 		} catch ( \Exception $e ) {
-			error_log( '[Google Calendar] OAuth Callback Error: ' . $e->getMessage() );
+			\Convoca\Core\Logger::error( '[Google Calendar] OAuth Callback Error: ' . $e->getMessage(), 'Google Calendar' );
 		}
 
 		return false;
@@ -202,7 +202,7 @@ class Google_Calendar {
 		try {
 			$this->service->events->delete( $calendar_id, $event_id );
 		} catch ( \Exception $e ) {
-			error_log( '[Google Calendar] Delete Error: ' . $e->getMessage() );
+			\Convoca\Core\Logger::error( '[Google Calendar] Delete Error: ' . $e->getMessage(), 'Google Calendar' );
 		}
 	}
 
@@ -262,7 +262,7 @@ class Google_Calendar {
 
 			return $updated_event->getId();
 		} catch ( \Exception $e ) {
-			error_log( 'Convoca Enroll: Error syncing with Google Calendar: ' . $e->getMessage() );
+			\Convoca\Core\Logger::error( 'Convoca Enroll: Error syncing with Google Calendar: ' . $e->getMessage(), 'Google Calendar' );
 			return null;
 		}
 	}
@@ -310,7 +310,7 @@ class Google_Calendar {
 			$factory = new CalendarFactory();
 			return (string) $factory->createCalendar( $vCalendar );
 		} catch ( \Exception $e ) {
-			error_log( '[ICS] Generation Error: ' . $e->getMessage() );
+			\Convoca\Core\Logger::error( '[ICS] Generation Error: ' . $e->getMessage(), 'Google Calendar' );
 			return null;
 		}
 	}

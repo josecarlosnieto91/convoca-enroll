@@ -135,7 +135,7 @@ class PDF_Compromiso {
 				wp_delete_post( $temp_post_id, true );
 				$error            = __( 'La clase de firma digital no se encuentra disponible.', 'convoca-enroll' );
 				self::$last_error = $error;
-				error_log( 'Convoca Enroll: Signature class not found.' );
+				\Convoca\Core\Logger::error( 'Convoca Enroll: Signature class not found.', 'PDF' );
 				if ( is_admin() ) {
 					set_transient( self::ERROR_TRANSIENT . get_current_user_id(), $error, 30 );
 				}

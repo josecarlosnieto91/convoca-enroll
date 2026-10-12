@@ -247,7 +247,7 @@ class Admin_Actividades {
 									foreach ( $users as $user ) :
 										?>
 										<label style="display: block; margin-bottom: 5px;">
-											<input type="checkbox" name="responsables[]" value="<?php echo esc_attr( $user->ID ); ?>" <?php checked( in_array( $user->ID, $current_resp ) ); ?>>
+											<input type="checkbox" name="responsables[]" value="<?php echo esc_attr( $user->ID ); ?>" <?php checked( in_array( (int) $user->ID, array_map( 'intval', $current_resp ), true ) ); ?>>
 											<?php echo esc_html( $user->display_name ); ?>
 										</label>
 									<?php endforeach; ?>
