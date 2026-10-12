@@ -1,5 +1,18 @@
 # Changelog — convoca-enroll
 
+## v2.7.27 (2026-10-12)
+
+### Cambiado
+- **Se retira `_convoca_plazas_ocupadas` como fuente de ocupacion.** Era un meta que nadie
+  escribia en todo el ecosistema (solo se leia en la comprobacion de aforo, y con el aforo
+  inexistente daba `0 >= 0` y saltaba todas las inscripciones). La ocupacion se cuenta con
+  `CPT_Inscripcion::count_by_activity()`. La decision queda escrita en el propio codigo,
+  junto al motivo, para que nadie lo vuelva a leer creyendo que tiene datos.
+- Medido antes de tocarlo: en Lugg no quedaba **ninguna** fila con esa clave; en la demo
+  habia seis, de ediciones a mano, borradas con copia previa en
+  `/var/tmp/hermes-p5-meta-ocupadas-demo.tsv`. `_convoca_aforo` sigue sin existir en ninguna
+  instalacion (0 filas en los dos sitios).
+
 ## v2.7.25 (2026-10-12)
 
 ### Arreglado

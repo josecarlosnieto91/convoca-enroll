@@ -447,6 +447,13 @@ class Admin_Page {
 	 * siempre 0. Con los dos ceros la comprobación daba `0 >= 0` y la acción masiva
 	 * saltaba TODAS las inscripciones por «falta de aforo» sin confirmar ninguna.
 	 *
+	 * DECISIÓN (12/10/2026): `_convoca_plazas_ocupadas` queda **retirado** como fuente
+	 * de ocupación. No se mantiene y **no debe leerse**: el dato bueno es
+	 * `CPT_Inscripcion::count_by_activity()`. Se comprobó en los dos sitios: en Lugg no
+	 * quedaba ninguna fila y en la demo seis, de ediciones a mano (borradas, con copia
+	 * en /var/tmp/hermes-p5-meta-ocupadas-demo.tsv). Si algún día hace falta un contador
+	 * cacheado, tendrá que tener su escritor en el mismo commit que su lectura.
+	 *
 	 * @param int $actividad_id Actividad a comprobar.
 	 * @return bool True si hay sitio (o si la actividad no tiene aforo configurado).
 	 */
