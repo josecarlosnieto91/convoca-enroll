@@ -127,7 +127,14 @@ class Email_Queue_List extends \WP_List_Table {
 			$args[]  = '%' . $wpdb->esc_like( $search ) . '%'; }
 
 		$where_clause = implode( ' AND ', $where );
-		$total        = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE $where_clause", $args ) );
+		// `wpdb::prepare()` EXIGE al menos un marcador en la consulta. Con la vista por
+		// defecto (ni filtro ni busqueda) `$where_clause` es `1=1`, no hay ninguno, y
+		// WordPress avisa en CADA carga de la pantalla -- «El argumento de la consulta
+		// wpdb::prepare() debe tener un marcador de posicion» -- ensuciando el registro.
+		// Sin `$args` no hay nada que parametrizar porque el fragmento es fijo, asi que no
+		// se llama. Mismo criterio que `Admin_Logs_List` en el nucleo.
+		$count_sql    = "SELECT COUNT(*) FROM $table WHERE $where_clause";
+		$total        = $args ? $wpdb->get_var( $wpdb->prepare( $count_sql, $args ) ) : $wpdb->get_var( $count_sql );
 		$offset       = ( $page - 1 ) * $per_page;
 		$this->items  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table WHERE $where_clause ORDER BY created_at DESC LIMIT %d OFFSET %d", array_merge( $args, array( $per_page, $offset ) ) ) );
 		$this->set_pagination_args(

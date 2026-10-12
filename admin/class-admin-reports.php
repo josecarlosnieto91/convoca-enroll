@@ -1000,8 +1000,7 @@ endif;
 			$args[]        = $actividad_id;
 		}
 
-		$sql = $wpdb->prepare(
-			"SELECT 
+		$sql = 			"SELECT 
                 pm_act.meta_value AS actividad_id,
                 p.post_title,
                 COUNT(*) AS count,
@@ -1018,10 +1017,13 @@ endif;
             WHERE $where_clause
             GROUP BY pm_act.meta_value, p.post_title
             ORDER BY count DESC
-            LIMIT 100",
-			$args
-		);
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is already prepared via $wpdb->prepare() above
+            LIMIT 100",;
+		// Solo se prepara si hay algo que parametrizar: con la vista por defecto
+		// `$where_clause` es fijo (sin `%`) y `prepare()` avisaria en cada carga.
+		if ( $args ) {
+			$sql = $wpdb->prepare( $sql, $args );
+		}
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- con filtros se prepara arriba; sin filtros la consulta es fija.
 		$results = $wpdb->get_results( $sql, ARRAY_A );
 
 		// Agrupación monitor/actividad para el informe de auditoría.

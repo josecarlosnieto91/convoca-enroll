@@ -1,5 +1,16 @@
 # Changelog — convoca-enroll
 
+## v2.7.29 (2026-10-12)
+
+### Arreglado
+- **Aviso de `wpdb::prepare()` en cada carga de la cola de correo.** La consulta de recuento
+  se construye con un fragmento fijo (`1=1`) mas un `%d` **opcional**: con la vista por
+  defecto no hay ningun marcador y WordPress avisa -- «El argumento de la consulta
+  wpdb::prepare() debe tener un marcador de posicion» -- en CADA carga de la pantalla.
+  Medido antes del arreglo: +1 aviso por carga. Ahora solo se llama a `prepare()` cuando hay
+  algo que parametrizar, con el mismo criterio que `Admin_Logs_List` en el nucleo.
+- Mismo defecto y mismo arreglo en la consulta del informe de evaluaciones.
+
 ## v2.7.27 (2026-10-12)
 
 ### Cambiado
