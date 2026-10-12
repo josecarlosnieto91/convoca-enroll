@@ -993,14 +993,15 @@ endif;
 		global $wpdb;
 
 		$where_extra  = '';
-		$where_clause = "p.post_type = 'convoca_evaluacion' AND p.post_status = 'publish'";
-		$args         = array();
+		$where_clause = 'p.post_type = %s AND p.post_status = %s';
+		$args         = array( 'convoca_evaluacion', 'publish' );
 		if ( $actividad_id > 0 ) {
 			$where_clause .= ' AND pm_act.meta_value = %d';
 			$args[]        = $actividad_id;
 		}
 
-		$sql = "SELECT 
+		$sql = $wpdb->prepare(
+			"SELECT 
                 pm_act.meta_value AS actividad_id,
                 p.post_title,
                 COUNT(*) AS count,
@@ -1017,13 +1018,10 @@ endif;
             WHERE $where_clause
             GROUP BY pm_act.meta_value, p.post_title
             ORDER BY count DESC
-            LIMIT 100";
-		// Solo se prepara si hay algo que parametrizar: con la vista por defecto
-		// `$where_clause` es fijo (sin `%`) y `prepare()` avisaria en cada carga.
-		if ( $args ) {
-			$sql = $wpdb->prepare( $sql, $args );
-		}
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- con filtros se prepara arriba; sin filtros la consulta es fija.
+            LIMIT 100",
+			$args
+		);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql ya viene preparada por $wpdb->prepare() arriba.
 		$results = $wpdb->get_results( $sql, ARRAY_A );
 
 		// Agrupación monitor/actividad para el informe de auditoría.

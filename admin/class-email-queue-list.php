@@ -113,8 +113,13 @@ class Email_Queue_List extends \WP_List_Table {
 		$this->_column_headers = array( $this->get_columns(), array(), array() );
 		$this->process_bulk_action();
 
-		$where         = array( '1=1' );
-		$args          = array();
+		// La base lleva un marcador (`%d = 1`) y no un literal: `wpdb::prepare()` EXIGE al
+		// menos un marcador en la consulta, y sin filtros el fragmento fijo no aportaba
+		// ninguno, asi que WordPress avisaba -- «El argumento de la consulta wpdb::prepare()
+		// debe tener un marcador de posicion» -- en CADA carga de la pantalla. Parametrizando
+		// tambien la base, la consulta siempre lleva marcador y siempre se prepara.
+		$where         = array( '%d = 1' );
+		$args          = array( 1 );
 		$filter_status = sanitize_text_field( $_GET['filter_status'] ?? '' );
 		$search        = sanitize_text_field( $_GET['s'] ?? '' );
 
@@ -127,16 +132,9 @@ class Email_Queue_List extends \WP_List_Table {
 			$args[]  = '%' . $wpdb->esc_like( $search ) . '%'; }
 
 		$where_clause = implode( ' AND ', $where );
-		// `wpdb::prepare()` EXIGE al menos un marcador en la consulta. Con la vista por
-		// defecto (ni filtro ni busqueda) `$where_clause` es `1=1`, no hay ninguno, y
-		// WordPress avisa en CADA carga de la pantalla -- «El argumento de la consulta
-		// wpdb::prepare() debe tener un marcador de posicion» -- ensuciando el registro.
-		// Sin `$args` no hay nada que parametrizar porque el fragmento es fijo, asi que no
-		// se llama. Mismo criterio que `Admin_Logs_List` en el nucleo.
-		$count_sql   = "SELECT COUNT(*) FROM $table WHERE $where_clause";
-		$total       = $args ? $wpdb->get_var( $wpdb->prepare( $count_sql, $args ) ) : $wpdb->get_var( $count_sql );
-		$offset      = ( $page - 1 ) * $per_page;
-		$this->items = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table WHERE $where_clause ORDER BY created_at DESC LIMIT %d OFFSET %d", array_merge( $args, array( $per_page, $offset ) ) ) );
+		$total        = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE $where_clause", $args ) );
+		$offset       = ( $page - 1 ) * $per_page;
+		$this->items  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table WHERE $where_clause ORDER BY created_at DESC LIMIT %d OFFSET %d", array_merge( $args, array( $per_page, $offset ) ) ) );
 		$this->set_pagination_args(
 			array(
 				'total_items' => (int) $total,
