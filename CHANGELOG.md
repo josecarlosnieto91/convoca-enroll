@@ -405,3 +405,11 @@ esos cuatro endpoints: el motor no hay que rehacerlo.
 ---
 
 *Las entradas de las versiones v2.7.1 a v2.7.6 se reconstruyeron a partir del historial de git.*
+## [2.7.28] - 2026-10-12
+
+### Cambios
+- Higiene de datos: el docblock de `hay_aforo()` citaba un sitio concreto y una ruta de
+  trabajo local. Se conserva la decisión (`_convoca_plazas_ocupadas` retirado como fuente
+  de ocupación, el dato bueno es `CPT_Inscripcion::count_by_activity()`) y se quitan el
+  nombre del cliente y la ruta, que no pintan nada en el código del producto.
+
