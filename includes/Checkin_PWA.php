@@ -80,7 +80,7 @@ class Checkin_PWA {
 		$logo_url = \Convoca\Core\Utils::get_logo_url( 'checkin' );
 
 		header( 'Content-Type: application/json' );
-		echo json_encode(
+		echo wp_json_encode(
 			array(
 				'name'             => __( 'Check-in Convoca', 'convoca-enroll' ),
 				'short_name'       => __( 'Check-in', 'convoca-enroll' ),

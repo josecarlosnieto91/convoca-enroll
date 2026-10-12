@@ -112,7 +112,7 @@ class Admin_Evaluaciones_List {
 
 	public static function add_custom_filters() {
 		global $typenow;
-		if ( $typenow == 'convoca_evaluacion' ) {
+		if ( $typenow === 'convoca_evaluacion' ) {
 			$actividades = get_posts(
 				array(
 					'post_type'      => 'actividad',
@@ -144,7 +144,7 @@ class Admin_Evaluaciones_List {
 			$type = wp_unslash( $_GET['post_type'] );
 		}
 
-		if ( 'convoca_evaluacion' == $type && is_admin() && $pagenow == 'edit.php' && isset( $_GET['filter_actividad'] ) && $_GET['filter_actividad'] > 0 ) {
+		if ( 'convoca_evaluacion' === $type && is_admin() && $pagenow === 'edit.php' && isset( $_GET['filter_actividad'] ) && $_GET['filter_actividad'] > 0 ) {
 			$query->query_vars['meta_key']   = '_convoca_eval_actividad_id';
 			$query->query_vars['meta_value'] = intval( $_GET['filter_actividad'] );
 		}

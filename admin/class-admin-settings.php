@@ -776,7 +776,7 @@ class Admin_Settings {
 					Maintenance::reparar_integridad();
 					\Convoca\Core\Utils::set_admin_notice( 'Integridad reparada.', 'success' );
 				} else {
-					wp_redirect( admin_url( 'admin.php?page=conv-ajustes&tab=general&maint_res=1' ) );
+					wp_safe_redirect( admin_url( 'admin.php?page=conv-ajustes&tab=general&maint_res=1' ) );
 					exit;
 				}
 			}
@@ -894,7 +894,7 @@ class Admin_Settings {
 			\Convoca\Core\Utils::set_admin_notice( 'Error en la autenticación con Google. Verifica las credenciales.', 'danger' );
 		}
 
-		wp_redirect( admin_url( 'admin.php?page=conv-ajustes&tab=' . $redirect_tab ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-ajustes&tab=' . $redirect_tab ) );
 		exit;
 	}
 

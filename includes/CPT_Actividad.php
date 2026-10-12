@@ -184,7 +184,7 @@ class CPT_Actividad {
 				array(
 					'show_in_rest' => true,
 					'single'       => true,
-					'type'         => in_array( $key, array( 'plazas_totales', 'plazas_disponibles', 'requiere_pago', 'actividad_externa', 'reminder_7dias', 'reminder_1dia', 'reminder_1hora', 'reminder_hours', 'reminder_post_evento', 'google_create_album', 'google_calendar_sync' ) ) ? 'integer' : 'string',
+					'type'         => in_array( $key, array( 'plazas_totales', 'plazas_disponibles', 'requiere_pago', 'actividad_externa', 'reminder_7dias', 'reminder_1dia', 'reminder_1hora', 'reminder_hours', 'reminder_post_evento', 'google_create_album', 'google_calendar_sync' ) , true) ? 'integer' : 'string',
 				)
 			);
 		}

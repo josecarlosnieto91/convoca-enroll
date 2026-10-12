@@ -184,7 +184,7 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 		$is_voluntario = false;
 		if ( is_user_logged_in() ) {
 			$usuario_actual = wp_get_current_user();
-			if ( in_array( 'voluntario_aprobado', (array) $usuario_actual->roles ) || $usuario_actual->has_cap( 'gestionar_mis_turnos' ) || get_user_meta( $usuario_actual->ID, '_convoca_es_voluntario', true ) ) {
+			if ( in_array( 'voluntario_aprobado', (array) $usuario_actual->roles , true) || $usuario_actual->has_cap( 'gestionar_mis_turnos' ) || get_user_meta( $usuario_actual->ID, '_convoca_es_voluntario', true ) ) {
 				$is_voluntario = true;
 			}
 		}

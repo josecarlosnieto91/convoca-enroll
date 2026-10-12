@@ -59,12 +59,12 @@ class Admin_Evaluaciones_Editor {
 
 		if ( ( $screen && $screen->id === 'convoca_evaluacion' ) || $post_type === 'convoca_evaluacion' ) {
 			if ( isset( $screen->action ) && $screen->action === 'add' || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
-				wp_redirect( admin_url( 'admin.php?page=conv-evaluacion-editor' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=conv-evaluacion-editor' ) );
 				exit;
 			} else {
 				$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
 				if ( $post_id && strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false ) {
-					wp_redirect( admin_url( 'admin.php?page=conv-evaluacion-editor&id=' . $post_id ) );
+					wp_safe_redirect( admin_url( 'admin.php?page=conv-evaluacion-editor&id=' . $post_id ) );
 					exit;
 				}
 			}
@@ -244,7 +244,7 @@ class Admin_Evaluaciones_Editor {
 			update_post_meta( $post_id, '_convoca_eval_fecha', current_time( 'mysql' ) );
 		}
 
-		wp_redirect( admin_url( 'edit.php?post_type=conv_evaluacion&message=saved' ) );
+		wp_safe_redirect( admin_url( 'edit.php?post_type=conv_evaluacion&message=saved' ) );
 		exit;
 	}
 }

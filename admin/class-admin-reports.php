@@ -330,10 +330,10 @@ endif;
 			new Chart(document.getElementById('bdeChartTrends'), {
 				type: 'line',
 				data: {
-					labels: <?php echo json_encode( $trends['labels'] ); ?>,
+					labels: <?php echo wp_json_encode( $trends['labels'] ); ?>,
 					datasets: [{
 						label: 'Inscripciones',
-						data: <?php echo json_encode( $trends['values'] ); ?>,
+						data: <?php echo wp_json_encode( $trends['values'] ); ?>,
 						borderColor: '#2196f3',
 						backgroundColor: 'rgba(33, 150, 243, 0.1)',
 						fill: true,
@@ -346,9 +346,9 @@ endif;
 			new Chart(document.getElementById('bdeChartStates'), {
 				type: 'pie',
 				data: {
-					labels: <?php echo json_encode( array_values( CPT_Inscripcion::labels() ) ); ?>,
+					labels: <?php echo wp_json_encode( array_values( CPT_Inscripcion::labels() ) ); ?>,
 					datasets: [{
-						data: <?php echo json_encode( array_values( $pie_data ) ); ?>,
+						data: <?php echo wp_json_encode( array_values( $pie_data ) ); ?>,
 						backgroundColor: ['#ffd700', '#ff9800', '#4caf50', '#9c27b0', '#f44336']
 					}]
 				}
@@ -358,10 +358,10 @@ endif;
 			new Chart(document.getElementById('bdeChartDemand'), {
 				type: 'bar',
 				data: {
-					labels: <?php echo json_encode( $bar_data['labels'] ); ?>,
+					labels: <?php echo wp_json_encode( $bar_data['labels'] ); ?>,
 					datasets: [{
 						label: 'Confirmadas',
-						data: <?php echo json_encode( $bar_data['values'] ); ?>,
+						data: <?php echo wp_json_encode( $bar_data['values'] ); ?>,
 						backgroundColor: '#2196f3'
 					}]
 				},

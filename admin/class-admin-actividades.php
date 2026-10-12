@@ -116,12 +116,12 @@ class Admin_Actividades {
 
 		if ( ( $screen && $screen->id === 'actividad' ) || $post_type === 'actividad' ) {
 			if ( isset( $screen->action ) && $screen->action === 'add' || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
-				wp_redirect( admin_url( 'admin.php?page=convoca-enroll-actividad-editor' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=convoca-enroll-actividad-editor' ) );
 				exit;
 			} else {
 				$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
 				if ( $post_id && strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false ) {
-					wp_redirect( admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $post_id ) );
+					wp_safe_redirect( admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $post_id ) );
 					exit;
 				}
 			}
@@ -329,7 +329,7 @@ class Admin_Actividades {
 		// El slug apuntaba a una página que no existe: el admin aterrizaba en
 		// «Sorry, you are not allowed to access this page» justo después de guardar
 		// la actividad (verificado con HTTP real). El slug del menú es `convoca-enroll`.
-		wp_redirect( admin_url( 'admin.php?page=convoca-enroll&message=saved' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=convoca-enroll&message=saved' ) );
 		exit;
 	}
 
@@ -392,7 +392,7 @@ class Admin_Actividades {
 			'Enroll/Admin'
 		);
 
-		wp_redirect( esc_url_raw( admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $new_id ) ) );
+		wp_safe_redirect( esc_url_raw( admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $new_id ) ) );
 		exit;
 	}
 }

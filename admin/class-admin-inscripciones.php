@@ -410,7 +410,7 @@ class Inscriptions_List extends \WP_List_Table {
 		$is_voluntario = false;
 
 		if ( $user ) {
-			if ( in_array( 'voluntario_aprobado', (array) $user->roles ) || get_user_meta( $user->ID, '_convoca_es_voluntario', true ) ) {
+			if ( in_array( 'voluntario_aprobado', (array) $user->roles , true) || get_user_meta( $user->ID, '_convoca_es_voluntario', true ) ) {
 				$is_voluntario = true;
 			}
 		}

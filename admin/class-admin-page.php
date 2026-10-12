@@ -533,11 +533,6 @@ class Admin_Page {
 
 		$m = fn( $k ) => CPT_Inscripcion::get_meta( $id, $k );
 
-		if ( isset( $_GET['debug'] ) ) {
-			echo '<pre>';
-			var_dump( get_post_meta( $id ) );
-			echo '</pre>';
-		}
 		$act_id = (int) $m( 'actividad_id' );
 		$act    = get_post( $act_id );
 		$estado = $m( 'estado' );
