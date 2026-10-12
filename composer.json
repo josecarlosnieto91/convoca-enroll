@@ -31,7 +31,9 @@
         "wp-coding-standards/wpcs": "^3.4",
         "php-stubs/wordpress-stubs": "^7.0",
         "phpunit/phpunit": "^10.5",
-        "phpstan/extension-installer": "^1.4"
+        "phpstan/extension-installer": "^1.4",
+        "wp-phpunit/wp-phpunit": "^7.0",
+        "yoast/phpunit-polyfills": "^3.0"
     },
     "scripts": {
         "phpcs": "phpcs --standard=.phpcs.xml.dist",
@@ -42,6 +44,7 @@
             "@phpcs",
             "@phpstan",
             "@phpunit"
-        ]
+        ],
+        "phpunit:integration": "phpunit -c phpunit-integration.xml"
     }
 }

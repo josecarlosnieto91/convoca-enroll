@@ -25,6 +25,20 @@ use PHPUnit\Framework\TestCase;
 class RestAPITest extends TestCase
 {
     /**
+     * Los endpoints REST solo existen con WordPress cargado: sin el, los casos que
+     * construyen una peticion mueren con "Class WP_REST_Request not found" y el fallo
+     * parece del plugin. Se declaran SALTADOS, con el motivo y el numero a la vista
+     * (convoca-health-check#3: falta el entorno de WordPress en la automatizacion).
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        if (!class_exists('WP_REST_Request')) {
+            $this->markTestSkipped('WordPress no cargado: falta el entorno de la suite de integracion (convoca-health-check#3)');
+        }
+    }
+
+    /**
      * Instance of the REST API class.
      *
      * @var Rest_API|null

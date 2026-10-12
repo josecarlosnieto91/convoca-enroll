@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Suite de INTEGRACION de convoca-enroll: necesita WordPress real (WP_UnitTestCase).
+
+  Configuracion aparte de phpunit-unit.xml a proposito: el bootstrap unitario no carga
+  WordPress, y con el, la suite de integracion no arrancaba nunca ("Class
+  WP_UnitTestCase not found"). Aqui el bootstrap es tests/bootstrap.php, que carga
+  WordPress por wp-phpunit y, si el entorno no esta montado, declara los tests
+  SALTADOS con su motivo en vez de morir al cargar.
+
+  Uso:  vendor/bin/phpunit -c phpunit-integration.xml
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         backupGlobals="false"
+         colors="true"
+         cacheResult="false">
+  <testsuites>
+    <testsuite name="integration">
+      <directory suffix="Test.php">./tests/Integration</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>
