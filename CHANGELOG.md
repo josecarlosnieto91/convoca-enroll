@@ -405,7 +405,7 @@ esos cuatro endpoints: el motor no hay que rehacerlo.
 ---
 
 *Las entradas de las versiones v2.7.1 a v2.7.6 se reconstruyeron a partir del historial de git.*
-## [2.7.28] - 2026-10-12
+## v2.7.28 (2026-10-12)
 
 ### Cambios
 - Higiene de datos: el docblock de `hay_aforo()` citaba un sitio concreto y una ruta de
