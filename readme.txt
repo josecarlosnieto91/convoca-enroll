@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.7.34
+Stable tag: 2.7.35
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,11 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.35 =
+* Desinstalación: se limpian todas las tareas programadas del plugin. Antes se
+  quedaban puestas y seguían disparándose tras borrarlo (medido en un WordPress limpio).
+* Prueba nueva: todo gancho que el plugin programa tiene que aparecer en su desinstalación.
 
 = 2.7.22 =
 * Los avisos por correo y la sincronización con Sheets de una inscripción dejaron de registrar un aviso de deprecación: escuchaban nombres de hook retirados en la 1.1.0. Se corrigen los tres eventos (confirmada, promovida y cancelada). No cambia lo que se envía.
