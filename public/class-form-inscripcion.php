@@ -91,7 +91,8 @@ class Form_Inscripcion {
 	 * Antes devolvía «Actividad no encontrada.» y, si faltaba el `id`, **nada en absoluto**:
 	 * el visitante veía un error que no puede seguir (o una página vacía) y quien lo
 	 * administra no sabía que el shortcode estaba mal puesto. Medido en `/inscribete/`
-	 * (demo y Lugg): la página existía y no había forma de inscribirse ni de saber por qué.
+	 * (en la demo y en un sitio de cliente): la página existía y no había forma de inscribirse
+ * ni de saber por qué.
 	 *
 	 * @return string HTML del aviso.
 	 */
