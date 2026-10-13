@@ -211,8 +211,16 @@ class Admin_Reports {
 						$pct       = $act['plazas_totales'] > 0 ? round( ( $act['confirmadas'] / $act['plazas_totales'] ) * 100, 1 ) : 0;
 						$row_class = $pct >= 90 ? 'table-success' : ( $pct < 30 ? 'table-warning' : '' );
 						?>
-					<tr class="<?php echo esc_attr( $row_class ); ?>">
-					<td><strong><a href="<?php echo esc_url( get_edit_post_link( $act['id'] ) ); ?>"><?php echo esc_html( $act['title'] ); ?></a></strong></td>
+						<?php
+						// El enlace de edición puede no existir (entrada borrada o no editable):
+						// `get_edit_post_link()` devuelve null y `esc_url( null )` deja un `PHP Deprecated`.
+						$convoca_enlace = get_edit_post_link( $act['id'] );
+						$convoca_titulo = $convoca_enlace
+							? sprintf( '<a href="%s">%s</a>', esc_url( $convoca_enlace ), esc_html( $act['title'] ) )
+							: esc_html( $act['title'] );
+						?>
+						<tr class="<?php echo esc_attr( $row_class ); ?>">
+							<td><strong><?php echo wp_kses_post( $convoca_titulo ); ?></strong></td>
 						<td><?php echo esc_html( date_i18n( 'd/m/Y', strtotime( $act['fecha'] ) ) ); ?></td>
 						<td><?php echo (int) $act['plazas_totales']; ?></td>
 						<td><?php echo (int) $act['confirmadas']; ?></td>

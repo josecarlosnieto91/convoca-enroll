@@ -43,7 +43,7 @@ class MensajesDeErrorTest extends TestCase
 		$raiz   = $this->raiz();
 		$salida = array();
 
-		foreach ( array( 'assets/js', 'admin', 'public', 'includes' ) as $dir ) {
+		foreach ( array( 'assets/js', 'admin', 'public', 'includes', 'social' ) as $dir ) {
 			$ruta = $raiz . '/' . $dir;
 			if ( ! is_dir( $ruta ) ) {
 				continue;

@@ -102,7 +102,10 @@ class Social_Publisher {
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( isset( $body['error'] ) ) {
-			return array( 'success' => false, 'message' => $body['error']['message'] ?? 'Error desconocido' );
+			return array( 'success' => false, 'message' => $body['error']['message'] ?? __(
+				'Facebook no ha explicado el fallo. Reintenta la publicacion; si se repite, revisa la conexion de la cuenta.',
+				'convoca-enroll'
+			) );
 		}
 
 		return array( 'success' => true, 'message' => __( 'Publicado en Facebook', 'convoca-enroll' ), 'id' => $body['id'] ?? '' );

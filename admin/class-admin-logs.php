@@ -113,10 +113,18 @@ class Admin_Logs {
 								</td>
 								<td><code><?php echo esc_html( $log->context ); ?></code></td>
 								<td>
-									<?php if ( $log->object_id ) : ?>
-										<a href="<?php echo esc_url( get_edit_post_link( $log->object_id ) ); ?>">#
+									<?php
+									// El enlace de edición puede no existir (entrada borrada o no editable) y
+									// `get_edit_post_link()` devuelve null: pasarlo a `esc_url()` mete un `ltrim(null)`
+									// y un `PHP Deprecated` en el registro en cada carga de la pantalla.
+									$convoca_enlace = $log->object_id ? get_edit_post_link( $log->object_id ) : '';
+									if ( $convoca_enlace ) :
+										?>
+										<a href="<?php echo esc_url( $convoca_enlace ); ?>">#
 											<?php echo (int) $log->object_id; ?>
 										</a>
+									<?php elseif ( $log->object_id ) : ?>
+										#<?php echo (int) $log->object_id; ?>
 									<?php else : ?>
 										—
 									<?php endif; ?>

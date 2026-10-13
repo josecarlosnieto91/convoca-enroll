@@ -264,7 +264,7 @@ class Meta_Provider implements Social_Provider_Interface {
 		$body = json_decode( wp_remote_retrieve_body( $resp ), true );
 
 		if ( $code !== 200 || isset( $body["error"] ) ) {
-			Social_OAuth::update_token_status( $this->account_id, "token_expired", $body["error"]["message"] ?? "Error desconocido" );
+			Social_OAuth::update_token_status( $this->account_id, "token_expired", $body["error"]["message"] ?? "La red no ha explicado el fallo" );
 			return [ "success" => false, "message" => $body["error"]["message"] ?? "HTTP $code" ];
 		}
 

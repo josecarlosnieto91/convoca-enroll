@@ -1,5 +1,30 @@
 # Changelog — convoca-enroll
 
+## v2.7.33 (2026-10-13)
+
+### Arreglado
+
+- **`PHP Deprecated` en cada carga de la pantalla de Logs** (10 líneas por carga, medido): el enlace
+  de edición se pasaba directo a `esc_url()` y `get_edit_post_link()` devuelve `null` cuando la
+  entrada no existe o no es editable, así que `esc_url()` acababa llamando a `ltrim( null )`.
+  Ahora el enlace se guarda en una variable y, si no hay, se pinta el identificador a secas
+  (`#123`) en vez de un `<a>` vacío. Mismo arreglo en la pantalla de Informes.
+
+### Pruebas
+
+### Arreglado (más)
+
+- **«Error desconocido» fuera del producto**: el publicador social de este plugin usaba ese literal
+  como respaldo cuando la red no daba detalle, y sin pasar por traducción. Ahora dice qué intentar.
+
+### Pruebas
+
+- `MensajesDeErrorTest` miraba `assets/js`, `admin`, `public` e `includes`… y **no** `social/`: por ahí
+  se colaba el literal. Ampliado (probado en negativo).
+
+- `EnlacesDeEdicionTest`: lee el código propio **sin comentarios** (tokenizador) y falla si el enlace
+  de edición vuelve a ir directo a `esc_url()`. Probado en negativo: con el defecto repuesto, falla.
+
 ## v2.7.32 (2026-10-13)
 
 ### Arreglado
