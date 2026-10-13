@@ -388,7 +388,7 @@ class Poster_Engine {
 		$alto = max( 20, min( $maximo, $caben ) );
 		return array(
 			'alto'     => $alto,
-			'etiqueta' => max( 14, (int) round( $alto * 0.30 ) ),
+			'etiqueta' => max( 14, (int) round( $alto * 0.34 ) ),
 			'valor'    => max( 18, (int) round( $alto * 0.50 ) ),
 		);
 	}
@@ -478,12 +478,21 @@ class Poster_Engine {
 				return sprintf( 'rgba(%d,%d,%d,%.3F)', hexdec( substr( $hex, 0, 2 ) ), hexdec( substr( $hex, 2, 2 ) ), hexdec( substr( $hex, 4, 2 ) ), max( 0, min( 1, $opacity ) ) );
 			};
 
-			$text_draw = static function( string $font, int $size, string $color ): \ImagickDraw {
+			$text_draw = static function( string $font, int $size, string $color, bool $engrosar = false ): \ImagickDraw {
 				$draw = new \ImagickDraw();
 				$draw->setFont( $font ?: 'DejaVu-Sans' );
 				$draw->setFontSize( $size );
 				$draw->setFillColor( new \ImagickPixel( $color ) );
 				$draw->setTextAntialias( true );
+				if ( $engrosar ) {
+					// La tipografía trae un solo peso (regular) y a tamaños pequeños el trazo fino no
+					// llega a cubrir ningún píxel: medido en los carteles el 13/10/2026, las etiquetas
+					// salían a 1,5:1 aunque su color calculado cumplía. Se engorda el trazo con un
+					// contorno del mismo color para que el texto tenga píxeles plenos.
+					$draw->setStrokeColor( new \ImagickPixel( $color ) );
+					$draw->setStrokeWidth( max( 0.6, $size * 0.040 ) );
+					$draw->setStrokeAntialias( true );
+				}
 				return $draw;
 			};
 
@@ -511,10 +520,10 @@ class Poster_Engine {
 				return '…';
 			};
 
-			$text_box = static function( \Imagick $canvas, string $text, array $box, string $font, string $color, int $size, float $line_height = 1.15, string $align = 'left', bool $shadow = false, int $max_lines = 0 ) use ( $text_draw, $wrap, $ellipsize ): void {
+			$text_box = static function( \Imagick $canvas, string $text, array $box, string $font, string $color, int $size, float $line_height = 1.15, string $align = 'left', bool $shadow = false, int $max_lines = 0, bool $engrosar = false ) use ( $text_draw, $wrap, $ellipsize ): void {
 				$text = trim( preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $text ) );
 				if ( '' === $text || $box['w'] <= 0 || $box['h'] <= 0 ) { return; }
-				$draw = $text_draw( $font, $size, $color );
+				$draw = $text_draw( $font, $size, $color, $engrosar );
 				$lines = $wrap( $canvas, $text, $font, $size, $box['w'] );
 				if ( $max_lines > 0 && count( $lines ) > $max_lines ) { $lines = array_slice( $lines, 0, $max_lines ); $lines[ $max_lines - 1 ] = $ellipsize( $canvas, $lines[ $max_lines - 1 ], $font, $size, $box['w'] ); }
 				$step = (int) round( $size * $line_height );
@@ -604,7 +613,7 @@ class Poster_Engine {
 				$size_etiqueta = $medidas['etiqueta'];
 				$size_valor    = $medidas['valor'];
 				$y = $l['meta']['y'];
-				foreach ( $meta_lines as $line ) { $row = array( 'x' => $l['meta']['x'], 'y' => $y, 'w' => $l['meta']['w'], 'h' => $row_h ); $round_rect( $img, $row, $rgba( '#111827', 0.055 ), (int) round( $row_h * 0.24 ) ); $label_w = min( 170, (int) round( $row['w'] * 0.26 ) ); $text_box( $img, mb_strtoupper( $line[0] ), array( 'x' => $row['x'] + 18, 'y' => $row['y'], 'w' => $label_w, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $p['label'], $size_etiqueta, 1.0, 'left', false, 1 ); $text_box( $img, $line[1], array( 'x' => $row['x'] + $label_w + 18, 'y' => $row['y'], 'w' => $row['w'] - $label_w - 36, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $panel_text, $size_valor, 1.05, 'left', false, 2 ); $y += $row_h + $gap; if ( $y > $l['meta']['y'] + $l['meta']['h'] ) { break; } }
+				foreach ( $meta_lines as $line ) { $row = array( 'x' => $l['meta']['x'], 'y' => $y, 'w' => $l['meta']['w'], 'h' => $row_h ); $round_rect( $img, $row, $rgba( '#111827', 0.055 ), (int) round( $row_h * 0.24 ) ); $label_w = min( 170, (int) round( $row['w'] * 0.26 ) ); $text_box( $img, mb_strtoupper( $line[0] ), array( 'x' => $row['x'] + 18, 'y' => $row['y'], 'w' => $label_w, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $p['label'], $size_etiqueta, 1.0, 'left', false, 1, true ); $text_box( $img, $line[1], array( 'x' => $row['x'] + $label_w + 18, 'y' => $row['y'], 'w' => $row['w'] - $label_w - 36, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $panel_text, $size_valor, 1.05, 'left', false, 2, true ); $y += $row_h + $gap; if ( $y > $l['meta']['y'] + $l['meta']['h'] ) { break; } }
 			}
 
 			$round_rect( $img, $l['cta'], $p['accent'], (int) round( $l['cta']['h'] / 2 ) );
