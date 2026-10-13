@@ -26,6 +26,32 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+/*
+ * Sin JavaScript: la degradación se DECLARA y se da salida (mismo defecto medido en el resto de
+ * formularios del ecosistema: sin `method` ni `action` el envío cae en una búsqueda de WordPress).
+ */
+$convoca_sin_js = ! empty( $_POST['convoca_sin_js_panel'] );
+
+if ( $convoca_sin_js ) {
+	$convoca_opciones = get_option( 'convoca_members_settings' );
+	$convoca_email    = is_array( $convoca_opciones ) && ! empty( $convoca_opciones['admin_email'] )
+		? (string) $convoca_opciones['admin_email']
+		: (string) get_option( 'admin_email' );
+	$convoca_email    = (string) apply_filters( 'convoca_panel_sin_js_email', $convoca_email );
+	?>
+	<div class="convoca-alert convoca-alert--warning" role="status">
+		<p><?php esc_html_e( 'No se ha podido consultar tus reservas: este formulario necesita JavaScript en el navegador.', 'convoca-enroll' ); ?></p>
+		<p><?php esc_html_e( 'Actívalo y vuelve a intentarlo.', 'convoca-enroll' ); ?>
+		<?php if ( $convoca_email ) : ?>
+			<?php esc_html_e( 'Si no puedes, escríbenos:', 'convoca-enroll' ); ?>
+			<a href="<?php echo esc_url( 'mailto:' . $convoca_email ); ?>"><?php echo esc_html( $convoca_email ); ?></a>
+		<?php endif; ?>
+		</p>
+	</div>
+	<?php
+	return;
+}
 ?>
 
 <div id="convoca-panel-reservas" class="conv-panel-wrapper convoca-form" role="region"
@@ -42,7 +68,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<p class="convoca-small"><?php esc_html_e( 'El código lo recibiste en el email de confirmación de tu inscripción.', 'convoca-enroll' ); ?></p>
 		</div>
 
-		<form id="conv-panel-login-form" novalidate>
+		<!-- Sin JavaScript no hay formulario que enviar: se dice antes de rellenarlo. -->
+		<noscript>
+			<div class="convoca-alert convoca-alert--warning" role="status">
+				<p><?php esc_html_e( 'Este acceso necesita JavaScript en el navegador. Actívalo y vuelve a intentarlo.', 'convoca-enroll' ); ?></p>
+			</div>
+		</noscript>
+
+		<form id="conv-panel-login-form" method="post" action="" novalidate>
+			<?php // Marcador del envío sin JavaScript: lo lee el aviso del principio del template. ?>
+			<input type="hidden" name="convoca_sin_js_panel" value="1" />
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
 					<label for="conv-panel-email"><?php esc_html_e( 'Correo electrónico', 'convoca-enroll' ); ?> *</label>

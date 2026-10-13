@@ -12,6 +12,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/*
+ * Sin JavaScript: la degradación se DECLARA y se da salida.
+ *
+ * Medido el 13/10/2026 en el sitio vivo (demo, navegador sin JS a 390 px): el formulario no
+ * declaraba `method` ni `action`, así que el navegador lo enviaba como GET con los campos en la
+ * URL y WordPress lo resolvía como una búsqueda vacía («Página no encontrada») después de
+ * rellenarlo entero.
+ */
+$convoca_sin_js = ! empty( $_POST['convoca_sin_js_inscripcion'] );
+
+if ( $convoca_sin_js ) {
+	$convoca_opciones = get_option( 'convoca_members_settings' );
+	$convoca_email    = is_array( $convoca_opciones ) && ! empty( $convoca_opciones['admin_email'] )
+		? (string) $convoca_opciones['admin_email']
+		: (string) get_option( 'admin_email' );
+	$convoca_tel      = is_array( $convoca_opciones ) && ! empty( $convoca_opciones['telefono'] )
+		? (string) $convoca_opciones['telefono']
+		: '';
+	$convoca_email    = (string) apply_filters( 'convoca_inscripcion_sin_js_email', $convoca_email );
+	$convoca_tel      = (string) apply_filters( 'convoca_inscripcion_sin_js_telefono', $convoca_tel );
+	?>
+	<div class="convoca-alert convoca-alert--warning" role="status">
+		<p><?php esc_html_e( 'No se ha registrado tu inscripción: este formulario necesita JavaScript en el navegador.', 'convoca-enroll' ); ?></p>
+		<p><?php esc_html_e( 'Actívalo y vuelve a intentarlo.', 'convoca-enroll' ); ?>
+		<?php if ( $convoca_email ) : ?>
+			<?php esc_html_e( 'Si no puedes, escríbenos y te inscribimos a mano:', 'convoca-enroll' ); ?>
+			<a href="<?php echo esc_url( 'mailto:' . $convoca_email ); ?>"><?php echo esc_html( $convoca_email ); ?></a>
+		<?php endif; ?>
+		<?php if ( $convoca_tel ) : ?>
+			(<?php echo esc_html( $convoca_tel ); ?>)
+		<?php endif; ?>
+		</p>
+	</div>
+	<?php
+	return;
+}
+
 $settings         = get_option( 'convoca_enroll_settings', array() );
 $show_plazas      = $attrs['mostrar_plazas'] ?? true;
 $show_precios     = $attrs['mostrar_precios'] ?? true;
@@ -105,8 +142,17 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 	<!-- Alert -->
 	<div id="conv-alert" class="convoca-alert" style="display:none" role="alert" aria-live="assertive"></div>
 
+	<!-- Sin JavaScript no hay formulario que enviar: se dice antes de rellenarlo. -->
+	<noscript>
+		<div class="convoca-alert convoca-alert--warning" role="status">
+			<p><?php esc_html_e( 'Este formulario de inscripción necesita JavaScript en el navegador. Actívalo y vuelve a intentarlo.', 'convoca-enroll' ); ?></p>
+		</div>
+	</noscript>
+
 	<!-- Form -->
-	<form id="conv-inscripcion-form" class="<?php echo $agotada ? 'conv-form--waitlist' : ''; ?>" novalidate>
+	<form id="conv-inscripcion-form" class="<?php echo $agotada ? 'conv-form--waitlist' : ''; ?>" method="post" action="" novalidate>
+		<?php // Marcador del envío sin JavaScript: lo lee el aviso del principio del template. ?>
+		<input type="hidden" name="convoca_sin_js_inscripcion" value="1" />
 		<input type="hidden" name="actividad_id" value="<?php echo (int) $actividad->ID; ?>">
 
 		<?php if ( $agotada ) : ?>
