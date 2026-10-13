@@ -25,6 +25,10 @@ Makefile
 CHANGELOG.md
 docs/
 
+# Scripts de desarrollo (montar el entorno de pruebas, empaquetar).
+# Plugin Check los rechaza como «Application files are not permitted»: no van en el paquete.
+bin/
+
 # Artefactos de las pruebas de navegador y de PHPUnit: no deben viajar NUNCA.
 # `auth.json` es el estado de sesion (cookies de WordPress) y `playwright-report` un
 # informe con las trazas. Los dos acabaron servidos por HTTP en sitios reales.

@@ -45,9 +45,25 @@ VERSION_REAL="$(grep -o "wp_version = '[^']*'" "$DATOS/wp/wp-includes/version.ph
 echo "    WordPress $VERSION_REAL"
 
 # La biblioteca de pruebas va EMPAREJADA con la versión de WordPress: la del trunk no vale.
+# Se baja del tarball ETIQUETADO de wordpress-develop (no con svn: el runner de GitHub no lo trae,
+# y un paso de CI no puede depender de una herramienta que puede faltar).
 if [ ! -f "$DATOS/wptests/includes/functions.php" ]; then
-	rm -rf "$DATOS/wptests"
-	svn export --quiet "https://develop.svn.wordpress.org/tags/$VERSION_REAL/tests/phpunit/" "$DATOS/wptests"
+	rm -rf "$DATOS/wpd" "$DATOS/wpd.tgz"
+	url_test="https://github.com/WordPress/wordpress-develop/archive/refs/tags/$VERSION_REAL.tar.gz"
+	codigo="$(curl -sSL -o "$DATOS/wpd.tgz" -w '%{http_code}' "$url_test")"
+	if [ "$codigo" != "200" ]; then
+		echo "    ERROR: no hay biblioteca de pruebas para la versión $VERSION_REAL ($url_test → $codigo)"
+		exit 1
+	fi
+	mkdir -p "$DATOS/wpd"
+	tar xzf "$DATOS/wpd.tgz" -C "$DATOS/wpd" --strip-components=1
+	if [ ! -f "$DATOS/wpd/tests/phpunit/includes/functions.php" ]; then
+		echo "    ERROR: el tarball de $VERSION_REAL no trae tests/phpunit"
+		exit 1
+	fi
+	mkdir -p "$DATOS/wptests"
+	cp -r "$DATOS/wpd/tests/phpunit/." "$DATOS/wptests/"
+	rm -rf "$DATOS/wpd" "$DATOS/wpd.tgz"
 fi
 echo "    biblioteca: $DATOS/wptests"
 
