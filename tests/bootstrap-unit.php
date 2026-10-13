@@ -231,6 +231,13 @@ if (!function_exists('get_posts')) { function get_posts($a) { return []; } }
 // URLs
 if (!function_exists('home_url')) { function home_url($p = '') { return "https://example.com$p"; } }
 if (!function_exists('admin_url')) { function admin_url($p = '') { return "/wp-admin/$p"; } }
+if (!function_exists('get_post_type_archive_link')) {
+    // El archivo del CPT: por defecto existe, y se puede apagar con
+    // `$GLOBALS['convoca_test_archive_link'] = ''` para probar el caso sin listado.
+    function get_post_type_archive_link($t) {
+        return $GLOBALS['convoca_test_archive_link'] ?? "https://example.com/{$t}/";
+    }
+}
 
 // Registro de menús: se captura en vez de pintarse, para poder comprobar a qué
 // pantalla apunta cada entrada sin arrancar WordPress.

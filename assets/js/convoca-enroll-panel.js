@@ -52,7 +52,7 @@
                 conv.setLoading(btn, false, '🔍 Consultar reservas');
             },
             (res) => {
-                showAlert(res.data?.message || 'Error desconocido.');
+                showAlert(res.data?.errors?.join('<br>') || res.data?.message || conv.mensajes.reintentar);
                 conv.setLoading(btn, false, '🔍 Consultar reservas');
             }
         );

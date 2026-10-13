@@ -178,7 +178,7 @@
                 },
                 /* On Error */
                 (res) => {
-                    const msgs = res.data?.errors ? res.data.errors.join('<br>') : (res.data?.message || 'Error desconocido.');
+                    const msgs = res.data?.errors ? res.data.errors.join('<br>') : (res.data?.message || conv.mensajes.reintentar);
                     conv.showAlert(alert, msgs, 'danger');
                     conv.setLoading(btn, false, '✔ Inscribirme');
                 }

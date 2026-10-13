@@ -1,5 +1,21 @@
 # Changelog — convoca-enroll
 
+## v2.7.31 (2026-10-13)
+
+### Arreglado
+- **`/inscribete/` era un callejón sin salida.** Medido en el sitio vivo (demo): la página servía
+  «Actividad no encontrada.» con HTTP 200 porque llama a `[convoca_form_inscripcion id="98"]` y esa
+  actividad no existe; y si el shortcode va **sin** `id`, el formulario no imprimía **nada**. El
+  aviso (`Form_Inscripcion::aviso_sin_actividad()`) explica la situación, ofrece el listado de
+  actividades cuando existe y solo enseña la causa técnica (el shortcode con su id) a quien puede
+  editar.
+- La inscripción pública y el panel de reservas usan los mensajes comunes
+  (`conv.mensajes.reintentar`) en vez de «Error desconocido.», y el alta desde la administración
+  pasa por `convocaAdmin.ajaxPost`: texto traducido, escapado y con la respuesta de protocolo de
+  WordPress traducida.
+- Pruebas `tests/Unit/AvisoSinActividadTest.php` y `tests/Unit/MensajesDeErrorTest.php`, las dos
+  probadas **en negativo**.
+
 ## v2.7.30 (2026-10-12)
 
 ### Cambiado

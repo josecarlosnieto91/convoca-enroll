@@ -58,12 +58,12 @@ class Form_Inscripcion {
 	 */
 	public function render_form( int $actividad_id, array $attrs = array() ): string {
 		if ( ! $actividad_id ) {
-			return '';
+			return $this->aviso_sin_actividad();
 		}
 
 		$actividad = get_post( $actividad_id );
 		if ( ! $actividad || $actividad->post_type !== 'actividad' ) {
-			return '<p class="convoca-alert convoca-alert--danger">' . esc_html__( 'Actividad no encontrada.', 'convoca-enroll' ) . '</p>';
+			return $this->aviso_sin_actividad();
 		}
 
 		$meta = CPT_Actividad::get_meta( $actividad_id );
@@ -83,6 +83,35 @@ class Form_Inscripcion {
 		ob_start();
 		include CONVOCA_ENROLL_DIR . 'templates/form-inscripcion.php';
 		return ob_get_clean();
+	}
+
+	/**
+	 * Aviso cuando el formulario no apunta a ninguna actividad: dice QUÉ HACER.
+	 *
+	 * Antes devolvía «Actividad no encontrada.» y, si faltaba el `id`, **nada en absoluto**:
+	 * el visitante veía un error que no puede seguir (o una página vacía) y quien lo
+	 * administra no sabía que el shortcode estaba mal puesto. Medido en `/inscribete/`
+	 * (demo y Lugg): la página existía y no había forma de inscribirse ni de saber por qué.
+	 *
+	 * @return string HTML del aviso.
+	 */
+	protected function aviso_sin_actividad(): string {
+		$archivo = get_post_type_archive_link( 'actividad' );
+		$salida  = '<div class="convoca-alert convoca-alert--warning" role="status">';
+		$salida .= '<p>' . esc_html__( 'Aquí no hay ninguna actividad abierta a inscripción.', 'convoca-enroll' ) . '</p>';
+
+		if ( $archivo ) {
+			$salida .= '<p><a class="convoca-btn convoca-btn-primary" href="' . esc_url( $archivo ) . '">' . esc_html__( 'Ver las actividades disponibles', 'convoca-enroll' ) . '</a></p>';
+		}
+
+		$salida .= '<p>' . esc_html__( 'Si has llegado por un enlace de la asociación, avísanos: ese enlace está mal.', 'convoca-enroll' ) . '</p>';
+
+		// Quien puede editar ve la causa y el arreglo; el visitante, no.
+		if ( current_user_can( 'edit_posts' ) ) {
+			$salida .= '<p class="description">' . esc_html__( 'Para quien administra: esta página no tiene actividad asignada. Abre la ficha de la actividad que quieras y pega en ella el bloque o el shortcode con su id, por ejemplo [convoca_form_inscripcion id="123"]. Para listar todas las inscripciones abiertas, usa [convoca_inscripcion_page].', 'convoca-enroll' ) . '</p>';
+		}
+
+		return $salida . '</div>';
 	}
 
 	/**

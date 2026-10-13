@@ -200,32 +200,32 @@ class Admin_Inscripcion_Form {
 					btn.disabled = true;
 					btn.textContent = 'Creando…';
 
-					fetch(window.bdeAdmin?.ajaxUrl || ajaxurl, {
-						method: 'POST',
-						body: fd,
-					})
-						.then(r => r.json())
-						.then(res => {
-							if (res.success) {
-								alert.className = 'convoca-alert convoca-alert--success';
-								alert.innerHTML = '<p>✅ Inscripción creada correctamente (ID: ' + res.data.inscripcion_id + '). <a href="' + res.data.detail_url + '">Ver detalle →</a></p>';
-								alert.style.display = 'block';
-								form.reset();
-							} else {
-								alert.className = 'convoca-alert convoca-alert--danger';
-								alert.innerHTML = '<p>❌ ' + (res.data?.errors?.join('<br>') || res.data || 'Error desconocido') + '</p>';
-								alert.style.display = 'block';
-							}
-							btn.disabled = false;
-							btn.textContent = 'Crear inscripción';
-						})
-						.catch(() => {
-							alert.className = 'convoca-alert convoca-alert--danger';
-							alert.innerHTML = '<p>❌ Error de conexión.</p>';
-							alert.style.display = 'block';
-							btn.disabled = false;
-							btn.textContent = 'Crear inscripción';
-						});
+					/* Los textos de error los resuelve la capa común (convoca-common-admin.js):
+						dice QUÉ HACER y traduce el `0` / `-1` de admin-ajax, que antes salían
+						como «Error desconocido» o como un cero pegado al mensaje. */
+					if (!window.convocaAdmin || !window.convocaAdmin.ajaxPost) {
+						alert.className = 'convoca-alert convoca-alert--danger';
+						alert.innerHTML = '<p>❌ <?php echo esc_js( __( 'No se ha podido completar la operación. Recarga la página y vuelve a intentarlo.', 'convoca-enroll' ) ); ?></p>';
+						alert.style.display = 'block';
+						btn.disabled = false;
+						btn.textContent = 'Crear inscripción';
+						return;
+					}
+
+					convocaAdmin.ajaxPost('convoca_enroll_admin_inscribir', fd, window.bdeAdmin?.nonce || '', function (res) {
+						alert.className = 'convoca-alert convoca-alert--success';
+						alert.innerHTML = '<p>✅ Inscripción creada correctamente (ID: ' + res.data.inscripcion_id + '). <a href="' + res.data.detail_url + '">Ver detalle →</a></p>';
+						alert.style.display = 'block';
+						form.reset();
+						btn.disabled = false;
+						btn.textContent = 'Crear inscripción';
+					}, function (res) {
+						alert.className = 'convoca-alert convoca-alert--danger';
+						alert.innerHTML = '<p>❌ ' + (res.data?.errors?.join('<br>') || res.data?.message) + '</p>';
+						alert.style.display = 'block';
+						btn.disabled = false;
+						btn.textContent = 'Crear inscripción';
+					});
 				});
 			})();
 		</script>
