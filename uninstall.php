@@ -109,6 +109,8 @@ $convoca_enroll_crons = array(
 	'convoca_enroll_reminder_1hora',
 	'convoca_enroll_reminder_24h',
 	'convoca_enroll_reminder_7dias',
+	// Faltaba: se programa en convoca-enroll.php y seguía disparándose tras desinstalar.
+	'convoca_social_token_healthcheck',
 );
 
 foreach ( $convoca_enroll_crons as $convoca_enroll_cron ) {
