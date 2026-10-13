@@ -24,8 +24,8 @@ use PHPUnit\Framework\TestCase;
 
 class LegibilidadDeCartelesTest extends TestCase {
 
-	/** Fondos de la fila de datos y del panel, tal y como se pintan. */
-	const FONDO_FILA = '#f1f2f2';
+	/** Fondo real de la fila de datos, medido en los carteles generados (#e6e8e8). */
+	const FONDO_FILA = '#e6e8e8';
 
 	/** Las ocho plantillas de fábrica. */
 	private function plantillas(): array {

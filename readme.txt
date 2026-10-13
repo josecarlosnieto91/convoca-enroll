@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.7.38
+Stable tag: 2.7.39
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,11 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.39 =
+* Carteles: el color de las etiquetas se calcula contra el fondo real de la fila (#e6e8e8, medido en
+  los carteles: la tarjeta blanca al 95% sobre el degradado) y no contra un blanco teórico. Con el
+  fondo equivocado el contraste medido quedaba en 4,48:1, dos centésimas por debajo del mínimo.
 
 = 2.7.38 =
 * Carteles: las etiquetas y los valores de los datos salen con el trazo engrosado. La tipografía

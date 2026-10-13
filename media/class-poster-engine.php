@@ -359,7 +359,10 @@ class Poster_Engine {
 			// El acento crudo como TEXTO sobre la fila clara daba entre 1,9:1 y 3,4:1 según la
 			// plantilla (medido el 13/10/2026 sobre los carteles generados): se oscurece hasta que
 			// cumpla el mínimo de contraste, conservando el tono de la plantilla.
-			'label'       => self::texto_legible( $accent_color, '#f1f2f2', 4.5 ),
+			// El fondo de referencia es el que se midió en los carteles (#e6e8e8: la tarjeta blanca
+			// al 95% sobre el degradado), no un blanco teórico: con #f1f2f2 el color quedaba en
+			// 4,48:1 medido, dos centésimas por debajo del mínimo.
+			'label'       => self::texto_legible( $accent_color, '#e6e8e8', 4.5 ),
 			'panel'       => __( 'rgba(255,255,255,0.94)', 'convoca-enroll' ),
 		);
 	}
