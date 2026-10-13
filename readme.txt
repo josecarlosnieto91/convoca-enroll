@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.7.35
+Stable tag: 2.7.36
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,15 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.36 =
+* Carteles: las etiquetas de los datos (FECHA, HORA, LUGAR, PLAZAS, PRECIO) ya se leen. Se pintaban
+  con el color de acento de cada plantilla sobre una fila casi blanca: entre 1,91:1 y 3,36:1 en las
+  ocho plantillas, por debajo del mínimo. Ahora el color se oscurece lo justo hasta cumplir 4,5:1,
+  conservando el tono de cada plantilla.
+* Carteles: cuando la actividad no trae hora, el cartel decía «HORA 00:00» y anunciaba el evento a
+  medianoche. Ahora dice «Por confirmar». (Una medianoche escrita a propósito en la actividad se
+  sigue respetando.)
 
 = 2.7.35 =
 * Desinstalación: se limpian todas las tareas programadas del plugin. Antes se

@@ -261,6 +261,13 @@ class Poster_Engine {
 			return '';
 		}
 		$out = date_i18n( 'H:i', $st );
+		// Si la actividad no trae hora, la fecha de inicio es de solo día y `strtotime` la deja a
+		// las 00:00: eso NO es una hora del evento. Se devuelve vacío para que el cartel diga
+		// «Por confirmar» en vez de anunciar un evento a medianoche (visto en los carteles del
+		// banco de pruebas el 13/10/2026).
+		if ( '' === $time && '00:00' === $out ) {
+			return '';
+		}
 		return $et && $et !== $st ? $out . ' – ' . date_i18n( 'H:i', $et ) : $out;
 	}
 
@@ -349,8 +356,63 @@ class Poster_Engine {
 			'muted'       => $v[3],
 			'accent'      => $accent_color,
 			'accent_text' => $accent_text,
+			// El acento crudo como TEXTO sobre la fila clara daba entre 1,9:1 y 3,4:1 según la
+			// plantilla (medido el 13/10/2026 sobre los carteles generados): se oscurece hasta que
+			// cumpla el mínimo de contraste, conservando el tono de la plantilla.
+			'label'       => self::texto_legible( $accent_color, '#f1f2f2', 4.5 ),
 			'panel'       => __( 'rgba(255,255,255,0.94)', 'convoca-enroll' ),
 		);
+	}
+
+	/**
+	 * Devuelve un color del mismo tono que oscurece lo necesario para leerse sobre un fondo.
+	 *
+	 * Por qué: las etiquetas de los datos se pintaban con el color de acento tal cual y quedaban
+	 * entre 1,9:1 y 3,4:1 sobre la fila clara — por debajo del mínimo. En vez de cambiar los
+	 * colores de las ocho plantillas a mano, se oscurece el que haya hasta que cumpla.
+	 *
+	 * @param string $hex   Color de partida (#rrggbb).
+	 * @param string $fondo Fondo sobre el que se va a leer (#rrggbb).
+	 * @param float  $min   Contraste mínimo exigido (4.5 = AA en texto normal).
+	 * @return string Color legible en #rrggbb.
+	 */
+	private static function texto_legible( string $hex, string $fondo, float $min = 4.5 ): string {
+		$hex = ltrim( $hex, '#' );
+		if ( 6 !== strlen( $hex ) ) {
+			return '#334155';
+		}
+		$rgb = array( hexdec( substr( $hex, 0, 2 ) ), hexdec( substr( $hex, 2, 2 ) ), hexdec( substr( $hex, 4, 2 ) ) );
+		for ( $k = 1.0; $k >= 0.2; $k -= 0.1 ) {
+			$c = array_map( static fn( $v ) => (int) round( $v * $k ), $rgb );
+			$hex_c = sprintf( '#%02x%02x%02x', $c[0], $c[1], $c[2] );
+			if ( self::contraste( $hex_c, $fondo ) >= $min ) {
+				return $hex_c;
+			}
+		}
+		return '#334155';
+	}
+
+	/**
+	 * Contraste WCAG entre dos colores.
+	 *
+	 * @param string $a #rrggbb.
+	 * @param string $b #rrggbb.
+	 * @return float
+	 */
+	private static function contraste( string $a, string $b ): float {
+		$lum = static function ( string $hex ): float {
+			$hex = ltrim( $hex, '#' );
+			$canal = static function ( float $v ): float {
+				$v /= 255;
+				return $v <= 0.03928 ? $v / 12.92 : pow( ( $v + 0.055 ) / 1.055, 2.4 );
+			};
+			return 0.2126 * $canal( (float) hexdec( substr( $hex, 0, 2 ) ) )
+				+ 0.7152 * $canal( (float) hexdec( substr( $hex, 2, 2 ) ) )
+				+ 0.0722 * $canal( (float) hexdec( substr( $hex, 4, 2 ) ) );
+		};
+		$la = $lum( $a );
+		$lb = $lum( $b );
+		return ( max( $la, $lb ) + 0.05 ) / ( min( $la, $lb ) + 0.05 );
 	}
 
 	private static function is_light_color( string $hex ): bool {
@@ -510,7 +572,7 @@ class Poster_Engine {
 				$gap = max( 4, (int) round( $l['meta']['h'] * 0.030 ) );
 				$row_h = max( 28, min( 52, (int) floor( ( $l['meta']['h'] - $gap * ( count( $meta_lines ) - 1 ) ) / count( $meta_lines ) ) ) );
 				$y = $l['meta']['y'];
-				foreach ( $meta_lines as $line ) { $row = array( 'x' => $l['meta']['x'], 'y' => $y, 'w' => $l['meta']['w'], 'h' => $row_h ); $round_rect( $img, $row, $rgba( '#111827', 0.055 ), (int) round( $row_h * 0.24 ) ); $label_w = min( 170, (int) round( $row['w'] * 0.26 ) ); $text_box( $img, mb_strtoupper( $line[0] ), array( 'x' => $row['x'] + 18, 'y' => $row['y'], 'w' => $label_w, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $p['accent'], max( 14, (int) round( $row_h * 0.25 ) ), 1.0, 'left', false, 1 ); $text_box( $img, $line[1], array( 'x' => $row['x'] + $label_w + 18, 'y' => $row['y'], 'w' => $row['w'] - $label_w - 36, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $panel_text, max( 18, (int) round( $row_h * 0.38 ) ), 1.05, 'left', false, 2 ); $y += $row_h + $gap; if ( $y > $l['meta']['y'] + $l['meta']['h'] ) { break; } }
+				foreach ( $meta_lines as $line ) { $row = array( 'x' => $l['meta']['x'], 'y' => $y, 'w' => $l['meta']['w'], 'h' => $row_h ); $round_rect( $img, $row, $rgba( '#111827', 0.055 ), (int) round( $row_h * 0.24 ) ); $label_w = min( 170, (int) round( $row['w'] * 0.26 ) ); $text_box( $img, mb_strtoupper( $line[0] ), array( 'x' => $row['x'] + 18, 'y' => $row['y'], 'w' => $label_w, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $p['label'], max( 14, (int) round( $row_h * 0.25 ) ), 1.0, 'left', false, 1 ); $text_box( $img, $line[1], array( 'x' => $row['x'] + $label_w + 18, 'y' => $row['y'], 'w' => $row['w'] - $label_w - 36, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $panel_text, max( 18, (int) round( $row_h * 0.38 ) ), 1.05, 'left', false, 2 ); $y += $row_h + $gap; if ( $y > $l['meta']['y'] + $l['meta']['h'] ) { break; } }
 			}
 
 			$round_rect( $img, $l['cta'], $p['accent'], (int) round( $l['cta']['h'] / 2 ) );
