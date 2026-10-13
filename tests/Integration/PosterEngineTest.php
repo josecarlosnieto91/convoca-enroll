@@ -19,6 +19,17 @@ class PosterEngineTest extends \WP_UnitTestCase {
 
 	public function setUp(): void {
 		parent::setUp();
+
+		// El motor usa Imagick. Si la extension esta pero NO tiene formatos compilados (contenedores
+		// minimos), setImageFormat falla y la prueba se lee como fallo del codigo. Se salta con el
+		// motivo a la vista; en el CI, con Imagick completo, la prueba corre de verdad.
+		if ( ! extension_loaded( 'imagick' ) ) {
+			$this->markTestSkipped( 'Sin la extension Imagick: no se puede generar el cartel.' );
+		}
+		if ( ! count( \Imagick::queryFormats( 'PNG' ) ) ) {
+			$this->markTestSkipped( 'Imagick sin formatos compilados en este entorno (queryFormats(PNG) = 0).' );
+		}
+
 		$this->actividad_id = $this->factory->post->create( array(
 			'post_type'  => 'actividad',
 			'post_title' => 'Test Activity',

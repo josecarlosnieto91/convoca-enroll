@@ -69,6 +69,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           coverage: pcov
+          extensions: imagick, gd, mysqli
           tools: composer:v2
       - name: Cache Composer dependencies
         uses: actions/cache@v4
@@ -86,12 +87,33 @@ jobs:
         run: mkdir -p build
       - name: Run unit tests
         run: vendor/bin/phpunit -c phpunit-unit.xml --log-junit build/junit.xml
+      - name: Traer el nucleo (dependencia real, como en produccion)
+        # El plugin exige Convoca Core activo y sus pruebas necesitan el CPT y las tablas del nucleo.
+        # Se instala SIN dependencias de desarrollo: con ellas, el PHPUnit del nucleo (10.x) se mezcla
+        # con el del plugin (9.6, que es lo que necesita wp-phpunit) y el arranque revienta.
+        run: |
+          git clone --depth 1 https://github.com/josecarlosnieto91/convoca-core.git ../convoca-core
+          ( cd ../convoca-core && composer update --no-dev --no-interaction --ignore-platform-req=ext-iconv )
+
+      - name: Montar el entorno de pruebas de WordPress
+        # Antes esta suite saltaba los 39 tests (0 aserciones) y el job lo leia como exito. El script
+        # deja WordPress + la biblioteca de pruebas de la version etiquetada + el wp-tests-config, y
+        # tests/bootstrap.php ejecuta la activacion del plugin (que es donde se crean sus tablas).
+        env:
+          DB_NAME: wordpress_test
+          DB_USER: root
+          DB_PASSWORD: convoca_test
+          DB_HOST: 127.0.0.1:3306
+          CONVOCA_CORE_DIR: ../convoca-core
+        run: |
+          mysql -h 127.0.0.1 -uroot -pconvoca_test -e 'CREATE DATABASE IF NOT EXISTS wordpress_test;'
+          bash bin/instalar-entorno-pruebas.sh /tmp/entorno
+
       - name: Run integration tests
-        # Esta suite necesita WordPress real (WP_UnitTestCase + base de datos de pruebas).
-        # Antes el paso salia por un `if` que en el runner SIEMPRE se cumplia: avisaba y
-        # terminaba con 0, asi que los 39 tests no se ejecutaban nunca y el job lo tapaba.
-        # Ahora se ejecuta: si falta el entorno, la propia suite declara los tests SALTADOS
-        # con su motivo y su numero (convoca-health-check#3), y el recuento se ve en el log.
+        env:
+          CONVOCA_WP_ROOT: /tmp/entorno/wp
+          WP_PHPUNIT__TESTS_CONFIG: /tmp/entorno/wp-tests-config.php
+          WP_TESTS_DIR: /tmp/entorno/wptests
         run: vendor/bin/phpunit -c phpunit-integration.xml --log-junit build/junit-integration.xml
       - uses: actions/upload-artifact@v4
         if: always()

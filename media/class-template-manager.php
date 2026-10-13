@@ -110,8 +110,25 @@ class Template_Manager {
 
 	public static function validate_config( array $config ): array {
 		$errors = array();
-		if ( empty( $config['width'] ) || empty( $config['height'] ) ) {
-			$errors[] = __( 'Las dimensiones (width/height) son obligatorias.', 'convoca-enroll' );
+
+		/*
+		 * Las plantillas de fabrica declaran las dimensiones POR FORMATO (formats.square, formats.story...)
+		 * y no en la raiz, asi que exigir solo width/height de raiz hacia que la propia plantilla que
+		 * trae el plugin no pasara su validador. Se acepta cualquiera de las dos formas, y se sigue
+		 * rechazando lo que no tiene ninguna (que es lo que hay que proteger en una importacion).
+		 */
+		$tiene_raiz = ! empty( $config['width'] ) && ! empty( $config['height'] );
+		$tiene_formato = false;
+		if ( ! empty( $config['formats'] ) && is_array( $config['formats'] ) ) {
+			foreach ( $config['formats'] as $formato ) {
+				if ( ! empty( $formato['width'] ) && ! empty( $formato['height'] ) ) {
+					$tiene_formato = true;
+					break;
+				}
+			}
+		}
+		if ( ! $tiene_raiz && ! $tiene_formato ) {
+			$errors[] = __( 'Faltan las dimensiones: ni width/height en la raiz ni un formato con width/height.', 'convoca-enroll' );
 		}
 		if ( empty( $config['layers'] ) || ! is_array( $config['layers'] ) ) {
 			$errors[] = __( 'Debe definir al menos una capa.', 'convoca-enroll' );

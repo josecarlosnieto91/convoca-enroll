@@ -54,6 +54,15 @@ if ('' !== $convoca_wp_phpunit && file_exists((string) $convoca_tests_config)
     require_once $convoca_wp_phpunit . '/includes/functions.php';
     require_once $convoca_wp_phpunit . '/includes/bootstrap.php';
     require_once dirname(__DIR__) . '/convoca-enroll.php';
+
+    /*
+     * El entorno de pruebas carga el plugin, pero no ejecuta su activacion. Las tablas propias (cola
+     * de correo, webhooks, codigos de reserva, medios) se crean ahi, asi que sin esto las pruebas
+     * fallan por «tabla no existe» y el fallo parece del codigo. La activacion es idempotente
+     * (dbDelta / CREATE TABLE IF NOT EXISTS), por eso se puede ejecutar en cada arranque.
+     */
+    require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    do_action( 'activate_' . plugin_basename( dirname( __DIR__ ) . '/convoca-enroll.php' ) );
     return;
 }
 

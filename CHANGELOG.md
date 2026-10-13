@@ -1,5 +1,26 @@
 # Changelog — convoca-enroll
 
+## [2.7.34] - 2026-10-13
+
+### Arreglado
+
+- **La suite de integración vuelve a validar de verdad** (issue #10): las 39 pruebas se saltaban y el
+  CI lo contaba como éxito (0 aserciones). Ahora corre con WordPress real: `bin/instalar-entorno-pruebas.sh`
+  (WordPress + biblioteca de pruebas de la versión etiquetada + Core sin dependencias de desarrollo) y
+  el CI lo monta en cada ejecución. Medido con entorno real: 39 pruebas, 70 aserciones.
+- **La suite de integración usa PHPUnit 9.6**: `wp-phpunit` llama a
+  `PHPUnit\Util\Test::parseTestMethodAnnotations()`, que PHPUnit 10 eliminó; con 10 salían 33 errores
+  de instrumento que parecían del código. La suite unitaria (149 pruebas) pasa igual con 9.6.
+- **El bootstrap ejecuta la activación del plugin**: las tablas propias (cola de correo, webhooks,
+  códigos de reserva, medios) se crean ahí; sin eso las pruebas fallaban por «tabla no existe».
+- **Las plantillas de fábrica ya pasan su propio validador** (issue #11): `validate_config()` exigía
+  `width`/`height` en la raíz y las plantillas solo los tienen por formato (`formats`). Ahora acepta
+  cualquiera de las dos formas y sigue rechazando lo que no tiene ninguna.
+- **La prueba de rutas REST comprobaba una ruta inexistente**: pedía `/convoca/v1/checkin`; la ruta real
+  es `convoca-enroll/v1/checkin/flush`. Pasaba sin comprobar nada.
+- **Las pruebas del motor de pósters se saltan con el motivo a la vista** cuando el Imagick del entorno
+  no tiene formatos compilados (contenedores mínimos); en el CI, con Imagick completo, corren de verdad.
+
 ## v2.7.33 (2026-10-13)
 
 ### Arreglado
