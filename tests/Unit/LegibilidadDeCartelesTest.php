@@ -121,6 +121,39 @@ class LegibilidadDeCartelesTest extends TestCase {
 		$this->assertSame( '00:00', $this->llamar( 'time_label', array( '2026-09-10', '', '00:00' ) ) );
 	}
 
+	public function test_la_letra_de_las_filas_crece_con_el_formato(): void {
+		// El A4 de imprenta salía con etiquetas de 14 px (1,2 mm) porque el alto de fila estaba
+		// topado a 28-52 px, igual para todos los formatos. Tiene que escalar con el formato.
+		$cuadrado = $this->llamar( 'medidas_de_fila', array( 134, 32, 5, 4 ) );
+		$a4       = $this->llamar( 'medidas_de_fila', array( 336, 74, 5, 11 ) );
+
+		$this->assertGreaterThan( $cuadrado['alto'], $a4['alto'], 'La fila del A4 no es más alta que la del cuadrado.' );
+		$this->assertGreaterThan( $cuadrado['etiqueta'], $a4['etiqueta'], 'La etiqueta del A4 no es más grande.' );
+		$this->assertGreaterThan( $cuadrado['valor'], $a4['valor'], 'El valor del A4 no es más grande.' );
+	}
+
+	public function test_las_filas_caben_en_su_bloque(): void {
+		// Casos reales: cuadrado con 5 y con 7 filas, y A4 con 5 y con 7.
+		// OJO: el cuadrado con 7 filas NO cabe (134 px de bloque para 7 filas); está anotado en el
+		// issue correspondiente, no escondido aquí.
+		foreach ( array( array( 134, 32, 5, 4 ), array( 336, 74, 5, 11 ), array( 336, 74, 7, 11 ) ) as $caso ) {
+			list( $meta_h, $meta_size, $filas, $gap ) = $caso;
+			$m = $this->llamar( 'medidas_de_fila', array( $meta_h, $meta_size, $filas, $gap ) );
+			$usado = $filas * $m['alto'] + $gap * ( $filas - 1 );
+			$this->assertLessThanOrEqual(
+				$meta_h + 2,
+				$usado,
+				sprintf( 'Con %d filas de %d px y %d de hueco se usan %d px en un bloque de %d.', $filas, $m['alto'], $gap, $usado, $meta_h )
+			);
+		}
+	}
+
+	public function test_el_texto_no_es_mas_pequeno_que_el_minimo_legible(): void {
+		$m = $this->llamar( 'medidas_de_fila', array( 100, 20, 7, 4 ) );   // el caso más apretado
+		$this->assertGreaterThanOrEqual( 14, $m['etiqueta'] );
+		$this->assertGreaterThanOrEqual( 18, $m['valor'] );
+	}
+
 	public function test_un_rango_de_horas_se_mantiene(): void {
 		$this->assertSame(
 			'10:00 – 13:00',

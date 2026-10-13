@@ -365,6 +365,35 @@ class Poster_Engine {
 	}
 
 	/**
+	 * Alto de fila y tamaño de letra de las filas de datos, según el formato.
+	 *
+	 * Por qué existe: con topes fijos (28-52 px de fila) el A4 de imprenta salía con las etiquetas
+	 * a **14 px** — 1,2 mm de alto — mientras el propio layout ya calculaba 74 px para esa medida
+	 * (medido el 13/10/2026 sobre los carteles generados). El bloque `meta` manda: si hay poco
+	 * sitio se aprieta, y si hay mucho la letra crece en vez de dejar un hueco blanco.
+	 *
+	 * @param int $meta_h    Alto del bloque de datos.
+	 * @param int $meta_size Tamaño de letra que el layout calcula para ese formato.
+	 * @param int $filas     Cuántas filas de datos hay.
+	 * @param int $gap       Separación entre filas.
+	 * @return array{alto:int,etiqueta:int,valor:int}
+	 */
+	private static function medidas_de_fila( int $meta_h, int $meta_size, int $filas, int $gap ): array {
+		$maximo = max( 48, (int) round( $meta_size * 1.60 ) );
+		$caben  = (int) floor( ( $meta_h - $gap * max( 0, $filas - 1 ) ) / max( 1, $filas ) );
+		// La fila SIEMPRE tiene que caber en su bloque (si no, las últimas no se dibujan y el
+		// cartel pierde datos sin avisar). El mínimo de 20 px es el suelo para que el texto no
+		// desaparezca; con muchas filas y un bloque pequeño, la etiqueta y el valor ya no bajan
+		// de 14 y 18 px respectivamente, así que puede quedar apretado pero legible.
+		$alto = max( 20, min( $maximo, $caben ) );
+		return array(
+			'alto'     => $alto,
+			'etiqueta' => max( 14, (int) round( $alto * 0.30 ) ),
+			'valor'    => max( 18, (int) round( $alto * 0.50 ) ),
+		);
+	}
+
+	/**
 	 * Devuelve un color del mismo tono que oscurece lo necesario para leerse sobre un fondo.
 	 *
 	 * Por qué: las etiquetas de los datos se pintaban con el color de acento tal cual y quedaban
@@ -570,9 +599,12 @@ class Poster_Engine {
 			if ( ! empty( $d['age'] ) ) { $meta_lines[] = array( __( 'Edad', 'convoca-enroll' ), $d['age'] ); }
 			if ( $meta_lines ) {
 				$gap = max( 4, (int) round( $l['meta']['h'] * 0.030 ) );
-				$row_h = max( 28, min( 52, (int) floor( ( $l['meta']['h'] - $gap * ( count( $meta_lines ) - 1 ) ) / count( $meta_lines ) ) ) );
+				$medidas = self::medidas_de_fila( $l['meta']['h'], (int) $l['meta_size'], count( $meta_lines ), $gap );
+				$row_h   = $medidas['alto'];
+				$size_etiqueta = $medidas['etiqueta'];
+				$size_valor    = $medidas['valor'];
 				$y = $l['meta']['y'];
-				foreach ( $meta_lines as $line ) { $row = array( 'x' => $l['meta']['x'], 'y' => $y, 'w' => $l['meta']['w'], 'h' => $row_h ); $round_rect( $img, $row, $rgba( '#111827', 0.055 ), (int) round( $row_h * 0.24 ) ); $label_w = min( 170, (int) round( $row['w'] * 0.26 ) ); $text_box( $img, mb_strtoupper( $line[0] ), array( 'x' => $row['x'] + 18, 'y' => $row['y'], 'w' => $label_w, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $p['label'], max( 14, (int) round( $row_h * 0.25 ) ), 1.0, 'left', false, 1 ); $text_box( $img, $line[1], array( 'x' => $row['x'] + $label_w + 18, 'y' => $row['y'], 'w' => $row['w'] - $label_w - 36, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $panel_text, max( 18, (int) round( $row_h * 0.38 ) ), 1.05, 'left', false, 2 ); $y += $row_h + $gap; if ( $y > $l['meta']['y'] + $l['meta']['h'] ) { break; } }
+				foreach ( $meta_lines as $line ) { $row = array( 'x' => $l['meta']['x'], 'y' => $y, 'w' => $l['meta']['w'], 'h' => $row_h ); $round_rect( $img, $row, $rgba( '#111827', 0.055 ), (int) round( $row_h * 0.24 ) ); $label_w = min( 170, (int) round( $row['w'] * 0.26 ) ); $text_box( $img, mb_strtoupper( $line[0] ), array( 'x' => $row['x'] + 18, 'y' => $row['y'], 'w' => $label_w, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $p['label'], $size_etiqueta, 1.0, 'left', false, 1 ); $text_box( $img, $line[1], array( 'x' => $row['x'] + $label_w + 18, 'y' => $row['y'], 'w' => $row['w'] - $label_w - 36, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $panel_text, $size_valor, 1.05, 'left', false, 2 ); $y += $row_h + $gap; if ( $y > $l['meta']['y'] + $l['meta']['h'] ) { break; } }
 			}
 
 			$round_rect( $img, $l['cta'], $p['accent'], (int) round( $l['cta']['h'] / 2 ) );

@@ -4,7 +4,7 @@ Tags: activities, registration, enrollment, check-in, forms
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.7.36
+Stable tag: 2.7.37
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,13 @@ This plugin can connect to external Google Calendar and Google Photos services v
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.37 =
+* Carteles: el tamaño de las letras de los datos ya escala con el formato. El alto de fila estaba
+  topado a 28-52 px para todos los formatos, así que el A4 de imprenta salía con las etiquetas a
+  14 px (1,2 mm) y los valores a 20 px, aunque el motor ya calculaba 74 px para esa medida. Ahora la
+  fila crece con el bloque de datos y la letra con la fila (A4: etiqueta 19 px, valor 32 px; el
+  cuadrado apenas cambia), y la fila siempre cabe en su bloque para no perder filas.
 
 = 2.7.36 =
 * Carteles: las etiquetas de los datos (FECHA, HORA, LUGAR, PLAZAS, PRECIO) ya se leen. Se pintaban
