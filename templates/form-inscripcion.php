@@ -15,10 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /*
  * Sin JavaScript: la degradación se DECLARA y se da salida.
  *
- * Medido el 13/10/2026 en el sitio vivo (demo, navegador sin JS a 390 px): el formulario no
- * declaraba `method` ni `action`, así que el navegador lo enviaba como GET con los campos en la
- * URL y WordPress lo resolvía como una búsqueda vacía («Página no encontrada») después de
- * rellenarlo entero.
+ * Medido el 13/10/2026 con Playwright sin JavaScript (390 px): el formulario no declaraba
+ * `method` ni `action`, así que el navegador lo enviaba por GET a la misma página con los campos
+ * en la URL y nadie lo procesaba: la inscripción se perdía en silencio.
  */
 $convoca_sin_js = ! empty( $_POST['convoca_sin_js_inscripcion'] );
 

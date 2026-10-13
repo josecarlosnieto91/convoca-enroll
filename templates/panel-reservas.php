@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /*
  * Sin JavaScript: la degradación se DECLARA y se da salida (mismo defecto medido en el resto de
- * formularios del ecosistema: sin `method` ni `action` el envío cae en una búsqueda de WordPress).
+ * formularios del ecosistema: sin `method` ni `action` el envío se pierde sin procesarse).
  */
 $convoca_sin_js = ! empty( $_POST['convoca_sin_js_panel'] );
 

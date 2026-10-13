@@ -3,10 +3,10 @@
 ## v2.7.32 (2026-10-13)
 
 ### Arreglado
-- **Sin JavaScript, la inscripción y el panel de reservas eran un callejón sin salida.** Medido en
-  el sitio vivo (demo, navegador sin JS a 390 px): ninguno de los dos formularios declaraba
-  `method` ni `action`, así que el navegador los enviaba como GET con los campos en la URL y
-  WordPress lo resolvía como una búsqueda vacía, con la página en «Página no encontrada».
+- **Sin JavaScript, la inscripción y el panel de reservas eran un callejón sin salida.** Medido con
+  Playwright sin JavaScript (390 px): ninguno de los dos formularios declaraba `method` ni `action`,
+  así que el navegador los enviaba por GET a la misma página con los campos en la URL y nadie los
+  procesaba: la inscripción y la consulta de reservas se perdían en silencio.
 - Ahora envían por **POST a su propia página** con un marcador (`convoca_sin_js_inscripcion`,
   `convoca_sin_js_panel`) y, cuando la petición llega sin JavaScript, el template explica la
   situación y ofrece el correo de la asociación (con el teléfono si está configurado); el
