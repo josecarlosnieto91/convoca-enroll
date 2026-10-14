@@ -170,6 +170,17 @@ class Form_Inscripcion {
 			wp_send_json_error( array( 'errors' => $errors ) );
 		}
 
+		// El tipo de inscripción lo decide el SERVIDOR, no el formulario. El motor ya lo corrige
+		// —sin sesión de socio, toda inscripción es de «socio de día» (Trasgu)—, pero el importe se
+		// calculaba antes con el tipo que venía en la petición: una petición anónima podía pedir
+		// «socio» y pagar la tarifa de socio (medido en la pasada 11: 2,50 € en vez de 5,00 €). Se
+		// corrige aquí, antes de calcular el importe, con la misma condición que usa el motor.
+		$es_socio_real = class_exists( '\\Convoca\\Members\\Member_Auth' ) && \Convoca\Members\Member_Auth::is_authenticated();
+		if ( ! $es_socio_real ) {
+			$tipo_inscripcion = 'socio_dia';
+			$es_socio         = false;
+		}
+
 		// Determine price based on tipo_inscripcion.
 		$act_meta      = CPT_Actividad::get_meta( $actividad_id );
 		$requiere_pago = ! empty( $act_meta['requiere_pago'] );

@@ -1,5 +1,24 @@
 # Changelog — convoca-enroll
 
+## [2.7.44] - 2026-10-15
+
+### Corregido
+
+- **Sobreventa al ampliar las plazas de una actividad llena** (pasada 11 del gauntlet). El panel
+  recalculaba el cupo restando **solo las inscripciones `confirmada`**, mientras el motor descuenta
+  plaza por `pendiente` y `pendiente_pago`. Dos reglas distintas para el mismo concepto: al ampliar de
+  2 a 5 plazas una actividad con 2 inscripciones pendientes, el sistema se creía con 5 libres y admitía
+  7 personas en una actividad de 5 (medido).
+
+  Ahora hay **una sola regla**, `Motor_Inscripcion::estados_que_ocupan_plaza()`, y la usan los tres
+  sitios que tocan el cupo: al inscribir, al cancelar y al recalcular desde el panel.
+
+- **El precio lo elegía el cliente.** El importe se calculaba con el `tipo_inscripcion` que venía en la
+  petición, antes de que el motor corrigiera el tipo. Una petición anónima podía declarar «socio» y
+  pagar la tarifa de socio en vez de la de día (medido: 2,50 € en vez de 5,00 €). Ahora el tipo y el
+  importe se derivan en el servidor de la misma condición que usa el motor: sin sesión de socio, la
+  inscripción es de «socio de día».
+
 ## [2.7.43] - 2026-10-15
 
 ### Corregido

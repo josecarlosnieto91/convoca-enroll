@@ -313,10 +313,18 @@ class Admin_Actividades {
 		$new_plazas = (int) $_POST['plazas_totales'];
 		update_post_meta( $post_id, '_convoca_plazas_totales', $new_plazas );
 
-		// Update available plazas if total changed.
+		// Si cambian las plazas totales se recalcula el cupo con LA MISMA regla que usa el motor para
+		// descontar (estados_que_ocupan_plaza). Antes solo restaba las 'confirmada', así que ampliar
+		// las plazas de una actividad llena —el caso real «amplío porque está completo»— devolvía al
+		// cupo las plazas ya ocupadas por inscripciones pendientes y se producía sobreventa (medido en
+		// la pasada 11: 7 personas con plaza reservada en una actividad de 5).
 		if ( $new_plazas !== $old_plazas ) {
-			$stats = CPT_Inscripcion::count_by_activity( $post_id );
-			update_post_meta( $post_id, '_convoca_plazas_disponibles', max( 0, $new_plazas - $stats['confirmada'] ) );
+			$stats    = CPT_Inscripcion::count_by_activity( $post_id );
+			$ocupadas = 0;
+			foreach ( Motor_Inscripcion::estados_que_ocupan_plaza() as $estado_que_ocupa ) {
+				$ocupadas += (int) ( $stats[ $estado_que_ocupa ] ?? 0 );
+			}
+			update_post_meta( $post_id, '_convoca_plazas_disponibles', max( 0, $new_plazas - $ocupadas ) );
 		}
 
 		update_post_meta( $post_id, '_convoca_precio_socio', sanitize_text_field( wp_unslash( $_POST['precio_socio'] ?? '' ) ) );

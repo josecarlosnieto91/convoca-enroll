@@ -66,6 +66,25 @@ class Motor_Inscripcion {
 	}
 
 	/**
+	 * Estados en los que una inscripción OCUPA una plaza del cupo.
+	 *
+	 * Una sola regla para todo el plugin. Antes cada sitio decidía la suya: al inscribir se descontaba
+	 * por 'pendiente' y 'pendiente_pago'; al cancelar se devolvía por 'confirmada', 'pendiente' y
+	 * 'pendiente_pago'; y el panel de administración, al cambiar las plazas totales, recalculaba el
+	 * cupo restando **solo** las 'confirmada'. Con dos reglas distintas para el mismo concepto, ampliar
+	 * las plazas de una actividad llena devolvía al cupo plazas que ya estaban ocupadas por
+	 * inscripciones pendientes (medido en la pasada 11 del gauntlet: 7 personas con plaza reservada en
+	 * una actividad de 5 plazas).
+	 *
+	 * 'lista_espera' y 'cancelada' no ocupan plaza.
+	 *
+	 * @return string[]
+	 */
+	public static function estados_que_ocupan_plaza(): array {
+		return array( 'pendiente', 'pendiente_pago', 'confirmada', 'pagada' );
+	}
+
+	/**
 	 * Inscripciones de una actividad que coinciden con un dato del socio, con lectura CON BLOQUEO.
 	 *
 	 * Va por SQL directo a propósito. WordPress cachea el resultado de las consultas, así que pedir la
@@ -330,7 +349,7 @@ class Motor_Inscripcion {
 			$estado = $datos['estado_forzado'] ?? null;
 
 			// Check capacity atomically - only for states that consume a spot.
-			$estados_que_consumen_plaza = array( 'pendiente', 'pendiente_pago' );
+			$estados_que_consumen_plaza = self::estados_que_ocupan_plaza();
 
 			if ( empty( $datos['estado_forzado'] ) || in_array( $datos['estado_forzado'], $estados_que_consumen_plaza, true ) ) {
 				$meta_actividad     = CPT_Actividad::get_meta( $actividad_id );
@@ -454,7 +473,7 @@ class Motor_Inscripcion {
 			// decrementan plazas_disponibles en inscribir()). Antes solo
 			// 'confirmada' liberaba, así que cancelar una 'pendiente' dejaba la
 			// plaza ocupada para siempre.
-			$estados_que_consumen_plaza = array( 'confirmada', 'pendiente', 'pendiente_pago' );
+			$estados_que_consumen_plaza = self::estados_que_ocupan_plaza();
 			if ( in_array( $estado_actual, $estados_que_consumen_plaza, true ) ) {
 				$promoted = self::promote_waitlist( $actividad_id );
 
