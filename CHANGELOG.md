@@ -1,5 +1,30 @@
 # Changelog — convoca-enroll
 
+## [2.7.42] - 2026-10-14
+
+### Retirado
+
+- **Los cuatro JavaScript de bloque que quedaron de una consolidación** (código muerto, pasada 9 del
+  gauntlet): `blocks/evaluacion/index.js`, `blocks/inscripcion/block-inscripcion.js`,
+  `blocks/pagina-inscripcion/block.js` y `blocks/panel-reservas/block.js`, más el
+  `block-inscripcion.asset.php` huérfano.
+
+  Comprobado antes de borrarlos, uno a uno: **ningún `block.json` los declara** (los cuatro usan
+  `"editorScript": "convoca-enroll-blocks"`, un *handle* que apunta al fichero consolidado
+  `assets/js/convoca-enroll-blocks.js`), **ningún PHP los nombra**, y **ningun `block.json` usa
+  `file:`** para cargarlos. No son fuentes de un build: no llevan `import`, son IIFE que usan el
+  global `wp`, y el consolidado ya registra los seis bloques.
+
+  Nada de esto rompía nada —por eso llevaba ahí— pero engordaba el paquete y confundía a quien
+  leía: el editor sigue funcionando con el fichero consolidado.
+
+### Añadido
+
+- **El guardián que lo habría cazado el primer día**: `convoca-health-check` ahora comprueba que
+  todo `.js` y `.css` que viaja en un plugin lo cargue alguien. Probado en negativo por los dos
+  lados: con un fichero muerto devuelve 2, y con un bloque que declara su script con `file:` **no**
+  da falso positivo.
+
 ## [2.7.41] - 2026-10-14
 
 ### Arreglado
