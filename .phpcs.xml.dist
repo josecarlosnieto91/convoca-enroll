@@ -16,7 +16,12 @@
        regresión. Se mantiene fuera del escaneo como publisher con
        php-cs-fixer. El código WordPress real (admin/includes/public) SÍ pasa
        PHPCS a 0. -->
-  <exclude-pattern>media/*</exclude-pattern>
+  <!-- media/ y social/ en la raíz siguen fuera del escaneo (arriba está el motivo),
+       pero `media/poster/` —las clases puras de cálculo de los carteles— SÍ se
+       escanea: no tienen nada que ver con el renderizado con Imagick y pasar el
+       estándar era gratis. Una exclusión ancha tapaba también esto. -->
+  <exclude-pattern>*/media/class-*.php</exclude-pattern>
+  <file>media/poster/</file>
   <exclude-pattern>social/*</exclude-pattern>
 
   <arg name="extensions" value="php"/>

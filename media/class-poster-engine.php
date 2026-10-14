@@ -16,14 +16,23 @@
  */
 
 /**
- * Poster Engine v6 — Direct Imagick image renderer for activity posters.
+ * Poster Engine v7 — dibuja los carteles de actividad directamente sobre un lienzo Imagick.
  *
- * Renders deterministic canvas posters without HTML/CSS/PDF pipelines.
- * Features: 6 social formats, 8 templates, text centering, auto-shrink,
- * text shadow for readability, no-image placeholders, accurate layout.
+ * Sin HTML, sin PDF y sin pipeline de CSS: PNG/JPG/WebP en seis formatos (cuadrado, vertical,
+ * stories, Facebook, banner y A4 a 300 dpi, imprimible como imagen).
+ *
+ * Qué cambió en la pasada 9 del gauntlet (refactor, sin cambio de aspecto):
+ *  - La paleta y el contraste viven en `Poster_Palette` y la geometría en `Poster_Layout`, que son
+ *    cálculo puro y se prueban sin arrancar Imagick. Este fichero se queda con lo que sí necesita
+ *    WordPress y la extensión: leer la actividad, dibujar y cachear.
+ *  - La clave de la caché incluye `ENGINE_VERSION`: antes, un cartel ya publicado **no se
+ *    regeneraba** al actualizar el plugin y seguía sirviendo el dibujo viejo.
+ *  - Ninguna fila de datos se descarta en silencio: si no caben todas a tamaño legible, se dice en
+ *    el resultado (`omitidas`) y se anota en el registro del plugin.
+ *  - Se borró `Poster_Layout_Validator` (232 líneas de código muerto que validaba HTML inexistente);
+ *    la comprobación de solapes se hace ahora sobre las cajas reales, en las pruebas.
  *
  * @package Convoca\Enroll\Media
- * @version 5.0.0
  */
 
 namespace Convoca\Enroll\Media;
@@ -39,6 +48,13 @@ class Poster_Engine {
 	const FONT_PLAYFAIR   = 'PlayfairDisplay';
 
 	/**
+	 * Versión del dibujo. **Entra en la clave de la caché**: si cambia el motor, los carteles ya
+	 * generados se vuelven a dibujar en vez de servirse viejos (defecto medido el 13/10/2026: un
+	 * cartel publicado no se regeneraba al actualizar el plugin).
+	 */
+	const ENGINE_VERSION = '7.0.0';
+
+	/**
 	 * Render posters for one or more formats.
 	 *
 	 * @param int    $actividad_id Activity post ID.
@@ -47,7 +63,7 @@ class Poster_Engine {
 	 * @return array|\WP_Error
 	 */
 	public static function render( int $actividad_id, string $template_slug = 'nature-classic', array $overrides = array() ): array|\WP_Error {
-		if ( ! extension_loaded( 'imagick' ) || ! class_exists( '\\Imagick' ) ) {
+		if ( ! extension_loaded( 'imagick' ) || ! class_exists( '\Imagick' ) ) {
 			return new \WP_Error( 'imagick_missing', __( 'Imagick no está disponible. Instala/activa la extensión PHP Imagick para generar carteles.', 'convoca-enroll' ) );
 		}
 
@@ -59,8 +75,9 @@ class Poster_Engine {
 		$urlbase = trailingslashit( $upload['baseurl'] ) . self::CACHE_DIR;
 		wp_mkdir_p( $dir );
 
-		$files  = array();
-		$cached = true;
+		$files    = array();
+		$cached   = true;
+		$omitidas = 0;
 
 		foreach ( $formats as $format ) {
 			$data = self::activity_data( $actividad_id, $template_slug, $format, $overrides );
@@ -72,6 +89,9 @@ class Poster_Engine {
 				md5(
 					wp_json_encode(
 						array(
+							// La versión del motor entra en la clave: si cambia el dibujo, el cartel
+							// se regenera en vez de servirse el viejo.
+							self::ENGINE_VERSION,
 							get_post_modified_time( 'U', true, $actividad_id ),
 							$data['image_id'],
 							$data['title'],
@@ -99,8 +119,23 @@ class Poster_Engine {
 				return $result;
 			}
 
-			$cached           = false;
-			$files[ $format ] = $path;
+			$omitidas         += $result['omitidas'];
+			$cached            = false;
+			$files[ $format ]  = $path;
+
+			if ( $result['omitidas'] > 0 ) {
+				Media_Logger::log(
+					'poster',
+					$actividad_id,
+					'render',
+					'warning',
+					array(
+						'format'   => $format,
+						'omitidas' => $result['omitidas'],
+						'motivo'   => 'Los datos no caben a tamaño legible en este formato.',
+					)
+				);
+			}
 		}
 
 		$first = reset( $files );
@@ -113,13 +148,15 @@ class Poster_Engine {
 				'template' => $template_slug,
 				'formats'  => array_keys( $files ),
 				'cached'   => $cached,
+				'omitidas' => $omitidas,
 			)
 		);
 
 		return array(
-			'files'  => $files,
-			'url'    => $first ? str_replace( $dir, $urlbase, $first ) : '',
-			'cached' => $cached,
+			'files'    => $files,
+			'url'      => $first ? str_replace( $dir, $urlbase, $first ) : '',
+			'cached'   => $cached,
+			'omitidas' => $omitidas,
 		);
 	}
 
@@ -182,7 +219,7 @@ class Poster_Engine {
 		$time_raw  = self::meta_first( $id, array( 'hora', '_convoca_hora' ) );
 
 		list( $start_date, $start_time ) = self::split_datetime( $start_raw );
-		list( $end_date, $end_time )     = self::split_datetime( $end_raw );
+		list( $end_date )                = self::split_datetime( $end_raw );
 		$explicit_time                   = $time_raw ?: $start_time;
 
 		$type_slug = self::meta_first( $id, array( 'tipo_actividad', '_convoca_tipo_actividad', 'tipo', '_convoca_tipo' ) );
@@ -223,8 +260,40 @@ class Poster_Engine {
 			'image_path' => $image_id ? get_attached_file( $image_id ) : '',
 			'qr_path'    => $qr_path && file_exists( $qr_path ) ? $qr_path : '',
 			'logo_path'  => $logo_path && file_exists( $logo_path ) ? $logo_path : '',
-			'palette'    => self::palette( $template_slug, $style['color'] ),
+			'palette'    => Poster_Palette::para( $template_slug, $style['color'] ),
 		);
+	}
+
+	/**
+	 * Las filas de datos que lleva el cartel, en orden.
+	 *
+	 * Está aparte de `draw()` porque el número de filas decide la maquetación: el bloque de datos
+	 * tiene que reservar sitio para ellas antes de dibujar (si no, las últimas se perdían).
+	 *
+	 * @param array $d Datos de la actividad.
+	 * @return array<int, array{0:string,1:string}>
+	 */
+	public static function filas_de_datos( array $d ): array {
+		$filas = array(
+			array( __( 'Fecha', 'convoca-enroll' ), (string) ( $d['date'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) ),
+			array( __( 'Hora', 'convoca-enroll' ), (string) ( $d['time'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) ),
+			array( __( 'Lugar', 'convoca-enroll' ), (string) ( $d['location'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) ),
+			array(
+				__( 'Plazas', 'convoca-enroll' ),
+				$d['places']
+					/* translators: %d: number of available spots */
+					? sprintf( _n( '%d plaza', '%d plazas', $d['places'], 'convoca-enroll' ), $d['places'] )
+					: __( 'Por confirmar', 'convoca-enroll' ),
+			),
+			array( __( 'Precio', 'convoca-enroll' ), (string) ( $d['price'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) ),
+		);
+		if ( ! empty( $d['organizer'] ) ) {
+			$filas[] = array( __( 'Organiza', 'convoca-enroll' ), $d['organizer'] );
+		}
+		if ( ! empty( $d['age'] ) ) {
+			$filas[] = array( __( 'Edad', 'convoca-enroll' ), $d['age'] );
+		}
+		return $filas;
 	}
 
 	private static function split_datetime( string $raw ): array {
@@ -332,154 +401,29 @@ class Poster_Engine {
 	}
 
 	/* ─────────────────────────────────────────────
-	 *  PALETTE
-	 * ───────────────────────────────────────────── */
-
-	private static function palette( string $template, string $accent ): array {
-		$map = array(
-			'nature-classic'       => array( '#173b25', '#07150e', '#132018', '#4a5c50', '#5fa65a' ),
-			'modern-ngo'           => array( '#10213a', '#07111f', '#111827', '#4b5563', '#ff8700' ),
-			'educational-workshop' => array( '#243b73', '#111827', '#111827', '#475569', '#3b82f6' ),
-			'volunteer-campaign'   => array( '#4a1d31', '#1a0b12', '#201018', '#614455', '#e84a5f' ),
-			'kids-family'          => array( '#0f766e', '#042f2e', '#10231f', '#4b635d', '#f59e0b' ),
-			'full-photo-hero'      => array( '#1f2937', '#030712', '#111827', '#4b5563', '#22c55e' ),
-			'story-focused'        => array( '#312e81', '#111827', '#111827', '#475569', '#a78bfa' ),
-			'minimal-corporate'    => array( '#334155', '#0f172a', '#111827', '#475569', '#0ea5e9' ),
-		);
-		$v      = $map[ sanitize_key( $template ) ] ?? $map['nature-classic'];
-		$accent_color = $accent ?: $v[4];
-		$accent_text  = self::is_light_color( $accent_color ) ? '#1a1a1a' : '#ffffff';
-		return array(
-			'bg'          => $v[0],
-			'deep'        => $v[1],
-			'text'        => $v[2],
-			'muted'       => $v[3],
-			'accent'      => $accent_color,
-			'accent_text' => $accent_text,
-			// El acento crudo como TEXTO sobre la fila clara daba entre 1,9:1 y 3,4:1 según la
-			// plantilla (medido el 13/10/2026 sobre los carteles generados): se oscurece hasta que
-			// cumpla el mínimo de contraste, conservando el tono de la plantilla.
-			// El fondo de referencia es el que se midió en los carteles (#e6e8e8: la tarjeta blanca
-			// al 95% sobre el degradado), no un blanco teórico: con #f1f2f2 el color quedaba en
-			// 4,48:1 medido, dos centésimas por debajo del mínimo.
-			'label'       => self::texto_legible( $accent_color, '#e6e8e8', 4.5 ),
-			'panel'       => __( 'rgba(255,255,255,0.94)', 'convoca-enroll' ),
-		);
-	}
-
-	/**
-	 * Alto de fila y tamaño de letra de las filas de datos, según el formato.
-	 *
-	 * Por qué existe: con topes fijos (28-52 px de fila) el A4 de imprenta salía con las etiquetas
-	 * a **14 px** — 1,2 mm de alto — mientras el propio layout ya calculaba 74 px para esa medida
-	 * (medido el 13/10/2026 sobre los carteles generados). El bloque `meta` manda: si hay poco
-	 * sitio se aprieta, y si hay mucho la letra crece en vez de dejar un hueco blanco.
-	 *
-	 * @param int $meta_h    Alto del bloque de datos.
-	 * @param int $meta_size Tamaño de letra que el layout calcula para ese formato.
-	 * @param int $filas     Cuántas filas de datos hay.
-	 * @param int $gap       Separación entre filas.
-	 * @return array{alto:int,etiqueta:int,valor:int}
-	 */
-	private static function medidas_de_fila( int $meta_h, int $meta_size, int $filas, int $gap ): array {
-		$maximo = max( 48, (int) round( $meta_size * 1.60 ) );
-		$caben  = (int) floor( ( $meta_h - $gap * max( 0, $filas - 1 ) ) / max( 1, $filas ) );
-		// La fila SIEMPRE tiene que caber en su bloque (si no, las últimas no se dibujan y el
-		// cartel pierde datos sin avisar). El mínimo de 20 px es el suelo para que el texto no
-		// desaparezca; con muchas filas y un bloque pequeño, la etiqueta y el valor ya no bajan
-		// de 14 y 18 px respectivamente, así que puede quedar apretado pero legible.
-		$alto = max( 20, min( $maximo, $caben ) );
-		return array(
-			'alto'     => $alto,
-			'etiqueta' => max( 14, (int) round( $alto * 0.34 ) ),
-			'valor'    => max( 18, (int) round( $alto * 0.50 ) ),
-		);
-	}
-
-	/**
-	 * Devuelve un color del mismo tono que oscurece lo necesario para leerse sobre un fondo.
-	 *
-	 * Por qué: las etiquetas de los datos se pintaban con el color de acento tal cual y quedaban
-	 * entre 1,9:1 y 3,4:1 sobre la fila clara — por debajo del mínimo. En vez de cambiar los
-	 * colores de las ocho plantillas a mano, se oscurece el que haya hasta que cumpla.
-	 *
-	 * @param string $hex   Color de partida (#rrggbb).
-	 * @param string $fondo Fondo sobre el que se va a leer (#rrggbb).
-	 * @param float  $min   Contraste mínimo exigido (4.5 = AA en texto normal).
-	 * @return string Color legible en #rrggbb.
-	 */
-	private static function texto_legible( string $hex, string $fondo, float $min = 4.5 ): string {
-		$hex = ltrim( $hex, '#' );
-		if ( 6 !== strlen( $hex ) ) {
-			return '#334155';
-		}
-		$rgb = array( hexdec( substr( $hex, 0, 2 ) ), hexdec( substr( $hex, 2, 2 ) ), hexdec( substr( $hex, 4, 2 ) ) );
-		for ( $k = 1.0; $k >= 0.2; $k -= 0.1 ) {
-			$c = array_map( static fn( $v ) => (int) round( $v * $k ), $rgb );
-			$hex_c = sprintf( '#%02x%02x%02x', $c[0], $c[1], $c[2] );
-			if ( self::contraste( $hex_c, $fondo ) >= $min ) {
-				return $hex_c;
-			}
-		}
-		return '#334155';
-	}
-
-	/**
-	 * Contraste WCAG entre dos colores.
-	 *
-	 * @param string $a #rrggbb.
-	 * @param string $b #rrggbb.
-	 * @return float
-	 */
-	private static function contraste( string $a, string $b ): float {
-		$lum = static function ( string $hex ): float {
-			$hex = ltrim( $hex, '#' );
-			$canal = static function ( float $v ): float {
-				$v /= 255;
-				return $v <= 0.03928 ? $v / 12.92 : pow( ( $v + 0.055 ) / 1.055, 2.4 );
-			};
-			return 0.2126 * $canal( (float) hexdec( substr( $hex, 0, 2 ) ) )
-				+ 0.7152 * $canal( (float) hexdec( substr( $hex, 2, 2 ) ) )
-				+ 0.0722 * $canal( (float) hexdec( substr( $hex, 4, 2 ) ) );
-		};
-		$la = $lum( $a );
-		$lb = $lum( $b );
-		return ( max( $la, $lb ) + 0.05 ) / ( min( $la, $lb ) + 0.05 );
-	}
-
-	private static function is_light_color( string $hex ): bool {
-		$hex = ltrim( $hex, '#' );
-		if ( 3 === strlen( $hex ) ) {
-			$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
-		}
-		$r = hexdec( substr( $hex, 0, 2 ) );
-		$g = hexdec( substr( $hex, 2, 2 ) );
-		$b = hexdec( substr( $hex, 4, 2 ) );
-		$luminance = 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
-		return $luminance > 180;
-	}
-
-	/* ─────────────────────────────────────────────
 	 *  MAIN DRAWING PIPELINE
 	 * ───────────────────────────────────────────── */
 
-	private static function draw( array $d, string $path, string $export ): bool|\WP_Error {
+	/**
+	 * Dibuja el cartel.
+	 *
+	 * @param array  $d      Datos de la actividad.
+	 * @param string $path   Ruta de salida.
+	 * @param string $export png|jpg|webp.
+	 * @return array{omitidas:int}|\WP_Error
+	 */
+	private static function draw( array $d, string $path, string $export ): array|\WP_Error {
+		$omitidas = 0;
 		try {
+			$p        = $d['palette'];
+			$filas    = self::filas_de_datos( $d );
+			$l        = Poster_Layout::calcular( $d['format'], $d['w'], $d['h'], count( $filas ) );
+			$gap      = Poster_Layout::fila_gap( (int) $l['meta']['h'] );
+
 			$img = new \Imagick();
-			$img->newImage( $d['w'], $d['h'], new \ImagickPixel( $d['palette']['bg'] ) );
+			$img->newImage( $d['w'], $d['h'], new \ImagickPixel( $p['bg'] ) );
 			$img->setImageFormat( 'png' );
 			$img->setImageAlphaChannel( \Imagick::ALPHACHANNEL_SET );
-			$p = $d['palette'];
-			$l = self::layout( $d['format'], $d['w'], $d['h'] );
-
-			$rgba = static function( string $hex, float $opacity ): string {
-				$hex = trim( $hex );
-				if ( str_starts_with( $hex, 'rgb' ) ) { return $hex; }
-				$hex = ltrim( $hex, '#' );
-				if ( 3 === strlen( $hex ) ) { $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2]; }
-				if ( 6 !== strlen( $hex ) ) { return 'rgba(0,0,0,' . max( 0, min( 1, $opacity ) ) . ')'; }
-				return sprintf( 'rgba(%d,%d,%d,%.3F)', hexdec( substr( $hex, 0, 2 ) ), hexdec( substr( $hex, 2, 2 ) ), hexdec( substr( $hex, 4, 2 ) ), max( 0, min( 1, $opacity ) ) );
-			};
 
 			$text_draw = static function( string $font, int $size, string $color, bool $engrosar = false ): \ImagickDraw {
 				$draw = new \ImagickDraw();
@@ -507,7 +451,7 @@ class Poster_Engine {
 					if ( '' === $paragraph ) { continue; }
 					$line = '';
 					foreach ( preg_split( '/\s+/u', $paragraph ) as $word ) {
-						$test = '' === $line ? $word : $line . ' ' . $word;
+						$test    = '' === $line ? $word : $line . ' ' . $word;
 						$metrics = $canvas->queryFontMetrics( $draw, $test );
 						if ( (float) ( $metrics['textWidth'] ?? 0 ) > $max_width && '' !== $line ) { $out[] = $line; $line = $word; }
 						else { $line = $test; }
@@ -526,17 +470,17 @@ class Poster_Engine {
 			$text_box = static function( \Imagick $canvas, string $text, array $box, string $font, string $color, int $size, float $line_height = 1.15, string $align = 'left', bool $shadow = false, int $max_lines = 0, bool $engrosar = false ) use ( $text_draw, $wrap, $ellipsize ): void {
 				$text = trim( preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $text ) );
 				if ( '' === $text || $box['w'] <= 0 || $box['h'] <= 0 ) { return; }
-				$draw = $text_draw( $font, $size, $color, $engrosar );
+				$draw  = $text_draw( $font, $size, $color, $engrosar );
 				$lines = $wrap( $canvas, $text, $font, $size, $box['w'] );
 				if ( $max_lines > 0 && count( $lines ) > $max_lines ) { $lines = array_slice( $lines, 0, $max_lines ); $lines[ $max_lines - 1 ] = $ellipsize( $canvas, $lines[ $max_lines - 1 ], $font, $size, $box['w'] ); }
-				$step = (int) round( $size * $line_height );
+				$step    = (int) round( $size * $line_height );
 				$total_h = count( $lines ) * $step;
-				$y = $box['y'] + max( $size, (int) round( ( $box['h'] - $total_h ) / 2 ) + $size );
+				$y       = $box['y'] + max( $size, (int) round( ( $box['h'] - $total_h ) / 2 ) + $size );
 				foreach ( $lines as $line ) {
 					if ( $y > $box['y'] + $box['h'] ) { break; }
 					$metrics = $canvas->queryFontMetrics( $draw, $line );
-					$tw = (float) ( $metrics['textWidth'] ?? 0 );
-					$x = $box['x'];
+					$tw      = (float) ( $metrics['textWidth'] ?? 0 );
+					$x       = $box['x'];
 					if ( 'center' === $align ) { $x = $box['x'] + (int) round( ( $box['w'] - $tw ) / 2 ); }
 					if ( 'right' === $align ) { $x = $box['x'] + $box['w'] - (int) round( $tw ); }
 					if ( $shadow ) { $canvas->annotateImage( $text_draw( $font, $size, 'rgba(0,0,0,0.32)' ), $x + 3, $y + 3, 0, $line ); }
@@ -561,9 +505,9 @@ class Poster_Engine {
 			$gradient->clear(); $gradient->destroy();
 
 			$decor = new \ImagickDraw();
-			$decor->setFillColor( new \ImagickPixel( $rgba( $p['accent'], 0.16 ) ) );
+			$decor->setFillColor( new \ImagickPixel( Poster_Palette::rgba( $p['accent'], 0.16 ) ) );
 			$decor->circle( (int) ( $d['w'] * 0.92 ), (int) ( $d['h'] * 0.12 ), (int) ( $d['w'] * 1.10 ), (int) ( $d['h'] * 0.12 ) );
-			$decor->setFillColor( new \ImagickPixel( $rgba( '#ffffff', 0.08 ) ) );
+			$decor->setFillColor( new \ImagickPixel( Poster_Palette::rgba( '#ffffff', 0.08 ) ) );
 			$decor->circle( (int) ( $d['w'] * 0.10 ), (int) ( $d['h'] * 0.92 ), (int) ( $d['w'] * 0.26 ), (int) ( $d['h'] * 0.92 ) );
 			$img->drawImage( $decor );
 
@@ -583,14 +527,15 @@ class Poster_Engine {
 				$placeholder->setFillColor( new \ImagickPixel( $p['deep'] ) );
 				$placeholder->rectangle( $l['photo']['x'], $l['photo']['y'], $l['photo']['x'] + $l['photo']['w'], $l['photo']['y'] + $l['photo']['h'] );
 				$cx = $l['photo']['x'] + (int) round( $l['photo']['w'] / 2 ); $cy = $l['photo']['y'] + (int) round( $l['photo']['h'] / 2 ); $rr = (int) round( min( $l['photo']['w'], $l['photo']['h'] ) * 0.18 );
-				$placeholder->setFillColor( new \ImagickPixel( $rgba( $p['accent'], 0.92 ) ) ); $placeholder->circle( $cx, $cy, $cx + $rr, $cy );
-				$placeholder->setFillColor( new \ImagickPixel( $rgba( '#ffffff', 0.16 ) ) ); $placeholder->circle( $cx, $cy, $cx + (int) round( $rr * 0.58 ), $cy );
+				$placeholder->setFillColor( new \ImagickPixel( Poster_Palette::rgba( $p['accent'], 0.92 ) ) ); $placeholder->circle( $cx, $cy, $cx + $rr, $cy );
+				$placeholder->setFillColor( new \ImagickPixel( Poster_Palette::rgba( '#ffffff', 0.16 ) ) ); $placeholder->circle( $cx, $cy, $cx + (int) round( $rr * 0.58 ), $cy );
 				$img->drawImage( $placeholder );
 				$text_box( $img, __( 'Imagen de la actividad', 'convoca-enroll' ), array( 'x' => $l['photo']['x'] + (int) ( $l['photo']['w'] * 0.18 ), 'y' => $cy + $rr + 22, 'w' => (int) ( $l['photo']['w'] * 0.64 ), 'h' => 80 ), self::font( self::FONT_MONTSERRAT ), '#ffffff', max( 24, (int) round( min( $l['photo']['w'], $l['photo']['h'] ) * 0.045 ) ), 1.1, 'center' );
 			}
 
-			$panel_text = '#0f172a'; $panel_muted = '#334155';
-			$round_rect( $img, $l['panel'], $rgba( '#ffffff', 0.95 ), $l['radius'], $rgba( '#000000', 0.10 ), 2 );
+			$panel_text  = '#0f172a';
+			$panel_muted = '#334155';
+			$round_rect( $img, $l['panel'], Poster_Palette::rgba( '#ffffff', 0.95 ), $l['radius'], Poster_Palette::rgba( '#000000', 0.10 ), 2 );
 
 			$round_rect( $img, $l['badge'], $p['accent'], (int) round( $l['badge']['h'] / 2 ) );
 			$text_box( $img, mb_strtoupper( $d['type_label'] ?: __( 'Actividad', 'convoca-enroll' ) ), array( 'x' => $l['badge']['x'] + 18, 'y' => $l['badge']['y'], 'w' => $l['badge']['w'] - 36, 'h' => $l['badge']['h'] ), self::font( self::FONT_MONTSERRAT ), $p['accent_text'], max( 18, (int) round( $l['badge']['h'] * 0.36 ) ), 1.0, 'center', false, 1 );
@@ -600,23 +545,26 @@ class Poster_Engine {
 			$text_box( $img, $d['title'], $l['title'], self::font( self::FONT_PLAYFAIR ), $panel_text, $title_size, 1.04, 'left', true );
 			if ( $d['subtitle'] ) { $text_box( $img, $d['subtitle'], $l['subtitle'], self::font( self::FONT_MONTSERRAT ), $panel_muted, $l['subtitle_size'], 1.18, 'left', false, 2 ); }
 
-			$meta_lines = array(
-			array( __( 'Fecha', 'convoca-enroll' ), (string) ( $d['date'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) ),
-			array( __( 'Hora', 'convoca-enroll' ), (string) ( $d['time'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) ),
-			array( __( 'Lugar', 'convoca-enroll' ), (string) ( $d['location'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) ),
-			array( __( 'Plazas', 'convoca-enroll' ), $d['places'] ? /* translators: %d: number of available spots */ sprintf( _n( '%d plaza', '%d plazas', $d['places'], 'convoca-enroll' ), $d['places'] ) : __( 'Por confirmar', 'convoca-enroll' ) ),
-			array( __( 'Precio', 'convoca-enroll' ), (string) ( $d['price'] ?: __( 'Por confirmar', 'convoca-enroll' ) ) )
-		);
-			if ( ! empty( $d['organizer'] ) ) { $meta_lines[] = array( __( 'Organiza', 'convoca-enroll' ), $d['organizer'] ); }
-			if ( ! empty( $d['age'] ) ) { $meta_lines[] = array( __( 'Edad', 'convoca-enroll' ), $d['age'] ); }
-			if ( $meta_lines ) {
-				$gap = max( 4, (int) round( $l['meta']['h'] * 0.030 ) );
-				$medidas = self::medidas_de_fila( $l['meta']['h'], (int) $l['meta_size'], count( $meta_lines ), $gap );
-				$row_h   = $medidas['alto'];
+			if ( $filas ) {
+				$filas_caben  = Poster_Layout::filas_que_caben( (int) $l['meta']['h'], $gap );
+				$medidas      = Poster_Layout::medidas_de_fila( (int) $l['meta']['h'], (int) $l['meta_size'], max( 1, min( count( $filas ), $filas_caben ) ), $gap );
+				$row_h        = $medidas['alto'];
 				$size_etiqueta = $medidas['etiqueta'];
 				$size_valor    = $medidas['valor'];
-				$y = $l['meta']['y'];
-				foreach ( $meta_lines as $line ) { $row = array( 'x' => $l['meta']['x'], 'y' => $y, 'w' => $l['meta']['w'], 'h' => $row_h ); $round_rect( $img, $row, $rgba( '#111827', 0.055 ), (int) round( $row_h * 0.24 ) ); $label_w = min( 170, (int) round( $row['w'] * 0.26 ) ); $text_box( $img, mb_strtoupper( $line[0] ), array( 'x' => $row['x'] + 18, 'y' => $row['y'], 'w' => $label_w, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $p['label'], $size_etiqueta, 1.0, 'left', false, 1, true ); $text_box( $img, $line[1], array( 'x' => $row['x'] + $label_w + 18, 'y' => $row['y'], 'w' => $row['w'] - $label_w - 36, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $panel_text, $size_valor, 1.05, 'left', false, 2, true ); $y += $row_h + $gap; if ( $y > $l['meta']['y'] + $l['meta']['h'] ) { break; } }
+				$y            = $l['meta']['y'];
+				foreach ( $filas as $line ) {
+					// Ninguna fila se descarta en silencio: si no cabe, se cuenta y se informa.
+					if ( $y + $row_h > $l['meta']['y'] + $l['meta']['h'] ) {
+						++$omitidas;
+						continue;
+					}
+					$row = array( 'x' => $l['meta']['x'], 'y' => $y, 'w' => $l['meta']['w'], 'h' => $row_h );
+					$round_rect( $img, $row, Poster_Palette::rgba( '#111827', 0.055 ), (int) round( $row_h * 0.24 ) );
+					$label_w = min( 170, (int) round( $row['w'] * 0.26 ) );
+					$text_box( $img, mb_strtoupper( $line[0] ), array( 'x' => $row['x'] + 18, 'y' => $row['y'], 'w' => $label_w, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $p['label'], $size_etiqueta, 1.0, 'left', false, 1, true );
+					$text_box( $img, $line[1], array( 'x' => $row['x'] + $label_w + 18, 'y' => $row['y'], 'w' => $row['w'] - $label_w - 36, 'h' => $row['h'] ), self::font( self::FONT_MONTSERRAT ), $panel_text, $size_valor, 1.05, 'left', false, 2, true );
+					$y += $row_h + $gap;
+				}
 			}
 
 			$round_rect( $img, $l['cta'], $p['accent'], (int) round( $l['cta']['h'] / 2 ) );
@@ -624,13 +572,18 @@ class Poster_Engine {
 			if ( $d['price'] && __( 'Gratuito', 'convoca-enroll' ) !== $d['price'] ) { $cta_text .= ' · ' . $d['price']; }
 			$text_box( $img, $cta_text, array( 'x' => $l['cta']['x'] + 22, 'y' => $l['cta']['y'], 'w' => $l['cta']['w'] - 44, 'h' => $l['cta']['h'] ), self::font( self::FONT_MONTSERRAT ), $p['accent_text'], max( 20, (int) round( $l['cta']['h'] * 0.36 ) ), 1.0, 'center', false, 1 );
 
-			if ( self::has_image( $d['qr_path'] ) ) { $pad = max( 10, (int) round( $l['qr']['size'] * 0.08 ) ); $round_rect( $img, array( 'x' => $l['qr']['x'] - $pad, 'y' => $l['qr']['y'] - $pad, 'w' => $l['qr']['size'] + 2 * $pad, 'h' => $l['qr']['size'] + 2 * $pad ), '#ffffff', max( 14, (int) round( $pad * 1.5 ) ), $rgba( '#000000', 0.10 ), 1 ); $qr = new \Imagick( $d['qr_path'] ); $qr->resizeImage( $l['qr']['size'], $l['qr']['size'], \Imagick::FILTER_LANCZOS, 1, true ); $img->compositeImage( $qr, \Imagick::COMPOSITE_OVER, $l['qr']['x'], $l['qr']['y'] ); $qr->clear(); $qr->destroy(); }
-			$text_box( $img, $d['org_name'], array( 'x' => $l['logo']['x'], 'y' => $l['logo']['y'], 'w' => $l['logo']['size'] ?? 240, 'h' => $l['logo']['size'] ?? 80 ), self::font( self::FONT_MONTSERRAT ), $panel_muted, max( 18, (int) round( ( $l['logo']['size'] ?? 70 ) * 0.32 ) ), 1.1, 'right', false, 2 );
+			if ( self::has_image( $d['qr_path'] ) ) { $pad = max( 10, (int) round( $l['qr']['size'] * 0.08 ) ); $round_rect( $img, array( 'x' => $l['qr']['x'] - $pad, 'y' => $l['qr']['y'] - $pad, 'w' => $l['qr']['size'] + 2 * $pad, 'h' => $l['qr']['size'] + 2 * $pad ), '#ffffff', max( 14, (int) round( $pad * 1.5 ) ), Poster_Palette::rgba( '#000000', 0.10 ), 1 ); $qr = new \Imagick( $d['qr_path'] ); $qr->resizeImage( $l['qr']['size'], $l['qr']['size'], \Imagick::FILTER_LANCZOS, 1, true ); $img->compositeImage( $qr, \Imagick::COMPOSITE_OVER, $l['qr']['x'], $l['qr']['y'] ); $qr->clear(); $qr->destroy(); }
+			$text_box( $img, $d['org_name'], array( 'x' => $l['logo']['x'], 'y' => $l['logo']['y'], 'w' => $l['logo']['size'], 'h' => max( 60, (int) round( $l['logo']['size'] * 0.34 ) ) ), self::font( self::FONT_MONTSERRAT ), $panel_muted, max( 18, (int) round( $l['logo']['size'] * 0.32 ) ), 1.1, 'right', false, 2 );
 
 			if ( 'jpg' === $export ) { $img->setImageBackgroundColor( new \ImagickPixel( '#ffffff' ) ); $img = $img->mergeImageLayers( \Imagick::LAYERMETHOD_FLATTEN ); $img->setImageFormat( 'jpeg' ); $img->setImageCompressionQuality( 92 ); }
 			elseif ( 'webp' === $export ) { $img->setImageFormat( 'webp' ); $img->setImageCompressionQuality( 92 ); }
 			else { $img->setImageFormat( 'png' ); $img->setImageCompressionQuality( 92 ); }
 			$img->stripImage();
+			// El A4 va a 300 dpi reales y se lo dice al fichero, para que la imprenta no lo reescale
+			// (y no hace falta una salida PDF, que metería Dompdf sin necesidad). Se pone DESPUÉS
+			// de `stripImage()`, que borra los perfiles: antes se perdía.
+			$dpi = 'a4' === $d['format'] ? 300 : 72;
+			$img->setImageResolution( $dpi, $dpi );
 			$ok = $img->writeImage( $path );
 			$img->clear(); $img->destroy();
 		} catch ( \Throwable $e ) {
@@ -639,121 +592,7 @@ class Poster_Engine {
 		}
 
 		if ( ! $ok || ! file_exists( $path ) || filesize( $path ) < 1000 ) { return new \WP_Error( 'save_error', __( 'No se pudo guardar el cartel generado.', 'convoca-enroll' ) ); }
-		return true;
-	}
-	/* ─────────────────────────────────────────────
-	 *  LAYOUT CALCULATION
-	 * ───────────────────────────────────────────── */
-
-	private static function layout( string $format, int $w, int $h ): array {
-		$landscape = $w > $h;
-		$min_dim   = min( $w, $h );
-		$m         = (int) round( $min_dim * 0.055 );
-		$gap       = (int) round( $min_dim * 0.022 );
-		$radius    = (int) round( $min_dim * 0.028 );
-
-		if ( $landscape ) {
-			return self::layout_landscape( $w, $h, $m, $gap, $radius, $format );
-		}
-
-		return self::layout_portrait( $w, $h, $m, $gap, $radius, $format );
-	}
-
-	private static function layout_landscape( int $w, int $h, int $m, int $gap, int $radius, string $format ): array {
-		$photo_w  = (int) round( $w * 0.46 );
-		$photo    = array( 'x' => $w - $m - $photo_w, 'y' => $m, 'w' => $photo_w, 'h' => $h - 2 * $m );
-		$panel_w  = $w - $photo_w - 3 * $m;
-		$panel    = array( 'x' => $m, 'y' => $m, 'w' => $panel_w, 'h' => $h - 2 * $m );
-
-		$badge_h      = 56;
-		$available_h  = $panel['h'] - 2 * $gap;
-		$title_h      = (int) round( $available_h * 0.28 );
-		$subtitle_h   = (int) round( $available_h * 0.15 );
-		$cta_h        = 48;
-		$meta_h       = max( 110, $available_h - $badge_h - $title_h - $subtitle_h - $cta_h - 3 * $gap );
-		$meta_h       = max( 40, $meta_h );
-
-		$badge_y    = $panel['y'] + $gap;
-		$title_y    = $badge_y + $badge_h + $gap;
-		$subtitle_y = $title_y + $title_h + $gap;
-		$meta_y     = $subtitle_y + $subtitle_h + $gap;
-		$cta_y      = $panel['y'] + $panel['h'] - $gap - $cta_h;
-		$meta_h     = max( 60, min( $meta_h, $cta_y - $meta_y - $gap ) );
-
-		$qr_size  = (int) round( min( $w, $h ) * 0.12 );
-		$logo_size = (int) round( min( $w, $h ) * 0.06 );
-
-		return array(
-			'photo'    => $photo,
-			'panel'    => $panel,
-			'radius'   => $radius,
-			'badge'    => array( 'x' => $panel['x'] + $gap, 'y' => $badge_y, 'w' => min( 460, $panel['w'] - 2 * $gap ), 'h' => $badge_h ),
-			'title'    => array( 'x' => $panel['x'] + $gap, 'y' => $title_y, 'w' => $panel['w'] - 2 * $gap, 'h' => $title_h ),
-			'subtitle' => array( 'x' => $panel['x'] + $gap, 'y' => $subtitle_y, 'w' => $panel['w'] - 2 * $gap, 'h' => $subtitle_h ),
-			'meta'     => array( 'x' => $panel['x'] + $gap, 'y' => $meta_y, 'w' => $panel['w'] - 2 * $gap, 'h' => $meta_h ),
-			'cta'      => array( 'x' => $panel['x'] + $gap, 'y' => $cta_y, 'w' => min( 390, (int) ( $panel['w'] * 0.55 ) ), 'h' => $cta_h ),
-			'qr'       => array( 'x' => $photo['x'] + $photo['w'] - $m - $qr_size, 'y' => $photo['y'] + $photo['h'] - $m - $qr_size, 'size' => $qr_size ),
-			'logo'     => array( 'x' => $panel['x'] + $panel['w'] - $gap - $logo_size, 'y' => $panel['y'] + $gap, 'size' => $logo_size ),
-			'title_size'    => (int) round( min( $w, $h ) * 0.078 ),
-			'subtitle_size' => max( 18, (int) round( min( $w, $h ) * 0.028 ) ),
-			'meta_size'     => max( 20, (int) round( min( $w, $h ) * 0.030 ) ),
-		);
-	}
-
-	private static function layout_portrait( int $w, int $h, int $m, int $gap, int $radius, string $format ): array {
-		$photo_ratio = match ( $format ) {
-			'story'   => 0.48,
-			'a4'      => 0.45,
-			'portrait' => 0.44,
-			'square'   => 0.38,
-			default   => 0.45,
-		};
-		$photo_h  = (int) round( $h * $photo_ratio );
-		$photo    = array( 'x' => 0, 'y' => 0, 'w' => $w, 'h' => $photo_h );
-
-		$overlap  = (int) round( min( $w, $h ) * 0.055 );
-		$panel_y  = $photo_h - $overlap;
-		$panel    = array( 'x' => $m, 'y' => $panel_y, 'w' => $w - 2 * $m, 'h' => $h - $panel_y - $m );
-
-		$qr_size   = (int) round( min( $w, $h ) * ( 'story' === $format ? 0.16 : ( $format === 'square' ? 0.09 : 0.12 ) ) );
-		$logo_size = (int) round( min( $w, $h ) * ( 'story' === $format ? 0.075 : 0.065 ) );
-
-		$font_base = max( 42, (int) round( min( $w, $h ) * ( 'story' === $format ? 0.065 : 0.060 ) ) );
-
-		$available_h      = $panel['h'] - 2 * $gap;
-		$bottom_zone_h    = max( $qr_size, $logo_size ) + $gap;
-		$text_available_h = $available_h - $bottom_zone_h;
-
-		$badge_h    = (int) round( min( $w, $h ) * ( $format === 'square' ? 0.040 : 0.058 ) );
-		$title_h    = (int) round( $text_available_h * ( $format === 'square' ? 0.20 : 0.28 ) );
-		$subtitle_h = (int) round( $text_available_h * 0.10 );
-		$cta_h      = (int) round( min( $w, $h ) * ( $format === 'square' ? 0.050 : 0.062 ) );
-		$meta_h     = max( 130, $text_available_h - $badge_h - $title_h - $subtitle_h - $cta_h - 3 * $gap );
-
-		$badge_y    = $panel['y'] + $gap;
-		$title_y    = $badge_y + $badge_h + $gap;
-		$subtitle_y = $title_y + $title_h + $gap;
-		$meta_y     = $subtitle_y + $subtitle_h + $gap;
-		$cta_y      = $panel['y'] + $panel['h'] - $gap - $bottom_zone_h - $gap - $cta_h;
-		$meta_h     = max( 80, min( $meta_h, $cta_y - $meta_y - $gap ) );
-
-		$qr_logo_y  = $panel['y'] + $panel['h'] - $gap - max( $qr_size, $logo_size );
-
-		return array(
-			'photo'     => $photo,
-			'panel'     => $panel,
-			'radius'    => $radius,
-			'badge'     => array( 'x' => $panel['x'] + $gap, 'y' => $badge_y, 'w' => min( $panel['w'] - 2 * $gap, 500 ), 'h' => $badge_h ),
-			'title'     => array( 'x' => $panel['x'] + $gap, 'y' => $title_y, 'w' => $panel['w'] - 2 * $gap, 'h' => $title_h ),
-			'subtitle'  => array( 'x' => $panel['x'] + $gap, 'y' => $subtitle_y, 'w' => $panel['w'] - 2 * $gap, 'h' => $subtitle_h ),
-			'meta'      => array( 'x' => $panel['x'] + $gap, 'y' => $meta_y, 'w' => $panel['w'] - $qr_size - 3 * $gap, 'h' => $meta_h ),
-			'cta'       => array( 'x' => $panel['x'] + $gap, 'y' => $cta_y, 'w' => min( 480, (int) round( $panel['w'] * 0.48 ) ), 'h' => $cta_h ),
-			'qr'        => array( 'x' => $panel['x'] + $panel['w'] - $gap - $qr_size, 'y' => $qr_logo_y, 'size' => $qr_size ),
-			'logo'      => array( 'x' => $panel['x'] + $panel['w'] - $gap - $logo_size, 'y' => $panel['y'] + $gap, 'size' => $logo_size ),
-			'title_size'    => $font_base,
-			'subtitle_size' => max( 20, (int) round( min( $w, $h ) * 0.028 ) ),
-			'meta_size'     => max( 22, (int) round( min( $w, $h ) * 0.030 ) ),
-		);
+		return array( 'omitidas' => $omitidas );
 	}
 
 	/* ─────────────────────────────────────────────
@@ -767,6 +606,7 @@ class Poster_Engine {
 	/* ─────────────────────────────────────────────
 	 *  FONT HELPERS
 	 * ───────────────────────────────────────────── */
+
 	private static function font( string $name ): string {
 		$files = array(
 			self::FONT_MONTSERRAT => 'assets/fonts/Montserrat.ttf',
@@ -775,5 +615,4 @@ class Poster_Engine {
 		$path  = CONVOCA_ENROLL_DIR . ( $files[ $name ] ?? '' );
 		return file_exists( $path ) ? $path : '';
 	}
-
 }

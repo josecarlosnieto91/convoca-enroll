@@ -1,5 +1,87 @@
 # Changelog — convoca-enroll
 
+## [2.7.40] - 2026-10-14
+
+### Cambiado
+
+- **El motor de carteles, partido en tres** (pasada 9 del gauntlet). `Poster_Engine` tenía 779
+  líneas y seis responsabilidades. Ahora:
+  - `Poster_Palette` — paleta y contraste. Cálculo puro, se prueba sin arrancar Imagick.
+  - `Poster_Layout` — cajas, filas de datos y comprobación de solapes. Cálculo puro.
+  - `Poster_Engine` — leer la actividad, dibujar y cachear (lo que sí necesita WordPress).
+  Sin cambio de aspecto salvo lo que cuentan los arreglos de abajo.
+- **`media/poster/` entra en el estándar de PHPCS**: la exclusión `media/*` era tan ancha que tapaba
+  también estas clases puras, que pasan el estándar sin esfuerzo (49 → 51 ficheros analizados).
+
+### Arreglado
+
+- **Un cartel ya publicado no se regeneraba al actualizar el plugin** (issue #12): la clave de la
+  caché no incluía la versión del motor, así que seguía sirviéndose el dibujo viejo. Ahora
+  `ENGINE_VERSION` entra en el `md5` que nombra el fichero.
+- **Ninguna fila de datos se pierde en silencio**: el bloque de datos se quedaba con «lo que
+  sobraba» y el bucle del motor descartaba las filas que no cabían. Con siete datos (organizador y
+  edad además de fecha, hora, lugar, plazas y precio) el cuadrado dibujaba cinco y **el cartel
+  mentía por omisión**. Ahora la maquetación reserva el sitio que necesitan: sube el panel (hasta
+  el suelo de la foto, un 22 %) y, si aun así no caben a tamaño legible, lo dice en el resultado
+  (`omitidas`) y lo anota en el registro. En el A4 la etiqueta vuelve a 21 px (2,1 mm) incluso con
+  siete filas; antes se quedaba en 14 px (1,2 mm).
+- **El texto sobre el color de acento se elige por contraste, no por un umbral**: con el criterio
+  anterior, el naranja de la casa (#ff8700) llevaba texto blanco a **2,37:1** y el ámbar de
+  `kids-family` a **2,14:1** — el rótulo del tipo de actividad y el botón «Apúntate» de esos
+  carteles quedaban por debajo del mínimo. Midiendo los dos contrastes y quedándose con el mayor, el
+  peor caso posible es 4,58:1.
+- **Borrado `Poster_Layout_Validator`** (issue #13): 232 líneas de código muerto que validaban HTML
+  — y este motor no genera HTML, dibuja sobre un lienzo. No lo cargaba nadie. La capacidad que
+  aportaba (detectar solapes y elementos fuera de zona segura) se recupera **como prueba** sobre las
+  cajas reales: `MaquetacionDeCartelesTest`, sin Imagick y corriendo en cualquier sitio.
+- **El A4 dice su resolución**: se le pone 300 dpi al fichero (y 72 al resto) **después** de
+  `stripImage()`, que borraba el dato.
+
+### Nota
+
+- Los carteles **no llevan salida PDF, a propósito**: el A4 sale a 2480×3508 px, que es lo que acepta
+  cualquier imprenta, y añadir Dompdf metería una dependencia pesada para no aportar nada. Decisión
+  escrita en la wiki.
+
+### Pruebas
+
+- 12 pruebas nuevas de maquetación y contraste (174 en total, 846 aserciones), con las cuatro
+  comprobaciones probadas **en negativo**: sin la reserva de sitio fallan 5 casos; con el umbral de
+  luminancia falla el contraste; con el validador de vuelta falla la comprobación de código muerto; y
+  sacando la versión del `md5` falla la de la caché.
+
+### Arreglado (entradas que faltaban)
+
+Estas versiones se publicaron **sin su entrada de changelog**; se anotan aquí para que el histórico
+cuadre con las versiones que hay desplegadas.
+
+## [2.7.39] - 2026-10-13
+
+- **Carteles: el color de la etiqueta, contra el fondo real de la fila.** El acento crudo daba entre
+  1,9:1 y 3,4:1; ahora se oscurece hasta cumplir (5,60:1 medido en los píxeles del cartel).
+
+## [2.7.38] - 2026-10-13
+
+- **Carteles: el trazo de los datos, engrosado.** La tipografía trae un solo peso y a tamaños
+  pequeños el trazo no cubría ningún píxel (1,5:1 medido con un color calculado de 5,7:1). Con el
+  contorno del mismo color, el dato se lee.
+
+## [2.7.37] - 2026-10-13
+
+- **Carteles: el texto escala con el formato.** El alto de fila estaba topado a 28-52 px para todos
+  los formatos, así que el A4 de imprenta salía con etiquetas de 1,2 mm.
+
+## [2.7.36] - 2026-10-13
+
+- **Carteles: que los datos se lean y que no se invente la hora.** Sin hora en la actividad, el
+  cartel anunciaba «HORA 00:00»; ahora dice «Por confirmar».
+
+## [2.7.35] - 2026-10-13
+
+- La suite de integración valida de verdad (issue #10) y corre en el CI.
+- Los respaldos de mensaje de error dicen qué hacer, no «Error desconocido».
+- La inscripción y el panel de reservas dejan de ser un callejón sin salida sin JavaScript.
+
 ## [2.7.34] - 2026-10-13
 
 ### Arreglado

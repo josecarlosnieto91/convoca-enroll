@@ -53,13 +53,6 @@ parameters:
             message: '#Call to function method_exists\(\) with Imagick and \x27autoOrient\x27#'
             identifier: function.alreadyNarrowedType
             path: media/class-poster-engine.php
-        -
-            # $meta_lines siempre contiene 5+ filas al llegar aquí (se inicializa
-            # con Fecha/Hora/Lugar/Plazas/Precio); el if es defensivo de cara a
-            # futuras refactorizaciones y no rompe nada.
-            message: '#If condition is always true#'
-            identifier: if.alwaysTrue
-            path: media/class-poster-engine.php
 
         # check_admin_referer() hace wp_die si el nonce falla: stub reciente lo tipa
         # como siempre-true. Patrón WP estándar en admin handlers.
