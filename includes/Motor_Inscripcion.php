@@ -66,6 +66,57 @@ class Motor_Inscripcion {
 	}
 
 	/**
+	 * Inscripciones de una actividad que coinciden con un dato del socio, con lectura CON BLOQUEO.
+	 *
+	 * Va por SQL directo a propósito. WordPress cachea el resultado de las consultas, así que pedir la
+	 * misma consulta dos veces dentro de una petición devuelve **la primera respuesta**: si esa
+	 * comprobación se hizo antes de abrir la transacción, la re-verificación de dentro lee un «no hay
+	 * duplicados» ya viejo y no verifica nada. Medido en la pasada 11 del gauntlet: tres peticiones
+	 * simultáneas con el mismo correo creaban tres inscripciones, daban tres códigos de reserva y
+	 * consumían tres plazas del cupo de una sola persona.
+	 *
+	 * Con bloqueo, además, la segunda petición espera a que la primera confirme y ve su fila.
+	 *
+	 * @param int    $actividad_id        Actividad.
+	 * @param string $campo               'email' o 'dni'.
+	 * @param string $valor               Valor buscado.
+	 * @param string $nombre_participante Nombre del menor, si la inscripción es de un menor.
+	 * @return int[] Identificadores encontrados (sin las canceladas).
+	 */
+	private static function buscar_duplicados_con_bloqueo( int $actividad_id, string $campo, string $valor, string $nombre_participante = '' ): array {
+		global $wpdb;
+
+		if ( '' === $valor ) {
+			return array();
+		}
+
+		$prefijo = CPT_Inscripcion::META_PREFIX;
+
+		$sql = "SELECT p.ID FROM {$wpdb->posts} p
+			INNER JOIN {$wpdb->postmeta} dato ON dato.post_id = p.ID AND dato.meta_key = %s
+			INNER JOIN {$wpdb->postmeta} estado ON estado.post_id = p.ID AND estado.meta_key = %s
+			INNER JOIN {$wpdb->postmeta} actividad ON actividad.post_id = p.ID AND actividad.meta_key = %s
+			WHERE p.post_type = 'inscripcion' AND p.post_status = 'publish'
+			  AND dato.meta_value = %s AND estado.meta_value NOT IN ('cancelada') AND actividad.meta_value = %d";
+
+		$args = array( $prefijo . $campo, $prefijo . 'estado', $prefijo . 'actividad_id', $valor, $actividad_id );
+
+		if ( '' !== $nombre_participante ) {
+			$sql   .= " AND p.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s)";
+			$args[] = $prefijo . 'nombre_participante';
+			$args[] = $nombre_participante;
+		}
+
+		$sql .= ' LIMIT 5 FOR UPDATE';
+
+		// La plantilla se compone aquí arriba; los valores van por prepare().
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$filas = $wpdb->get_col( $wpdb->prepare( $sql, $args ) );
+
+		return array_map( 'intval', (array) $filas );
+	}
+
+	/**
 	 * Create a new inscription.
 	 *
 	 * @param int   $actividad_id  Activity post ID.
@@ -233,23 +284,28 @@ class Motor_Inscripcion {
 		global $wpdb;
 		$wpdb->query( 'START TRANSACTION' );
 
-		// Serializar inscripciones concurrentes sobre la misma actividad:
-		// bloqueamos la fila del post de la actividad (FOR UPDATE) para que dos
-		// peticiones simultáneas del mismo email/DNI no pasen ambos los checks
-		// de duplicado (TOCTOU). El lock se mantiene hasta COMMIT/ROLLBACK.
+		// Serializar inscripciones concurrentes sobre la misma actividad: se bloquea la fila de la
+		// actividad (FOR UPDATE) para que dos peticiones simultáneas del mismo email/DNI no pasen
+		// las dos la re-verificación. El bloqueo se mantiene hasta COMMIT/ROLLBACK.
 		$wpdb->query( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE ID = %d FOR UPDATE", $actividad_id ) );
 
-		// Re-verificar duplicados DENTRO de la transacción (tras adquirir el lock
-		// de la actividad, ningún otro hilo puede insertar una inscripción para
-		// esta actividad hasta que hagamos COMMIT).
-		$existing = get_posts( $dup_query );
-		if ( ! empty( $existing ) ) {
+		// La re-verificación va por SQL directo CON BLOQUEO, no por get_posts(). Motivo medido
+		// (pasada 11 del gauntlet): WordPress cachea el resultado de las consultas, así que la misma
+		// consulta pedida dos veces en una petición devuelve la PRIMERA respuesta. La comprobación
+		// previa —la de más arriba, fuera de la transacción— ya había dejado «no hay duplicados» en
+		// la caché, de modo que aquí se volvía a leer ese «no hay duplicados» aunque otra petición
+		// acabara de confirmar su fila: tres peticiones simultáneas con el mismo correo creaban tres
+		// inscripciones, le mandaban tres códigos de reserva y le comían tres plazas del cupo.
+		// Con lectura directa y bloqueo, la segunda petición espera al bloqueo y ve la fila ya
+		// confirmada. Es el mismo patrón que usa el alta de socio, que sí aguanta la concurrencia.
+		$duplicados = self::buscar_duplicados_con_bloqueo( $actividad_id, 'email', $email, $es_menor ? $nombre_participante : '' );
+		if ( ! empty( $duplicados ) ) {
 			$wpdb->query( 'ROLLBACK' );
 			return new \WP_Error( 'duplicate', __( 'Ya estás inscrito/a en esta actividad.', 'convoca-enroll' ) );
 		}
 		if ( $bloquear_dni === '1' && ! empty( $dni ) ) {
-			$existing_dni = get_posts( $dni_query );
-			if ( ! empty( $existing_dni ) ) {
+			$duplicados_dni = self::buscar_duplicados_con_bloqueo( $actividad_id, 'dni', $dni );
+			if ( ! empty( $duplicados_dni ) ) {
 				$wpdb->query( 'ROLLBACK' );
 				return new \WP_Error( 'duplicate_dni', __( 'Ya existe una inscripción activa para este DNI en esta actividad.', 'convoca-enroll' ) );
 			}

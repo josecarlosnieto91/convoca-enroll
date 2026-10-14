@@ -1,5 +1,33 @@
 # Changelog — convoca-enroll
 
+## [2.7.43] - 2026-10-15
+
+### Corregido
+
+- **La inscripción se podía duplicar y comerse varias plazas de la misma persona** (pasada 11 del
+  gauntlet). Con tres peticiones simultáneas del mismo formulario, el mismo correo creaba **tres
+  inscripciones**, recibía **tres códigos de reserva** distintos y consumía **tres plazas** del cupo.
+
+  La causa no estaba en la concurrencia de la base de datos, que sí estaba bien: el motor ya abría
+  transacción y bloqueaba la fila de la actividad, y el bloqueo funcionaba (medido: la segunda petición
+  esperaba 44 ms a que la primera confirmara). El fallo era la **re-verificación de duplicados**:
+  se hacía con `get_posts()` y **WordPress cachea el resultado de las consultas**, así que al pedir por
+  segunda vez la misma consulta dentro de la misma petición devolvía **la primera respuesta**. Como la
+  comprobación previa —la de fuera de la transacción— ya había dejado «no hay duplicados» en la caché,
+  la re-verificación volvía a leer ese «no hay duplicados» aunque el otro proceso acabara de confirmar
+  su fila. La re-verificación no verificaba nada.
+
+  Medido con el instrumento puesto: en el mismo instante y en la misma transacción, `get_posts()`
+  devolvía 0 filas y una lectura directa por SQL devolvía la fila del otro proceso.
+
+  Ahora la re-verificación (por correo y por DNI) va por **SQL directo con bloqueo**, que ni pasa por la
+  caché de consultas ni puede leer datos anteriores al bloqueo. Es el mismo patrón que usa el alta de
+  socio, que ya aguantaba la concurrencia.
+
+  Verificado con el mismo arnés que midió el defecto: tres peticiones simultáneas con el mismo correo
+  pasan de **3 filas y 3 plazas consumidas** a **1 fila y 1 plaza**, y las otras dos reciben «Ya estás
+  inscrito/a en esta actividad».
+
 ## [2.7.42] - 2026-10-14
 
 ### Retirado
