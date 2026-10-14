@@ -1,5 +1,31 @@
 # Changelog — convoca-enroll
 
+## [2.7.41] - 2026-10-14
+
+### Arreglado
+
+- **El formulario de evaluación no se podía enviar nunca.** Dos nombres escritos a mano a cada lado
+  que nadie cruzaba:
+  - el JS leía `conv_eval_ajax`, y el PHP publica la variable como `convoca_eval_ajax`
+    (`wp_localize_script`). La primera línea que la usa reventaba con `ReferenceError` y la función
+    entera dejaba de existir;
+  - el JS publicaba `action: 'conv_eval_get_nonce'`, y el manejador registrado es
+    `wp_ajax_convoca_eval_get_nonce`.
+
+  Son el mismo defecto que ya apareció el 26/09 con cinco acciones del panel: dos lados que tienen
+  que coincidir y no los cruza nadie.
+
+### Pruebas
+
+- La prueba de contratos AJAX (`AjaxAccionesTest`) **mira todas las formas de publicar** una acción
+  —`ajaxPost('x')`, `action: 'x'` y `action=x` dentro de una URL— y ya no descarta los nombres que
+  no empiezan por `convoca_`: era justo por ahí por donde se colaba el prefijo viejo.
+- Recorre **todos** los `.js` del plugin de forma recursiva, no solo `assets/js/`.
+- Y comprueba el otro contrato del mismo tipo: **todo objeto de configuración que lee el JS lo tiene
+  que publicar el PHP** con `wp_localize_script()`. Ese contrato no se miraba en ningún sitio.
+- Negativos comprobados por separado: con el nombre de la acción al prefijo viejo falla una prueba,
+  con el nombre del objeto al prefijo viejo falla la otra.
+
 ## [2.7.40] - 2026-10-14
 
 ### Cambiado

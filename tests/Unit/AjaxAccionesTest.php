@@ -57,6 +57,31 @@ class AjaxAccionesTest extends TestCase
 		return $lista;
 	}
 
+	/**
+	 * Todos los ficheros JS del plugin, no solo los de `assets/js/`.
+	 *
+	 * `blocks/` y `public/assets/pwa/` también hablan con WordPress: mirar solo un directorio deja
+	 * fuera justo lo que nadie revisa.
+	 *
+	 * @return array<int, string>
+	 */
+	private function ficheros_js(): array {
+		$fuera = array( 'vendor', 'tests', 'node_modules', '.git', 'languages' );
+		$lista = array();
+		foreach ( new \RecursiveIteratorIterator( new \RecursiveDirectoryIterator( $this->raiz() ) ) as $f ) {
+			$ruta = $f->getPathname();
+			foreach ( $fuera as $carpeta ) {
+				if ( str_contains( $ruta, '/' . $carpeta . '/' ) ) {
+					continue 2;
+				}
+			}
+			if ( str_ends_with( $ruta, '.js' ) ) {
+				$lista[] = $ruta;
+			}
+		}
+		return $lista;
+	}
+
 	public function test_toda_accion_publicada_desde_el_js_esta_registrada_en_php(): void {
 		// Lo que publica el JavaScript. Se miran DOS formas de llamar, porque la primera versión de
 		// esta prueba solo veía la primera y por ahí se colaron dos ficheros que publicaban acciones
@@ -64,17 +89,25 @@ class AjaxAccionesTest extends TestCase
 		//   1. el ayudante del plugin:  ajaxPost('convoca_accion', …)
 		//   2. jQuery/fetch a pelo:      $.post(url, { action: 'convoca_accion', … })
 		$publicadas = array();
-		foreach ( (array) glob( $this->raiz() . '/assets/js/*.js' ) as $js ) {
+		foreach ( $this->ficheros_js() as $js ) {
 			$contenido = (string) file_get_contents( $js );
-			if ( preg_match_all( "/ajaxPost\(\s*'([a-z0-9_]+)'/", $contenido, $m ) ) {
-				foreach ( $m[1] as $accion ) {
-					$publicadas[ $accion ] = basename( $js );
-				}
-			}
-			// Solo el prefijo del plugin: así no se confunde con un `action` que no sea una acción AJAX.
-			if ( preg_match_all( "/action:\s*['\"](convoca_[a-z0-9_]+)['\"]/", $contenido, $m2 ) ) {
-				foreach ( $m2[1] as $accion ) {
-					$publicadas[ $accion ] = basename( $js );
+			$origen    = basename( $js );
+
+			// TODAS las formas de publicar una acción, no dos. La versión anterior reconocía
+			// `action: 'convoca_…'` y descartaba cualquier otro nombre **a propósito**, así que
+			// `action: 'conv_eval_get_nonce'` —con el prefijo viejo— se le colaba: la llamada no
+			// tenía manejador y el formulario de evaluación no se podía enviar. Aquí vale cualquier
+			// literal que empiece por `conv`, con el prefijo que sea.
+			$patrones = array(
+				"/ajaxPost\\(\\s*['\"](conv[a-z0-9_]*)['\"]/",
+				"/\\baction\\s*[:=]\\s*['\"](conv[a-z0-9_]*)['\"]/",
+				"/\\baction=(conv[a-z0-9_]+)/",
+			);
+			foreach ( $patrones as $patron ) {
+				if ( preg_match_all( $patron, $contenido, $m ) ) {
+					foreach ( $m[1] as $accion ) {
+						$publicadas[ $accion ] = $origen;
+					}
 				}
 			}
 		}
@@ -98,6 +131,41 @@ class AjaxAccionesTest extends TestCase
 				$accion,
 				$registradas,
 				"{$origen} publica «{$accion}» pero el plugin no registra esa acción (wp_ajax_{$accion}): la llamada fallará y el usuario verá «Error desconocido.»"
+			);
+		}
+	}
+
+	public function test_todo_objeto_de_configuracion_que_lee_el_js_lo_publica_el_php(): void {
+		// El otro contrato del mismo tipo, que nadie cruzaba: el PHP publica variables con
+		// `wp_localize_script()` y el JS las lee por su nombre. Si los dos nombres no coinciden, el
+		// JS revienta con `ReferenceError` en la primera línea que las usa y **la función entera
+		// deja de existir** — medido en el formulario de evaluación: el PHP publicaba
+		// `convoca_eval_ajax` y el JS leía `conv_eval_ajax`.
+		$publicados = array();
+		foreach ( $this->ficheros_php() as $php ) {
+			if ( preg_match_all( "/wp_localize_script\\s*\\([^,]+,\\s*['\"]([A-Za-z_$][\\w$]*)['\"]/", (string) file_get_contents( $php ), $m ) ) {
+				foreach ( $m[1] as $nombre ) {
+					$publicados[ $nombre ] = true;
+				}
+			}
+		}
+
+		$leidos = array();
+		foreach ( $this->ficheros_js() as $js ) {
+			$contenido = (string) file_get_contents( $js );
+			if ( preg_match_all( "/\\b(conv[oa-z_]*_(?:ajax|config|data|i18n|vars))/", $contenido, $m ) ) {
+				foreach ( $m[1] as $nombre ) {
+					$leidos[ $nombre ] = basename( $js );
+				}
+			}
+		}
+
+		$this->assertNotEmpty( $publicados, 'El PHP no publica ninguna variable para el JS.' );
+		foreach ( $leidos as $nombre => $origen ) {
+			$this->assertArrayHasKey(
+				$nombre,
+				$publicados,
+				"{$origen} lee «{$nombre}», que el PHP no publica con wp_localize_script(): el JS morirá con un ReferenceError."
 			);
 		}
 	}

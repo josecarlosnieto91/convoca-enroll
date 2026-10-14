@@ -76,9 +76,9 @@ jQuery(document).ready(function($) {
         
         // Fetch fresh nonce before submitting
         $.ajax({
-            url: conv_eval_ajax.url,
+            url: convoca_eval_ajax.url,
             type: 'POST',
-            data: { action: 'conv_eval_get_nonce' },
+            data: { action: 'convoca_eval_get_nonce' },
             success: function(nonceResponse) {
                 if (nonceResponse.success) {
                     // Update nonce in form
@@ -87,7 +87,7 @@ jQuery(document).ready(function($) {
                     var formData = form.serialize();
                     
                     $.ajax({
-                        url: conv_eval_ajax.url,
+                        url: convoca_eval_ajax.url,
                         type: 'POST',
                         data: formData,
                         success: function(response) {
