@@ -1,3 +1,26 @@
+## [2.7.48] — 2026-10-15
+
+### Arreglado
+- **Las horas salen de la actividad, no de restar las fechas (issue #19).** La diferencia entre `fecha_inicio`
+  y `fecha_fin` daba **0 h** en una actividad de un día —cuatro de las seis de la demo— y **48 h** en un taller
+  de tres, que son días de calendario y no horas de nadie. Ahora manda el campo **«Horas que acredita»** de la
+  actividad, y si no está puesto se estiman los días completos por `horas_por_dia` (4 h por defecto,
+  ajustable): el mismo día cuenta como uno.
+- **Quien imparte la actividad suma sus horas aunque no esté inscrito.** Los monitores y responsables viven en
+  `_convoca_responsables`, que **no leía nadie**: un monitor que no se apuntaba a su propio taller no sumaba
+  nada. Ahora, con la asistencia marcada (la señal de que la actividad se ha dado), se le acreditan las horas
+  de la actividad, y se le retiran si se deshace la marca (simétrico). A quien esté inscrito **y** sea
+  responsable no se le cuenta dos veces.
+
+### Pruebas
+- `tests/Unit/HorasActividadTest.php`: la cuenta de días por reflexión (un día = 1 día; taller de tres = 3;
+  sin fechas = 0; fin anterior = 1), que el dato explícito manda, que el cálculo por calendario ya no está y
+  que la asistencia sincroniza a los responsables. **Negativos probados**: devolviendo 0 desde la cuenta de
+  días caen dos pruebas, y quitando la guarda de «ya acreditado por su inscripción», otra.
+- `HorasPorAsistenciaTest` pasa a expresar el invariante como **un punto de acreditación por hecho**
+  (inscripción y responsable), que es lo que el diseño necesita; antes exigía uno solo en total.
+- Suite 194 en verde, PHPCS 0, PHPStan `[OK]`, `composer test` con código 0.
+
 ## [2.7.47] — 2026-10-15
 
 ### Añadido

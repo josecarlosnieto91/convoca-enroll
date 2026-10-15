@@ -34,6 +34,7 @@ class CPT_Actividad {
 	public const META_KEYS = array(
 		'fecha_inicio',
 		'fecha_fin',
+		'horas_actividad',
 		'plazas_totales',
 		'plazas_disponibles',
 		'precio_socio',
@@ -233,6 +234,16 @@ class CPT_Actividad {
 				<input type="datetime-local" id="conv_enroll_fecha_fin" name="conv_enroll_fecha_fin"
 					value="<?php echo esc_attr( $m( 'fecha_fin' ) ); ?>">
 			</div>
+			<div class="convoca-field">
+				<label for="conv_enroll_horas_actividad">
+					<?php esc_html_e( 'Horas que acredita', 'convoca-enroll' ); ?>
+				</label>
+				<input type="number" step="0.5" min="0" id="conv_enroll_horas_actividad" name="conv_enroll_horas_actividad"
+					value="<?php echo esc_attr( $m( 'horas_actividad' ) ); ?>" placeholder="4">
+				<p class="description">
+					<?php esc_html_e( 'Horas de voluntariado que suma la actividad a quien participa y a quien la imparte. Si lo dejas vacío se estiman los días de la actividad × 4 h (ajustable en los ajustes de Enroll).', 'convoca-enroll' ); ?>
+				</p>
+			</div>
 			<div class="convoca-field" style="grid-column: 1 / -1;">
 				<label for="conv_enroll_ubicacion">
 					<?php esc_html_e( 'Ubicación / Punto de encuentro', 'convoca-enroll' ); ?>
@@ -328,6 +339,7 @@ class CPT_Actividad {
 				return str_replace( 'T', ' ', sanitize_text_field( $v ) ); },
 			'fecha_fin'            => function ( $v ) {
 				return str_replace( 'T', ' ', sanitize_text_field( $v ) ); },
+			'horas_actividad'      => fn( $v ) => floatval( str_replace( ',', '.', $v ) ),
 			'plazas_totales'       => 'absint',
 			'plazas_disponibles'   => 'absint',
 			'precio_socio'         => fn( $v ) => floatval( str_replace( ',', '.', $v ) ),

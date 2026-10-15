@@ -64,6 +64,7 @@ class Hour_Ledger
 {
     const ORIGEN_INSCRIPCION = 'inscripcion';
     const ORIGEN_TURNO = 'turno';
+    const ORIGEN_RESPONSABLE = 'responsable';
     const ESTADO_APROBADA = 'aprobada';
     const ESTADO_ANULADA = 'anulada';
 

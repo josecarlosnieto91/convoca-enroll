@@ -67,10 +67,17 @@ class HorasPorAsistenciaTest extends TestCase
 
 		// La guarda del marcador: si ya se contó, no se vuelve a contar.
 		$this->assertStringContainsString( '_convoca_horas_contadas', $tracker );
-		// Un único punto de acreditación (dentro de add_hours), no en un bucle.
-		$this->assertSame( 1, substr_count( $tracker, 'Hour_Ledger::credit(' ), 'Las horas se acreditan en un solo sitio.' );
-		// Y se acredita por inscripción, que es lo que da «un registro por asistencia».
-		$this->assertStringContainsString( 'Hour_Ledger::ORIGEN_INSCRIPCION', $tracker );
+		// Un único punto de acreditación POR HECHO (issue #19): la inscripción acredita en un sitio y la
+		// actividad a quien la imparte —que no está inscrito— en otro. Lo que sigue prohibido es acreditar
+		// dos veces el mismo hecho, y eso lo garantiza el libro de horas (reactiva, no duplica) más la
+		// guarda que excluye a quien ya se acreditó por su inscripción.
+		preg_match_all( '/Hour_Ledger::credit\([^;]*?Hour_Ledger::(ORIGEN_[A-Z_]+)/s', $tracker, $origenes );
+		$this->assertSame(
+			array( 'ORIGEN_INSCRIPCION', 'ORIGEN_RESPONSABLE' ),
+			$origenes[1],
+			'Se acredita por inscripción y por impartir la actividad: un punto por hecho, y ninguno repetido.'
+		);
+		$this->assertStringContainsString( '$user_id === $excepto', $tracker, 'A quien está inscrito Y es responsable no se le cuenta dos veces' );
 	}
 
 	public function test_retirar_la_asistencia_anula_no_borra(): void
