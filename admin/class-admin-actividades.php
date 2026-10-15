@@ -114,6 +114,18 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 			</a>
 			<hr class="wp-header-end">
 
+			<?php
+			// Aviso de guardado: la pantalla se recarga tras guardar y sin esto no dice nada. Enroll#16.
+			$convoca_aviso = isset( $_GET['message'] ) ? sanitize_key( wp_unslash( $_GET['message'] ) ) : '';
+			if ( 'saved' === $convoca_aviso ) :
+				?>
+				<div class="notice notice-success is-dismissible">
+					<p><?php esc_html_e( 'Actividad guardada.', 'convoca-enroll' ); ?></p>
+				</div>
+				<?php
+			endif;
+			?>
+
 			<form method="get">
 				<input type="hidden" name="page" value="convoca-enroll-actividades">
 				<?php
@@ -336,10 +348,9 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 		$responsables = isset( $_POST['responsables'] ) ? array_map( 'intval', $_POST['responsables'] ) : array();
 		update_post_meta( $post_id, '_convoca_responsables', implode( ',', $responsables ) );
 
-		// El slug apuntaba a una página que no existe: el admin aterrizaba en
-		// «Sorry, you are not allowed to access this page» justo después de guardar
-		// la actividad (verificado con HTTP real). El slug del menú es `convoca-enroll`.
-		wp_safe_redirect( admin_url( 'admin.php?page=convoca-enroll&message=saved' ) );
+		// La lista de actividades es la de la propia pantalla, no la de inscripciones: al guardar se vuelve
+		// a donde estaba la actividad, con su aviso (antes saltaba a Inscripciones y sin decir nada). Enroll#16.
+		wp_safe_redirect( admin_url( 'admin.php?page=convoca-enroll-actividades&message=saved' ) );
 		exit;
 	}
 

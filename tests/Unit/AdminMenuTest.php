@@ -142,6 +142,17 @@ class AdminMenuTest extends TestCase
 						}
 					}
 				}
+				// Las pantallas del andamiaje (core#16) se registran por
+				// `registrar_subpagina( padre, título, menú, capacidad, slug, callback )`: el último
+				// argumento también es `array(...)`, así que se recogen con la misma expresión. Sin
+				// esto, el guardia daba por «no registrado» cualquier slug de una pantalla migrada.
+				if ( preg_match_all( "/registrar_subpagina\\((.*?)\\);/s", $fuente, $m ) ) {
+					foreach ( $m[1] as $bloque ) {
+						if ( preg_match( "/'([a-z0-9\\-_]+)'\\s*,\\s*array\\(/", $bloque, $slug ) ) {
+							$registrados[] = $slug[1];
+						}
+					}
+				}
 			}
 		}
 

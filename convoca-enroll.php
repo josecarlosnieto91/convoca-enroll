@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Enroll
  * Plugin URI:        https://getconvoca.app
  * Description:       Centralized activity enrollment system.
- * Version: 2.7.51
+ * Version: 2.7.52
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -352,6 +352,21 @@ add_action(
 
 		// Admin.
 		if ( is_admin() ) {
+			// El listado y el alta crudos de estos tipos no se ofrecen: llevan a la pantalla del plugin.
+			// Con `show_ui => false` WordPress resuelve esas URLs con un 500 de permisos (medido). Core#15.
+			\Convoca\Core\Admin\Andamiaje_Admin::redirigir_pantallas_crudas(
+				array(
+					'actividad'   => array(
+						'lista' => 'convoca-enroll-actividades',
+						'alta'  => 'convoca-enroll-actividad-editor',
+					),
+					'inscripcion' => array(
+						'lista' => 'convoca-enroll',
+						'alta'  => 'conv-nueva-inscripcion',
+					),
+				)
+			);
+
 			add_action(
 				'init',
 				function () {
