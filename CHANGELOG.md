@@ -1,5 +1,25 @@
 # Changelog — convoca-enroll
 
+## [2.7.46] - 2026-10-15
+
+### Corregido
+
+- **Con la sesión de socio abierta no se podía inscribir a otra persona** (#17): toda inscripción se
+  atribuía al socio —nombre, email, teléfono y DNI de su ficha— y el tipo se forzaba a «socio», así que el
+  control de duplicados miraba el email del socio y la inscripción de un menor o persona a cargo se
+  rechazaba con «Ya estás inscrito/a en esta actividad». Y ese camino lo ofrece el propio formulario
+  («Estoy inscribiendo a un menor o persona a mi cargo»). Ahora la sesión solo decide cuando la inscripción
+  es para el propio socio; si el formulario dice que es para un tercero, se usan los datos enviados y la
+  tarifa es la de socio de día. El importe que calcula la página usa la misma condición, para no cobrar una
+  tarifa y guardar otra.
+
+### Notas
+
+- #15 (fatal latente en `on_confirmada()`): el invariante **hoy se sostiene** (`add_action( …, 10, 2 )`, la
+  firma pide 2 y el disparador pasa 2). Se añade la prueba que cruza las tres piezas —quién lo engancha,
+  quién lo dispara y la firma—, con su negativo comprobado: quitando un argumento del disparador, la prueba
+  falla.
+
 ## [2.7.45] - 2026-10-15
 
 ### Corregido

@@ -165,7 +165,16 @@ class Motor_Inscripcion {
 			$is_member   = true;
 		}
 
-		if ( $is_member && $member_data ) {
+		// El formulario ofrece inscribir a un menor o persona a cargo («Estoy inscribiendo a un menor o
+		// persona a mi cargo» → `es_menor`), así que la sesión de socio no basta para decidir de quién es
+		// la inscripción: hay que mirar qué dice el formulario. Antes, con la sesión abierta, TODA
+		// inscripción se atribuía al socio —nombre, email, teléfono y DNI de su ficha— y el tipo se
+		// forzaba a «socio», así que el camino de inscribir a un tercero no existía: el duplicado se
+		// comprobaba contra el email del socio y la inscripción del menor se rechazaba con «Ya estás
+		// inscrito/a en esta actividad». Issue #17.
+		$es_tercero = ! empty( $datos['es_menor'] );
+
+		if ( $is_member && $member_data && ! $es_tercero ) {
 			$nombre                    = sanitize_text_field( $member_data['name'] );
 			$email                     = sanitize_email( $member_data['email'] );
 			$tel                       = sanitize_text_field( $member_data['phone'] );
@@ -173,7 +182,9 @@ class Motor_Inscripcion {
 			$datos['tipo_inscripcion'] = 'socio';
 			$datos['es_socio']         = true;
 		} else {
-			// Validate required fields explicitly provided by non-members.
+			// Los datos del formulario, en los dos casos restantes: quien no ha iniciado sesión y el socio
+			// que inscribe a un tercero. La tarifa es la de «socio de día»: quien se inscribe no es la
+			// persona socia (para el socio inscribiéndose a sí mismo se entra por la rama de arriba).
 			$nombre = sanitize_text_field( $datos['nombre'] ?? '' );
 			$email  = sanitize_email( $datos['email'] ?? '' );
 			$tel    = sanitize_text_field( $datos['telefono'] ?? '' );
