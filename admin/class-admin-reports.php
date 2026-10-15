@@ -1090,102 +1090,118 @@ endif;
 		$type     = sanitize_text_field( $_GET['export'] );
 		$filename = 'reporte-convoca-' . $type . '-' . wp_date( 'Y-m-d' ) . '.csv';
 
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
-		header( 'Pragma: no-cache' );
-		header( 'Expires: 0' );
-
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV streaming to output
-		$out = fopen( 'php://output', 'w' );
-		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) ); // BOM for Excel.
-
+		// La ceremonia del CSV vive en el núcleo: cabeceras, BOM, separador y escapado de cada celda
+		// en un solo flujo. Antes, este fichero escribía las celdas TAL CUAL (era el único de los
+		// nueve sin ninguna protección contra fórmulas) y las cabeceras de contenido a mano.
 		switch ( $type ) {
 			case 'ocupacion':
-				fputcsv( $out, array( 'Actividad', 'Fecha', 'Plazas Totales', 'Ocupadas', 'Disponibles', 'Asistentes' ), ';' );
 				$data = $this->get_occupancy_data( wp_date( 'Y-01-01' ), wp_date( 'Y-12-31' ), 'todas' );
-				foreach ( $data as $r ) {
-					fputcsv( $out, array( $r['title'], $r['fecha'], $r['plazas_totales'], $r['confirmadas'], $r['plazas_disponibles'], $r['asistentes'] ), ';' );
-				}
+				\Convoca\Core\Utils::stream_csv(
+					$filename,
+					array( 'Actividad', 'Fecha', 'Plazas Totales', 'Ocupadas', 'Disponibles', 'Asistentes' ),
+					( static function () use ( $data ) {
+						foreach ( $data as $r ) {
+							yield array( $r['title'], $r['fecha'], $r['plazas_totales'], $r['confirmadas'], $r['plazas_disponibles'], $r['asistentes'] );
+						}
+					} )()
+				);
 				break;
 			case 'espera':
-				fputcsv( $out, array( 'Actividad', 'En espera', 'Ratio promocion (%)' ), ';' );
 				$data = $this->get_waitlist_data();
-				foreach ( $data as $r ) {
-					fputcsv( $out, array( $r['title'], $r['en_espera'], $r['ratio_promocion'] ), ';' );
-				}
+				\Convoca\Core\Utils::stream_csv(
+					$filename,
+					array( 'Actividad', 'En espera', 'Ratio promocion (%)' ),
+					( static function () use ( $data ) {
+						foreach ( $data as $r ) {
+							yield array( $r['title'], $r['en_espera'], $r['ratio_promocion'] );
+						}
+					} )()
+				);
 				break;
 			case 'financiero':
-				fputcsv( $out, array( 'Actividad', 'Total (€)', 'Tarjeta (€)', 'Bizum (€)', 'Pendiente (€)' ), ';' );
 				$data = $this->get_financial_data();
-				foreach ( $data as $r ) {
-					fputcsv( $out, array( $r['title'], $r['total'], $r['tarjeta'], $r['bizum'], $r['pendiente'] ), ';' );
-				}
+				\Convoca\Core\Utils::stream_csv(
+					$filename,
+					array( 'Actividad', 'Total (€)', 'Tarjeta (€)', 'Bizum (€)', 'Pendiente (€)' ),
+					( static function () use ( $data ) {
+						foreach ( $data as $r ) {
+							yield array( $r['title'], $r['total'], $r['tarjeta'], $r['bizum'], $r['pendiente'] );
+						}
+					} )()
+				);
 				break;
 			case 'memoria':
 				$year = isset( $_GET['year'] ) ? (int) $_GET['year'] : (int) wp_date( 'Y' );
-				fputcsv( $out, array( 'Actividad', 'Fecha', 'Responsables', 'Participantes', 'Socios/as', 'Ubicación' ), ';' );
 				$data = $this->get_memoria_data( $year );
-				foreach ( $data as $r ) {
-					fputcsv( $out, array( $r['title'], $r['fecha'], $r['responsables'], $r['participantes'], $r['socios'], $r['ubicacion'] ), ';' );
-				}
+				\Convoca\Core\Utils::stream_csv(
+					$filename,
+					array( 'Actividad', 'Fecha', 'Responsables', 'Participantes', 'Socios/as', 'Ubicación' ),
+					( static function () use ( $data ) {
+						foreach ( $data as $r ) {
+							yield array( $r['title'], $r['fecha'], $r['responsables'], $r['participantes'], $r['socios'], $r['ubicacion'] );
+						}
+					} )()
+				);
 				break;
 			case 'evaluaciones':
 				$filter_act = isset( $_GET['filter_actividad'] ) ? (int) $_GET['filter_actividad'] : 0;
-				fputcsv( $out, array( 'ID', 'Actividad', 'Usuario', 'Fecha', 'Gestion', 'Instalaciones', 'Participantes', 'Comunicacion', 'Comentarios Gestion', 'Necesidades', 'Mejoras Gestion', 'Mejoras Instalaciones', 'Comentarios Participantes', 'Aspectos Positivos', 'Aspectos a Mejorar', 'Otros Comentarios' ), ';' );
-				$batch     = 0;
-				$per_batch = 200;
-				do {
-					$meta_where = "pm_act.meta_key = '_convoca_eval_actividad_id'";
-					$meta_args  = array();
-					if ( $filter_act > 0 ) {
-						$meta_where .= ' AND pm_act.meta_value = %d';
-						$meta_args[] = $filter_act;
-					}
-					$eval_ids = $wpdb->get_col(
-						$wpdb->prepare(
-							"SELECT p.ID FROM {$wpdb->posts} p
-					JOIN {$wpdb->postmeta} pm_act ON p.ID = pm_act.post_id AND pm_act.meta_key = '_convoca_eval_actividad_id'
+				\Convoca\Core\Utils::stream_csv(
+					$filename,
+					array( 'ID', 'Actividad', 'Usuario', 'Fecha', 'Gestion', 'Instalaciones', 'Participantes', 'Comunicacion', 'Comentarios Gestion', 'Necesidades', 'Mejoras Gestion', 'Mejoras Instalaciones', 'Comentarios Participantes', 'Aspectos Positivos', 'Aspectos a Mejorar', 'Otros Comentarios' ),
+					// Generador: los lotes de 200 se van pidiendo mientras se escriben, así que la
+					// exportación no carga las evaluaciones enteras en memoria.
+					( static function () use ( $filter_act ) {
+						global $wpdb;
+						$batch     = 0;
+						$per_batch = 200;
+						do {
+							$meta_where = "pm_act.meta_key = '_convoca_eval_actividad_id'";
+							$meta_args  = array();
+							if ( $filter_act > 0 ) {
+								$meta_where .= ' AND pm_act.meta_value = %d';
+								$meta_args[] = $filter_act;
+							}
+							$eval_ids = $wpdb->get_col(
+								$wpdb->prepare(
+									"SELECT p.ID FROM {$wpdb->posts} p
+						JOIN {$wpdb->postmeta} pm_act ON p.ID = pm_act.post_id AND pm_act.meta_key = '_convoca_eval_actividad_id'
                          WHERE p.post_type = 'convoca_evaluacion' AND p.post_status = 'publish'
                          ORDER BY p.ID ASC LIMIT %d OFFSET %d",
-							array_merge( $meta_args, array( $per_batch, $batch * $per_batch ) )
-						)
-					);
-					if ( empty( $eval_ids ) ) {
-						break;
-					}
-					update_meta_cache( 'post', $eval_ids );
-					foreach ( $eval_ids as $eid ) {
-						$u = get_userdata( get_post_meta( $eid, '_convoca_eval_usuario_id', true ) );
-						fputcsv(
-							$out,
-							array(
-								$eid,
-								get_the_title( get_post_meta( $eid, '_convoca_eval_actividad_id', true ) ),
-								$u ? $u->user_login : 'Desconocido',
-								get_post_meta( $eid, '_convoca_eval_fecha', true ),
-								get_post_meta( $eid, '_convoca_eval_gestion', true ),
-								get_post_meta( $eid, '_convoca_eval_instalaciones', true ),
-								get_post_meta( $eid, '_convoca_eval_participantes', true ),
-								get_post_meta( $eid, '_convoca_eval_comunicacion', true ),
-								get_post_meta( $eid, '_convoca_eval_comentarios_gestion', true ),
-								get_post_meta( $eid, '_convoca_eval_necesidades_no_cubiertas', true ),
-								get_post_meta( $eid, '_convoca_eval_mejoras_gestion', true ),
-								get_post_meta( $eid, '_convoca_eval_mejoras_instalaciones', true ),
-								get_post_meta( $eid, '_convoca_eval_comentarios_participantes', true ),
-								get_post_meta( $eid, '_convoca_eval_aspectos_positivos', true ),
-								get_post_meta( $eid, '_convoca_eval_aspectos_mejorar', true ),
-								get_post_meta( $eid, '_convoca_eval_otros_comentarios', true ),
-							),
-							';'
-						);
-					}
-					++$batch;
-				} while ( count( $eval_ids ) === $per_batch );
+									array_merge( $meta_args, array( $per_batch, $batch * $per_batch ) )
+								)
+							);
+							if ( empty( $eval_ids ) ) {
+								break;
+							}
+							update_meta_cache( 'post', $eval_ids );
+							foreach ( $eval_ids as $eid ) {
+								$u = get_userdata( get_post_meta( $eid, '_convoca_eval_usuario_id', true ) );
+								yield array(
+									$eid,
+									get_the_title( get_post_meta( $eid, '_convoca_eval_actividad_id', true ) ),
+									$u ? $u->user_login : 'Desconocido',
+									get_post_meta( $eid, '_convoca_eval_fecha', true ),
+									get_post_meta( $eid, '_convoca_eval_gestion', true ),
+									get_post_meta( $eid, '_convoca_eval_instalaciones', true ),
+									get_post_meta( $eid, '_convoca_eval_participantes', true ),
+									get_post_meta( $eid, '_convoca_eval_comunicacion', true ),
+									get_post_meta( $eid, '_convoca_eval_comentarios_gestion', true ),
+									get_post_meta( $eid, '_convoca_eval_necesidades_no_cubiertas', true ),
+									get_post_meta( $eid, '_convoca_eval_mejoras_gestion', true ),
+									get_post_meta( $eid, '_convoca_eval_mejoras_instalaciones', true ),
+									get_post_meta( $eid, '_convoca_eval_comentarios_participantes', true ),
+									get_post_meta( $eid, '_convoca_eval_aspectos_positivos', true ),
+									get_post_meta( $eid, '_convoca_eval_aspectos_mejorar', true ),
+									get_post_meta( $eid, '_convoca_eval_otros_comentarios', true ),
+								);
+							}
+							++$batch;
+						} while ( count( $eval_ids ) === $per_batch );
+					} )()
+				);
 				break;
 		}
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- CSV streaming
-		fclose( $out );
 		exit;
 	}
 }

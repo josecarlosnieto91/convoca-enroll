@@ -146,28 +146,6 @@ class Admin_Monitor_CRM {
 		$act      = get_post( $actividad_id );
 		$filename = sanitize_title( $act->post_title ) . '-' . $type . '-' . wp_date( 'Y-m-d' ) . '.csv';
 
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename=' . $filename );
-
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV streaming to output
-		$output = fopen( 'php://output', 'w' );
-		// UTF-8 BOM for Excel.
-		fprintf( $output, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
-
-		fputcsv(
-			$output,
-			array(
-				__( 'Actividad', 'convoca-enroll' ),
-				__( 'Fecha', 'convoca-enroll' ),
-				__( 'Nombre', 'convoca-enroll' ),
-				__( 'Email', 'convoca-enroll' ),
-				__( 'Teléfono', 'convoca-enroll' ),
-				__( 'Estado Inscripción', 'convoca-enroll' ),
-				__( 'Asistencia', 'convoca-enroll' ),
-				__( 'Token Check-in', 'convoca-enroll' ),
-			)
-		);
-
 		$args = array(
 			'post_type'      => 'inscripcion',
 			'posts_per_page' => -1,
@@ -197,24 +175,37 @@ class Admin_Monitor_CRM {
 		$inscripciones = get_posts( $args );
 		$fecha_act     = get_post_meta( $actividad_id, '_convoca_fecha', true );
 
-		foreach ( $inscripciones as $ins ) {
-			fputcsv(
-				$output,
-				array(
-					\Convoca\Core\Utils::escape_csv_field( $act->post_title ),
-					\Convoca\Core\Utils::escape_csv_field( $fecha_act ),
-					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::get_meta( $ins->ID, 'nombre' ) ),
-					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::get_meta( $ins->ID, 'email' ) ),
-					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::get_meta( $ins->ID, 'telefono' ) ),
-					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::get_meta( $ins->ID, 'estado' ) ),
-					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::get_meta( $ins->ID, 'asistencia' ) ),
-					\Convoca\Core\Utils::escape_csv_field( get_post_meta( $ins->ID, '_convoca_checkin_token', true ) ),
-				)
-			);
-		}
+		// La ceremonia del CSV vive en el núcleo (cabeceras, BOM, separador y escapado por celda en
+		// un solo flujo). Aquí salía con el separador por omisión de PHP, que Excel en español no
+		// reconoce, y el nombre del fichero sin entrecomillar.
+		\Convoca\Core\Utils::stream_csv(
+			$filename,
+			array(
+				__( 'Actividad', 'convoca-enroll' ),
+				__( 'Fecha', 'convoca-enroll' ),
+				__( 'Nombre', 'convoca-enroll' ),
+				__( 'Email', 'convoca-enroll' ),
+				__( 'Teléfono', 'convoca-enroll' ),
+				__( 'Estado Inscripción', 'convoca-enroll' ),
+				__( 'Asistencia', 'convoca-enroll' ),
+				__( 'Token Check-in', 'convoca-enroll' ),
+			),
+			( static function () use ( $inscripciones, $act, $fecha_act ) {
+				foreach ( $inscripciones as $ins ) {
+					yield array(
+						$act->post_title,
+						$fecha_act,
+						CPT_Inscripcion::get_meta( $ins->ID, 'nombre' ),
+						CPT_Inscripcion::get_meta( $ins->ID, 'email' ),
+						CPT_Inscripcion::get_meta( $ins->ID, 'telefono' ),
+						CPT_Inscripcion::get_meta( $ins->ID, 'estado' ),
+						CPT_Inscripcion::get_meta( $ins->ID, 'asistencia' ),
+						get_post_meta( $ins->ID, '_convoca_checkin_token', true ),
+					);
+				}
+			} )()
+		);
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- CSV streaming
-		fclose( $output );
 		exit;
 	}
 

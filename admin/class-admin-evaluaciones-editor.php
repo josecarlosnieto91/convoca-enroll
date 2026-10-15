@@ -27,17 +27,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Admin_Evaluaciones_Editor {
+class Admin_Evaluaciones_Editor extends \Convoca\Core\Admin\Pantalla_Admin {
 
-	public function __construct() {
-		add_action( 'admin_menu', array( $this, 'add_menu' ) );
-		add_action( 'admin_post_convoca_save_evaluacion_admin', array( $this, 'handle_save_admin' ) );
-		add_action( 'load-post-new.php', array( $this, 'redirect_to_custom_editor' ) );
-		add_action( 'load-post.php', array( $this, 'redirect_to_custom_editor' ) );
+	/**
+	 * Ganchos de la pantalla, en una lista en vez del constructor copiado.
+	 *
+	 * Séptima pantalla con el mismo andamiaje: apareció al medir la lista de seis y entra en el
+	 * refactor, en vez de quedarse con su copia del constructor y de su redirect del editor.
+	 *
+	 * @return array<string, string> Gancho => método de esta clase.
+	 */
+	protected function ganchos(): array {
+		return array(
+			'admin_menu'                               => 'add_menu',
+			'admin_post_convoca_save_evaluacion_admin' => 'handle_save_admin',
+			'load-post-new.php'                        => 'redirigir_editor_propio',
+			'load-post.php'                            => 'redirigir_editor_propio',
+		);
+	}
+
+	/**
+	 * Editor propio de las evaluaciones.
+	 *
+	 * @return array{tipo: string, slug: string}
+	 */
+	protected function editor_propio(): ?array {
+		return array(
+			'tipo' => 'convoca_evaluacion',
+			'slug' => 'conv-evaluacion-editor',
+		);
 	}
 
 	public function add_menu() {
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'convoca-enroll',
 			__( 'Añadir evaluación', 'convoca-enroll' ),
 			__( 'Añadir evaluación', 'convoca-enroll' ),
@@ -45,30 +67,6 @@ class Admin_Evaluaciones_Editor {
 			'conv-evaluacion-editor',
 			array( $this, 'render_editor' )
 		);
-	}
-
-	/**
-	 * Redirect standard post editor to custom editor.
-	 */
-	public function redirect_to_custom_editor() {
-		$screen    = get_current_screen();
-		$post_type = $_GET['post_type'] ?? '';
-		if ( ! $post_type && isset( $_GET['post'] ) ) {
-			$post_type = get_post_type( $_GET['post'] );
-		}
-
-		if ( ( $screen && $screen->id === 'convoca_evaluacion' ) || $post_type === 'convoca_evaluacion' ) {
-			if ( isset( $screen->action ) && $screen->action === 'add' || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
-				wp_safe_redirect( admin_url( 'admin.php?page=conv-evaluacion-editor' ) );
-				exit;
-			} else {
-				$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
-				if ( $post_id && strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false ) {
-					wp_safe_redirect( admin_url( 'admin.php?page=conv-evaluacion-editor&id=' . $post_id ) );
-					exit;
-				}
-			}
-		}
 	}
 
 	/**

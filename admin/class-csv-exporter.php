@@ -97,20 +97,11 @@ class CSV_Exporter {
 
 		$filename = 'inscripciones-convoca-' . gmdate( 'Y-m-d' ) . '.csv';
 
-		// Send headers directly (csv_headers opens/closes stream causing BOM loss).
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
-		header( 'Pragma: no-cache' );
-		header( 'Expires: 0' );
-
-		$out = fopen( 'php://output', 'w' );
-
-		// Write BOM for Excel.
-		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
-
-		// Header row.
-		fputcsv(
-			$out,
+		// La ceremonia vive en el núcleo: cabeceras, BOM, separador y escapado de cada celda, en un
+		// solo flujo. Antes se copiaba aquí a mano y el ayudante `csv_headers()` no servía porque
+		// abría y cerraba el flujo, dejando el BOM fuera.
+		\Convoca\Core\Utils::stream_csv(
+			$filename,
 			array(
 				'Nombre',
 				'Email',
@@ -123,29 +114,25 @@ class CSV_Exporter {
 				'Consentimiento',
 				'Notas',
 			),
-			';'
+			( static function () use ( $posts ) {
+				foreach ( $posts as $post ) {
+					$m      = fn( $k ) => get_post_meta( $post->ID, '_convoca_' . $k, true );
+					$act_id = (int) $m( 'actividad_id' );
+
+					yield array(
+						$m( 'nombre' ),
+						$m( 'email' ),
+						$m( 'telefono' ),
+						$m( 'es_socio' ) === '1' ? 'Sí' : 'No',
+						CPT_Inscripcion::labels()[ $m( 'estado' ) ] ?? $m( 'estado' ),
+						$m( 'pagado' ) === '1' ? 'Sí' : 'No',
+						get_the_title( $act_id ),
+						get_the_date( 'd/m/Y H:i', $post ),
+						'v' . $m( 'consentimiento_version' ) . ' · ' . $m( 'consentimiento_timestamp' ),
+						$m( 'notas' ),
+					);
+				}
+			} )()
 		);
-
-		foreach ( $posts as $post ) {
-			$m      = fn( $k ) => get_post_meta( $post->ID, '_convoca_' . $k, true );
-			$act_id = (int) $m( 'actividad_id' );
-
-			fputcsv(
-				$out,
-				array(
-					\Convoca\Core\Utils::escape_csv_field( $m( 'nombre' ) ),
-					\Convoca\Core\Utils::escape_csv_field( $m( 'email' ) ),
-					\Convoca\Core\Utils::escape_csv_field( $m( 'telefono' ) ),
-					$m( 'es_socio' ) === '1' ? 'Sí' : 'No',
-					\Convoca\Core\Utils::escape_csv_field( CPT_Inscripcion::labels()[ $m( 'estado' ) ] ?? $m( 'estado' ) ),
-					$m( 'pagado' ) === '1' ? 'Sí' : 'No',
-					\Convoca\Core\Utils::escape_csv_field( get_the_title( $act_id ) ),
-					\Convoca\Core\Utils::escape_csv_field( get_the_date( 'd/m/Y H:i', $post ) ),
-					\Convoca\Core\Utils::escape_csv_field( 'v' . $m( 'consentimiento_version' ) . ' · ' . $m( 'consentimiento_timestamp' ) ),
-					\Convoca\Core\Utils::escape_csv_field( $m( 'notas' ) ),
-				),
-				';'
-			);
-		}
 	}
 }

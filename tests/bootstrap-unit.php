@@ -31,6 +31,44 @@ namespace Convoca\Core {
     }
 }
 
+namespace Convoca\Core\Admin {
+
+    // El andamiaje de las pantallas de administración vive en el núcleo (convoca-core#16): las
+    // pantallas de este plugin heredan de `Pantalla_Admin` o usan su trait, así que el símbolo tiene
+    // que existir cuando se declara la clase. Se carga el fichero REAL si el núcleo está clonado al
+    // lado (es lo que hay en local y lo que deja el CI); solo si no está, se declara un doble mínimo.
+    // Un doble que se queda atrás mediría algo que no existe.
+    if ( ! \defined( 'ABSPATH' ) ) {
+        \define( 'ABSPATH', \dirname( __DIR__ ) . '/' );
+    }
+
+    $convoca_core_admin = \dirname( __DIR__, 2 ) . '/convoca-core/includes/Admin/Andamiaje_Admin.php';
+    if ( \file_exists( $convoca_core_admin ) && ! \trait_exists( 'Convoca\\Core\\Admin\\Andamiaje_Admin' ) ) {
+        require_once $convoca_core_admin;
+        require_once \dirname( __DIR__, 2 ) . '/convoca-core/includes/Admin/Pantalla_Admin.php';
+    }
+
+    if ( ! \trait_exists( 'Convoca\\Core\\Admin\\Andamiaje_Admin' ) ) {
+        trait Andamiaje_Admin
+        {
+            abstract protected function ganchos(): array;
+            protected function editor_propio(): ?array { return null; }
+            protected function nodo_barra(): ?array { return null; }
+            public function __construct() {}
+            protected function registrar_subpagina( ?string $padre, string $titulo, string $menu, string $capacidad, string $slug, callable $callback ): string { return ''; }
+            protected function encolar_estilo_comun(): void {}
+            protected function exigir_guardado( string $nonce, string $capacidad, string $mensaje ): void {}
+            public function redirigir_editor_propio(): void {}
+            public function apuntar_nodo_barra( $wp_admin_bar ): void {}
+        }
+
+        abstract class Pantalla_Admin
+        {
+            use Andamiaje_Admin;
+        }
+    }
+}
+
 namespace { // global namespace for all stubs
 
 $GLOBALS['_wp_stores'] = [

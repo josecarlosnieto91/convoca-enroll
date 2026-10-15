@@ -1,5 +1,32 @@
 ## [2.7.50] — 2026-10-15
 
+## [2.7.51] — 2026-10-15
+
+### Cambiado
+- **Los tres exportadores de CSV usan la ceremonia del núcleo (issue convoca-core#16).** `class-csv-exporter.php`,
+  `class-admin-monitor-crm.php` y `class-admin-reports.php` abrían el flujo a mano —cuatro `header()`, el BOM,
+  `fopen( 'php://output' )`, `fputcsv`— y decidían por su cuenta lo demás. Ahora los tres vuelcan por
+  `\Convoca\Core\Utils::stream_csv()`, con generador para las filas, y el escapado por celda lo pone el ayudante.
+- **Las dos pantallas de administración usan el andamiaje del núcleo.** `Admin_Actividades` y
+  `Admin_Evaluaciones_Editor` sueltan su constructor con los `add_action`, su alta de páginas y su redirect del editor
+  (que estaba copiado carácter a carácter en las dos) y pasan a `Convoca\Core\Admin\Pantalla_Admin`. Los ganchos,
+  las prioridades, las capacidades y el nonce no cambian.
+- **Contratos nuevos:** `UnaSolaCeremoniaCsvTest` (nadie abre `php://output` ni llama a `fputcsv`; los exportadores
+  declarados usan el ayudante) y `AndamiajeAdminTest` (las pantallas usan el andamiaje y no vuelven a copiar el
+  constructor). Los dos probados en negativo.
+- Las dos pruebas que cruzaban el `action` del formulario con su manejador (`ContratoFormularioActividadTest` y
+  `RegresionesInscripcionTest`) reconocen las dos formas de declarar el manejador —`add_action()` o clave de
+  `ganchos()`— y siguen cayendo si el `action` cambia o si el método declarado no existe (probado en negativo).
+
+### Corregido
+- **`class-admin-reports.php` no escapaba NINGUNA celda.** Un campo de texto libre (una nota, un comentario de
+  evaluación) que empezara por `=`, `+`, `-` o `@` viajaba tal cual a la hoja de cálculo de quien abre el informe: es
+  inyección de fórmulas. Era el único de los nueve exportadores del ecosistema sin protección.
+- **Dos exportadores salían con el separador por omisión de PHP (`,`)**, que Excel en español no reconoce: el CSV
+  abría con todos los campos en una columna. El de monitor, además, mandaba el nombre del fichero sin entrecomillar.
+- **El monitor y las inscripciones ya no pierden los ceros** (asistencia, contadores): el ayudante los daba por celdas
+  vacías.
+
 ### Cambiado
 - **La llamada a la pasarela usa el nombre nuevo, `Payment_Handler::build_payment_url()` (issue convoca-core#16).**
   Era uno de los tres `get_payment_link()` del ecosistema, con tres significados distintos. El nombre viejo sigue

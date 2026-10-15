@@ -32,6 +32,12 @@ class ContratoFormularioActividadTest extends TestCase
             if (preg_match_all("/add_action\(\s*'admin_post_([a-z0-9_]+)'/i", $texto, $m)) {
                 $registrados = array_merge($registrados, $m[1]);
             }
+            // Desde el refactor del andamiaje (convoca-core#16) los manejadores también se declaran
+            // como clave de la lista `ganchos()`. Esta prueba mira las DOS formas: si el formulario
+            // cambia su action y el manejador no, sigue fallando igual que antes.
+            if (preg_match_all("/'admin_post_([a-z0-9_]+)'\s*=>/i", $texto, $m3)) {
+                $registrados = array_merge($registrados, $m3[1]);
+            }
             if (preg_match_all('/name="action"\s+value="([a-z0-9_]+)"/i', $texto, $m2)) {
                 $publicados = array_merge($publicados, $m2[1]);
             }

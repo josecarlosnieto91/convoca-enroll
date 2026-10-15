@@ -136,10 +136,18 @@ final class RegresionesInscripcionTest extends TestCase {
 		preg_match( '/name="action" value="([a-z_]+)"/', $src, $m );
 		$accion = $m[1];
 
-		$this->assertStringContainsString(
-			"add_action( 'admin_post_{$accion}'",
-			$src,
-			"El action «{$accion}» del formulario no tiene manejador registrado: guardar no haría nada (#16)."
+		// El manejador se declara de dos formas desde el refactor del andamiaje (convoca-core#16):
+		// con `add_action()` o como clave de la lista `ganchos()` del andamiaje compartido. Y en el
+		// segundo caso el valor es el nombre del método, así que se comprueba que ese método existe:
+		// una clave que apunte a un método que no está deja el guardado muerto igual que antes.
+		$conAddAction = false !== strpos( $src, "add_action( 'admin_post_{$accion}'" );
+
+		$declarado   = preg_match( "/'admin_post_{$accion}'\s*=>\s*'([a-zA-Z_][a-zA-Z0-9_]*)'/", $src, $m2 );
+		$tieneMetodo = $declarado && (bool) preg_match( '/function\s+' . preg_quote( $m2[1], '/' ) . '\s*\(/', $src );
+
+		$this->assertTrue(
+			$conAddAction || $tieneMetodo,
+			"El action «{$accion}» del formulario no tiene manejador registrado (ni `add_action()` ni una clave en `ganchos()` que apunte a un método que exista): guardar no haría nada (#16)."
 		);
 	}
 }

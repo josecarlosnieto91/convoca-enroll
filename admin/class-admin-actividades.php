@@ -35,21 +35,56 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * Controller class for Activity management in Admin.
  * Does NOT extend WP_List_Table to avoid premature initialization errors.
  */
-class Admin_Actividades {
+class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 
 
-	public function __construct() {
-		add_action( 'admin_menu', array( $this, 'add_menu' ) );
-		add_action( 'admin_post_convoca_save_actividad_admin', array( $this, 'handle_save_admin' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-		add_action( 'load-post-new.php', array( $this, 'redirect_to_custom_editor' ) );
-		add_action( 'load-post.php', array( $this, 'redirect_to_custom_editor' ) );
-		add_action( 'admin_bar_menu', array( $this, 'customize_admin_bar' ), 80 );
-		add_action( 'admin_post_convoca_enroll_duplicate_actividad', array( $this, 'handle_duplicate' ) );
+	/**
+	 * Ganchos de la pantalla, en una lista en vez del constructor copiado.
+	 *
+	 * Los ganchos, el orden y las prioridades son los de antes: lo que cambia es dónde está escrito el
+	 * constructor, que estaba copiado en las pantallas del ecosistema. El redirect del editor y el nodo
+	 * de la barra de administración también vienen del andamiaje compartido.
+	 *
+	 * @return array<string, string|array<int, int|string>> Gancho => método de esta clase.
+	 */
+	protected function ganchos(): array {
+		return array(
+			'admin_menu'                              => 'add_menu',
+			'admin_post_convoca_save_actividad_admin' => 'handle_save_admin',
+			'admin_enqueue_scripts'                   => 'enqueue_assets',
+			'load-post-new.php'                       => 'redirigir_editor_propio',
+			'load-post.php'                           => 'redirigir_editor_propio',
+			'admin_bar_menu'                          => array( 'apuntar_nodo_barra', 80 ),
+			'admin_post_convoca_enroll_duplicate_actividad' => 'handle_duplicate',
+		);
+	}
+
+	/**
+	 * Editor propio de las actividades: al que se lleva el editor estándar de WordPress.
+	 *
+	 * @return array{tipo: string, slug: string}
+	 */
+	protected function editor_propio(): ?array {
+		return array(
+			'tipo' => 'actividad',
+			'slug' => 'convoca-enroll-actividad-editor',
+		);
+	}
+
+	/**
+	 * Nodo «Añadir nueva» de la barra de administración.
+	 *
+	 * @return array{nodo: string, slug: string}
+	 */
+	protected function nodo_barra(): ?array {
+		return array(
+			'nodo' => 'new-actividad',
+			'slug' => 'convoca-enroll-actividad-editor',
+		);
 	}
 
 	public function add_menu() {
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'convoca-enroll',
 			__( 'Actividades', 'convoca-enroll' ),
 			__( 'Actividades', 'convoca-enroll' ),
@@ -58,7 +93,7 @@ class Admin_Actividades {
 			array( $this, 'render_page' )
 		);
 
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'convoca-enroll',
 			__( 'Añadir nueva actividad', 'convoca-enroll' ),
 			__( 'Añadir nueva', 'convoca-enroll' ),
@@ -100,40 +135,7 @@ class Admin_Actividades {
 	 */
 	public function enqueue_assets( $hook ) {
 		if ( strpos( $hook, 'convoca-enroll-actividad-editor' ) !== false ) {
-			wp_enqueue_style( 'convoca-core', CONVOCA_COMMON_URL . 'assets/css/convoca-common.css', array(), CONVOCA_COMMON_VERSION );
-		}
-	}
-
-	/**
-	 * Redirect standard post editor to custom editor.
-	 */
-	public function redirect_to_custom_editor() {
-		$screen    = get_current_screen();
-		$post_type = $_GET['post_type'] ?? '';
-		if ( ! $post_type && isset( $_GET['post'] ) ) {
-			$post_type = get_post_type( $_GET['post'] );
-		}
-
-		if ( ( $screen && $screen->id === 'actividad' ) || $post_type === 'actividad' ) {
-			if ( isset( $screen->action ) && $screen->action === 'add' || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
-				wp_safe_redirect( admin_url( 'admin.php?page=convoca-enroll-actividad-editor' ) );
-				exit;
-			} else {
-				$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
-				if ( $post_id && strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false ) {
-					wp_safe_redirect( admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $post_id ) );
-					exit;
-				}
-			}
-		}
-	}
-
-	public function customize_admin_bar( \WP_Admin_Bar $wp_admin_bar ): void {
-		$node_id = 'new-actividad';
-		$node    = $wp_admin_bar->get_node( $node_id );
-		if ( $node ) {
-			$node->href = admin_url( 'admin.php?page=convoca-enroll-actividad-editor' );
-			$wp_admin_bar->add_node( (array) $node );
+			$this->encolar_estilo_comun();
 		}
 	}
 
@@ -273,11 +275,11 @@ class Admin_Actividades {
 	 * Handle save from admin form.
 	 */
 	public function handle_save_admin() {
-		check_admin_referer( 'convoca_enroll_save_actividad_nonce' );
-
-		if ( ! current_user_can( 'edit_posts' ) ) {
-			wp_die( esc_html__( 'No tienes permisos para realizar esta acción.', 'convoca-enroll' ) );
-		}
+		$this->exigir_guardado(
+			'convoca_enroll_save_actividad_nonce',
+			'edit_posts',
+			esc_html__( 'No tienes permisos para realizar esta acción.', 'convoca-enroll' )
+		);
 
 		$post_id = isset( $_POST['id'] ) ? (int) wp_unslash( $_POST['id'] ) : 0;
 		$title   = sanitize_text_field( wp_unslash( $_POST['post_title'] ?? '' ) );
