@@ -271,7 +271,7 @@ class Form_Inscripcion {
 					if ( $pago_status !== 'failed' ) {
 						$payment = array(
 							'pago_id'     => $pago_id_existente,
-							'payment_url' => \Convoca\Gateway\Payment_Handler::get_payment_link( $pago_id_existente ),
+							'payment_url' => \Convoca\Gateway\Payment_Handler::build_payment_url( $pago_id_existente ),
 						);
 						\Convoca\Core\Logger::info( "Reutilizando pago existente #$pago_id_existente para inscripción #$result.", 'Enroll/Form', $result );
 					}

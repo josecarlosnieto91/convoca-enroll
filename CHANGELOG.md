@@ -1,3 +1,10 @@
+## [2.7.50] — 2026-10-15
+
+### Cambiado
+- **La llamada a la pasarela usa el nombre nuevo, `Payment_Handler::build_payment_url()` (issue convoca-core#16).**
+  Era uno de los tres `get_payment_link()` del ecosistema, con tres significados distintos. El nombre viejo sigue
+  existiendo como alias de compatibilidad, así que no cambia nada de comportamiento.
+
 ## [2.7.49] — 2026-10-15
 
 ### Seguridad
