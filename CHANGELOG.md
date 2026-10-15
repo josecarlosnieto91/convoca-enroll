@@ -1,3 +1,17 @@
+## [2.7.47] — 2026-10-15
+
+### Añadido
+- **El formulario de inscripción se rellena con los datos del socio que ya tiene la sesión abierta
+  (requisito 3 de members#30).** Nombre, correo, identificación y teléfono salen puestos de su ficha, y un
+  aviso se lo dice: «Estás identificado como NOMBRE: tus datos ya están puestos y se te aplica el precio de
+  socio». El motor ya aplicaba el precio de socio, pero **no se veía** ni los campos venían rellenos, así que
+  el socio escribía sus datos para nada (y con el defecto de #17, encima se descartaban).
+
+### Pruebas
+- `tests/Unit/FormularioAutocompletadoTest.php`: que el formulario mire la sesión y pase los datos, que los
+  cuatro campos lleven su valor y que se avise del precio de socio. **Negativo probado**: quitando el valor de
+  un campo, la prueba cae. Suite 186 en verde, PHPCS 0, PHPStan `[OK]`, `composer test` con código 0.
+
 # Changelog — convoca-enroll
 
 ## [2.7.46] - 2026-10-15

@@ -161,16 +161,32 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 			</div>
 		<?php endif; ?>
 
+		<?php if ( ! empty( $miembro ) ) : ?>
+			<div class="convoca-alert convoca-alert--info" role="status">
+				<p>
+					<?php
+					printf(
+						/* translators: %s: nombre del socio que tiene la sesión abierta. */
+						esc_html__( 'Estás identificado como %s: tus datos ya están puestos y se te aplica el precio de socio.', 'convoca-enroll' ),
+						esc_html( (string) $miembro['nombre'] )
+					);
+					?>
+				</p>
+			</div>
+		<?php endif; ?>
+
 		<div class="convoca-grid-2">
 			<div class="convoca-field">
 				<label for="conv-nombre">Nombre completo del adulto responsable *</label>
 				<input type="text" id="conv-nombre" name="nombre" required autocomplete="name"
+					value="<?php echo esc_attr( (string) ( $miembro['nombre'] ?? '' ) ); ?>"
 					placeholder="Nombre y apellidos">
 				<span class="convoca-error-msg">Este campo es obligatorio.</span>
 			</div>
 			<div class="convoca-field">
 				<label for="conv-email">Correo electrónico *</label>
 				<input type="email" id="conv-email" name="email" required autocomplete="email"
+					value="<?php echo esc_attr( (string) ( $miembro['email'] ?? '' ) ); ?>"
 					placeholder="tu@correo.com">
 				<span class="convoca-error-msg">Introduce un email válido.</span>
 			</div>
@@ -179,12 +195,14 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 		<div class="convoca-grid-2">
 			<div class="convoca-field">
 				<label for="conv-dni">DNI / NIE / Identificación *</label>
-				<input type="text" id="conv-dni" name="dni" required autocomplete="off" placeholder="12345678A">
+				<input type="text" id="conv-dni" name="dni" required autocomplete="off" placeholder="12345678A"
+					value="<?php echo esc_attr( (string) ( $miembro['dni'] ?? '' ) ); ?>">
 				<span class="convoca-error-msg">Introduce un documento de identificación válido.</span>
 			</div>
 			<div class="convoca-field">
 				<label for="conv-telefono">Teléfono</label>
-				<input type="tel" id="conv-telefono" name="telefono" autocomplete="tel" placeholder="600 000 000">
+				<input type="tel" id="conv-telefono" name="telefono" autocomplete="tel" placeholder="600 000 000"
+					value="<?php echo esc_attr( (string) ( $miembro['telefono'] ?? '' ) ); ?>">
 			</div>
 		</div>
 

@@ -80,6 +80,24 @@ class Form_Inscripcion {
 			)
 		);
 
+		// Con la sesión de socio abierta, sus datos viajan al formulario ya puestos (issue members#30,
+		// requisito 3: «sin volver a escribir sus datos»). Se leen de la ficha, que es la fuente de
+		// verdad; el motor ya fuerza el precio de socio cuando la sesión está abierta.
+		$miembro = null;
+		if ( class_exists( '\Convoca\Members\Member_Auth' ) && \Convoca\Members\Member_Auth::is_authenticated() ) {
+			$miembro_id = (int) \Convoca\Members\Member_Auth::get_current_member_id();
+			$ficha      = $miembro_id ? get_post( $miembro_id ) : null;
+			if ( $ficha ) {
+				$miembro = array(
+					'id'       => $miembro_id,
+					'nombre'   => (string) $ficha->post_title,
+					'email'    => (string) get_post_meta( $miembro_id, '_convoca_email', true ),
+					'dni'      => (string) get_post_meta( $miembro_id, '_convoca_dni', true ),
+					'telefono' => (string) get_post_meta( $miembro_id, '_convoca_telefono', true ),
+				);
+			}
+		}
+
 		ob_start();
 		include CONVOCA_ENROLL_DIR . 'templates/form-inscripcion.php';
 		return ob_get_clean();
