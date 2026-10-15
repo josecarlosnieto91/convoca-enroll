@@ -166,9 +166,14 @@ class Admin_Monitor_CRM {
 		);
 
 		if ( $type === 'asistentes' ) {
+			// La asistencia se guarda como `si` en todo el ecosistema (informe de actividad, recordatorios,
+			// contador de horas). Aquí se pedía `'1'`, que no escribe nadie: el CSV salía con la cabecera y
+			// ninguna fila aunque hubiera asistencias marcadas. Se aceptan las dos formas por las fichas
+			// antiguas.
 			$args['meta_query'][] = array(
-				'key'   => CPT_Inscripcion::META_PREFIX . 'asistencia',
-				'value' => '1',
+				'key'     => CPT_Inscripcion::META_PREFIX . 'asistencia',
+				'value'   => array( 'si', '1' ),
+				'compare' => 'IN',
 			);
 		}
 
