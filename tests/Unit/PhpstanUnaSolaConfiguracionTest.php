@@ -29,16 +29,25 @@ class PhpstanUnaSolaConfiguracionTest extends TestCase
     }
 
     /**
-     * Configuraciones de PHPStan presentes en el repo (la raíz, que es donde viven).
+     * Configuraciones de PHPStan presentes en el repo: la raíz **y `dev-tools/`**.
      *
-     * @return string[]
+     * `dev-tools/` entra a propósito: en este repo vivía una copia que el CI no usaba y que no arrancaba
+     * (`Path /.../docs does not exist`, salida 1). Estaba **fuera del alcance** de esta comprobación, así que
+     * el contrato decía «una sola configuración» mientras el repo tenía dos. Una vara en el sitio donde uno
+     * mira no es una sola vara.
+     *
+     * @return string[] Rutas relativas a la raíz del repositorio.
      */
     private function configuraciones(): array
     {
         $encontradas = [];
-        foreach ((array) glob($this->raiz() . '/phpstan.neon*') as $f) {
+        $candidatas  = array_merge(
+            (array) glob($this->raiz() . '/phpstan.neon*'),
+            (array) glob($this->raiz() . '/dev-tools/phpstan.neon*')
+        );
+        foreach ($candidatas as $f) {
             if (is_file($f)) {
-                $encontradas[] = basename($f);
+                $encontradas[] = str_replace($this->raiz() . '/', '', $f);
             }
         }
         sort($encontradas);
