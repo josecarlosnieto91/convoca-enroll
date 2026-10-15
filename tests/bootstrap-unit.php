@@ -57,6 +57,19 @@ if (!function_exists('get_option')) {
     function delete_option($k) { unset($GLOBALS['_wp_stores']['options'][$k]); return true; }
 }
 
+// Sales: cifrar y descifrar tokens se apoyan en wp_salt() (issue #21). Aquí no hay WordPress,
+// así que las sales son fijas y CONOCIDAS: lo que se prueba es el esquema de cifrado, no el secreto.
+if (!function_exists('wp_salt')) {
+    function wp_salt($scheme = 'auth') {
+        $sales = array(
+            'auth'        => 'sal-de-prueba-para-autenticacion',
+            'secure_auth' => 'sal-de-prueba-para-autenticacion-segura',
+            'nonce'       => 'sal-de-prueba-para-los-nonces-1234',
+        );
+        return $sales[$scheme] ?? $sales['auth'];
+    }
+}
+
 // Transients
 if (!function_exists('get_transient')) {
     function get_transient($k) { $s = &$GLOBALS['_wp_stores']['transients']; return $s[$k] ?? false; }

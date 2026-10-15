@@ -1,3 +1,30 @@
+## [2.7.49] — 2026-10-15
+
+### Seguridad
+- **El cifrado de los tokens de redes pasa a AES-256-GCM, con IV aleatorio y etiqueta de autenticación (issue #21).**
+  Antes era AES-256-CBC con el IV derivado de `wp_salt( 'nonce' )`, o sea **el mismo siempre**: el cifrado era
+  determinista —dos cifrados del mismo token daban exactamente lo mismo, así que mirar la tabla ya decía qué
+  cuentas compartían token— y sin MAC, de modo que una manipulación no se detectaba. Y con ese cifrado se
+  guardaban los **tokens de OAuth** de las redes sociales.
+  - **Migración al leer**, no de golpe: los tokens guardados se descifran con el formato viejo y se re-cifran con
+    el nuevo la primera vez que alguien los usa. Sin script de migración a ciegas y sin perder ninguna conexión.
+  - Si un valor no se puede descifrar, se devuelve vacío y **no se pisa** lo guardado: perder un token es peor
+    que tenerlo en un formato viejo.
+  - El formato se distingue por prefijo (`convoca_social_enc:v2:`), así que lo que no lo lleva es del formato
+    viejo y se sabe sin adivinar.
+
+### Arreglado
+- Fuera la **copia muerta** de la configuración de PHPStan en `dev-tools/` (no la usa el CI y no arrancaba:
+  `Path .../docs does not exist`, salida 1). El contrato `PhpstanUnaSolaConfiguracionTest` ahora mira también
+  `dev-tools/`, que es justo donde estaba la copia que debía vigilar (issue convoca-health-check#15).
+
+### Pruebas
+- `CifradoTokensRedesTest` (6 pruebas): dos cifrados del mismo token dan valores **distintos**, el formato nuevo
+  va y vuelve, sobrevive a un token con bytes raros, un valor del formato viejo se sigue leyendo y se marca para
+  migrar, y **un valor manipulado no se acepta**. **Negativo probado**: con el fichero anterior fallan las dos
+  primeras (el cifrado era determinista y no llevaba versión).
+- Suite 200 verde, PHPCS 0, PHPStan `[OK]`.
+
 ## [2.7.48] — 2026-10-15
 
 ### Arreglado
