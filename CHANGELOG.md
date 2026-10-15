@@ -1,5 +1,17 @@
 # Changelog — convoca-enroll
 
+## [2.7.45] - 2026-10-15
+
+### Corregido
+
+- **El editor de actividad del panel no guardaba nada** (auditoría de navegador): el formulario enviaba
+  `action=conv_enroll_save_actividad_admin` —el prefijo viejo— y el manejador registrado era
+  `admin_post_convoca_save_actividad_admin`. El POST llegaba a `admin-post.php` y no lo atendía nadie.
+  Corregido el `action`, con una prueba que cruza las dos mitades para que no se vuelva a separar. Esa
+  misma prueba destapó **un segundo caso igual que nadie había reportado**: el formulario de evaluaciones
+  publicaba `conv_enroll_save_evaluacion_admin` y su manejador era `convoca_save_evaluacion_admin`, así
+  que el editor de evaluaciones tampoco guardaba. Corregido también.
+
 ## [2.7.44] - 2026-10-15
 
 ### Corregido

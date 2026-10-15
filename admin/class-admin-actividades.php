@@ -166,7 +166,7 @@ class Admin_Actividades {
 			<h1><?php echo esc_html( $title ); ?></h1>
 
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="conv-form-custom">
-				<input type="hidden" name="action" value="conv_enroll_save_actividad_admin">
+				<input type="hidden" name="action" value="convoca_save_actividad_admin">
 				<input type="hidden" name="id" value="<?php echo esc_attr( (string) $post_id ); ?>">
 				<?php wp_nonce_field( 'convoca_enroll_save_actividad_nonce' ); ?>
 
