@@ -3,7 +3,7 @@
  * Aviso de «aquí no hay actividad»: dice QUÉ HACER (y no deja la página en blanco).
  *
  * Defecto medido en el gauntlet (pasada 6, arrastrado a la 7): `/inscribete/` existía en la
- * demo y en Lugg con `[convoca_form_inscripcion]` sin `id` y con un id inexistente. El
+ * demo y en un sitio de cliente con `[convoca_form_inscripcion]` sin `id` y con un id inexistente. El
  * visitante recibía «Actividad no encontrada.» —un error que no puede seguir— o, si faltaba
  * el `id`, **nada**: ni formulario, ni mensaje, ni pista de dónde inscribirse.
  *
