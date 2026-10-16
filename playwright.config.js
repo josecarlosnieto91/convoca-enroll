@@ -1,5 +1,6 @@
 // @ts-check
 const fs = require('fs');
+const path = require('path');
 const { defineConfig } = require('@playwright/test');
 
 /**
@@ -13,7 +14,20 @@ const { defineConfig } = require('@playwright/test');
  * el contenedor de desarrollo y nunca un sitio en vivo: apuntarla a un dominio real se hace a
  * propósito, con E2E_BASE_URL.
  */
-const baseURL = process.env.E2E_BASE_URL || 'http://localhost:8080';
+/**
+ * El destino sale del propio fixture cuando existe: el sembrador ya escribe en él la URL del sitio en el
+ * que ha sembrado, así que `npm test` a secas apunta donde toca. Antes solo salía de `E2E_BASE_URL` y, sin
+ * ella, caía en `http://localhost:8080` —el contenedor retirado—, así que la suite se pasaba la vida
+ * midiendo un sitio que no existe (enroll#24: 11 fallos por esto, no por el código).
+ */
+function urlDelFixture() {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(__dirname, 'tests/e2e/.fixture.json'), 'utf8')).baseUrl;
+  } catch (e) {
+    return null;
+  }
+}
+const baseURL = process.env.E2E_BASE_URL || urlDelFixture() || 'http://localhost:8080';
 
 /**
  * Sesión de navegador, si hay. `auth.json` (ignorado por git) se mintea sin contraseñas

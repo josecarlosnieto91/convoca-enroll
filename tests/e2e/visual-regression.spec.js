@@ -9,6 +9,12 @@
  *
  * La línea base vive en `tests/snapshots/posters.json` (se commitea). Para rehacerla tras un
  * cambio deliberado de diseño: `npm run snapshots:update`.
+ *
+ * OJO (enroll#24): la huella depende de cómo pinta el cartel el servidor —fuentes e ImageMagick del
+ * host—, no solo de nuestro código. La línea base se hizo contra la **demo**; si la suite se apunta a
+ * otro entorno y la huella no cuadra, lo primero es regenerarla ahí (`npm run snapshots:update`) y
+ * mirar el cartel antes de dar por bueno que «no ha cambiado nada». No es un adorno: es la prueba que
+ * avisa de un cambio de aspecto, y solo avisa bien si la referencia es del mismo entorno.
  */
 const crypto = require('crypto');
 const fs = require('fs');

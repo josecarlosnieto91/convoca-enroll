@@ -3,7 +3,7 @@
   "version": "2.6.0",
   "private": true,
   "scripts": {
-    "test:seed": "podman exec convoca-dev-wp-1 php /var/www/html/wp-content/plugins/convoca-enroll/tests/e2e/seed.php",
+    "test:seed": "bash tests/e2e/seed-remoto.sh",
     "pretest": "npm run test:seed",
     "test": "playwright test",
     "test:visual": "playwright test --grep @visual",

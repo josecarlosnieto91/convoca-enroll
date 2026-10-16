@@ -36,7 +36,12 @@ test.describe('Social por API @social @api', () => {
     // En el entorno de pruebas no hay ninguna cuenta conectada, y eso es lo que debe decir: una
     // lista vacía. Si algún día devolviera cuentas sin haberlas conectado, sería un dato falso.
     for (const c of cuentas) {
-      expect(c).toHaveProperty('provider');
+      // Los campos que la API devuelve de verdad: `list_accounts()` pasa la fila de la tabla tal cual
+      // (id, network, account_id, account_name, is_active…). Antes se pedía `provider`, un campo que no
+      // existe en ninguna parte: la prueba no podía pasar contra un sitio real (enroll#24).
+      expect(c).toHaveProperty('id');
+      expect(c).toHaveProperty('network');
+      expect(c).toHaveProperty('account_name');
     }
   });
 
