@@ -15,7 +15,10 @@
     const ServerSideRender = wp.serverSideRender || null;
 
     // 1. Formulario de Inscripción
-    registerBlockType('convoca/formulario-inscripcion', {
+    // El nombre tiene que ser EXACTAMENTE el de `blocks/inscripcion/block.json` (enroll#22): aquí decía
+    // `convoca/formulario-inscripcion` y allí `convoca-enroll/formulario-inscripcion`, así que el bloque no
+    // aparecía en el insertador del editor — el formulario solo se podía poner a mano con un shortcode.
+    registerBlockType('convoca-enroll/formulario-inscripcion', {
         apiVersion: 3,
         category: 'convoca-enroll',
         edit: function (props) {

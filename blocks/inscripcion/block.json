@@ -7,11 +7,33 @@
     "category": "convoca-enroll",
     "icon": "clipboard",
     "description": "Formulario de inscripción dinámico vinculado a una actividad.",
-    "keywords": ["convoca", "inscripción", "actividad", "formulario"],
+    "keywords": [
+        "convoca",
+        "inscripción",
+        "actividad",
+        "formulario"
+    ],
     "supports": {
-        "align": ["wide", "full"],
+        "align": [
+            "wide",
+            "full"
+        ],
         "html": false
     },
     "textdomain": "convoca-enroll",
-    "editorScript": "convoca-enroll-blocks"
+    "editorScript": "convoca-enroll-blocks",
+    "attributes": {
+        "actividadId": {
+            "type": "number",
+            "default": 0
+        },
+        "mostrarPlazas": {
+            "type": "boolean",
+            "default": true
+        },
+        "mostrarPrecios": {
+            "type": "boolean",
+            "default": true
+        }
+    }
 }
