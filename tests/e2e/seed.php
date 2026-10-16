@@ -63,7 +63,7 @@ $salida['actividadId'] = $actividad;
 
 // ── Contraseña de aplicación (la API REST con cookie exige un nonce que no está
 //    disponible fuera del editor; con contraseña de aplicación no hace falta nonce) ────
-// Se elige por CAPACIDAD, no por nombre ni por número (enroll#24): en Lugg el usuario 2 no es
+// Se elige por CAPACIDAD, no por nombre ni por número (enroll#24): en producción el usuario 2 no es
 // administrador y en la demo el administrador no se llama «admin». Buscar por «admin» a secas hacía
 // que el sembrador muriese en cualquier sitio que no fuese el contenedor.
 $admins  = get_users(
