@@ -447,3 +447,86 @@
     }
 }
 
+
+
+/* ── Check-in en el móvil (enroll#25) ─────────────────────────────────────────
+   El check-in se hace DE PIE, con prisa y con el teléfono en la mano: medido en 390 px, la pantalla
+   desbordaba 39 px y había que arrastrarla de lado para llegar al botón de check-in. Aquí la tabla se
+   convierte en una tarjeta por participante y todo se ajusta al ancho de la pantalla. */
+@media screen and (max-width: 480px) {
+	.conv-admin .wrap,
+	.conv-checkin-filters,
+	.conv-admin .conv-checkin-filters form {
+		max-width: 100%;
+		box-sizing: border-box;
+	}
+
+	.conv-checkin-filters select,
+	.conv-checkin-filters input[type="search"],
+	.conv-checkin-filters input[type="submit"],
+	.conv-admin input[type="text"],
+	.conv-admin input[type="search"],
+	.conv-admin select {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.conv-admin table.wp-list-table {
+		display: block;
+		width: 100%;
+		border: 0;
+		background: transparent;
+		box-shadow: none;
+	}
+
+	.conv-admin table.wp-list-table thead {
+		display: none; /* Las columnas pasan a ser etiquetas dentro de cada tarjeta. */
+	}
+
+	.conv-admin table.wp-list-table tr {
+		display: block;
+		border: 1px solid #dcdcde;
+		border-radius: 8px;
+		background: #fff;
+		margin-bottom: 12px;
+		padding: 10px 12px;
+	}
+
+	.conv-admin table.wp-list-table td {
+		display: block;
+		border: 0;
+		padding: 4px 0;
+		text-align: left;
+	}
+
+	.conv-admin table.wp-list-table td::before {
+		content: attr(data-etiqueta) ": ";
+		font-weight: 600;
+		color: #50575e;
+	}
+
+	/* La línea de acciones (inscripción, teléfono, ficha) se mantiene legible y con sitio para el dedo. */
+	.conv-admin table.wp-list-table .row-actions {
+		display: block;
+		margin-top: 6px;
+		font-size: 0.95em;
+	}
+
+	.conv-admin table.wp-list-table .row-actions a {
+		display: inline-block;
+		padding: 4px 0;
+	}
+
+	.conv-admin .conv-badge {
+		display: inline-block;
+	}
+
+	/* El «Check-in» es lo que se pulsa con el dedo: que se vea grande. */
+	.conv-admin table.wp-list-table td:last-child .button,
+	.conv-admin table.wp-list-table td:last-child button,
+	.conv-admin table.wp-list-table td:last-child input[type="submit"] {
+		width: 100%;
+		min-height: 44px;
+		font-size: 1em;
+	}
+}

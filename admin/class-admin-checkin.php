@@ -52,9 +52,39 @@ class Admin_Checkin {
 		}
 		$actividades = get_posts( $actividades_args );
 
-		// If no activity selected, try to get the most recent/next one.
+		// Orden pensado para el día de la actividad (enroll#25): primero lo que está por venir —de la más
+		// cercana a la más lejana— y las pasadas al final, que casi siempre se miran «por si acaso». Con el
+		// orden de antes (fecha DESC) el desplegable empezaba por las actividades de las semanas pasadas y el
+		// monitor tenía que buscar la de hoy a mano, de pie y con prisa.
+		$hoy = current_time( 'Y-m-d' );
+		usort(
+			$actividades,
+			function ( $a, $b ) use ( $hoy ) {
+				$a_fecha  = (string) get_post_meta( $a->ID, '_convoca_fecha_inicio', true );
+				$b_fecha  = (string) get_post_meta( $b->ID, '_convoca_fecha_inicio', true );
+				$a_pasada = ( $a_fecha < $hoy );
+				$b_pasada = ( $b_fecha < $hoy );
+
+				if ( $a_pasada !== $b_pasada ) {
+					return $a_pasada ? 1 : -1; // Las de hoy y las futuras, primero.
+				}
+
+				// Entre las futuras, la más cercana primero; entre las pasadas, la más reciente primero.
+				return $a_pasada ? strcmp( $b_fecha, $a_fecha ) : strcmp( $a_fecha, $b_fecha );
+			}
+		);
+
+		// Y si no han elegido ninguna, la de HOY (la del día, que es a lo que viene el monitor). Si hoy no hay
+		// ninguna, la siguiente; y si no, la última que hubo.
 		if ( ! $actividad_id && ! empty( $actividades ) ) {
-			$actividad_id = $actividades[0]->ID;
+			$elegida = 0;
+			foreach ( $actividades as $act ) {
+				if ( $hoy === (string) get_post_meta( $act->ID, '_convoca_fecha_inicio', true ) ) {
+					$elegida = (int) $act->ID;
+					break;
+				}
+			}
+			$actividad_id = $elegida ? $elegida : (int) $actividades[0]->ID;
 		}
 
 		// Verify permission: non-admins can only view their assigned activities.
@@ -160,6 +190,7 @@ class Admin_Checkin {
 					}
 					?>
 					<p>
+						<a class="button button-small" href="<?php echo esc_url( admin_url( 'post.php?post=' . (int) $actividad_id . '&action=edit' ) ); ?>"><?php esc_html_e( 'Ver la actividad', 'convoca-enroll' ); ?></a>
 						<strong><?php esc_html_e( 'Asistencia:', 'convoca-enroll' ); ?></strong> 
 						<span id="conv-present-count"><?php echo (int) $presentes; ?></span> / <?php echo (int) $total; ?>
 					</p>
@@ -187,23 +218,31 @@ class Admin_Checkin {
 								$es_socio   = get_post_meta( $id, '_convoca_es_socio', true );
 								$telefono   = get_post_meta( $id, '_convoca_telefono', true );
 								?>
-								<tr data-id="<?php echo esc_attr( (string) $id ); ?>">
-									<td>
+								<tr data-id="<?php echo esc_attr( (string) $id ); ?>" data-nombre="<?php echo esc_attr( get_the_title( $id ) ); ?>">
+									<td data-etiqueta="<?php echo esc_attr__( 'Participante', 'convoca-enroll' ); ?>">
 										<strong><?php echo esc_html( $ins->post_title ); ?></strong>
 										<?php if ( $es_socio === '1' ) : ?>
 											<span class="dashicons dashicons-star-filled" title="Socio/a" style="color:#f1c40f;font-size:16px;"></span>
 										<?php endif; ?>
 										<div class="row-actions">
-											<span class="view"><a href="<?php echo esc_url( admin_url( 'post.php?post=' . $id . '&action=edit' ) ); ?>"><?php esc_html_e( 'Ver ficha', 'convoca-enroll' ); ?></a> | </span>
+											<span class="view"><a href="<?php echo esc_url( admin_url( 'post.php?post=' . $id . '&action=edit' ) ); ?>"><?php esc_html_e( 'Ver inscripción', 'convoca-enroll' ); ?></a>
+											<?php
+											// Y la ficha de la persona, que es la que se busca cuando alguien no aparece (enroll#25).
+											$miembro_id = (int) get_post_meta( $id, '_convoca_miembro_id', true );
+											if ( $miembro_id > 0 && 'miembro' === get_post_type( $miembro_id ) ) :
+												?>
+												| <span class="socio"><a href="<?php echo esc_url( admin_url( 'post.php?post=' . $miembro_id . '&action=edit' ) ); ?>"><?php esc_html_e( 'Ficha de socio', 'convoca-enroll' ); ?></a></span>
+											<?php endif; ?>
+											| </span>
 											<span class="tel"><a href="tel:<?php echo esc_attr( $telefono ); ?>"><?php echo esc_html( $telefono ); ?></a></span>
 										</div>
 									</td>
-									<td>
+									<td data-etiqueta="<?php echo esc_attr__( 'Estado', 'convoca-enroll' ); ?>">
 										<span class="conv-badge conv-badge-<?php echo esc_attr( $estado ); ?>">
 											<?php echo esc_html( ucfirst( str_replace( '_', ' ', $estado ) ) ); ?>
 										</span>
 									</td>
-									<td>
+									<td data-etiqueta="<?php echo esc_attr__( 'Pago', 'convoca-enroll' ); ?>">
 										<?php if ( $pagado === '1' ) : ?>
 											<span class="dashicons dashicons-yes-alt" style="color:green;" title="Pagado"></span>
 										<?php else : ?>
