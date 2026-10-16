@@ -129,6 +129,17 @@ class Admin_Page {
 			'convoca-enroll',
 			array( $this, 'render_inscripciones' )
 		);
+		// La pantalla de Delegados (enroll#26): estaba escrita y no la llamaba nadie — código muerto.
+		// Es la que reparte las actividades entre los monitores, y sin ella el check-in queda en manos del
+		// administrador: la persona que está en la puerta con la lista es la que no puede marcar quién vino.
+		add_submenu_page(
+			'convoca-enroll',
+			__( 'Delegados', 'convoca-enroll' ),
+			__( 'Delegados', 'convoca-enroll' ),
+			'convoca_view_reports',
+			'convoca-enroll-delegados',
+			array( $this, 'render_delegados' )
+		);
 
 		add_submenu_page(
 			'convoca-enroll',
@@ -383,7 +394,16 @@ class Admin_Page {
 			echo '<div class="updated"><p>Asignaciones guardadas.</p></div>';
 		}
 
-		$delegados           = get_users( array( 'role__in' => array( 'administrator', 'editor', 'author' ) ) );
+		// Quién puede ser delegado (enroll#26): en una asociación quien lleva una actividad es un voluntario
+		// o un monitor, no un editor de contenidos. La lista de antes (administrator, editor, author) dejaba
+		// fuera justo a quien hace el check-in en la puerta.
+		$delegados           = get_users(
+			array(
+				'role__in' => array( 'administrator', 'editor', 'author', 'voluntario_aprobado', 'monitor_actividad', 'subscriber', 'socio' ),
+				'orderby'  => 'display_name',
+				'order'    => 'ASC',
+			)
+		);
 		$actividades         = CPT_Actividad::get_upcoming( 50 );
 		$current_assignments = (array) get_option( 'convoca_enroll_delegados_actividades', array() );
 
