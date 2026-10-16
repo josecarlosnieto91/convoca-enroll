@@ -204,11 +204,17 @@ class Blog_Post_Manager {
 
 		// 4. Event details.
 		$details = array();
+		// Con la hora cuando la trae: «Fin: 5 noviembre 2026» para algo que acaba a las 13:00 no sirve de mucho.
+		$con_hora = function ( $valor ) {
+			$formato = ( false !== strpos( (string) $valor, ':' ) ) ? 'j F Y, H:i' : 'j F Y';
+
+			return \Convoca\Core\Utils::format_date( $valor, $formato );
+		};
 		if ( $fecha_inicio ) {
-			$details[] = sprintf( '<strong>📅 %s:</strong> %s', __( 'Fecha', 'convoca-enroll' ), \Convoca\Core\Utils::format_date( $fecha_inicio, 'j F Y' ) );
+			$details[] = sprintf( '<strong>📅 %s:</strong> %s', __( 'Fecha', 'convoca-enroll' ), $con_hora( $fecha_inicio ) );
 		}
 		if ( $fecha_fin ) {
-			$details[] = sprintf( '<strong>⏰ %s:</strong> %s', __( 'Fin', 'convoca-enroll' ), \Convoca\Core\Utils::format_date( $fecha_fin, 'j F Y' ) );
+			$details[] = sprintf( '<strong>⏰ %s:</strong> %s', __( 'Fin', 'convoca-enroll' ), $con_hora( $fecha_fin ) );
 		}
 		if ( $ubicacion ) {
 			$details[] = sprintf( '<strong>📍 %s:</strong> %s', __( 'Ubicación', 'convoca-enroll' ), esc_html( $ubicacion ) );
