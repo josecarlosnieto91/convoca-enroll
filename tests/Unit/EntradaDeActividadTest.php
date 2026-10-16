@@ -47,4 +47,41 @@ class EntradaDeActividadTest extends TestCase {
 		);
 		$this->assertStringContainsString( '{"actividadId":%d}', $gestor, 'Y apuntando a la actividad de la que sale' );
 	}
+
+	/** El botón de la entrada lleva al formulario de verdad, no a un ancla inventada. */
+	public function test_el_boton_lleva_al_formulario_de_verdad(): void {
+		$gestor = $this->leer( 'media/class-blog-post-manager.php' );
+
+		$this->assertStringNotContainsString(
+			"'#inscribirme'",
+			$gestor,
+			'No existe ningún elemento con ese id: el botón cargaba la página de la actividad y no bajaba al formulario'
+		);
+		$this->assertStringContainsString( 'self::ANCLA_FORMULARIO', $gestor, 'El ancla tiene que salir de un solo sitio' );
+
+		// Y el ancla tiene que ser EXACTAMENTE el id que pinta el formulario.
+		$plantilla = $this->leer( 'templates/form-inscripcion.php' );
+		$this->assertStringContainsString( 'id="convoca-form-inscripcion"', $plantilla, 'El id real del formulario' );
+		$this->assertStringContainsString(
+			"'#convoca-form-inscripcion'",
+			$gestor,
+			'El ancla del botón y el id del formulario tienen que ser el mismo nombre'
+		);
+	}
+
+	/** La entrada de anuncio se puede crear desde el listado de actividades, no solo por REST. */
+	public function test_se_puede_crear_el_anuncio_desde_el_listado(): void {
+		$admin = $this->leer( 'admin/class-admin-actividades.php' );
+
+		$this->assertStringContainsString( "'admin_post_convoca_enroll_crear_anuncio' => 'handle_crear_anuncio'", $admin, 'El gancho' );
+		$this->assertStringContainsString( 'public function handle_crear_anuncio(): void {', $admin, 'El manejador' );
+		$this->assertStringContainsString( 'action=convoca_enroll_crear_anuncio&id=', $admin, 'La acción del listado' );
+		$this->assertStringContainsString( 'wp_verify_nonce', $admin, 'Con nonce: escribe contenido' );
+		$this->assertStringContainsString( "current_user_can( 'edit_posts' )", $admin, 'Y con permiso comprobado' );
+		$this->assertStringContainsString(
+			'Blog_Post_Manager::create_or_update',
+			$admin,
+			'Llama al mismo gestor que el módulo de medios: una sola forma de generar la entrada, no una copia'
+		);
+	}
 }

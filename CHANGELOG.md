@@ -1,15 +1,18 @@
-## [2.7.58] — 2026-10-16
+## [2.7.60] — 2026-10-16
 
 ### Arreglado
-- **La entrada que genera el plugin trae ya los datos del evento y el formulario (enroll#22).** Medido en el
-  informe (entrada 2704 de la demo): se creaba la entrada pero **sin fecha, ni hora, ni lugar, ni plazas**.
-  La causa era un prefijo: el gestor leía las metas como `convoca_fecha_inicio` cuando en **todo** el
-  ecosistema están guardadas como `_convoca_fecha_inicio`. Leía claves que no existen.
-- Y la entrada se publica **con el formulario dentro** (el bloque `convoca-enroll/formulario-inscripcion`, que
-  es dinámico y lo pinta el plugin, apuntando a su actividad): así sirve por sí sola, sin depender de que
-  alguien lo añada a mano.
+- **El botón de la entrada generada ya lleva al formulario (enroll#22, punto 3).** Apuntaba a `#inscribirme`,
+  un ancla que **no existe** en ninguna página (contado: 0 elementos con ese id): al pulsar, el navegador
+  cargaba la actividad y no bajaba a ninguna parte, y en una entrada larga había que buscar el formulario a
+  mano. Ahora el ancla y su destino salen del mismo sitio: la constante `ANCLA_FORMULARIO`, con el id que de
+  verdad pinta el plugin (`convoca-form-inscripcion`).
+- **Y la entrada de anuncio ya se puede crear desde WordPress (enroll#22, punto 4).** Hasta ahora el módulo de
+  medios (cartel + entrada + QR) solo se podía usar por REST —`POST /convoca/v1/media/blog/create`—, que para
+  la junta es como no tenerlo. Ahora hay una acción **«Crear anuncio»** en el listado de actividades, con su
+  nonce y su permiso, que llama al **mismo** gestor y lleva a la entrada recién creada para revisarla y
+  publicarla.
 
 ### Notas
-- Dos pruebas nuevas (`EntradaDeActividadTest`): el prefijo de las metas —comprobando además que sea el mismo
-  que usa el resto del plugin— y que la entrada lleve el formulario con un nombre de bloque que exista.
+- Dos pruebas nuevas: el ancla del botón es exactamente el id que pinta el formulario (comparado con
+  `templates/form-inscripcion.php`), y se puede crear el anuncio desde el listado, llamando al gestor común.
 

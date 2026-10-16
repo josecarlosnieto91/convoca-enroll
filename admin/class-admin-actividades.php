@@ -56,6 +56,7 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 			'load-post.php'                           => 'redirigir_editor_propio',
 			'admin_bar_menu'                          => array( 'apuntar_nodo_barra', 80 ),
 			'admin_post_convoca_enroll_duplicate_actividad' => 'handle_duplicate',
+			'admin_post_convoca_enroll_crear_anuncio' => 'handle_crear_anuncio',
 		);
 	}
 
@@ -357,6 +358,39 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 	/**
 	 * Duplicate an activity.
 	 */
+	/**
+	 * Crea (o pone al día) la entrada de anuncio de una actividad.
+	 *
+	 * Antes solo se podía por REST —`POST /convoca/v1/media/blog/create`—, que para la junta es como no
+	 * tenerlo: el módulo de medios (cartel + entrada + QR) quedaba fuera del alcance de cualquiera que no
+	 * supiera lanzar una petición a mano. Ahora es una acción del listado de actividades (enroll#22, punto 4).
+	 */
+	public function handle_crear_anuncio(): void {
+		$actividad_id = (int) ( wp_unslash( $_GET['id'] ?? 0 ) );
+
+		if ( ! $actividad_id || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ?? '' ), 'convoca_enroll_anuncio_' . $actividad_id ) ) {
+			wp_die( esc_html__( 'Nonce inválido.', 'convoca-enroll' ) );
+		}
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-enroll' ) );
+		}
+
+		$actividad = get_post( $actividad_id );
+		if ( ! $actividad || 'actividad' !== $actividad->post_type ) {
+			wp_die( esc_html__( 'Actividad no encontrada.', 'convoca-enroll' ) );
+		}
+
+		$entrada = \Convoca\Enroll\Media\Blog_Post_Manager::create_or_update( $actividad_id );
+
+		if ( is_wp_error( $entrada ) ) {
+			wp_die( esc_html( $entrada->get_error_message() ) );
+		}
+
+		// Se lleva a la entrada recién creada: la revisa, la retoca y la publica.
+		wp_safe_redirect( admin_url( 'post.php?action=edit&post=' . (int) $entrada ) );
+		exit;
+	}
+
 	public function handle_duplicate(): void {
 		$orig_id = (int) ( wp_unslash( $_GET['id'] ?? 0 ) );
 		if ( ! $orig_id || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ?? '' ), 'convoca_enroll_duplicate_' . $orig_id ) ) {
@@ -550,6 +584,8 @@ class Admin_Actividades_List extends \WP_List_Table {
 		$actions   = array();
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=conv-checkin&actividad_id=' . $item->ID ) ), 'Check-in' );
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_duplicate_actividad&id=' . $item->ID ), 'convoca_enroll_duplicate_' . $item->ID ) ), 'Duplicar' );
+		// La entrada de anuncio (enroll#22, punto 4): hasta ahora esto solo se podía por REST, a mano.
+		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_crear_anuncio&id=' . $item->ID ), 'convoca_enroll_anuncio_' . $item->ID ) ), esc_html__( 'Crear anuncio', 'convoca-enroll' ) );
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=convoca-enroll&actividad_filter=' . $item->ID ) ), 'Inscripciones' );
 
 		return implode( ' | ', $actions );

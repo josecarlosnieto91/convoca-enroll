@@ -32,6 +32,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Blog_Post_Manager {
 
+	/**
+	 * Dónde está el formulario en la página de la actividad.
+	 *
+	 * El botón de la entrada generada apuntaba a `#inscribirme`, un ancla que NO EXISTE en ninguna página: se
+	 * pulsaba, cargaba la actividad y no bajaba a ninguna parte (enroll#22, contado: 0 elementos con ese id).
+	 * El id de verdad, el que pinta el plugin, es `convoca-form-inscripcion`.
+	 */
+	private const ANCLA_FORMULARIO = '#convoca-form-inscripcion';
+
 	const META_BLOG_POST_ID = '_convoca_media_blog_post_id';
 	const META_ACTIVIDAD_ID = '_convoca_media_actividad_id';
 
@@ -74,7 +83,7 @@ class Blog_Post_Manager {
 		$precio_socio    = get_post_meta( $actividad_id, $meta_prefix . 'precio_socio', true );
 		$plazas          = get_post_meta( $actividad_id, $meta_prefix . 'plazas_totales', true );
 		$permalink       = get_permalink( $actividad_id );
-		$inscripcion_url = $permalink ? $permalink . '#inscribirme' : '';
+		$inscripcion_url = $permalink ? $permalink . self::ANCLA_FORMULARIO : '';
 
 		$content = self::build_content( $actividad, $poster_url, $fecha_inicio, $fecha_fin, $ubicacion, $precio_socio, $plazas, $inscripcion_url );
 
@@ -139,7 +148,7 @@ class Blog_Post_Manager {
 		$precio_socio    = get_post_meta( $actividad_id, $meta_prefix . 'precio_socio', true );
 		$plazas          = get_post_meta( $actividad_id, $meta_prefix . 'plazas_totales', true );
 		$permalink       = get_permalink( $actividad_id );
-		$inscripcion_url = $permalink ? $permalink . '#inscribirme' : '';
+		$inscripcion_url = $permalink ? $permalink . self::ANCLA_FORMULARIO : '';
 
 		$content = self::build_content( $actividad, $poster_url, $fecha_inicio, $fecha_fin, $ubicacion, $precio_socio, $plazas, $inscripcion_url );
 
