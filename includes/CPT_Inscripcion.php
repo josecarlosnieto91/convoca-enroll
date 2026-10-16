@@ -219,22 +219,34 @@ class CPT_Inscripcion {
 		$val = get_post_meta( $post_id, self::META_PREFIX . $key, $single );
 
 		// Fallback for legacy data or migration issues.
-		if ( empty( $val ) ) {
-			$val = get_post_meta( $post_id, '_convoca_' . $key, $single );
+		//
+		// Con `empty()` esto estaba mal: en PHP `'0'` es vacío, así que una meta guardada como `'0'` —un «no»
+		// de una versión anterior, por ejemplo— se saltaba la cadena de respaldo y se quedaba en lo que
+		// devolviera la última lectura, que era nada. No era cosa solo de la asistencia: le pasaba a
+		// cualquier clave con `'0'` (enroll#27).
+		$vacio = ( '' === $val || null === $val || false === $val );
+		if ( $vacio ) {
+			$val   = get_post_meta( $post_id, '_convoca_' . $key, $single );
+			$vacio = ( '' === $val || null === $val || false === $val );
 		}
-		if ( empty( $val ) ) {
+		if ( $vacio ) {
 			$val = get_post_meta( $post_id, $key, $single );
 		}
 
 		// Normalize legacy attendance values.
+		//
+		// Ojo con `empty()`: en PHP `'0'` **es vacío**, así que un `'0'` guardado por una versión anterior —que
+		// es «no vino»— se leía como «no registrada», y el CRM del monitor contaba a esa persona como pendiente
+		// en vez de como ausente (enroll#27). Se compara con cadena vacía, que es lo que de verdad significa
+		// «no hay nada».
 		if ( $key === 'asistencia' ) {
-			if ( $val === '1' ) {
+			if ( '1' === (string) $val ) {
 				return 'si';
 			}
-			if ( $val === '0' ) {
+			if ( '0' === (string) $val ) {
 				return 'no';
 			}
-			if ( empty( $val ) ) {
+			if ( '' === (string) $val ) {
 				return 'no_registrada';
 			}
 		}
@@ -249,6 +261,31 @@ class CPT_Inscripcion {
 	 * @param mixed  $value New value.
 	 * @return int|bool
 	 */
+	/**
+	 * La asistencia de una inscripción, en la forma del canon.
+	 *
+	 * El canon está declarado en `META_FIELDS`: `si` | `no` | `no_registrada` (o nada). Las fichas
+	 * antiguas —y algún camino que escribía pulseadas— dejaron `1` y `0` para lo mismo, así que se
+	 * aceptan las dos formas y aquí se devuelve **una sola**: `si`, `no`, o cadena vacía si no hay nada
+	 * registrado. Sin esto, el CRM del monitor decía «0 Asistieron» con la asistencia guardada como `si`
+	 * mientras su propio CSV la traía (enroll#27).
+	 *
+	 * @param int $post_id Inscripción.
+	 * @return string 'si' | 'no' | ''.
+	 */
+	public static function asistencia( int $post_id ): string {
+		$valor = (string) self::get_meta( $post_id, 'asistencia' );
+
+		$formas = array(
+			'si' => 'si',
+			'1'  => 'si',
+			'no' => 'no',
+			'0'  => 'no',
+		);
+
+		return $formas[ $valor ] ?? '';
+	}
+
 	public static function update_meta( int $post_id, string $key, $value ) {
 		return update_post_meta( $post_id, self::META_PREFIX . $key, $value );
 	}

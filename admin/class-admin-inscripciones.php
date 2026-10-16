@@ -352,11 +352,11 @@ class Inscriptions_List extends \WP_List_Table {
 	}
 
 	public function column_asistencia( $item ): string {
-		$status = CPT_Inscripcion::get_meta( $item->ID, 'asistencia' );
-		if ( $status === 'si' ) {
+		$status = CPT_Inscripcion::asistencia( $item->ID );
+		if ( 'si' === $status ) {
 			return '<span class="convoca-badge convoca-badge--success">' . esc_html__( 'Asistió', 'convoca-enroll' ) . '</span>';
 		}
-		if ( $status === 'no' ) {
+		if ( 'no' === $status ) {
 			return '<span class="convoca-badge convoca-badge--error">' . esc_html__( 'No asistió', 'convoca-enroll' ) . '</span>';
 		}
 		return '<span class="convoca-badge convoca-badge--info">' . esc_html__( 'Sin registrar', 'convoca-enroll' ) . '</span>';

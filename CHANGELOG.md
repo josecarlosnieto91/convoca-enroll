@@ -1,12 +1,19 @@
-## [2.7.61] — 2026-10-16
+## [2.7.62] — 2026-10-16
 
 ### Arreglado
-- **El bloque del formulario ya no le da instrucciones de editor a un visitante (theme#10).** Cuando no
-  tiene actividad, decía «Selecciona una actividad en el editor» a cualquiera que pasara por la página. Ahora
-  esa frase es para quien puede arreglarlo (`edit_posts`) y a los demás se les da el mismo aviso que da el
-  shortcode: «Aquí no hay ninguna actividad abierta a inscripción», con el enlace a las que sí lo están. Para
-  eso `aviso_sin_actividad()` pasa a ser público y se reutiliza desde el bloque, en vez de tener dos mensajes.
+- **El CRM del monitor decía «0 Asistieron» con la asistencia marcada** (enroll#27). La asistencia se guarda
+  como `si`/`no` (el canon lo declara el propio CPT), pero los contadores, la columna CHECK-IN y los botones de
+  la pantalla comparaban con `'1'`/`'0'`, así que ninguna asistencia contaba —mientras el CSV del mismo listado
+  sí la traía—. Ahora todos leen por la misma puerta, `CPT_Inscripcion::asistencia()`, que devuelve `si`, `no` o
+  vacío y acepta las dos formas.
+- Y dos defectos de fondo, encontrados al medirlo:
+  - `CPT_Inscripcion::get_meta()` usaba `empty()` en el normalizador y en la cadena de respaldo de datos
+    antiguos. En PHP **`'0'` es vacío**, así que una meta guardada como `'0'` —un «no» de una versión
+    anterior— se leía como vacía. No era cosa solo de la asistencia: le pasaba a cualquier clave con `'0'`.
+  - Los botones de asistencia enviaban `data-status="1"`/`"0"` y ahora envían `si`/`no`, que es lo que se
+    guarda.
 
 ### Notas
-- Prueba nueva en `EntradaDeActividadTest`: el aviso depende de quien mira y el aviso público es reutilizable.
+- Pruebas nuevas de la vara de la asistencia (las dos formas se contestan igual; sin marca no se inventa nada).
+  Total: 221.
 

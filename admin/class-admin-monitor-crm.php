@@ -440,14 +440,14 @@ class Admin_Monitor_CRM {
 
 		foreach ( $inscripciones as $ins ) {
 			$estado     = CPT_Inscripcion::get_meta( $ins->ID, 'estado' );
-			$asistencia = CPT_Inscripcion::get_meta( $ins->ID, 'asistencia' );
+			$asistencia = CPT_Inscripcion::asistencia( $ins->ID );
 
 			if ( $estado === 'confirmada' ) {
 				++$confirmadas;
 				$list_c[] = $ins;
-				if ( $asistencia === '1' ) {
+				if ( 'si' === $asistencia ) {
 					++$asistieron;
-				} elseif ( $asistencia === '0' ) {
+				} elseif ( 'no' === $asistencia ) {
 					++$faltaron;
 				} else {
 					++$no_marcados;
@@ -476,8 +476,8 @@ class Admin_Monitor_CRM {
 			} else {
 				foreach ( $list_c as $ins ) {
 					$nombre     = CPT_Inscripcion::get_meta( $ins->ID, 'nombre' );
-					$asistencia = CPT_Inscripcion::get_meta( $ins->ID, 'asistencia' );
-					$row_class  = $asistencia === '1' ? 'checked-in' : ( $asistencia === '0' ? 'absent' : '' );
+					$asistencia = CPT_Inscripcion::asistencia( $ins->ID );
+					$row_class  = 'si' === $asistencia ? 'checked-in' : ( 'no' === $asistencia ? 'absent' : '' );
 					echo '<div class="checkin-row ' . esc_attr( $row_class ) . '" data-id="' . (int) $ins->ID . '">';
 					echo '<div class="checkin-name">' . esc_html( $nombre ) . '</div>';
 					echo '<div class="checkin-actions">';
@@ -560,10 +560,10 @@ class Admin_Monitor_CRM {
 			if ( ! $is_waitlist ) {
 				echo '<td style="text-align:center;">';
 				if ( $estado === 'confirmada' ) {
-					$asistencia = CPT_Inscripcion::get_meta( $item->ID, 'asistencia' );
+					$asistencia = CPT_Inscripcion::asistencia( $item->ID );
 					echo '<div class="attendance-control" style="justify-content:center;" data-id="' . (int) $item->ID . '">';
-					echo '<button class="attendance-btn mark-attendance ' . ( $asistencia === '1' ? 'active' : '' ) . '" data-status="1" title="Ha venido">✅</button>';
-					echo '<button class="attendance-btn mark-attendance ' . ( $asistencia === '0' ? 'active' : '' ) . '" data-status="0" title="No ha venido">❌</button>';
+					echo '<button class="attendance-btn mark-attendance ' . ( 'si' === $asistencia ? 'active' : '' ) . '" data-status="si" title="Ha venido">✅</button>';
+					echo '<button class="attendance-btn mark-attendance ' . ( 'no' === $asistencia ? 'active' : '' ) . '" data-status="no" title="No ha venido">❌</button>';
 					echo '</div>';
 				} else {
 					echo '<span style="color:#cbd5e1;">' . esc_html__( '&mdash;', 'convoca-enroll' ) . '</span>';
@@ -605,12 +605,12 @@ class Admin_Monitor_CRM {
 
 		foreach ( $items as $ins ) {
 			$estado     = CPT_Inscripcion::get_meta( $ins->ID, 'estado' );
-			$asistencia = CPT_Inscripcion::get_meta( $ins->ID, 'asistencia' );
+			$asistencia = CPT_Inscripcion::asistencia( $ins->ID );
 			if ( $estado === 'confirmada' ) {
 				++$confirmadas;
-				if ( $asistencia === '1' ) {
+				if ( 'si' === $asistencia ) {
 					++$asistieron;
-				} elseif ( $asistencia === '0' ) {
+				} elseif ( 'no' === $asistencia ) {
 					++$faltaron;
 				}
 			} elseif ( in_array( $estado, array( 'pendiente', 'pendiente_pago' ), true ) ) {

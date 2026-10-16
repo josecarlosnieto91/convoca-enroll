@@ -183,8 +183,8 @@ class Admin_Checkin {
 					$total     = count( $inscripciones );
 					$presentes = 0;
 					foreach ( $inscripciones as $ins ) {
-						$asistencia = get_post_meta( $ins->ID, '_convoca_asistencia', true );
-						if ( $asistencia === 'si' ) {
+						$asistencia = CPT_Inscripcion::asistencia( $ins->ID );
+						if ( 'si' === $asistencia ) {
 							++$presentes;
 						}
 					}
