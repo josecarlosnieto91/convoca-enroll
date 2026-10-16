@@ -1,18 +1,12 @@
-## [2.7.60] — 2026-10-16
+## [2.7.61] — 2026-10-16
 
 ### Arreglado
-- **El botón de la entrada generada ya lleva al formulario (enroll#22, punto 3).** Apuntaba a `#inscribirme`,
-  un ancla que **no existe** en ninguna página (contado: 0 elementos con ese id): al pulsar, el navegador
-  cargaba la actividad y no bajaba a ninguna parte, y en una entrada larga había que buscar el formulario a
-  mano. Ahora el ancla y su destino salen del mismo sitio: la constante `ANCLA_FORMULARIO`, con el id que de
-  verdad pinta el plugin (`convoca-form-inscripcion`).
-- **Y la entrada de anuncio ya se puede crear desde WordPress (enroll#22, punto 4).** Hasta ahora el módulo de
-  medios (cartel + entrada + QR) solo se podía usar por REST —`POST /convoca/v1/media/blog/create`—, que para
-  la junta es como no tenerlo. Ahora hay una acción **«Crear anuncio»** en el listado de actividades, con su
-  nonce y su permiso, que llama al **mismo** gestor y lleva a la entrada recién creada para revisarla y
-  publicarla.
+- **El bloque del formulario ya no le da instrucciones de editor a un visitante (theme#10).** Cuando no
+  tiene actividad, decía «Selecciona una actividad en el editor» a cualquiera que pasara por la página. Ahora
+  esa frase es para quien puede arreglarlo (`edit_posts`) y a los demás se les da el mismo aviso que da el
+  shortcode: «Aquí no hay ninguna actividad abierta a inscripción», con el enlace a las que sí lo están. Para
+  eso `aviso_sin_actividad()` pasa a ser público y se reutiliza desde el bloque, en vez de tener dos mensajes.
 
 ### Notas
-- Dos pruebas nuevas: el ancla del botón es exactamente el id que pinta el formulario (comparado con
-  `templates/form-inscripcion.php`), y se puede crear el anuncio desde el listado, llamando al gestor común.
+- Prueba nueva en `EntradaDeActividadTest`: el aviso depende de quien mira y el aviso público es reutilizable.
 

@@ -116,8 +116,15 @@ class Block_Inscripcion {
 	public function render_inscripcion( array $attrs ): string {
 		$id = (int) ( $attrs['actividadId'] ?? 0 );
 		if ( ! $id ) {
-			return '<p class="convoca-alert convoca-alert--info">' .
-				esc_html__( 'Selecciona una actividad en el editor.', 'convoca-enroll' ) . '</p>';
+			// A quien puede arreglarlo, se le dice qué hacer. A un visitante, esa frase no le sirve de nada
+			// (y no tiene por qué leer instrucciones de editor): se le da el mismo aviso que da el shortcode.
+			if ( current_user_can( 'edit_posts' ) ) {
+				return '<p class="convoca-alert convoca-alert--info">' .
+					esc_html__( 'Selecciona una actividad en el editor.', 'convoca-enroll' ) . '</p>';
+			}
+
+			$form = new Form_Inscripcion();
+			return $form->aviso_sin_actividad();
 		}
 
 		$form = new Form_Inscripcion();

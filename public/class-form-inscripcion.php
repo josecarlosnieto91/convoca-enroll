@@ -114,7 +114,14 @@ class Form_Inscripcion {
 	 *
 	 * @return string HTML del aviso.
 	 */
-	protected function aviso_sin_actividad(): string {
+	/**
+	 * Aviso público cuando no hay actividad que inscribir.
+	 *
+	 * Es `public` a propósito: el bloque del formulario lo reutiliza cuando no tiene actividad, en vez de
+	 * enseñarle a un visitante una instrucción de editor («Selecciona una actividad en el editor»), que no
+	 * puede hacer nada con ella (theme#10).
+	 */
+	public function aviso_sin_actividad(): string {
 		$archivo = get_post_type_archive_link( 'actividad' );
 		$salida  = '<div class="convoca-alert convoca-alert--warning" role="status">';
 		$salida .= '<p>' . esc_html__( 'Aquí no hay ninguna actividad abierta a inscripción.', 'convoca-enroll' ) . '</p>';

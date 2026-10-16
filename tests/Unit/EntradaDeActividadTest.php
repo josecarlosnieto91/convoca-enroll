@@ -84,4 +84,25 @@ class EntradaDeActividadTest extends TestCase {
 			'Llama al mismo gestor que el módulo de medios: una sola forma de generar la entrada, no una copia'
 		);
 	}
+
+	/** El aviso del bloque, solo para quien puede arreglarlo (theme#10). */
+	public function test_el_aviso_del_bloque_depende_de_quien_mira(): void {
+		$bloque = $this->leer( 'includes/Block_Inscripcion.php' );
+
+		$this->assertStringContainsString(
+			"current_user_can( 'edit_posts' )",
+			$bloque,
+			'A un visitante no se le dan instrucciones de editor: no puede hacer nada con ellas'
+		);
+		$this->assertStringContainsString(
+			'aviso_sin_actividad()',
+			$bloque,
+			'A los demás se les da el aviso público, el mismo que da el shortcode'
+		);
+		$this->assertStringContainsString(
+			'public function aviso_sin_actividad(): string {',
+			$this->leer( 'public/class-form-inscripcion.php' ),
+			'El aviso público tiene que ser reutilizable desde el bloque'
+		);
+	}
 }
