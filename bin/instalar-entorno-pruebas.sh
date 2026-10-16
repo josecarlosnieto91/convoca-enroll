@@ -49,10 +49,24 @@ echo "    WordPress $VERSION_REAL"
 # y un paso de CI no puede depender de una herramienta que puede faltar).
 if [ ! -f "$DATOS/wptests/includes/functions.php" ]; then
 	rm -rf "$DATOS/wpd" "$DATOS/wpd.tgz"
-	url_test="https://github.com/WordPress/wordpress-develop/archive/refs/tags/$VERSION_REAL.tar.gz"
-	codigo="$(curl -sSL -o "$DATOS/wpd.tgz" -w '%{http_code}' "$url_test")"
-	if [ "$codigo" != "200" ]; then
-		echo "    ERROR: no hay biblioteca de pruebas para la versión $VERSION_REAL ($url_test → $codigo)"
+	# La etiqueta no siempre es la versión tal cual: wordpress.org sirve las versiones SIN parche
+	# (7.0) y wordpress-develop solo etiqueta a partir del parche (7.0.0, 7.0.1…). Con `7.0` la
+	# URL daba 404 y el script abortaba antes de montar nada, aunque el entorno fuera viable
+	# (enroll#28). Se prueban en orden la versión tal cual, la `.0` y los parches de la serie, y
+	# se usa la primera que exista: para `7.0.7` acierta la primera, para `7.0` la segunda.
+	url_test=""
+	probadas=""
+	for candidata in "$VERSION_REAL" "$VERSION_REAL.0" $(seq 1 30 | sed "s|^|$VERSION_REAL.|"); do
+		[ -n "$url_test" ] && break
+		probadas="$probadas $candidata,"
+		url="https://github.com/WordPress/wordpress-develop/archive/refs/tags/$candidata.tar.gz"
+		if [ "200" = "$(curl -sSL -o "$DATOS/wpd.tgz" -w '%{http_code}' "$url")" ]; then
+			url_test="$url"
+			echo "    biblioteca de pruebas: etiqueta $candidata (WordPress $VERSION_REAL)"
+		fi
+	done
+	if [ -z "$url_test" ]; then
+		echo "    ERROR: no hay biblioteca de pruebas para la versión $VERSION_REAL (probadas:$probadas)"
 		exit 1
 	fi
 	mkdir -p "$DATOS/wpd"
