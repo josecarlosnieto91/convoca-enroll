@@ -67,7 +67,7 @@ class Blog_Post_Manager {
 			return new \WP_Error( 'invalid_activity', __( 'Actividad no encontrada.', 'convoca-enroll' ) );
 		}
 
-		$meta_prefix     = 'convoca_';
+		$meta_prefix     = '_convoca_'; // Con guion bajo: es como están guardadas las metas en TODO el ecosistema (enroll#22). Sin él, la entrada salía sin fecha, ni lugar, ni plazas: se leían claves que no existen.
 		$fecha_inicio    = get_post_meta( $actividad_id, $meta_prefix . 'fecha_inicio', true );
 		$fecha_fin       = get_post_meta( $actividad_id, $meta_prefix . 'fecha_fin', true );
 		$ubicacion       = get_post_meta( $actividad_id, $meta_prefix . 'ubicacion', true );
@@ -132,7 +132,7 @@ class Blog_Post_Manager {
 			return $post_id;
 		}
 
-		$meta_prefix     = 'convoca_';
+		$meta_prefix     = '_convoca_'; // Con guion bajo: es como están guardadas las metas en TODO el ecosistema (enroll#22). Sin él, la entrada salía sin fecha, ni lugar, ni plazas: se leían claves que no existen.
 		$fecha_inicio    = get_post_meta( $actividad_id, $meta_prefix . 'fecha_inicio', true );
 		$fecha_fin       = get_post_meta( $actividad_id, $meta_prefix . 'fecha_fin', true );
 		$ubicacion       = get_post_meta( $actividad_id, $meta_prefix . 'ubicacion', true );
@@ -194,7 +194,15 @@ class Blog_Post_Manager {
 		// 2. Activity content.
 		$blocks[] = '<!-- wp:paragraph --><p>' . wp_kses_post( $actividad->post_content ) . '</p><!-- /wp:paragraph -->';
 
-		// 3. Event details.
+		// 3. El formulario de inscripción, DENTRO de la entrada (enroll#22): el bloque funciona (es dinámico,
+		// lo pinta el plugin) y así la entrada sirve por sí sola, sin depender de que alguien lo añada a mano
+		// ni de que el lector encuentre el enlace. El bloque se registra con este nombre exacto.
+		$blocks[] = sprintf(
+			'<!-- wp:convoca-enroll/formulario-inscripcion {"actividadId":%d} /-->',
+			(int) $actividad->ID
+		);
+
+		// 4. Event details.
 		$details = array();
 		if ( $fecha_inicio ) {
 			$details[] = sprintf( '<strong>📅 %s:</strong> %s', __( 'Fecha', 'convoca-enroll' ), \Convoca\Core\Utils::format_date( $fecha_inicio, 'j F Y' ) );
