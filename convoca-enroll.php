@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Enroll
  * Plugin URI:        https://getconvoca.app
  * Description:       Centralized activity enrollment system.
- * Version: 2.7.62
+ * Version: 2.7.63
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -390,6 +390,10 @@ add_action(
 		new Panel_Reservas();
 		new Pagina_Inscripcion();
 		new Checkin_Handler();
+
+		// Limpieza de ganchos de cron de versiones anteriores (desplegamos copiando ficheros:
+		// la desactivación no corre nunca y los recurrentes se quedan agendados para siempre).
+		Migrator::init();
 		Checkin_PWA::init();
 		new Maintenance();
 		new Email_Queue();

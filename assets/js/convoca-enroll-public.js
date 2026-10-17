@@ -157,6 +157,10 @@
                         if (icon) icon.textContent = '💳';
                         if (title) title.textContent = 'Inscripción pendiente de aportación';
                         if (msg) msg.textContent = 'Completa la aportación para confirmar tu plaza.';
+                    } else if (res.data.estado === 'pendiente') {
+                        if (icon) icon.textContent = '⏳';
+                        if (title) title.textContent = 'Solicitud de inscripción recibida';
+                        if (msg) msg.textContent = 'Tu plaza queda pendiente de validación: te avisaremos por email en cuanto se confirme.';
                     } else {
                         if (icon) icon.textContent = '🎉';
                         if (title) title.textContent = '¡Inscripción confirmada!';

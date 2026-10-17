@@ -465,7 +465,9 @@ class Admin_Monitor_CRM {
 		echo '<div class="stat-box"><span>' . (int) $confirmadas . '</span>' . esc_html__( 'Confirmados', 'convoca-enroll' ) . '</div>';
 		echo '<div class="stat-box green"><span>' . (int) $asistieron . '</span>' . esc_html__( 'Asistieron', 'convoca-enroll' ) . '</div>';
 		echo '<div class="stat-box red"><span>' . (int) $faltaron . '</span>' . esc_html__( 'Faltaron', 'convoca-enroll' ) . '</div>';
-		echo '<div class="stat-box warning"><span>' . (int) $no_marcados . '</span>' . esc_html__( 'Pendientes', 'convoca-enroll' ) . '</div>';
+		// «Pendientes» = confirmadas sin marcar + las que aún están pendientes de estado.
+		// Antes sólo contaba las primeras, así que una inscripción pendiente no caía en ninguna caja.
+		echo '<div class="stat-box warning"><span>' . (int) ( $no_marcados + $pendientes ) . '</span>' . esc_html__( 'Pendientes', 'convoca-enroll' ) . '</div>';
 		echo '</div>';
 
 		if ( $checkin_mode ) {

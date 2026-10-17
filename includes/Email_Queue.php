@@ -89,6 +89,11 @@ class Email_Queue {
 
 		if ( $inserted ) {
 			\Convoca\Core\Logger::log( 'Email encolado para ' . $data['to'] . ' (' . $data['subject'] . ')', 'info', 'Enroll/Email', (int) ( $data['inscripcion_id'] ?? 0 ) );
+			// Que salga ya: sin esto el correo esperaba al cron del minuto y quien se
+			// inscribía no recibía nada hasta entonces (y nada, si el cron no corría).
+			if ( ! wp_next_scheduled( 'convoca_enroll_process_email_queue' ) || wp_next_scheduled( 'convoca_enroll_process_email_queue' ) > time() + 5 ) {
+				wp_schedule_single_event( time(), 'convoca_enroll_process_email_queue' );
+			}
 			return $wpdb->insert_id;
 		}
 

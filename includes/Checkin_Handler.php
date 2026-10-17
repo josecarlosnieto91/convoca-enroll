@@ -414,7 +414,7 @@ class Checkin_Handler {
 					}
 
 					const formData = new URLSearchParams();
-					formData.append('action', 'convoca_enroll_qr_checkin');
+					formData.append('action', 'convoca_qr_checkin');
 					formData.append('nonce', '<?php echo esc_js( wp_create_nonce( 'convoca_enroll_qr_checkin' ) ); ?>');
 					formData.append('id', token);
 
@@ -656,13 +656,15 @@ class Checkin_Handler {
 				return true;
 			}
 
-			// 5. Mark attendance
+			// 5. Mark attendance (con su hora: sin ella, el check-in no dejaba rastro horario)
 			$result = Motor_Inscripcion::set_asistencia( $id, 'si' );
 
 			if ( is_wp_error( $result ) ) {
 				$wpdb->query( 'ROLLBACK' );
 				return $result;
 			}
+
+			update_post_meta( $id, '_convoca_checkin_hora', current_time( 'mysql' ) );
 
 			$wpdb->query( 'COMMIT' );
 			return true;

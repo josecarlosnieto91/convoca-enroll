@@ -241,14 +241,16 @@ class Admin_Page {
 			wp_enqueue_script( 'chart-js', CONVOCA_ENROLL_URL . 'assets/vendor/chart.umd.min.js', array(), '4.4.1', true );
 		}
 
-		if ( $hook === 'actividad_page_conv-monitor-crm' ) {
+		// El hook real de esta pantalla es `actividades_page_conv-monitor-crm` (plural):
+		// con el singular el JS del CRM no se encolaba nunca y los botones quedaban inertes.
+		if ( false !== strpos( (string) $hook, 'conv-monitor-crm' ) ) {
 			wp_enqueue_script( 'conv-crm', CONVOCA_ENROLL_URL . 'assets/js/convoca-enroll-crm.js', array( 'convoca-common-admin-js' ), CONVOCA_ENROLL_VERSION, true );
 			wp_localize_script(
 				'conv-crm',
 				'bdeCrm',
 				array(
 					'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-					'nonce'   => wp_create_nonce( 'convoca_enroll_crm_attendance' ),
+					'nonce'   => wp_create_nonce( 'convoca_enroll_attendance_nonce' ),
 				)
 			);
 		}
