@@ -79,7 +79,7 @@ class MigradorDeGanchosHeredadosTest extends TestCase {
 	}
 
 	public function test_el_migrador_esta_enganchado_al_init(): void {
-		$codigo = $this->codigo_sin_comentarios( dirname( __DIR__ ) . '/includes/class-migrator.php' );
+		$codigo = $this->codigo_sin_comentarios( dirname( __DIR__ ) . '/includes/Migrator.php' );
 		$this->assertStringContainsString( "add_action( 'init'", $codigo );
 		$this->assertStringContainsString( 'migrar_ganchos_heredados', $codigo );
 	}
