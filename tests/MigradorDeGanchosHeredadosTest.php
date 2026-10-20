@@ -55,21 +55,20 @@ class MigradorDeGanchosHeredadosTest extends TestCase {
 		return $lista;
 	}
 
-	public function test_ningun_fichero_programa_los_ganchos_heredados(): void {
+	public function test_ningun_fichero_programa_ganchos_de_instalacion(): void {
 		$programadores = array( 'wp_schedule_event', 'wp_schedule_single_event', 'as_schedule_recurring_action', 'as_schedule_single_action' );
 		$culpables     = array();
 
+		// El nombre anterior del plugin llevaba dentro el nombre de una instalación real:
+		// no puede aparecer en NINGÚN fichero del paquete, ni como gancho ni como prefijo.
+		// (La lista de heredados ya no vive en el código: la aporta el sitio por filtro.)
 		foreach ( $this->ficheros_del_plugin() as $ruta ) {
 			$codigo = $this->codigo_sin_comentarios( $ruta );
-			foreach ( Migrator::GANCHOS_HEREDADOS as $gancho ) {
-				$pos = strpos( $codigo, "'" . $gancho . "'" );
-				if ( false !== $pos ) {
-					$culpables[] = basename( $ruta ) . ' nombra ' . $gancho;
-				}
+			if ( false !== stripos( $codigo, 'biodevas' ) ) { // convoca-hygiene-ignore: la prueba existe para prohibir ese prefijo; el literal es el patrón que se busca.
+				$culpables[] = basename( $ruta ) . ' nombra el prefijo viejo';
 			}
-			// Y que el programador no use una de esas llamadas, por si el nombre viene de una variable.
 			foreach ( $programadores as $fn ) {
-				if ( false !== strpos( $codigo, $fn ) && false !== strpos( $codigo, 'biodevas_enroll_' ) ) {
+				if ( false !== strpos( $codigo, $fn ) && false !== stripos( $codigo, 'biodevas_enroll_' ) ) { // convoca-hygiene-ignore: patrón buscado por la prueba, no un gancho del código.
 					$culpables[] = basename( $ruta ) . ' programa con ' . $fn . ' un gancho heredado';
 				}
 			}
@@ -84,10 +83,31 @@ class MigradorDeGanchosHeredadosTest extends TestCase {
 		$this->assertStringContainsString( 'migrar_ganchos_heredados', $codigo );
 	}
 
-	public function test_la_lista_de_heredados_no_esta_vacia_y_son_del_nombre_anterior(): void {
-		$this->assertNotEmpty( Migrator::GANCHOS_HEREDADOS );
-		foreach ( Migrator::GANCHOS_HEREDADOS as $gancho ) {
-			$this->assertStringStartsWith( 'biodevas_enroll_', $gancho, 'Se esperaba un gancho del nombre anterior: ' . $gancho );
-		}
+	public function test_los_heredados_los_aporta_el_sitio_por_filtro(): void {
+		// Sin filtro no hay nada que limpiar: el producto no trae nombres de instalaciones.
+		$this->assertSame( array(), Migrator::ganchos_heredados() );
+
+		$filtro = static function ( $ganchos ) {
+			return array_merge( (array) $ganchos, array( 'prefijo_viejo_cola', 'prefijo_viejo_avisos' ) );
+		};
+		add_filter( 'convoca_enroll_ganchos_heredados', $filtro );
+		$this->assertSame( array( 'prefijo_viejo_cola', 'prefijo_viejo_avisos' ), Migrator::ganchos_heredados() );
+		remove_filter( 'convoca_enroll_ganchos_heredados', $filtro );
+
+		// Basura del filtro: ni ganchos vacíos ni valores que no son cadenas.
+		$basura = static function () {
+			return array( 'gancho_valido', '', null, array( 'no' ), 0 );
+		};
+		add_filter( 'convoca_enroll_ganchos_heredados', $basura );
+		$this->assertSame( array( 'gancho_valido', '0' ), Migrator::ganchos_heredados() );
+		remove_filter( 'convoca_enroll_ganchos_heredados', $basura );
+
+		// Y si alguien devuelve algo que no es una lista, no se limpia nada.
+		$roto = static function () {
+			return 'no-es-una-lista';
+		};
+		add_filter( 'convoca_enroll_ganchos_heredados', $roto );
+		$this->assertSame( array(), Migrator::ganchos_heredados() );
+		remove_filter( 'convoca_enroll_ganchos_heredados', $roto );
 	}
 }

@@ -43,7 +43,7 @@ class Panel_Reservas {
 	/* ── Shortcode ─────────────────────────────── */
 
 	public function shortcode( $atts ): string {
-		wp_enqueue_style( 'conv-panel', CONVOCA_ENROLL_URL . 'assets/css/convoca-enroll-panel.css', array(), CONVOCA_ENROLL_VERSION );
+		wp_enqueue_style( 'conv-panel', CONVOCA_ENROLL_URL . 'assets/css/convoca-enroll-panel.css', array( 'convoca-core' ), CONVOCA_ENROLL_VERSION );
 		wp_enqueue_script( 'conv-panel', CONVOCA_ENROLL_URL . 'assets/js/convoca-enroll-panel.js', array( 'convoca-common-js' ), CONVOCA_ENROLL_VERSION, true );
 		wp_localize_script(
 			'conv-panel',

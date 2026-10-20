@@ -47,7 +47,7 @@ class Admin_Settings {
 		}
 
 		if ( ! \Convoca\Core\Utils::is_plugin_active_safe( 'convoca-core/convoca-core.php' ) ) {
-			echo '<div class="notice notice-warning"><p>⚠️ ' . esc_html__( 'Convoca Common no está activo. Algunas funciones podrían no estar disponibles.', 'convoca-enroll' ) . '</p></div>';
+			echo '<div class="notice notice-warning"><p>⚠️ ' . esc_html__( 'Convoca Core no está activo. Algunas funciones podrían no estar disponibles.', 'convoca-enroll' ) . '</p></div>';
 		}
 
 		$s         = get_option( self::OPTION, array() );
@@ -916,7 +916,7 @@ class Admin_Settings {
 		// 1. Plugins
 		$plugin_definitions = array(
 			'convoca-core'    => array(
-				'name'     => 'Convoca Common',
+				'name'     => 'Convoca Core',
 				'class'    => '\\Convoca\\Core\\Utils',
 				'severity' => 'error',
 			),

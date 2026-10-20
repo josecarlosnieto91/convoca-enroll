@@ -1,3 +1,24 @@
+## [2.7.64] — 2026-10-20
+
+### Arreglado
+- **La hoja pública nunca declaraba dependencia de `convoca-common.css`.** Los scripts sí
+  (`convoca-common-js`): por eso el JS del ecosistema funcionaba y las clases `convoca-*` salían sin
+  estilo. Ahora las cuatro hojas del plugin (pública, panel, admin) dependen del handle
+  `convoca-core`, así que la hoja común viaja con ellas aunque la página no tenga shortcodes.
+- **La lista de espera perdía su color de aviso.** La regla pedía `.conv-submit-btn`, una clase que
+  solo existía en el panel de reservas (que carga otra hoja): la cadena de selectores era imposible.
+  Ahora apunta al botón real, `.convoca-btn-primary`.
+- **El botón de confirmar del modal no salía en rojo.** El template usaba `convoca-btn-danger`; la
+  variante del núcleo es `convoca-btn--danger`.
+- **El JS del admin se descargaba y ejecutaba dos veces** en la pantalla del plugin: dos handles
+  (`conv-admin` y `conv-admin-js`) para el mismo fichero. Eliminado el segundo.
+
+### Cambiado
+- **Los ganchos de cron heredados ya no van en el código.** La lista llevaba dentro el nombre de una
+  instalación real y este fichero viaja en el paquete. Ahora la aporta el sitio por el filtro
+  `convoca_enroll_ganchos_heredados`; sin filtro no se limpia nada. El migrador sigue igual.
+- «Convoca Common» → «Convoca Core» en los textos que ve el usuario y en los catálogos `.pot`/`.po`.
+
 ## [2.7.63] — 2026-10-16
 
 ### Arreglado

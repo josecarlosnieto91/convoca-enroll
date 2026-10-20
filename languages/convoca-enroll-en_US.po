@@ -933,8 +933,8 @@ msgid "Error crítico: El motor de inscripciones no parece estar registrado corr
 msgstr "Critical error: The enrollment engine does not appear to be registered correctly."
 
 #: admin/class-admin-settings.php:57
-msgid "Convoca Common no está activo. Algunas funciones podrían no estar disponibles."
-msgstr "Convoca Common is not active. Some features may not be available."
+msgid "Convoca Core no está activo. Algunas funciones podrían no estar disponibles."
+msgstr "Convoca Core is not active. Some features may not be available."
 
 #: admin/class-admin-settings.php:58
 msgid "General"

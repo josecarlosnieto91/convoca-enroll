@@ -39,20 +39,35 @@ class Migrator {
 	public const VERSION_OPTION = 'convoca_enroll_ganchos_migrados';
 
 	/**
-	 * Ganchos de cron que dejaron versiones anteriores del plugin.
+	 * Ganchos de cron que dejaron versiones anteriores del plugin, aportados por el sitio.
 	 *
-	 * NO los programa ningún fichero del código actual (hay una prueba que lo vigila): son del nombre
-	 * anterior del plugin. Antes de añadir uno aquí, comprobar que el código no lo programa en ninguna
-	 * parte.
+	 * NO se hardcodean aquí: el nombre anterior del plugin llevaba dentro el nombre de una
+	 * instalación real, y este fichero viaja en el paquete y en un repositorio público. La
+	 * lista la pone el sitio que la necesita desde su mu-plugin:
+	 *
+	 *     add_filter( 'convoca_enroll_ganchos_heredados', function () {
+	 *         return array( 'prefijo_viejo_proceso_cola', … );
+	 *     } );
+	 *
+	 * NO los programa ningún fichero del código actual (hay una prueba que lo vigila).
 	 */
-	public const GANCHOS_HEREDADOS = array(
-		'biodevas_enroll_process_email_queue',
-		'biodevas_enroll_reminder_1hora',
-		'biodevas_enroll_reminder_24h',
-		'biodevas_enroll_cleanup_orphan_codes',
-		'biodevas_enroll_feedback',
-		'biodevas_enroll_google_photos_share',
-	);
+	public static function ganchos_heredados(): array {
+		$ganchos = apply_filters( 'convoca_enroll_ganchos_heredados', array() );
+
+		if ( ! is_array( $ganchos ) ) {
+			return array();
+		}
+
+		// Solo cadenas no vacías: un gancho vacío en `wp_clear_scheduled_hook()` limpia de más.
+		$limpios = array();
+		foreach ( $ganchos as $gancho ) {
+			if ( is_scalar( $gancho ) && '' !== (string) $gancho ) {
+				$limpios[] = (string) $gancho;
+			}
+		}
+
+		return $limpios;
+	}
 
 	/**
 	 * Engancha la migración.
@@ -75,7 +90,7 @@ class Migrator {
 			return;
 		}
 
-		foreach ( self::GANCHOS_HEREDADOS as $gancho ) {
+		foreach ( self::ganchos_heredados() as $gancho ) {
 			wp_clear_scheduled_hook( $gancho );
 		}
 

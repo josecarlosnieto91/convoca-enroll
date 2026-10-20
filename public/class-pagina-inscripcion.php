@@ -41,7 +41,7 @@ class Pagina_Inscripcion {
 		// Query upcoming activities.
 		$actividades = CPT_Actividad::get_upcoming( 100 );
 
-		wp_enqueue_style( 'conv-public', CONVOCA_ENROLL_URL . 'assets/css/convoca-enroll-public.css', array(), CONVOCA_ENROLL_VERSION );
+		wp_enqueue_style( 'conv-public', CONVOCA_ENROLL_URL . 'assets/css/convoca-enroll-public.css', array( 'convoca-core' ), CONVOCA_ENROLL_VERSION );
 
 		ob_start();
 		?>

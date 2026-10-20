@@ -117,13 +117,17 @@
 /* Common styles removed in favor of convoca-common.css */
 
 /* ── Waitlist form ────────────────────────────── */
-.conv-form--waitlist .conv-submit-btn {
+/* El botón de envío del formulario de lista de espera es el `.convoca-btn-primary`
+   de form-inscripcion.php. Antes el selector pedía `.conv-submit-btn`, una clase que
+   solo existía en el panel de reservas (que carga OTRA hoja), así que la regla nunca
+   se aplicaba: la lista de espera perdía su color de aviso. */
+.conv-form--waitlist .convoca-btn-primary {
     background: var(--wp--preset--color--amarillo, #ffab00);
     border-color: var(--wp--preset--color--amarillo, #ffab00);
     color: var(--wp--preset--color--violeta, #320028);
 }
 
-.conv-form--waitlist .conv-submit-btn:hover {
+.conv-form--waitlist .convoca-btn-primary:hover {
     background: #e69a00;
     border-color: #e69a00;
 }

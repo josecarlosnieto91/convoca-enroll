@@ -93,7 +93,7 @@ if ( $convoca_sin_js ) {
 					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce tu código de reserva.', 'convoca-enroll' ); ?></span>
 				</div>
 			</div>
-			<button type="submit" class="convoca-btn convoca-btn-primary conv-submit-btn">
+			<button type="submit" class="convoca-btn convoca-btn-primary">
 				🔍 <?php esc_html_e( 'Consultar reservas', 'convoca-enroll' ); ?>
 			</button>
 		</form>
@@ -125,7 +125,7 @@ if ( $convoca_sin_js ) {
 			<h3 id="conv-modal-title">⚠️ <?php esc_html_e( 'Cancelar reserva', 'convoca-enroll' ); ?></h3>
 			<p id="conv-modal-msg"><?php esc_html_e( '¿Estás seguro de que quieres cancelar esta reserva? Se liberará tu plaza.', 'convoca-enroll' ); ?></p>
 			<div class="conv-modal-actions">
-				<button id="conv-modal-confirm" class="convoca-btn convoca-btn-danger">
+				<button id="conv-modal-confirm" class="convoca-btn convoca-btn--danger">
 					<?php esc_html_e( 'Sí, cancelar reserva', 'convoca-enroll' ); ?>
 				</button>
 				<button id="conv-modal-close" class="convoca-btn convoca-btn-outline">

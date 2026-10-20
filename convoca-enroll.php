@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Enroll
  * Plugin URI:        https://getconvoca.app
  * Description:       Centralized activity enrollment system.
- * Version: 2.7.63
+ * Version: 2.7.64
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -49,14 +49,14 @@ if ( file_exists( $composer_autoload ) ) {
  */
 // Core classes auto-loaded via Convoca Core's Composer PSR-4
 
-// Compatibility Check: Ensure Convoca Common is loaded.
+// Compatibility Check: Ensure Convoca Core is loaded.
 if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
 	add_action(
 		'admin_notices',
 		function () {
 			printf(
 				'<div class="notice notice-error"><p>%s</p></div>',
-				'Convoca Enroll requiere el plugin Convoca Common Utilities activo para funcionar.'
+				'Convoca Enroll requiere el plugin Convoca Core activo para funcionar.'
 			);
 		}
 	);

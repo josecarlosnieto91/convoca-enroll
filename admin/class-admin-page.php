@@ -218,7 +218,7 @@ class Admin_Page {
 		if ( strpos( $hook, 'conv-' ) === false && strpos( $hook, 'page_conv' ) === false ) {
 			return;
 		}
-		wp_enqueue_style( 'conv-admin', CONVOCA_ENROLL_URL . 'assets/css/convoca-enroll-admin.css', array(), CONVOCA_ENROLL_VERSION );
+		wp_enqueue_style( 'conv-admin', CONVOCA_ENROLL_URL . 'assets/css/convoca-enroll-admin.css', array( 'convoca-core' ), CONVOCA_ENROLL_VERSION );
 		wp_enqueue_script( 'conv-admin', CONVOCA_ENROLL_URL . 'assets/js/convoca-enroll-admin.js', array( 'convoca-common-admin-js' ), CONVOCA_ENROLL_VERSION, true );
 		wp_localize_script(
 			'conv-admin',
@@ -233,9 +233,9 @@ class Admin_Page {
 			wp_enqueue_media();
 		}
 
-		if ( isset( $_GET['page'] ) && $_GET['page'] === 'convoca-enroll' ) {
-			wp_enqueue_script( 'conv-admin-js', CONVOCA_ENROLL_URL . 'assets/js/convoca-enroll-admin.js', array( 'convoca-common-admin-js' ), CONVOCA_ENROLL_VERSION, true );
-		}
+		// (Aquí había un bloque que re-encolaba con el handle `conv-admin-js` el mismo
+		// convoca-enroll-admin.js que ya encola `conv-admin` arriba: dos descargas y
+		// doble ejecución del fichero. Eliminado.)
 
 		if ( isset( $_GET['page'] ) && $_GET['page'] === 'conv-informes' ) {
 			wp_enqueue_script( 'chart-js', CONVOCA_ENROLL_URL . 'assets/vendor/chart.umd.min.js', array(), '4.4.1', true );

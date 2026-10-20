@@ -962,7 +962,7 @@ msgid "Error crítico: El motor de inscripciones no parece estar registrado corr
 msgstr ""
 
 #: admin/class-admin-settings.php:50
-msgid "Convoca Common no está activo. Algunas funciones podrían no estar disponibles."
+msgid "Convoca Core no está activo. Algunas funciones podrían no estar disponibles."
 msgstr ""
 
 #: admin/class-admin-settings.php:57

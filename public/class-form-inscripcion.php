@@ -68,7 +68,7 @@ class Form_Inscripcion {
 
 		$meta = CPT_Actividad::get_meta( $actividad_id );
 
-		wp_enqueue_style( 'conv-public', CONVOCA_ENROLL_URL . 'assets/css/convoca-enroll-public.css', array(), CONVOCA_ENROLL_VERSION );
+		wp_enqueue_style( 'conv-public', CONVOCA_ENROLL_URL . 'assets/css/convoca-enroll-public.css', array( 'convoca-core' ), CONVOCA_ENROLL_VERSION );
 		wp_enqueue_script( 'conv-public', CONVOCA_ENROLL_URL . 'assets/js/convoca-enroll-public.js', array( 'convoca-common-js' ), CONVOCA_ENROLL_VERSION, true );
 		wp_localize_script(
 			'conv-public',
