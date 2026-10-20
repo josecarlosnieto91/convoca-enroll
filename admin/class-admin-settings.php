@@ -903,6 +903,22 @@ class Admin_Settings {
 		\Convoca\Core\Utils::render_diagnostic_panel( $checks, __( 'Estado del Sistema', 'convoca-enroll' ) );
 	}
 
+	/**
+	 * Aporta las comprobaciones de este módulo al diagnóstico del núcleo.
+	 *
+	 * El método real es privado y el núcleo lo llamaba por reflexión; ahora esta es la puerta pública y
+	 * el registro va por el filtro `convoca_system_checks`.
+	 *
+	 * @param array<string, array<int, array<string, string>>> $bloques Bloques ya aportados.
+	 * @param bool                                             $force   Si se ignoran las cachés.
+	 * @return array<string, array<int, array<string, string>>>
+	 */
+	public static function aportar_checks( array $bloques, $force = false ): array {
+		$bloques['enroll'] = self::get_system_checks( (bool) $force );
+
+		return $bloques;
+	}
+
 	private static function get_system_checks( bool $force = false ): array {
 		if ( ! $force ) {
 			$cached = get_option( self::CACHE_KEY );

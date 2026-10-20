@@ -436,3 +436,8 @@ add_filter(
 		return $schedules;
 	}
 );
+
+/*
+ * Diagnóstico compartido: este módulo aporta sus comprobaciones a la página Salud del núcleo.
+ */
+add_filter( 'convoca_system_checks', array( '\Convoca\Enroll\Admin_Settings', 'aportar_checks' ), 10, 2 );
