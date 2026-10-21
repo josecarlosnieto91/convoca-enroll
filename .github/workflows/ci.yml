@@ -92,11 +92,11 @@ jobs:
       - name: Create build directory
         run: mkdir -p build
       - name: Run unit tests
-        run: vendor/bin/phpunit -c phpunit-unit.xml --log-junit build/junit.xml
+        run: vendor/bin/phpunit -c phpunit.xml.dist --log-junit build/junit.xml
       - name: Traer el nucleo (dependencia real, como en produccion)
         # El plugin exige Convoca Core activo y sus pruebas necesitan el CPT y las tablas del nucleo.
-        # Se instala SIN dependencias de desarrollo: con ellas, el PHPUnit del nucleo (10.x) se mezcla
-        # con el del plugin (9.6, que es lo que necesita wp-phpunit) y el arranque revienta.
+        # Va SIN dependencias de desarrollo: aquí sólo hace falta el código del nucleo, y su PHPUnit
+        # (con su vendor completo) engordaría el entorno sin aportar nada.
         run: |
           git clone --depth 1 https://github.com/josecarlosnieto91/convoca-core.git ../convoca-core
           ( cd ../convoca-core && composer update --no-dev --no-interaction --ignore-platform-req=ext-iconv )
@@ -104,7 +104,7 @@ jobs:
       - name: Montar el entorno de pruebas de WordPress
         # Antes esta suite saltaba los 39 tests (0 aserciones) y el job lo leia como exito. El script
         # deja WordPress + la biblioteca de pruebas de la version etiquetada + el wp-tests-config, y
-        # tests/bootstrap.php ejecuta la activacion del plugin (que es donde se crean sus tablas).
+        # tests/bootstrap-integration.php ejecuta la activacion del plugin (que es donde se crean sus tablas).
         env:
           DB_NAME: wordpress_test
           DB_USER: root
@@ -118,9 +118,34 @@ jobs:
       - name: Run integration tests
         env:
           CONVOCA_WP_ROOT: /tmp/entorno/wp
-          WP_PHPUNIT__TESTS_CONFIG: /tmp/entorno/wp-tests-config.php
+          WP_TESTS_CONFIG_FILE_PATH: /tmp/entorno/wp-tests-config.php
           WP_TESTS_DIR: /tmp/entorno/wptests
         run: vendor/bin/phpunit -c phpunit-integration.xml --log-junit build/junit-integration.xml
+      - name: Nadie se salta por no haber WordPress
+        # El verde de esta suite ya engañó una vez: 39 casos saltados y 0 aserciones leídos como éxito.
+        # Aquí se mira el informe, no el texto: si alguien se salta por falta de entorno o no hay
+        # informe, el trabajo cae.
+        run: |
+          set -euo pipefail
+          if [ ! -f build/junit-integration.xml ]; then
+            echo "::error::no hay informe de la suite de integración"; exit 1
+          fi
+          if grep -qE 'WordPress no cargado|WordPress not (loaded|available)|no existe el directorio' build/junit-integration.xml; then
+            echo "::error::hay casos saltados por falta de WordPress: el entorno no se montó"
+            grep -oE 'message="[^"]*(WordPress)[^"]*"' build/junit-integration.xml | head -5
+            exit 1
+          fi
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          raiz = ET.parse('build/junit-integration.xml').getroot()
+          casos = list(raiz.iter('testcase'))
+          saltados = [c for c in casos if c.find('skipped') is not None]
+          print(f"casos: {len(casos)} · ejecutados: {len(casos)-len(saltados)} · saltados: {len(saltados)}")
+          if len(saltados) == len(casos):
+              raise SystemExit("::error::todos los casos se han saltado: la suite no probó nada")
+          if len(casos) < 39:
+              raise SystemExit(f"::error::faltan casos: {len(casos)} de 39")
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
