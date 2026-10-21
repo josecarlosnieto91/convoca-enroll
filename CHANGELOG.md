@@ -110,4 +110,3 @@
 ### Notas
 - Pruebas nuevas de la vara de la asistencia (las dos formas se contestan igual; sin marca no se inventa nada).
   Total: 221.
-

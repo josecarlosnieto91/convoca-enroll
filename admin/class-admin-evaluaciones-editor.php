@@ -159,12 +159,12 @@ class Admin_Evaluaciones_Editor extends \Convoca\Core\Admin\Pantalla_Admin {
 									</div>
 								</div>
 							<?php endforeach; ?>
-							
+
 							<script>
 								document.querySelectorAll('.convoca-rating-stars').forEach(group => {
 									const stars = group.querySelectorAll('.conv-star');
 									const inputs = group.querySelectorAll('input');
-									
+
 									inputs.forEach((input, idx) => {
 										input.addEventListener('change', () => {
 											stars.forEach((s, sIdx) => {

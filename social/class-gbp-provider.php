@@ -203,7 +203,7 @@ class GBP_Provider implements Social_Provider_Interface {
 		}
 
 		$url = "https://mybusinessbusinessinformation.googleapis.com/v1/accounts/" . urlencode( $this->account["account_id"] ?? "" ) . "/locations?pageSize=1";
-		$resp = wp_remote_get( $url, [ 
+		$resp = wp_remote_get( $url, [
 			"timeout" => 10,
 			"headers" => [ "Authorization" => "Bearer " . $token["access_token"] ]
 		] );

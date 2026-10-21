@@ -60,7 +60,7 @@ class Social_OAuth {
 				'token_expires_at' => $expires_in ? gmdate( 'Y-m-d H:i:s', time() + $expires_in ) : null,
 				'is_active'        => 1,
 				'last_sync_at'     => current_time( 'mysql' ),
-			) 
+			)
 		);
 
 		return $wpdb->insert_id;
@@ -76,7 +76,7 @@ class Social_OAuth {
 				"SELECT * FROM {$wpdb->prefix}convoca_social_accounts WHERE id = %d AND is_active = 1",
 				$account_id
 			),
-			ARRAY_A 
+			ARRAY_A
 		);
 
 		if ( ! $row ) {

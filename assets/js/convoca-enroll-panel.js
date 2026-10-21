@@ -152,7 +152,7 @@
             (res) => {
                 modal.style.display = 'none';
                 conv.setLoading(confirmBtn, false, 'Sí, cancelar reserva');
-                
+
                 conv.showAlert(alert, res.data.message, 'success');
                 renderList(res.data.reservas);
                 cancelTargetId = null;
@@ -160,7 +160,7 @@
             (res) => {
                 modal.style.display = 'none';
                 conv.setLoading(confirmBtn, false, 'Sí, cancelar reserva');
-                
+
                 showAlert(res.data?.message || 'Error al cancelar.');
                 cancelTargetId = null;
             }

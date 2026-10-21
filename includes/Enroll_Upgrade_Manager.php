@@ -224,7 +224,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 		// 1 -> si
 		$wpdb->query(
 			$wpdb->prepare(
-				"UPDATE {$wpdb->postmeta} SET meta_value = 'si' 
+				"UPDATE {$wpdb->postmeta} SET meta_value = 'si'
              WHERE meta_key = %s AND meta_value = '1'",
 				'_convoca_asistencia'
 			)
@@ -233,7 +233,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 		// 0 -> no
 		$wpdb->query(
 			$wpdb->prepare(
-				"UPDATE {$wpdb->postmeta} SET meta_value = 'no' 
+				"UPDATE {$wpdb->postmeta} SET meta_value = 'no'
              WHERE meta_key = %s AND meta_value = '0'",
 				'_convoca_asistencia'
 			)

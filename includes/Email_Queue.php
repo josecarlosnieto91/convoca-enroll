@@ -155,10 +155,10 @@ class Email_Queue {
 			// 2. Select pending emails and mark as sending (atomic under the outer lock)
 			$ids = $wpdb->get_col(
 				$wpdb->prepare(
-					"SELECT id FROM $table_name 
-                WHERE status = 'pending' AND retries < %d 
+					"SELECT id FROM $table_name
+                WHERE status = 'pending' AND retries < %d
                 AND (next_retry_at IS NULL OR next_retry_at <= %s)
-                ORDER BY retries ASC, created_at ASC 
+                ORDER BY retries ASC, created_at ASC
                 LIMIT %d",
 					$max_retries,
 					current_time( 'mysql' ),
@@ -174,7 +174,7 @@ class Email_Queue {
 			$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 			$wpdb->query(
 				$wpdb->prepare(
-					"UPDATE $table_name SET status = 'sending' 
+					"UPDATE $table_name SET status = 'sending'
                  WHERE id IN ($placeholders)",
 					$ids
 				)

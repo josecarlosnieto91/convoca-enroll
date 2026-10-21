@@ -42,7 +42,7 @@
                     fd.append('id', id); // For mark_attendance action
                     fd.append('inscripcion_id', id); // For update_attendance action
                     fd.append('status', status);
-                    
+
                     var nonce = window.bdeCrm ? window.bdeCrm.nonce : '';
                     var action = 'convoca_mark_attendance';
 
@@ -55,7 +55,7 @@
                             var parent = currentBtn.closest('.attendance-control') || currentBtn.parentElement;
                             parent.querySelectorAll('.attendance-btn, .mark-attendance').forEach(b => b.classList.remove('active'));
                             currentBtn.classList.add('active');
-                            
+
                             var row = currentBtn.closest('.checkin-row');
                             if (row) {
                                 row.classList.remove('checked-in', 'absent');

@@ -61,37 +61,37 @@ class Admin_Reports {
 		<div class="wrap conv-reports-page">
 			<style>
 				.conv-reports-content { margin-top: 20px; }
-				.conv-report-filters { 
-					background: #fff; 
-					padding: 20px; 
-					border-radius: 8px; 
-					box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
-					margin-bottom: 20px; 
+				.conv-report-filters {
+					background: #fff;
+					padding: 20px;
+					border-radius: 8px;
+					box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+					margin-bottom: 20px;
 				}
-				.conv-filter-form { 
-					display: flex; 
-					flex-wrap: wrap; 
-					align-items: flex-end; 
-					gap: 15px; 
+				.conv-filter-form {
+					display: flex;
+					flex-wrap: wrap;
+					align-items: flex-end;
+					gap: 15px;
 				}
 				.conv-filter-group { display: flex; flex-direction: column; gap: 5px; }
 				.conv-filter-group label { font-weight: 600; font-size: 13px; color: #555; }
 				.conv-filter-group input, .conv-filter-group select { min-width: 150px; }
-				
-				.conv-charts-grid { 
-					display: grid; 
-					grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
-					gap: 20px; 
-					margin-top: 20px; 
+
+				.conv-charts-grid {
+					display: grid;
+					grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+					gap: 20px;
+					margin-top: 20px;
 				}
-				.conv-card { 
-					background: #fff; 
-					padding: 20px; 
-					border-radius: 8px; 
-					box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+				.conv-card {
+					background: #fff;
+					padding: 20px;
+					border-radius: 8px;
+					box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 				}
 				.conv-card h3 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-				
+
 				.table-success { background-color: #f0fdf4 !important; }
 				.table-warning { background-color: #fffbeb !important; }
 
@@ -166,7 +166,7 @@ class Admin_Reports {
 			<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>" class="conv-filter-form">
 				<input type="hidden" name="page" value="conv-informes">
 				<input type="hidden" name="tab" value="ocupacion">
-				
+
 				<div class="conv-filter-group">
 					<label>Desde</label>
 					<input type="date" name="start_date" value="<?php echo esc_attr( $start_date ); ?>">
@@ -284,9 +284,9 @@ endif;
 			global $wpdb;
 			$asistentes = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm 
-                 JOIN {$wpdb->posts} p ON p.ID = pm.post_id 
-                 WHERE pm.meta_key = '_convoca_actividad_id' AND pm.meta_value = %d 
+					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm
+                 JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+                 WHERE pm.meta_key = '_convoca_actividad_id' AND pm.meta_value = %d
                  AND p.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_asistencia' AND meta_value = 'si')",
 					$post->ID
 				)
@@ -393,8 +393,8 @@ endif;
 
 			$count    = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$wpdb->posts} 
-                 WHERE post_type = 'inscripcion' AND post_status = 'publish' 
+					"SELECT COUNT(*) FROM {$wpdb->posts}
+                 WHERE post_type = 'inscripcion' AND post_status = 'publish'
                  AND post_date LIKE %s",
 					$month . '%'
 				)
@@ -413,9 +413,9 @@ endif;
 		$counts = array_fill_keys( CPT_Inscripcion::STATES, 0 );
 
 		$results = $wpdb->get_results(
-			"SELECT meta_value AS estado, COUNT(*) AS total 
-             FROM {$wpdb->postmeta} 
-             WHERE meta_key = '_convoca_estado' 
+			"SELECT meta_value AS estado, COUNT(*) AS total
+             FROM {$wpdb->postmeta}
+             WHERE meta_key = '_convoca_estado'
              GROUP BY meta_value"
 		);
 
@@ -431,13 +431,13 @@ endif;
 	private function get_top_demanded_activities(): array {
 		global $wpdb;
 		$results = $wpdb->get_results(
-			"SELECT pm.meta_value as activity_id, COUNT(*) as total 
+			"SELECT pm.meta_value as activity_id, COUNT(*) as total
              FROM {$wpdb->postmeta} pm
              JOIN {$wpdb->postmeta} pm_status ON pm.post_id = pm_status.post_id
-             WHERE pm.meta_key = '_convoca_actividad_id' 
+             WHERE pm.meta_key = '_convoca_actividad_id'
                AND pm_status.meta_key = '_convoca_estado' AND pm_status.meta_value = 'confirmada'
-             GROUP BY pm.meta_value 
-             ORDER BY total DESC 
+             GROUP BY pm.meta_value
+             ORDER BY total DESC
              LIMIT 10"
 		);
 
@@ -637,7 +637,7 @@ endif;
 			// Calculate pending.
 			$fin['pendiente'] = (float) $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT SUM(CAST(pm_amount.meta_value AS DECIMAL(10,2))) 
+					"SELECT SUM(CAST(pm_amount.meta_value AS DECIMAL(10,2)))
                  FROM {$wpdb->postmeta} pm_act
                  JOIN {$wpdb->postmeta} pm_status ON pm_act.post_id = pm_status.post_id
                  JOIN {$wpdb->postmeta} pm_amount ON pm_act.post_id = pm_amount.post_id
@@ -711,7 +711,7 @@ endif;
 		 */
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT 
+				"SELECT
                 l.user_id,
                 l.object_id as actividad_id,
                 u.display_name as monitor,
@@ -780,7 +780,7 @@ endif;
 				<input type="hidden" name="post_type" value="actividad">
 				<input type="hidden" name="page" value="conv-informes">
 				<input type="hidden" name="tab" value="memoria">
-				
+
 				<div class="conv-filter-group">
 					<label>Año</label>
 					<select name="year">
@@ -875,7 +875,7 @@ endif;
 			global $wpdb;
 			$stats = $wpdb->get_row(
 				$wpdb->prepare(
-					"SELECT 
+					"SELECT
                     COUNT(*) as total,
                     SUM(CASE WHEN pm_socio.meta_value = '1' OR pm_tipo.meta_value = 'socio' THEN 1 ELSE 0 END) as socios
                  FROM {$wpdb->postmeta} pm_act
@@ -1009,7 +1009,7 @@ endif;
 		}
 
 		$sql = $wpdb->prepare(
-			"SELECT 
+			"SELECT
                 pm_act.meta_value AS actividad_id,
                 p.post_title,
                 COUNT(*) AS count,

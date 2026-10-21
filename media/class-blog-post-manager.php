@@ -101,7 +101,7 @@ class Blog_Post_Manager {
 					self::META_ACTIVIDAD_ID => $actividad_id,
 					'_convoca_schema_event' => self::build_schema( $actividad, $fecha_inicio, $fecha_fin, $ubicacion, $permalink ),
 				),
-			) 
+			)
 		);
 
 		if ( ! $post_id ) {
@@ -126,7 +126,7 @@ class Blog_Post_Manager {
 			array(
 				'actividad_id' => $actividad_id,
 				'status'       => $status,
-			) 
+			)
 		);
 
 		return $post_id;
@@ -159,7 +159,7 @@ class Blog_Post_Manager {
 				'post_content' => $content,
 				'post_excerpt' => get_the_excerpt( $actividad_id ) ?: wp_trim_words( $actividad->post_content, 40 ),
 				'post_status'  => $status,
-			) 
+			)
 		);
 
 		// Update schema.
@@ -177,7 +177,7 @@ class Blog_Post_Manager {
 			'ok',
 			array(
 				'actividad_id' => $actividad_id,
-			) 
+			)
 		);
 
 		return $post_id;
@@ -296,7 +296,7 @@ class Blog_Post_Manager {
 					'name'     => $filename,
 					'tmp_name' => $local_path,
 				),
-				$post_id 
+				$post_id
 			);
 
 			if ( ! is_wp_error( $attachment_id ) ) {

@@ -268,9 +268,9 @@ class Checkin_Handler {
 
 				#reader { width: 100% !important; height: 100% !important; border: none !important; }
 				#reader__scan_region video { object-fit: cover !important; width: 100% !important; height: 100% !important; }
-				
+
 				/* Hide default UI elements from library */
-				#reader__dashboard_section_csr button, 
+				#reader__dashboard_section_csr button,
 				#reader__dashboard_section_fsr button { display: none !important; }
 
 				.overlay-controls {
@@ -357,7 +357,7 @@ class Checkin_Handler {
 
 				<div class="scanner-wrapper">
 					<div id="reader"></div>
-					
+
 					<div class="overlay-controls">
 						<div id="status-badge" class="status-badge badge-scanning"><?php esc_html_e( 'Escaneando...', 'convoca-enroll' ); ?></div>
 						<div class="action-buttons">
@@ -401,7 +401,7 @@ class Checkin_Handler {
 				async function onScanSuccess(decodedText) {
 					if (isProcessing) return;
 					isProcessing = true;
-					
+
 					statusBadge.innerText = "<?php echo esc_js( __( 'Procesando...', 'convoca-enroll' ) ); ?>";
 					statusBadge.className = 'status-badge badge-processing';
 
@@ -425,7 +425,7 @@ class Checkin_Handler {
 							body: formData
 						});
 						const data = await response.json();
-						
+
 						showResult(data);
 					} catch (err) {
 						console.error(err);
@@ -438,7 +438,7 @@ class Checkin_Handler {
 
 				function showResult(data) {
 					resultScreen.style.display = 'flex';
-					
+
 					if (data.success) {
 						resIcon.innerText = '✅';
 						resTitle.innerText = data.data.message;
@@ -488,7 +488,7 @@ class Checkin_Handler {
 
 				async function initScanner() {
 					html5QrCode = new Html5Qrcode("reader");
-					
+
 					try {
 						const devices = await Html5Qrcode.getCameras();
 						if (devices && devices.length > 0) {
@@ -503,7 +503,7 @@ class Checkin_Handler {
 							// Auto-select back camera (usually last one).
 							currentCameraId = devices[devices.length - 1].id;
 							camSelect.value = currentCameraId;
-							
+
 							startScanner(currentCameraId);
 						} else {
 							statusBadge.innerText = "No se detectaron cámaras.";
@@ -516,7 +516,7 @@ class Checkin_Handler {
 
 				function startScanner(cameraId) {
 					html5QrCode.start(
-						cameraId, 
+						cameraId,
 						{ fps: 15, qrbox: (width, height) => {
 							const minSide = Math.min(width, height);
 							const qrSize = Math.floor(minSide * 0.7);
@@ -610,12 +610,12 @@ class Checkin_Handler {
 			// 1. Find and LOCK the inscription post row
 			$id = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT p.ID 
-                 FROM {$wpdb->posts} p 
-                 INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id 
-                 WHERE p.post_type = 'inscripcion' 
-                 AND pm.meta_key = '_convoca_checkin_token' 
-                 AND pm.meta_value = %s 
+					"SELECT p.ID
+                 FROM {$wpdb->posts} p
+                 INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+                 WHERE p.post_type = 'inscripcion'
+                 AND pm.meta_key = '_convoca_checkin_token'
+                 AND pm.meta_value = %s
                  LIMIT 1 FOR UPDATE",
 					$token
 				)
@@ -629,8 +629,8 @@ class Checkin_Handler {
 			// 2. Lock the relevant postmeta rows to prevent concurrent modifications
 			$wpdb->query(
 				$wpdb->prepare(
-					"SELECT meta_id FROM {$wpdb->postmeta} 
-                 WHERE post_id = %d AND meta_key IN ('_convoca_checkin_token', '_convoca_estado', '_convoca_asistencia') 
+					"SELECT meta_id FROM {$wpdb->postmeta}
+                 WHERE post_id = %d AND meta_key IN ('_convoca_checkin_token', '_convoca_estado', '_convoca_asistencia')
                  FOR UPDATE",
 					$id
 				)

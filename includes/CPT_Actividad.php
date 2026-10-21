@@ -786,7 +786,7 @@ class CPT_Actividad {
 
 		function bdeShareAlbum(activityId) {
 			if (!confirm('<?php echo esc_js( __( '¿Compartir el álbum con todos los participantes confirmados?', 'convoca-enroll' ) ); ?>')) return;
-			
+
 			const fd = new FormData();
 			fd.append('action', 'convoca_enroll_google_photos_share');
 			fd.append('activity_id', activityId);
@@ -1120,15 +1120,15 @@ class CPT_Actividad {
 			array( $precio_socio, $precio_socio_dia, $precio_general ),
 			function ( $v ) {
 				return '' !== $v && strtolower( $v ) !== 'gratis';
-			} 
+			}
 		);
 		$lowest_price = ! empty( $prices ) ? min(
 			array_map(
 				function ( $v ) {
 					return (float) preg_replace( '/[^0-9.]/', '', str_replace( ',', '.', $v ) );
 				},
-				$prices 
-			) 
+				$prices
+			)
 		) : 0;
 
 		$schema = array(

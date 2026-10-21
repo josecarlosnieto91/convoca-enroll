@@ -69,12 +69,12 @@ class PDF_Compromiso {
 		// ── 1. Check if already exists WITHOUT locking first ──
 		$existing_id = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT p.ID FROM {$wpdb->posts} p 
-             INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id 
-             INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id 
-             WHERE p.post_type = 'convoca_documento' 
-             AND pm1.meta_key = '_convoca_usuario_id' AND pm1.meta_value = %d 
-             AND pm2.meta_key = '_convoca_actividad_id' AND pm2.meta_value = %d 
+				"SELECT p.ID FROM {$wpdb->posts} p
+             INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id
+             INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id
+             WHERE p.post_type = 'convoca_documento'
+             AND pm1.meta_key = '_convoca_usuario_id' AND pm1.meta_value = %d
+             AND pm2.meta_key = '_convoca_actividad_id' AND pm2.meta_value = %d
              AND p.post_status = 'publish' LIMIT 1",
 				$user_id,
 				$actividad_id
@@ -111,13 +111,13 @@ class PDF_Compromiso {
 			// ── 3. LOCK and check again ──
 			$existing_id = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT p.ID FROM {$wpdb->posts} p 
-                 INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id 
-                 INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id 
-                 WHERE p.post_type = 'convoca_documento' 
-                 AND pm1.meta_key = '_convoca_usuario_id' AND pm1.meta_value = %d 
-                 AND pm2.meta_key = '_convoca_actividad_id' AND pm2.meta_value = %d 
-                 AND p.post_status = 'publish' 
+					"SELECT p.ID FROM {$wpdb->posts} p
+                 INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id
+                 INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id
+                 WHERE p.post_type = 'convoca_documento'
+                 AND pm1.meta_key = '_convoca_usuario_id' AND pm1.meta_value = %d
+                 AND pm2.meta_key = '_convoca_actividad_id' AND pm2.meta_value = %d
+                 AND p.post_status = 'publish'
                  FOR UPDATE",
 					$user_id,
 					$actividad_id

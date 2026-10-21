@@ -652,7 +652,7 @@ class Admin_Page {
 				<h3>Estado y Pago</h3>
 				<form id="conv-state-form">
 					<input type="hidden" name="inscripcion_id" value="<?php echo esc_attr( (string) $id ); ?>">
-					
+
 					<p>
 						<label><strong>Estado:</strong></label><br>
 						<select name="estado">

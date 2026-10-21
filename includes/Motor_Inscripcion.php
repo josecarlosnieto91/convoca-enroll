@@ -370,9 +370,9 @@ class Motor_Inscripcion {
 					// Atomically decrement plazas for states that consume a spot.
 					$affected = $wpdb->query(
 						$wpdb->prepare(
-							"UPDATE {$wpdb->postmeta} 
-                         SET meta_value = CAST(meta_value AS SIGNED) - 1 
-                         WHERE post_id = %d AND meta_key = %s 
+							"UPDATE {$wpdb->postmeta}
+                         SET meta_value = CAST(meta_value AS SIGNED) - 1
+                         WHERE post_id = %d AND meta_key = %s
                          AND CAST(meta_value AS SIGNED) > 0",
 							$actividad_id,
 							CPT_Inscripcion::META_PREFIX . 'plazas_disponibles'
@@ -490,8 +490,8 @@ class Motor_Inscripcion {
 				if ( ! $promoted ) {
 					$affected = $wpdb->query(
 						$wpdb->prepare(
-							"UPDATE {$wpdb->postmeta} 
-                        SET meta_value = CAST(meta_value AS SIGNED) + 1 
+							"UPDATE {$wpdb->postmeta}
+                        SET meta_value = CAST(meta_value AS SIGNED) + 1
                         WHERE post_id = %d AND meta_key = %s",
 							$actividad_id,
 							CPT_Inscripcion::META_PREFIX . 'plazas_disponibles'
@@ -634,7 +634,7 @@ class Motor_Inscripcion {
 				'plugin'   => 'convoca-enroll',
 				'template' => 'cancelaciones_tardias_admin',
 				'copy'     => false,
-			) 
+			)
 		);
 	}
 
@@ -664,8 +664,8 @@ class Motor_Inscripcion {
 			if ( 'lista_espera' === $estado_actual ) {
 				$affected = $wpdb->query(
 					$wpdb->prepare(
-						"UPDATE {$wpdb->postmeta} 
-				SET meta_value = CAST(meta_value AS SIGNED) - 1 
+						"UPDATE {$wpdb->postmeta}
+				SET meta_value = CAST(meta_value AS SIGNED) - 1
 				WHERE post_id = %d AND meta_key = %s AND CAST(meta_value AS SIGNED) > 0",
 						$actividad_id,
 						CPT_Inscripcion::META_PREFIX . 'plazas_disponibles'
@@ -736,7 +736,7 @@ class Motor_Inscripcion {
 				// Atomic update to ensure only one process promotes this specific record.
 				$affected = $wpdb->query(
 					$wpdb->prepare(
-						"UPDATE {$wpdb->postmeta} SET meta_value = 'pendiente' 
+						"UPDATE {$wpdb->postmeta} SET meta_value = 'pendiente'
                      WHERE post_id = %d AND meta_key = %s AND meta_value = 'lista_espera'",
 						$promoted->ID,
 						CPT_Inscripcion::META_PREFIX . 'estado'

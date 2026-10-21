@@ -138,10 +138,10 @@ class Google_Photos {
 		$actividad = get_post( $actividad_id );
 		$settings  = get_option( self::OPTION, array() );
 		$prefix    = $settings['google_photos_album_prefix'] ?? get_bloginfo( 'name' ) . ' - ';
-		
+
 		$fecha           = get_post_meta( $actividad_id, '_convoca_fecha_inicio', true );
 		$fecha_formatted = $fecha ? wp_date( 'd/m/Y', strtotime( $fecha ) ) : '';
-		
+
 		$album_title = $prefix . $actividad->post_title . ( $fecha_formatted ? ' - ' . $fecha_formatted : '' );
 
 		$album = new \Google\Service\PhotosLibrary\Album();
@@ -149,7 +149,7 @@ class Google_Photos {
 
 		try {
 			$created = $this->service->albums->create( $album );
-			
+
 			update_post_meta( $actividad_id, '_convoca_google_album_id', $created->getId() );
 			update_post_meta( $actividad_id, '_convoca_google_album_created_at', current_time( 'mysql' ) );
 
@@ -181,9 +181,9 @@ class Google_Photos {
 		try {
 			$share_request  = new \Google\Service\PhotosLibrary\ShareAlbumRequest();
 			$share_response = $this->service->albums->share( $album_id, $share_request );
-			
+
 			$shareable_url = $share_response->getShareInfo()->getShareableUrl();
-			
+
 			update_post_meta( $actividad_id, '_convoca_google_album_url', $shareable_url );
 			update_post_meta( $actividad_id, '_convoca_google_album_shared', '1' );
 
@@ -319,7 +319,7 @@ class Google_Photos {
 
 			$subject = str_replace( array_keys( $vars ), array_values( $vars ), $tpl['subject'] );
 			$body    = str_replace( array_keys( $vars ), array_values( $vars ), $tpl['body'] );
-			
+
 			$email_automation = new Email_Automation();
 			$html_body        = $email_automation->get_html_layout( $body, $subject );
 
@@ -347,7 +347,7 @@ class Google_Photos {
 
 	public static function cron_share_albums(): void {
 		$instance = new self();
-		
+
 		if ( ! $instance->is_configured() ) {
 			return;
 		}
@@ -382,7 +382,7 @@ class Google_Photos {
 
 		foreach ( $activities as $activity ) {
 			$create_option = get_post_meta( $activity->ID, '_convoca_google_create_album', true );
-			
+
 			if ( $create_option !== '0' ) {
 				$instance->notify_participants( $activity->ID );
 			}

@@ -80,7 +80,7 @@ class Template_Manager {
 				'description' => sanitize_textarea_field( $data['description'] ?? '' ),
 				'config'      => $config,
 				'is_system'   => ! empty( $data['is_system'] ) ? 1 : 0,
-			) 
+			)
 		);
 
 		if ( false === $result ) {
@@ -180,7 +180,7 @@ class Template_Manager {
 				'description' => sanitize_textarea_field( $data['description'] ?? '' ),
 				'config'      => $data['config'],
 				'is_system'   => 0,
-			) 
+			)
 		);
 	}
 }

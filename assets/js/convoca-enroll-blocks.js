@@ -128,7 +128,7 @@
             if (!ServerSideRender) {
                 return el('div', blockProps, 'Error: wp.serverSideRender no disponible.');
             }
-            return el('div', blockProps, 
+            return el('div', blockProps,
                 el(ServerSideRender, {
                     block: 'convoca-enroll/pagina-inscripcion',
                     attributes: props.attributes

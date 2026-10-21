@@ -52,11 +52,11 @@ jQuery(document).ready(function($) {
     // Form submission
     $('#conv-evaluacion-form').on('submit', function(e) {
         e.preventDefault();
-        
+
         var form = $(this);
         var submitBtn = form.find('button[type="submit"]');
         var responseDiv = $('#conv-evaluacion-response');
-        
+
         // Check if all star ratings have a value > 0
         var allRated = true;
         form.find('input[type="hidden"]').each(function() {
@@ -73,7 +73,7 @@ jQuery(document).ready(function($) {
         }
 
         submitBtn.prop('disabled', true).text('Enviando...');
-        
+
         // Fetch fresh nonce before submitting
         $.ajax({
             url: convoca_eval_ajax.url,
@@ -83,9 +83,9 @@ jQuery(document).ready(function($) {
                 if (nonceResponse.success) {
                     // Update nonce in form
                     form.find('input[name="security"]').val(nonceResponse.data);
-                    
+
                     var formData = form.serialize();
-                    
+
                     $.ajax({
                         url: convoca_eval_ajax.url,
                         type: 'POST',

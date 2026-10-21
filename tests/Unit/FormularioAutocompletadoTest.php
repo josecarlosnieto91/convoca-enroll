@@ -37,7 +37,7 @@ class FormularioAutocompletadoTest extends TestCase {
 			$this->assertStringContainsString(
 				sprintf( "\$miembro['%s']", $campo ),
 				$plantilla,
-				'El campo «' . $campo . '» no se autocompleta' 
+				'El campo «' . $campo . '» no se autocompleta'
 			);
 		}
 	}

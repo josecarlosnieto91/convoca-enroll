@@ -82,14 +82,14 @@ class Maintenance {
 					"
                 SELECT COUNT(*) FROM {$wpdb->postmeta} pm
                 JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-                WHERE p.post_type = 'inscripcion' 
+                WHERE p.post_type = 'inscripcion'
                   AND p.post_status = 'publish'
                   AND pm.meta_key = %s
                   AND pm.meta_value = %d
                   AND EXISTS (
-                      SELECT 1 FROM {$wpdb->postmeta} pm2 
-                      WHERE pm2.post_id = p.ID 
-                      AND pm2.meta_key = %s 
+                      SELECT 1 FROM {$wpdb->postmeta} pm2
+                      WHERE pm2.post_id = p.ID
+                      AND pm2.meta_key = %s
                       AND pm2.meta_value IN ('confirmada', 'pendiente', 'pendiente_pago')
                   )
             ",
@@ -157,14 +157,14 @@ class Maintenance {
 					"
                 SELECT COUNT(*) FROM {$wpdb->postmeta} pm
                 JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-                WHERE p.post_type = 'inscripcion' 
+                WHERE p.post_type = 'inscripcion'
                   AND p.post_status = 'publish'
                   AND pm.meta_key = %s
                   AND pm.meta_value = %d
                   AND EXISTS (
-                      SELECT 1 FROM {$wpdb->postmeta} pm2 
-                      WHERE pm2.post_id = p.ID 
-                      AND pm2.meta_key = %s 
+                      SELECT 1 FROM {$wpdb->postmeta} pm2
+                      WHERE pm2.post_id = p.ID
+                      AND pm2.meta_key = %s
                       AND pm2.meta_value IN ('confirmada', 'pendiente', 'pendiente_pago')
                   )
             ",
@@ -186,7 +186,7 @@ class Maintenance {
 			$deleted               = $wpdb->query(
 				$wpdb->prepare(
 					"
-                DELETE FROM $table_name 
+                DELETE FROM $table_name
                 WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
                 AND context LIKE %s
             ",

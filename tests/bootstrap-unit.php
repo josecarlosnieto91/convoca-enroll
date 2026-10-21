@@ -4,7 +4,7 @@
  * Mocks WordPress functions for Convoca Enroll testing.
  * Stubs defined BEFORE autoloader to prevent ABSPATH exit guards.
  */
- 
+
 // Mock Convoca\Core classes first (must be in own namespace block at top)
 namespace Convoca\Core {
     if (!class_exists('Utils')) {

@@ -194,7 +194,7 @@ class Admin_Settings {
 		</div>
 		<?php else : ?>
 		<div class="convoca-alert convoca-alert--info" style="display:block;margin-bottom:20px;padding:12px 16px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;">
-			<p style="margin:0;">🔒 <strong>Webhooks salientes</strong> es una funcionalidad PRO. 
+			<p style="margin:0;">🔒 <strong>Webhooks salientes</strong> es una funcionalidad PRO.
 			<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-license' ) ); ?>" style="font-weight:600;">Activa tu licencia</a> para conectarte con make.com, Zapier y otros sistemas externos.</p>
 		</div>
 		<?php endif; ?>
@@ -243,7 +243,7 @@ class Admin_Settings {
 					<?php esc_html_e( 'Reparar integridad', 'convoca-enroll' ); ?>
 				</button>
 			</div>
-			
+
 			<?php
 			if ( isset( $_GET['maint_res'] ) ) :
 				$res = Maintenance::validar_integridad();
@@ -386,7 +386,7 @@ class Admin_Settings {
 						👁️ Previsualizar
 					</button>
 				</div>
-				
+
 				<p>
 					<label><strong>Asunto</strong></label><br>
 					<input type="text" name="tpl[<?php echo esc_attr( $slug ); ?>][subject]"
@@ -441,7 +441,7 @@ class Admin_Settings {
 					btn.addEventListener('click', function(e) {
 						e.preventDefault();
 						const row = this.closest('.conv-attachment-row');
-						
+
 						if (!frame) {
 							frame = wp.media({
 								title: 'Seleccionar adjunto para email',

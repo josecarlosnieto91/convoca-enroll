@@ -81,7 +81,7 @@ class Media_Logger {
 				$object_id,
 				$limit
 			),
-			ARRAY_A 
+			ARRAY_A
 		);
 	}
 
@@ -96,7 +96,7 @@ class Media_Logger {
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->prefix}convoca_media_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)",
 				$days
-			) 
+			)
 		);
 	}
 }

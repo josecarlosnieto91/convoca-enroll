@@ -311,7 +311,7 @@ add_action(
 	'convoca_social_publish',
 	function ( $queue_id ) {
 		Social\Social_Scheduler::process( $queue_id );
-	} 
+	}
 );
 
 // Register every_minute cron schedule at top level (must be available during activation).

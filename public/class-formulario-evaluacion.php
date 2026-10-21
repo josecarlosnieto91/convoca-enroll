@@ -169,7 +169,7 @@ class Formulario_Evaluacion {
 				<div class="conv-eval-section">
 					<h4><?php esc_html_e( '1. Valoraciones numéricas', 'convoca-enroll' ); ?></h4>
 					<p class="description"><?php esc_html_e( 'Valora del 1 al 5 (1 = Muy insatisfecho, 5 = Muy satisfecho)', 'convoca-enroll' ); ?></p>
-					
+
 					<?php self::render_star_input( 'gestion', __( 'Gestión y coordinación', 'convoca-enroll' ) ); ?>
 					<?php self::render_star_input( 'instalaciones', __( 'Instalaciones / Espacio', 'convoca-enroll' ) ); ?>
 					<?php self::render_star_input( 'participantes', __( 'Grupo participante', 'convoca-enroll' ) ); ?>
@@ -178,7 +178,7 @@ class Formulario_Evaluacion {
 
 				<div class="conv-eval-section">
 					<h4><?php esc_html_e( '2. Comentarios y sugerencias', 'convoca-enroll' ); ?></h4>
-					
+
 					<div class="conv-form-group">
 						<label for="comentarios_gestion"><?php esc_html_e( 'Cuéntanos brevemente tu experiencia', 'convoca-enroll' ); ?></label>
 						<textarea id="comentarios_gestion" name="comentarios_gestion" rows="3"></textarea>

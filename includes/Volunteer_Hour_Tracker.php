@@ -127,8 +127,8 @@ class Volunteer_Hour_Tracker {
 			if ( $hours > 0 ) {
 				$wpdb->query(
 					$wpdb->prepare(
-						"UPDATE {$wpdb->usermeta} 
-	                 SET meta_value = GREATEST(0, CAST(meta_value AS DECIMAL(10,2)) - %f) 
+						"UPDATE {$wpdb->usermeta}
+	                 SET meta_value = GREATEST(0, CAST(meta_value AS DECIMAL(10,2)) - %f)
 	                 WHERE user_id = %d AND meta_key = %s",
 						$hours,
 						$user->ID,
@@ -185,8 +185,8 @@ class Volunteer_Hour_Tracker {
 			if ( $exists ) {
 				$wpdb->query(
 					$wpdb->prepare(
-						"UPDATE {$wpdb->usermeta} 
-                     SET meta_value = CAST(meta_value AS DECIMAL(10,2)) + %f 
+						"UPDATE {$wpdb->usermeta}
+                     SET meta_value = CAST(meta_value AS DECIMAL(10,2)) + %f
                      WHERE user_id = %d AND meta_key = %s",
 						$hours,
 						$user->ID,
@@ -206,8 +206,8 @@ class Volunteer_Hour_Tracker {
 
 			$wpdb->query(
 				$wpdb->prepare(
-					"INSERT INTO {$wpdb->postmeta} (post_id, meta_key, meta_value) 
-                 VALUES (%d, %s, %s) 
+					"INSERT INTO {$wpdb->postmeta} (post_id, meta_key, meta_value)
+                 VALUES (%d, %s, %s)
                  ON DUPLICATE KEY UPDATE meta_value = %s",
 					$inscripcion_id,
 					$meta_key_counted,

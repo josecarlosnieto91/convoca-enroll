@@ -45,7 +45,7 @@ class Social_Rest_API {
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'auth_meta_start' ),
 				'permission_callback' => array( $this, 'can_manage_social' ),
-			) 
+			)
 		);
 		register_rest_route(
 			'convoca/v1',
@@ -54,7 +54,7 @@ class Social_Rest_API {
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'auth_google_start' ),
 				'permission_callback' => array( $this, 'can_manage_social' ),
-			) 
+			)
 		);
 
 		// ── OAuth Callbacks ──
@@ -65,7 +65,7 @@ class Social_Rest_API {
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'callback_meta' ),
 				'permission_callback' => '__return_true',
-			) 
+			)
 		);
 		register_rest_route(
 			'convoca/v1',
@@ -74,7 +74,7 @@ class Social_Rest_API {
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'callback_google' ),
 				'permission_callback' => '__return_true',
-			) 
+			)
 		);
 
 		// ── Account Management ──
@@ -85,7 +85,7 @@ class Social_Rest_API {
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'list_accounts' ),
 				'permission_callback' => array( $this, 'can_manage_social' ),
-			) 
+			)
 		);
 		register_rest_route(
 			'convoca/v1',
@@ -94,7 +94,7 @@ class Social_Rest_API {
 				'methods'             => 'DELETE',
 				'callback'            => array( $this, 'delete_account' ),
 				'permission_callback' => array( $this, 'can_manage_social' ),
-			) 
+			)
 		);
 	}
 
@@ -253,7 +253,7 @@ class Social_Rest_API {
 					'redirect_uri'  => rest_url( 'convoca/v1/social/callback/google' ),
 					'grant_type'    => 'authorization_code',
 				),
-			) 
+			)
 		);
 		if ( is_wp_error( $resp ) ) {
 			wp_redirect( admin_url( 'admin.php?page=convoca-media-accounts&convoca_error=token_failed' ) );
@@ -274,7 +274,7 @@ class Social_Rest_API {
 			'https://www.googleapis.com/oauth2/v2/userinfo',
 			array(
 				'headers' => array( 'Authorization' => "Bearer {$access_token}" ),
-			) 
+			)
 		);
 		$info_body    = json_decode( wp_remote_retrieve_body( $info_resp ), true );
 		$account_name = $info_body['email'] ?? 'Google Account';

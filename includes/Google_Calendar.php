@@ -49,7 +49,7 @@ class Google_Calendar {
 
 	public function __construct() {
 		$this->init_client();
-		
+
 		// Hooks for sync.
 		add_action( 'save_post_actividad', array( $this, 'sync_on_save' ), 20, 3 );
 		add_action( 'before_delete_post', array( $this, 'sync_on_delete' ), 10, 2 );
@@ -367,7 +367,7 @@ class Google_Calendar {
 	public function cleanup_ics_files( int $actividad_id ): void {
 		$temp_dir = get_temp_dir();
 		$pattern  = 'actividad-' . $actividad_id . '-*.ics';
-		
+
 		foreach ( glob( $temp_dir . $pattern ) as $file ) {
 			if ( is_file( $file ) && filemtime( $file ) < time() - DAY_IN_SECONDS ) {
 				wp_delete_file( $file );

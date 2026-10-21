@@ -213,9 +213,9 @@ class Webhook_Dispatcher {
 			// 2. Select pending webhooks and mark as sending (atomic under the outer lock)
 			$ids = $wpdb->get_col(
 				$wpdb->prepare(
-					"SELECT id FROM $table_name 
-                WHERE status = 'pending' AND retries < %d 
-                ORDER BY retries ASC, created_at ASC 
+					"SELECT id FROM $table_name
+                WHERE status = 'pending' AND retries < %d
+                ORDER BY retries ASC, created_at ASC
                 LIMIT %d",
 					$max_retries,
 					$batch_size
@@ -230,7 +230,7 @@ class Webhook_Dispatcher {
 			$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 			$wpdb->query(
 				$wpdb->prepare(
-					"UPDATE $table_name SET status = 'sending' 
+					"UPDATE $table_name SET status = 'sending'
                  WHERE id IN ($placeholders)",
 					$ids
 				)

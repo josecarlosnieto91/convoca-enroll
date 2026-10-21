@@ -51,8 +51,8 @@ class WP_CLI_Migration extends \WP_CLI_Command {
 		$updated_inscriptions = $wpdb->query(
 			$wpdb->prepare(
 				"
-            UPDATE {$wpdb->postmeta} 
-            SET meta_value = 'socio_dia' 
+            UPDATE {$wpdb->postmeta}
+            SET meta_value = 'socio_dia'
             WHERE meta_key = %s AND meta_value = 'general'
         ",
 				CPT_Inscripcion::META_PREFIX . 'tipo_inscripcion'
@@ -87,7 +87,7 @@ class WP_CLI_Migration extends \WP_CLI_Command {
 		$deleted_meta = $wpdb->query(
 			$wpdb->prepare(
 				"
-            DELETE FROM {$wpdb->postmeta} 
+            DELETE FROM {$wpdb->postmeta}
             WHERE meta_key = %s
         ",
 				CPT_Inscripcion::META_PREFIX . 'precio_general'

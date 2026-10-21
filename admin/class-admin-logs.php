@@ -65,9 +65,9 @@ class Admin_Logs {
 		$logs = $wpdb->get_results(
 			$wpdb->prepare(
 				"
-            SELECT * FROM $table_name 
+            SELECT * FROM $table_name
             WHERE context LIKE %s
-            ORDER BY created_at DESC 
+            ORDER BY created_at DESC
             LIMIT %d OFFSET %d
         ",
 				'%Enroll%',
@@ -153,7 +153,7 @@ class Admin_Logs {
 									'total'     => (int) $num_pages,
 									'current'   => $pagenum,
 								)
-							) 
+							)
 						);
 						?>
 					</div>

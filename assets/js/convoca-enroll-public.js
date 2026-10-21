@@ -10,7 +10,7 @@
         const wrapper = form.closest('.conv-enroll-wrapper');
         const alert = conv.$('#conv-alert', wrapper);
         const success = conv.$('#conv-success', wrapper);
-        
+
         const socioSelect = conv.$('#conv-es-socio', wrapper);
         const tipoInscripcion = conv.$('#conv-tipo-inscripcion', wrapper);
         const authBanner = conv.$('#conv-auth-banner', wrapper);
@@ -23,7 +23,7 @@
                 if (!data.authenticated) {
                     if (socioSelect) socioSelect.value = '0';
                     if (tipoInscripcion) tipoInscripcion.value = 'socio_dia';
-                    
+
                     const precioS = conv.$('#conv-precio-socio', wrapper);
                     const precioSD = conv.$('#conv-precio-socio-dia', wrapper);
                     if (precioS) precioS.classList.remove('conv-price--active');
@@ -44,7 +44,7 @@
 
                         if (socioSelect) socioSelect.value = '1';
                         if (tipoInscripcion) tipoInscripcion.value = 'socio';
-                        
+
                         const precioS = conv.$('#conv-precio-socio', wrapper);
                         const precioSD = conv.$('#conv-precio-socio-dia', wrapper);
                         if (precioS) precioS.classList.add('conv-price--active');
@@ -82,12 +82,12 @@
             const updateMinorFields = () => {
                 const isVisible = minorToggle.checked;
                 minorFields.style.display = isVisible ? 'block' : 'none';
-                
+
                 // Toggle required attribute for validation
                 if (inputNombreParticipante) inputNombreParticipante.required = isVisible;
                 if (inputEdadParticipante) inputEdadParticipante.required = isVisible;
             };
-            
+
             minorToggle.addEventListener('change', updateMinorFields);
             // Run once on init in case it's checked by some persistent browser state
             updateMinorFields();
@@ -109,7 +109,7 @@
                     allValid = false;
                 }
             });
-            
+
             const consentimiento = conv.$('#conv-consentimiento', form) || conv.$('#conv-consentimiento', wrapper);
             if (consentimiento && !consentimiento.checked) {
                 conv.showAlert(alert, 'Debes aceptar la política de privacidad.', 'danger');
@@ -129,7 +129,7 @@
             const fd = new FormData(form);
             const nonce = window.bdeEnroll?.nonce || '';
 
-            conv.ajaxPost('convoca_inscribir', fd, nonce, 
+            conv.ajaxPost('convoca_inscribir', fd, nonce,
                 /* On Success */
                 (res) => {
                     // Redirect directly without showing success pane if gateway rules

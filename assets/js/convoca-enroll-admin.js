@@ -16,7 +16,7 @@
     if (stateForm) {
         stateForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const submitBtn = stateForm.querySelector('button[type="submit"]');
             if (submitBtn) {
                 submitBtn.disabled = true;
@@ -44,7 +44,7 @@
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             const id = this.dataset.id;
-            
+
             this.disabled = true;
             this.style.opacity = '0.5';
 
@@ -79,7 +79,7 @@
         if (!btn) return;
 
         e.preventDefault();
-        
+
         if (!confirm('¿Seguro que quieres reenviar el email de confirmación?')) {
             return;
         }
@@ -87,7 +87,7 @@
         const id = btn.dataset.id;
         btn.disabled = true;
         btn.style.opacity = '0.5';
-        
+
         const spinner = document.querySelector('.spinner');
         if (spinner) spinner.classList.add('is-active');
 

@@ -149,7 +149,7 @@ class Admin_Checkin {
 
 			<?php if ( ! \Convoca\Core\License_Manager::has_pro( 'pwa_checkin' ) ) : ?>
 			<div class="convoca-alert convoca-alert--info" style="display:block;margin-bottom:20px;padding:12px 16px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;">
-				<p style="margin:0;">🔒 <strong>PWA Check-in QR</strong> es una funcionalidad PRO que permite a los participantes registrarse escaneando un código QR con su móvil. 
+				<p style="margin:0;">🔒 <strong>PWA Check-in QR</strong> es una funcionalidad PRO que permite a los participantes registrarse escaneando un código QR con su móvil.
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-license' ) ); ?>" style="font-weight:600;">Activa tu licencia</a> para desbloquearla.</p>
 			</div>
 			<?php endif; ?>
@@ -157,7 +157,7 @@ class Admin_Checkin {
 			<div class="conv-checkin-filters">
 				<form method="get" action="">
 					<input type="hidden" name="page" value="conv-checkin">
-					
+
 					<label for="actividad_id"><?php esc_html_e( 'Seleccionar actividad:', 'convoca-enroll' ); ?></label>
 					<select name="actividad_id" id="actividad_id" onchange="this.form.submit()">
 						<option value="0"><?php esc_html_e( '— Seleccionar —', 'convoca-enroll' ); ?></option>
@@ -191,7 +191,7 @@ class Admin_Checkin {
 					?>
 					<p>
 						<a class="button button-small" href="<?php echo esc_url( admin_url( 'post.php?post=' . (int) $actividad_id . '&action=edit' ) ); ?>"><?php esc_html_e( 'Ver la actividad', 'convoca-enroll' ); ?></a>
-						<strong><?php esc_html_e( 'Asistencia:', 'convoca-enroll' ); ?></strong> 
+						<strong><?php esc_html_e( 'Asistencia:', 'convoca-enroll' ); ?></strong>
 						<span id="conv-present-count"><?php echo (int) $presentes; ?></span> / <?php echo (int) $total; ?>
 					</p>
 				</div>
@@ -250,8 +250,8 @@ class Admin_Checkin {
 										<?php endif; ?>
 									</td>
 									<td>
-										<button type="button" 
-												class="button conv-toggle-checkin <?php echo ( $asistencia === 'si' ) ? 'button-primary' : ''; ?>" 
+										<button type="button"
+												class="button conv-toggle-checkin <?php echo ( $asistencia === 'si' ) ? 'button-primary' : ''; ?>"
 												data-id="<?php echo esc_attr( (string) $id ); ?>">
 											<?php echo ( $asistencia === 'si' ) ? esc_html__( 'Registrado', 'convoca-enroll' ) : esc_html__( 'Pendiente', 'convoca-enroll' ); ?>
 										</button>

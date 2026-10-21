@@ -79,9 +79,9 @@ class Admin_Evaluaciones_Meta_Box {
 		<div class="conv-eval-summary">
 			<p><strong><?php /* translators: %d: number of evaluations */ printf( esc_html__( 'Total evaluaciones: %d', 'convoca-enroll' ), (int) $total_evals ); ?></strong></p>
 			<p><strong><?php esc_html_e( 'Media Global:', 'convoca-enroll' ); ?></strong> <?php self::render_stars( $overall_avg ); ?> (<?php echo esc_html( (string) $overall_avg ); ?>/5)</p>
-			
+
 			<hr>
-			
+
 			<table class="widefat striped">
 				<tbody>
 					<tr>
@@ -102,7 +102,7 @@ class Admin_Evaluaciones_Meta_Box {
 					</tr>
 				</tbody>
 			</table>
-			
+
 			<p style="margin-top: 15px;">
 				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=conv_evaluacion&filter_actividad=' . $post->ID ) ); ?>" class="button button-primary">
 					<?php esc_html_e( 'Ver todas las evaluaciones', 'convoca-enroll' ); ?>
