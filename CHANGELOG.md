@@ -1,3 +1,10 @@
+## [2.7.65] — 2026-10-21
+
+### Cambiado
+
+- **Aporta su diagnóstico al núcleo por el filtro `convoca_system_checks`**, en vez de que el núcleo
+  llame a su clase por reflexión.
+
 ## [2.7.64] — 2026-10-20
 
 ### Arreglado
