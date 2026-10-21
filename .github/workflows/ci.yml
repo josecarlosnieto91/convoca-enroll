@@ -117,7 +117,6 @@ jobs:
 
       - name: Run integration tests
         env:
-          CONVOCA_WP_ROOT: /tmp/entorno/wp
           WP_TESTS_CONFIG_FILE_PATH: /tmp/entorno/wp-tests-config.php
           WP_TESTS_DIR: /tmp/entorno/wptests
         run: vendor/bin/phpunit -c phpunit-integration.xml --log-junit build/junit-integration.xml
