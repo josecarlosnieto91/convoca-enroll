@@ -23,7 +23,9 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          # 8.4 y no 8.3: eluceo/ical 2.17.0 exige ~8.4||~8.5 y doctrine/instantiator 2.1.0 exige ^8.4 (composer.lock). Con 8.3 el 'composer install' del lock
+          # fallaba («Your lock file does not contain a compatible set of packages»).
+          php-version: '8.4'
           coverage: pcov
           tools: composer:v2
 
