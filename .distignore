@@ -50,3 +50,5 @@ phpunit-unit.xml
 phpstan-stubs/
 *.stub.php
 wpml-config.xml
+# Política del proyecto: los .htaccess no viajan (el empaquetador ya los quita).
+.htaccess
