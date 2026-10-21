@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Enroll
  * Plugin URI:        https://getconvoca.app
  * Description:       Centralized activity enrollment system.
- * Version: 2.7.65
+ * Version: 2.7.66
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -141,22 +141,8 @@ register_activation_hook(
 			}
 		}
 
-		// Roles and capabilities.
-		$admin = get_role( 'administrator' );
-		if ( $admin ) {
-			$admin->add_cap( 'manage_inscripciones' );
-		}
-
-		add_role(
-			'monitor_actividad',
-			__( 'Monitor de Actividad', 'convoca-enroll' ),
-			array(
-				'read'                 => true,
-				'manage_inscripciones' => true,
-				'edit_posts'           => true,
-				'gestionar_miembros'   => true,
-			)
-		);
+		// Roles y capacidades: los crea y los mantiene Convoca Core (vocabulario del producto). Enroll no
+		// crea `monitor_actividad` ni toca los permisos del administrador.
 
 		// Schedule cron events with appropriate intervals.
 		if ( ! wp_next_scheduled( 'convoca_enroll_reminder_7dias' ) ) {
@@ -250,99 +236,10 @@ add_action(
 		new Social\Social_Rest_API();
 		Social\Social_Healthcheck::init();
 
-		if ( ! function_exists( 'Convoca\Enroll\convoca_ensure_enroll_capabilities' ) ) {
-			/**
-			 * Ensure all necessary roles and capabilities are present.
-			 * Called on init to prevent race conditions or missing caps after updates.
-			 */
-			function convoca_ensure_enroll_capabilities() {
-				// 1. Ensure Roles exist
-				if ( ! get_role( 'monitor_actividad' ) ) {
-					add_role(
-						'monitor_actividad',
-						__( 'Monitor de Actividad', 'convoca-enroll' ),
-						array(
-							'read'                 => true,
-							'manage_inscripciones' => true,
-							'edit_posts'           => true,
-							'gestionar_miembros'   => true,
-							'view_reports'         => true,
-						)
-					);
-				}
-
-				// 2. Assign Capabilities
-				$roles_to_check = array(
-					'administrator'     => array(
-						'manage_inscripciones',
-						'gestionar_miembros',
-						'gestionar_documentos_voluntariado',
-						'view_reports',
-						'manage_convoca_logs',
-						'manage_convoca_templates',
-						'manage_convoca_gateway',
-						'convoca_shifts_manage_turnos',
-						'convoca_shifts_view_stats',
-						'convoca_shifts_audit_hours',
-						'convoca_manage_checkin',
-						'convoca_manage_evaluations',
-						'convoca_view_reports',
-						'convoca_manage_hours',
-						'convoca_export_members',
-						'convoca_manage_webhooks',
-						'convoca_view_payments',
-						'convoca_manage_payments',
-						'common_view_logs',
-						'common_manage_backup',
-					),
-					'monitor_actividad' => array(
-						'manage_inscripciones',
-						'gestionar_miembros',
-						'gestionar_documentos_voluntariado',
-						'view_reports',
-						'convoca_shifts_manage_turnos',
-						'convoca_shifts_view_stats',
-						'convoca_shifts_audit_hours',
-						'convoca_manage_checkin',
-						'convoca_manage_evaluations',
-						'convoca_view_reports',
-						'convoca_manage_hours',
-					),
-				);
-
-				foreach ( $roles_to_check as $role_name => $caps ) {
-					$role = get_role( $role_name );
-					if ( ! $role ) {
-						continue;
-					}
-
-					foreach ( $caps as $cap ) {
-						if ( ! $role->has_cap( $cap ) ) {
-							$role->add_cap( $cap );
-						}
-					}
-				}
-			}
-		}
-		add_action( 'init', 'Convoca\Enroll\convoca_ensure_enroll_capabilities', 1 );
-
-		/**
-		 * Only run ensure_capabilities if the version hash has changed
-		 * (avoids writing to options table on every request).
-		 */
-		add_action(
-			'init',
-			function () {
-				$version_hash = md5( CONVOCA_ENROLL_VERSION . '_caps_v2' );
-				if ( get_option( 'convoca_enroll_caps_hash' ) !== $version_hash ) {
-					if ( function_exists( 'Convoca\Enroll\convoca_ensure_enroll_capabilities' ) ) {
-						convoca_ensure_enroll_capabilities();
-					}
-					update_option( 'convoca_enroll_caps_hash', $version_hash, false );
-				}
-			},
-			0
-		);
+		// Los roles de personas y sus capacidades son vocabulario del PRODUCTO y los mantiene Convoca Core
+		// (`Capabilities::crear_roles()` + `Capabilities::register()`). Enroll no crea roles ni les añade
+		// capacidades: hacerlo era proveer funcionalidad de otro plugin, y mantenía un segundo mapa de
+		// capacidades que había que ir sincronizando a mano con el del núcleo.
 
 		// WP-CLI Commands.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {

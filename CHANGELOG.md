@@ -1,3 +1,25 @@
+## [2.7.66] — 2026-10-21
+
+### Cambiado
+
+- **Enroll deja de administrar roles.** Creaba `monitor_actividad` (en la activación y en `init`) y
+  mantenía **un segundo mapa de capacidades** para `administrator` y `monitor_actividad` que había que ir
+  sincronizando a mano con el del núcleo. Ahora los roles y las capacidades los crea y los mantiene
+  Convoca Core: el mapa se ha ido entero (92 líneas) y con él el riesgo de que las dos listas se
+  separaran. Las tres capacidades que sólo estaban ahí (`manage_convoca_logs`, `manage_convoca_templates`,
+  `manage_convoca_gateway`) se han movido al mapa del núcleo.
+- **Quién acredita horas lo dice la puerta del libro.** El tracker tenía un `if/elseif`: si estaba
+  Convoca Members preguntaba a su clase; si no, decidía por el rol `voluntario_aprobado`, un meta y la
+  capacidad `gestionar_mis_turnos`. Las dos ramas se van: ahora los dos caminos (inscripción y
+  responsables) preguntan a `Hour_Ledger::puede_acreditar_horas()`, que por defecto dice **no**. Así no se
+  acreditan horas en sitios sin gestión de personas, y Enroll deja de nombrar una clase de Members.
+
+### Pruebas
+
+- `EnrollNoAdministraRolesTest` (3 casos) blinda las dos reglas sobre el fuente y cuenta las dos puertas
+  (inscripción y responsables) para que ninguna se quede por la puerta de atrás. Probado en negativo: con
+  un `add_role()` de vuelta, el test cae.
+
 ## [2.7.65] — 2026-10-21
 
 ### Cambiado

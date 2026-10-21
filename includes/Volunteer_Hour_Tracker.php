@@ -59,15 +59,11 @@ class Volunteer_Hour_Tracker {
 			// donde escribe la aprobación. Antes se aceptaba además la clave
 			// `_convoca_es_voluntario` en el usuario — que nadie escribe y se confunde con el meta
 			// del mismo nombre en la ficha —, así que el compromiso parecía habilitar las horas.
-			if ( class_exists( '\Convoca\Members\Admin_Voluntariado' ) ) {
-				if ( ! \Convoca\Members\Admin_Voluntariado::puede_acreditar_horas( (int) $user->ID ) ) {
-					return;
-				}
-			} elseif (
-				! in_array( 'voluntario_aprobado', (array) $user->roles, true )
-				&& '1' !== (string) get_user_meta( $user->ID, '_convoca_voluntario_aprobado', true )
-				&& ! $user->has_cap( 'gestionar_mis_turnos' )
-			) {
+			// Quién acredita horas lo dice la puerta del libro de Convoca Core, no una clase de otro
+			// plugin ni un rol leído aquí: eso era proveer funcionalidad ajena, y además el fallback
+			// acreditaba horas en sitios donde no hay gestión de personas. La puerta está CERRADA por
+			// defecto: sin gestión de personas, no se acredita nada.
+			if ( ! \Convoca\Core\Hour_Ledger::puede_acreditar_horas( (int) $user->ID ) ) {
 				return;
 			}
 
@@ -349,9 +345,9 @@ class Volunteer_Hour_Tracker {
 				continue;
 			}
 
-			// Solo acredita quien puede acreditarlas: monitor, voluntariado aprobado o administración.
-			if ( class_exists( '\Convoca\Members\Admin_Voluntariado' )
-				&& ! \Convoca\Members\Admin_Voluntariado::puede_acreditar_horas( $user_id ) ) {
+			// Los responsables también pasan por la puerta del libro: es la única fuente de verdad de quién
+			// acredita horas, y por defecto está cerrada (sin gestión de personas, no se acredita).
+			if ( ! \Convoca\Core\Hour_Ledger::puede_acreditar_horas( $user_id ) ) {
 				continue;
 			}
 
