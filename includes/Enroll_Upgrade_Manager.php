@@ -168,6 +168,8 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 		$migradas = 0;
 		foreach ( $antiguas as $fila ) {
 			if ( get_post_meta( (int) $fila->post_id, '_convoca_member_id', true ) === '' ) {
+				// convoca-acoplamiento-ignore: migración de datos heredados: se copia el meta que ya existía en la base
+				// antigua, no se decide nada nuevo. Quitar esta escritura perdería el vínculo.
 				update_post_meta( (int) $fila->post_id, '_convoca_member_id', $fila->meta_value );
 				++$migradas;
 			}
