@@ -37,7 +37,13 @@ abstract class IntegrationTestCase extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		if ( ! function_exists( 'wp_insert_post' ) ) {
+		/*
+		 * Ojo con la guarda: `wp_insert_post()` NO sirve para saber si hay WordPress de verdad, porque los
+		 * dobles de la suite unitaria la definen. Se pide `dbDelta()`, que solo existe cuando se ha cargado
+		 * el WordPress real (wp-admin/includes/upgrade.php, ver bootstrap-integration.php): con los dobles
+		 * la guarda pasa en falso y el caso muere después con «undefined function».
+		 */
+		if ( ! function_exists( 'wp_insert_post' ) || ! function_exists( 'dbDelta' ) ) {
 			$this->markTestSkipped(
 				'Suite de integración sin entorno de WordPress: falta un WordPress con base de datos de '
 				. 'pruebas. Montaje: bin/instalar-entorno-pruebas.sh (ver convoca-health-check#3).'
