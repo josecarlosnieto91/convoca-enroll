@@ -30,6 +30,13 @@ $convoca_wp_root = getenv( 'CONVOCA_WP_ROOT' ) ?: '/var/www/html';
 $convoca_wptests = getenv( 'WP_TESTS_DIR' ) ?: '';
 $convoca_config  = getenv( 'WP_TESTS_CONFIG_FILE_PATH' ) ?: ( getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) ?: '' );
 
+/*
+ * La clase base de los casos se carga SIEMPRE, con o sin entorno: es la que sabe declarar los casos
+ * saltados cuando no hay WordPress. Si sólo se cargara en la rama buena, sin entorno PHPUnit moriría
+ * con «Class IntegrationTestCase not found» (exit 255) en vez de decir qué falta.
+ */
+require_once __DIR__ . '/IntegrationTestCase.php';
+
 $convoca_hay_entorno = '' !== $convoca_wptests
 	&& file_exists( $convoca_wptests . '/includes/bootstrap.php' )
 	&& '' !== $convoca_config
@@ -51,8 +58,6 @@ if ( $convoca_hay_entorno ) {
 	if ( ! defined( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH' ) && file_exists( $convoca_polyfills . '/phpunitpolyfills-autoload.php' ) ) {
 		define( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH', $convoca_polyfills );
 	}
-
-	require_once dirname( __DIR__ ) . '/tests/IntegrationTestCase.php';
 
 	require_once $convoca_wptests . '/includes/functions.php';
 	require_once $convoca_wptests . '/includes/bootstrap.php';
