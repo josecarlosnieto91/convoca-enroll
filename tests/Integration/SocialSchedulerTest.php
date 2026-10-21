@@ -10,11 +10,11 @@ namespace Convoca\Enroll\Tests;
 use Convoca\Enroll\Social\Social_Scheduler;
 use Convoca\Enroll\Social\Social_OAuth;
 
-class SocialSchedulerTest extends \WP_UnitTestCase {
+class SocialSchedulerTest extends IntegrationTestCase {
 
 	public function test_queue_creates_entry(): void {
 		global $wpdb;
-		$act_id = $this->factory->post->create( array( 'post_type' => 'actividad', 'post_title' => 'Scheduler Test' ) );
+		$act_id = $this->crear_actividad( array( 'post_type' => 'actividad', 'post_title' => 'Scheduler Test' ) );
 		$queue_id = Social_Scheduler::queue( $act_id, array(), 'Test message' );
 		$this->assertGreaterThan( 0, $queue_id );
 
@@ -23,7 +23,7 @@ class SocialSchedulerTest extends \WP_UnitTestCase {
 	}
 
 	public function test_queue_with_schedule(): void {
-		$act_id = $this->factory->post->create( array( 'post_type' => 'actividad' ) );
+		$act_id = $this->crear_actividad( array( 'post_type' => 'actividad' ) );
 		$future = time() + 3600;
 		$queue_id = Social_Scheduler::queue( $act_id, array(), 'Scheduled', '', $future );
 		$this->assertGreaterThan( 0, $queue_id );

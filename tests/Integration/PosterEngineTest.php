@@ -13,7 +13,7 @@ use Convoca\Enroll\Media\Template_Manager;
 /**
  * Test poster generation and template management.
  */
-class PosterEngineTest extends \WP_UnitTestCase {
+class PosterEngineTest extends IntegrationTestCase {
 
 	protected $actividad_id;
 
@@ -30,7 +30,7 @@ class PosterEngineTest extends \WP_UnitTestCase {
 			$this->markTestSkipped( 'Imagick sin formatos compilados en este entorno (queryFormats(PNG) = 0).' );
 		}
 
-		$this->actividad_id = $this->factory->post->create( array(
+		$this->actividad_id = $this->crear_actividad( array(
 			'post_type'  => 'actividad',
 			'post_title' => 'Test Activity',
 		) );

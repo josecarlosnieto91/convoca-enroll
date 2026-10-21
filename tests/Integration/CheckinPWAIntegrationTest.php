@@ -6,7 +6,7 @@
 
 namespace Convoca\Enroll\Tests;
 
-class CheckinPWAIntegrationTest extends \WP_UnitTestCase
+class CheckinPWAIntegrationTest extends IntegrationTestCase
 {
     public function test_class_exists(): void
     {

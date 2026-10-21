@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Suite de INTEGRACION de convoca-enroll: necesita WordPress real (WP_UnitTestCase).
+  Suite de INTEGRACIÓN de convoca-enroll: necesita WordPress real (base de datos de pruebas).
 
-  Configuracion aparte de phpunit-unit.xml a proposito: el bootstrap unitario no carga
-  WordPress, y con el, la suite de integracion no arrancaba nunca ("Class
-  WP_UnitTestCase not found"). Aqui el bootstrap es tests/bootstrap.php, que carga
-  WordPress por wp-phpunit y, si el entorno no esta montado, declara los tests
-  SALTADOS con su motivo en vez de morir al cargar.
+  Configuración aparte de phpunit.xml.dist a propósito: el bootstrap unitario no carga WordPress y con él
+  esta suite no arrancaría. Aquí el bootstrap es tests/bootstrap-integration.php, que carga la biblioteca
+  de pruebas de WordPress (WP_TESTS_DIR), arranca el sitio y ejecuta la activación del plugin —donde se
+  crean sus tablas—. Si no hay entorno, los casos se declaran SALTADOS con su motivo y el CI los cuenta.
 
-  Uso:  vendor/bin/phpunit -c phpunit-integration.xml
+  Los casos extienden `IntegrationTestCase` (tests/IntegrationTestCase.php), NO `WP_UnitTestCase`: eso es
+  lo que permite correr en PHPUnit 10.5.
+
+  Uso:  CONVOCA_WP_ROOT=… WP_TESTS_DIR=… WP_TESTS_CONFIG_FILE_PATH=… vendor/bin/phpunit -c phpunit-integration.xml
 -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="tests/bootstrap.php"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         bootstrap="tests/bootstrap-integration.php"
          backupGlobals="false"
          colors="true"
-         cacheResult="false">
+         cacheDirectory=".phpunit.cache">
   <testsuites>
     <testsuite name="integration">
       <directory suffix="Test.php">./tests/Integration</directory>

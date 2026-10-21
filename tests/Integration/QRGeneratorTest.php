@@ -9,13 +9,13 @@ namespace Convoca\Enroll\Tests;
 
 use Convoca\Enroll\Media\QR_Generator;
 
-class QRGeneratorTest extends \WP_UnitTestCase {
+class QRGeneratorTest extends IntegrationTestCase {
 
 	protected $actividad_id;
 
 	public function setUp(): void {
 		parent::setUp();
-		$this->actividad_id = $this->factory->post->create( array(
+		$this->actividad_id = $this->crear_actividad( array(
 			'post_type' => 'actividad',
 			'post_title' => 'QR Test',
 		) );

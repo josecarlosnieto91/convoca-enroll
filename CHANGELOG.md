@@ -1,3 +1,22 @@
+## [2.7.68] — 2026-10-21
+
+### Cambiado
+
+- **La suite de integración ya no hereda de `WP_UnitTestCase`, y con eso el plugin entra en PHPUnit 10.5.**
+  `wp-phpunit` llama a `PHPUnit\Util\Test::parseTestMethodAnnotations()` y a `getName()`, eliminados en
+  PHPUnit 10 (WordPress sigue igual en trunk), así que subir de versión reventaba 29 de los 39 casos de
+  integración con errores que parecían del código.
+  Los casos extienden ahora `IntegrationTestCase`, propio: carga WordPress de verdad, pone un
+  administrador de pruebas, aísla cada caso en una transacción (`START TRANSACTION`/`ROLLBACK`, como hacía
+  la clase de WordPress) y ofrece `crear_actividad()`, que sustituye a `$this->factory->post->create()`.
+  El bootstrap nuevo usa la biblioteca de pruebas de WordPress por `WP_TESTS_DIR` (no la copia del vendor)
+  y ejecuta la activación del plugin, que es donde se crean sus tablas.
+  Medido en el mismo entorno que el CI (WordPress real + MariaDB): **39 casos, 39 ejecutados, 0 saltados**,
+  antes y después; unitarios **227**; cobertura 10,5 % sobre el suelo de 8,5 %.
+  Se retiran `wp-phpunit/wp-phpunit` y `phpunit-unit.xml` (dos configuraciones para lo mismo), y el CI
+  gana el guardián que ya tenía el núcleo: si el informe dice «WordPress no cargado» o se saltan todos los
+  casos, el trabajo cae.
+
 ## [2.7.67] — 2026-10-21
 
 ### Cambiado
