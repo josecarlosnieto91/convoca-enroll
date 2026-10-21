@@ -4,7 +4,6 @@
  *
  * @package       Convoca\Enroll\Tests
  *
- * @coversDefaultClass \Convoca\Enroll\CPT_Actividad
  */
 
 namespace Convoca\Enroll\Tests;
@@ -15,20 +14,20 @@ use PHPUnit\Framework\TestCase;
 /**
  * Tests for the Actividad CPT.
  *
- * @covers ::get_meta
- * @covers ::get_meta_value
- * @covers ::update_meta
- * @covers ::get_upcoming
- * @covers ::META_KEYS
- * @covers ::META_PREFIX
- * @covers ::REMINDER_TYPES
+ * @covers \Convoca\Enroll\CPT_Actividad::get_meta
+ * @covers \Convoca\Enroll\CPT_Actividad::get_meta_value
+ * @covers \Convoca\Enroll\CPT_Actividad::update_meta
+ * @covers \Convoca\Enroll\CPT_Actividad::get_upcoming
+ * @covers \Convoca\Enroll\CPT_Actividad
+ * @covers \Convoca\Enroll\CPT_Actividad
+ * @covers \Convoca\Enroll\CPT_Actividad
  */
 class CPTActividadTest extends TestCase
 {
     /**
      * Test that META_PREFIX is defined correctly.
      *
-     * @covers \Convoca\Enroll\CPT_Actividad::META_PREFIX
+     * @covers \Convoca\Enroll\CPT_Actividad
      */
     public function test_meta_prefix(): void
     {
@@ -38,7 +37,7 @@ class CPTActividadTest extends TestCase
     /**
      * Test that META_KEYS contains expected fields.
      *
-     * @covers \Convoca\Enroll\CPT_Actividad::META_KEYS
+     * @covers \Convoca\Enroll\CPT_Actividad
      */
     public function test_meta_keys_contains_expected(): void
     {
@@ -58,7 +57,7 @@ class CPTActividadTest extends TestCase
     /**
      * Test that META_KEYS contains all unique values.
      *
-     * @covers \Convoca\Enroll\CPT_Actividad::META_KEYS
+     * @covers \Convoca\Enroll\CPT_Actividad
      */
     public function test_meta_keys_unique(): void
     {
@@ -69,7 +68,7 @@ class CPTActividadTest extends TestCase
     /**
      * Test that REMINDER_TYPES contains expected keys.
      *
-     * @covers \Convoca\Enroll\CPT_Actividad::reminder_types()
+     * @covers \Convoca\Enroll\CPT_Actividad::reminder_types
      */
     public function test_reminder_types(): void
     {
@@ -85,7 +84,7 @@ class CPTActividadTest extends TestCase
     /**
      * Test that reminder labels are non-empty.
      *
-     * @covers \Convoca\Enroll\CPT_Actividad::reminder_types()
+     * @covers \Convoca\Enroll\CPT_Actividad::reminder_types
      */
     public function test_reminder_labels(): void
     {

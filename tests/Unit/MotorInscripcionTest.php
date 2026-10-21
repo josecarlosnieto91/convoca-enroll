@@ -4,7 +4,6 @@
  *
  * @package       Convoca\Enroll\Tests
  *
- * @coversDefaultClass \Convoca\Enroll\Motor_Inscripcion
  */
 
 namespace Convoca\Enroll\Tests;
@@ -15,11 +14,11 @@ use PHPUnit\Framework\TestCase;
 /**
  * Tests for the enrollment logic engine.
  *
- * @covers ::generar_codigo
- * @covers ::validar_dni
- * @covers ::generar_token_unico
- * @covers ::regenerar_token_checkin
- * @covers ::buscar_por_codigo
+ * @covers \Convoca\Enroll\Motor_Inscripcion::generar_codigo
+ * @covers \Convoca\Enroll\Motor_Inscripcion::validar_dni
+ * @covers \Convoca\Enroll\Motor_Inscripcion::generar_token_unico
+ * @covers \Convoca\Enroll\Motor_Inscripcion::regenerar_token_checkin
+ * @covers \Convoca\Enroll\Motor_Inscripcion::buscar_por_codigo
  */
 class MotorInscripcionTest extends TestCase
 {

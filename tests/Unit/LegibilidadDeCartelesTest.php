@@ -48,7 +48,6 @@ class LegibilidadDeCartelesTest extends TestCase {
 
 	private function llamar( string $metodo, array $args ) {
 		$m = new \ReflectionMethod( Poster_Engine::class, $metodo );
-		$m->setAccessible( true );
 		return $m->invokeArgs( null, $args );
 	}
 

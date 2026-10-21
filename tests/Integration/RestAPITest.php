@@ -4,7 +4,6 @@
  *
  * @package       Convoca\Enroll\Tests
  *
- * @coversDefaultClass \Convoca\Enroll\Rest_API
  * @group integration
  */
 
@@ -16,11 +15,11 @@ use PHPUnit\Framework\TestCase;
 /**
  * Tests for REST API endpoints.
  *
- * @covers ::list_activities
- * @covers ::get_activity
- * @covers ::get_session_status
- * @covers ::register_routes
- * @covers ::handle_checkin
+ * @covers \Convoca\Enroll\Rest_API::list_activities
+ * @covers \Convoca\Enroll\Rest_API::get_activity
+ * @covers \Convoca\Enroll\Rest_API::get_session_status
+ * @covers \Convoca\Enroll\Rest_API::register_routes
+ * @covers \Convoca\Enroll\Rest_API::handle_checkin
  */
 class RestAPITest extends TestCase
 {

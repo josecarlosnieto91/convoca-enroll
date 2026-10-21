@@ -34,7 +34,6 @@ class HorasActividadTest extends TestCase {
 		require_once dirname( __DIR__, 2 ) . '/includes/Volunteer_Hour_Tracker.php';
 		$clase = new \ReflectionClass( \Convoca\Enroll\Volunteer_Hour_Tracker::class );
 		$m     = $clase->getMethod( $metodo );
-		$m->setAccessible( true );
 
 		return $m->invokeArgs( null, $argumentos );
 	}

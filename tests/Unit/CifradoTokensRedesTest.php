@@ -40,7 +40,6 @@ class CifradoTokensRedesTest extends TestCase {
 
 		$clase = new ReflectionClass( \Convoca\Enroll\Social\Social_OAuth::class );
 		$m     = $clase->getMethod( $metodo );
-		$m->setAccessible( true );
 
 		return $m->invokeArgs( null, $argumentos );
 	}

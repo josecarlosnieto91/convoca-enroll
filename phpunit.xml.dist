@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- OJO: este plugin está en PHPUnit 9.6 (composer.json: ^9.6), no en 10.x como el resto del
-     ecosistema. Con la sintaxis de 10.5 (`cacheDirectory`, `<source>`) el fichero NO pasa la
-     validación y PHPUnit avisa «No filter is configured, code coverage will not be processed»:
-     el job de cobertura salía en verde midiendo 0 %. Aquí el filtro va en <coverage><include>. -->
+<!-- PHPUnit 10.5 desde el 21-10-2026 (antes 9.6, el último plugin que quedaba atrás). La sintaxis
+     importa: con la de 10.5 sobre una instalación 9.6 el fichero NO valida, PHPUnit lo ignora y avisa
+     «No filter is configured, code coverage will not be processed» — el job de cobertura salía en verde
+     midiendo 0 %. Aquí el filtro va en <source>, que es lo que lee 10.x.
+
+     El filtro cubre el código REAL del plugin: includes/ (8.931 líneas) + admin/ (6.997) + media/.
+     Medir solo includes/ dejaba fuera media aplicación y el número no significaba nada. -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
          bootstrap="tests/bootstrap-unit.php"
          defaultTestSuite="unit"
          backupGlobals="false"
          colors="true"
-         cacheResult="false">
+         cacheDirectory=".phpunit.cache">
   <testsuites>
     <testsuite name="unit">
       <directory suffix="Test.php">./tests/Unit</directory>
     </testsuite>
   </testsuites>
-  <coverage>
+  <source>
     <include>
       <directory suffix=".php">./includes</directory>
       <directory suffix=".php">./admin</directory>
       <directory suffix=".php">./media</directory>
     </include>
-  </coverage>
+  </source>
 </phpunit>
