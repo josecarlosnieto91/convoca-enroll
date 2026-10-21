@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- PHPUnit 10.5 desde el 21-10-2026 (antes 9.6, el último plugin que quedaba atrás). La sintaxis
-     importa: con la de 10.5 sobre una instalación 9.6 el fichero NO valida, PHPUnit lo ignora y avisa
-     «No filter is configured, code coverage will not be processed» — el job de cobertura salía en verde
-     midiendo 0 %. Aquí el filtro va en <source>, que es lo que lee 10.x.
+<!-- PHPUnit 9.6 — y no es un olvido: es lo que exige `wp-phpunit/wp-phpunit ^7.0`, del que depende la
+     suite de INTEGRACIÓN de este plugin. Medido el 21-10-2026 al intentar unificar a 10.5: la integración
+     se cae entera con «Call to undefined method PHPUnit\Util\Test::parseTestMethodAnnotations()» (39
+     tests, 29 errores; run 39669879373). Unificar exigiría migrar esa suite a yoast/wp-test-utils, que
+     es otro trabajo.
+
+     Lo que SÍ importa y estaba mal: el fichero tiene que estar en la sintaxis de la versión instalada.
+     Con la de 10.5 sobre 9.6 no valida, PHPUnit lo ignora y avisa «No filter is configured, code coverage
+     will not be processed»: el job de cobertura salía en verde midiendo 0 %. En 9.6 el filtro va en
+     <coverage><include>.
 
      El filtro cubre el código REAL del plugin: includes/ (8.931 líneas) + admin/ (6.997) + media/.
      Medir solo includes/ dejaba fuera media aplicación y el número no significaba nada. -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
          bootstrap="tests/bootstrap-unit.php"
          defaultTestSuite="unit"
          backupGlobals="false"
          colors="true"
-         cacheDirectory=".phpunit.cache">
+         cacheResult="false">
   <testsuites>
     <testsuite name="unit">
       <directory suffix="Test.php">./tests/Unit</directory>
     </testsuite>
   </testsuites>
-  <source>
+  <coverage>
     <include>
       <directory suffix=".php">./includes</directory>
       <directory suffix=".php">./admin</directory>
       <directory suffix=".php">./media</directory>
     </include>
-  </source>
+  </coverage>
 </phpunit>
