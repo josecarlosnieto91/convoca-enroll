@@ -1,3 +1,20 @@
+## [2.7.67] — 2026-10-21
+
+### Cambiado
+
+- **La identidad del socio se pregunta al núcleo, no a las clases de Members.** Cuatro sitios —el motor de
+  inscripción, el formulario público y la API— llamaban a `\Convoca\Members\Member_Auth` con un
+  `class_exists` delante y su camino de reserva detrás. Ahora usan `Core\Member_Identity`.
+- **La prioridad de una inscripción sale de Enroll.** Eran treinta líneas dentro de un
+  `class_exists( '\Convoca\Members\Process_Member' )` que resolvían la ficha y miraban la cuota; ahora se
+  pregunta a `Member_Identity::prioridad_de_socio()`, que por defecto concede la prioridad (sin gestión de
+  socios no hay cuota que verificar, que es lo que hacía el código de antes).
+
+### Pruebas
+
+- `IdentidadDelSocioTest` (3 casos) fija que Enroll no vuelve a nombrar las clases de nadie, que la
+  identidad y la prioridad se preguntan al contrato y que ya no lee la cuota ni busca la ficha.
+
 ## [2.7.66] — 2026-10-21
 
 ### Cambiado

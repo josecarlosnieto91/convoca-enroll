@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Enroll 2.7.66\n"
+"Project-Id-Version: Convoca Enroll 2.7.67\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-enroll\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-21T08:12:42+00:00\n"
+"POT-Creation-Date: 2026-10-21T10:31:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-enroll\n"
@@ -733,7 +733,7 @@ msgstr ""
 #: admin/class-admin-page.php:126
 #: admin/class-admin-page.php:127
 #: admin/class-admin-page.php:338
-#: includes/CPT_Inscripcion.php:142
+#: includes/CPT_Inscripcion.php:144
 msgid "Inscripciones"
 msgstr ""
 
@@ -845,8 +845,8 @@ msgid "(%1$d saltadas por falta de aforo, %2$d por estado no confirmable)."
 msgstr ""
 
 #: admin/class-admin-page.php:557
-#: includes/Motor_Inscripcion.php:452
-#: includes/Motor_Inscripcion.php:989
+#: includes/Motor_Inscripcion.php:450
+#: includes/Motor_Inscripcion.php:955
 msgid "Inscripción no encontrada."
 msgstr ""
 
@@ -1700,7 +1700,7 @@ msgstr ""
 msgid "Cancelada"
 msgstr ""
 
-#: includes/CPT_Inscripcion.php:143
+#: includes/CPT_Inscripcion.php:145
 msgid "Inscripción"
 msgstr ""
 
@@ -1965,91 +1965,91 @@ msgstr ""
 msgid "Demasiados intentos. Inténtalo de nuevo más tarde."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:194
+#: includes/Motor_Inscripcion.php:192
 msgid "El nombre es obligatorio."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:197
+#: includes/Motor_Inscripcion.php:195
 msgid "El email no es válido."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:203
+#: includes/Motor_Inscripcion.php:201
 msgid "El dominio del email no es válido."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:207
+#: includes/Motor_Inscripcion.php:205
 msgid "El DNI/NIE no es válido."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:218
+#: includes/Motor_Inscripcion.php:216
 msgid "Debes aceptar la política de privacidad."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:228
+#: includes/Motor_Inscripcion.php:226
 msgid "La edad del menor debe estar entre 0 y 17 años."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:276
-#: includes/Motor_Inscripcion.php:334
+#: includes/Motor_Inscripcion.php:274
+#: includes/Motor_Inscripcion.php:332
 msgid "Ya estás inscrito/a en esta actividad."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:306
-#: includes/Motor_Inscripcion.php:340
+#: includes/Motor_Inscripcion.php:304
+#: includes/Motor_Inscripcion.php:338
 msgid "Ya existe una inscripción activa para este DNI en esta actividad."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:357
+#: includes/Motor_Inscripcion.php:355
 msgid "No se pudo crear la inscripción."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:386
+#: includes/Motor_Inscripcion.php:384
 msgid "No hay plazas disponibles."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:435
+#: includes/Motor_Inscripcion.php:433
 msgid "Error al procesar la inscripción."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:528
+#: includes/Motor_Inscripcion.php:526
 msgid "Error al cancelar la inscripción."
 msgstr ""
 
 #. translators: %d: horas mínimas de antelación
-#: includes/Motor_Inscripcion.php:571
+#: includes/Motor_Inscripcion.php:569
 #, php-format
 msgid "No se puede cancelar a menos de %d horas del inicio. Contacta con la organización."
 msgstr ""
 
 #. translators: %1$s: nombre, %2$d: número de cancelaciones tardías
-#: includes/Motor_Inscripcion.php:620
+#: includes/Motor_Inscripcion.php:618
 #, php-format
 msgid "Aviso: %1$s acumula %2$d cancelaciones tardías este año"
 msgstr ""
 
 #. translators: %1$s: nombre, %2$s: email, %3$d: número de cancelaciones tardías
-#: includes/Motor_Inscripcion.php:624
+#: includes/Motor_Inscripcion.php:622
 #, php-format
 msgid "La persona %1$s (%2$s) ha acumulado %3$d cancelaciones tardías en el año natural. Revisa su historial de inscripciones."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:653
+#: includes/Motor_Inscripcion.php:651
 msgid "Solo se pueden confirmar inscripciones pendientes o en lista de espera."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:679
+#: includes/Motor_Inscripcion.php:677
 msgid "No hay plazas disponibles para confirmar esta inscripción."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:700
+#: includes/Motor_Inscripcion.php:698
 msgid "Error al confirmar la inscripción."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:875
+#: includes/Motor_Inscripcion.php:841
 msgid "Ya tienes una reserva activa. Cada persona solo puede realizar una única reserva de taller. Si quieres inscribir a un menor o persona a tu cargo, marca la opción correspondiente."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:994
+#: includes/Motor_Inscripcion.php:960
 msgid "Estado de asistencia no válido. Valores permitidos: si, no, no_registrada."
 msgstr ""
 

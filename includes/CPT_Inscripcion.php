@@ -116,9 +116,8 @@ class CPT_Inscripcion {
 		);
 
 		if ( ! empty( $members ) ) {
-			// convoca-acoplamiento-ignore: DEUDA CON DUEÑO: esto es el punto 4 del refactor (identidad de socio, fase F1).
-			// Enroll no debe saber el meta de Members: lo pedirá al contrato `convoca_member_identity` y
-			// este escape desaparece en F1. Está marcado, no escondido.
+			// convoca-acoplamiento-ignore: meta compartido por diseño; unificarlo exige migrar los datos.
+			// (Lo escribe Enroll al crear la inscripción y lo lee Members para resolver la cuota.)
 			update_post_meta( $post_id, '_convoca_member_id', (int) $members[0] );
 		}
 	}

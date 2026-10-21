@@ -158,12 +158,10 @@ class Motor_Inscripcion {
 			return new \WP_Error( 'activity_ended', __( 'Esta actividad ya ha finalizado.', 'convoca-enroll' ) );
 		}
 
-		$is_member   = false;
-		$member_data = null;
-		if ( class_exists( '\\Convoca\\Members\\Member_Auth' ) && \Convoca\Members\Member_Auth::is_authenticated() ) {
-			$member_data = \Convoca\Members\Member_Auth::get_current_member_data();
-			$is_member   = true;
-		}
+		// Quién es el socio lo dice el contrato del núcleo, no una clase de otro plugin con su código de
+		// reserva detrás: sin gestión de socios, el contrato contesta «nadie» y el camino es el mismo.
+		$is_member   = \Convoca\Core\Member_Identity::is_authenticated();
+		$member_data = $is_member ? \Convoca\Core\Member_Identity::current_member_data() : null;
 
 		// El formulario ofrece inscribir a un menor o persona a cargo («Estoy inscribiendo a un menor o
 		// persona a mi cargo» → `es_menor`), así que la sesión de socio no basta para decidir de quién es
@@ -794,43 +792,11 @@ class Motor_Inscripcion {
 			return false;
 		}
 
-		// Si convoca-members está activo, refinamos con el estado de cuota.
-		if ( class_exists( '\Convoca\Members\Process_Member' ) ) {
-			$member_id = (int) get_post_meta( $inscripcion_id, '_convoca_member_id', true );
-
-			if ( ! $member_id ) {
-				$email = CPT_Inscripcion::get_meta( $inscripcion_id, 'email' );
-				if ( $email ) {
-					$members = get_posts(
-						array(
-							'post_type'      => 'miembro',
-							'posts_per_page' => 1,
-							'post_status'    => 'any',
-							'fields'         => 'ids',
-							'meta_query'     => array(
-								array(
-									'key'   => '_convoca_email',
-									'value' => $email,
-								),
-							),
-						)
-					);
-					if ( ! empty( $members ) ) {
-						$member_id = (int) $members[0];
-					}
-				}
-			}
-
-			if ( $member_id ) {
-				return 'activa' === get_post_meta( $member_id, '_convoca_estado_cuota', true );
-			}
-
-			// Socio sin miembro vinculado: no se puede verificar la cuota → sin prioridad.
-			return false;
-		}
-
-		// Sin members activo, es_socio '1' ya implica prioridad (no hay cuota que verificar).
-		return true;
+		// El resto lo decide quien gestiona los socios —resolver la ficha y mirar el estado de la cuota—,
+		// y por defecto se concede: sin gestión de socios no hay cuota que verificar y `es_socio = 1` ya
+		// daba prioridad. Era un `class_exists( '\Convoca\Members\Process_Member' )` con la lógica dentro;
+		// ahora es un contrato y Enroll deja de saber cómo se llama la clase de nadie.
+		return \Convoca\Core\Member_Identity::prioridad_de_socio( (int) $inscripcion_id );
 	}
 
 	/**

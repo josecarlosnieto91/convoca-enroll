@@ -226,11 +226,11 @@ class Rest_API {
 			return new \WP_REST_Response( array( 'error' => __( 'Too many requests', 'convoca-enroll' ) ), 429 );
 		}
 
-		if ( \Convoca\Core\Features::is_members_active() && \Convoca\Members\Member_Auth::is_authenticated() ) {
+		if ( \Convoca\Core\Member_Identity::is_authenticated() ) {
 			return new \WP_REST_Response(
 				array(
 					'authenticated' => true,
-					'member_id'     => (int) \Convoca\Members\Member_Auth::get_current_member_id(),
+					'member_id'     => \Convoca\Core\Member_Identity::current_member_id(),
 				),
 				200
 			);

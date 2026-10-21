@@ -84,8 +84,8 @@ class Form_Inscripcion {
 		// requisito 3: «sin volver a escribir sus datos»). Se leen de la ficha, que es la fuente de
 		// verdad; el motor ya fuerza el precio de socio cuando la sesión está abierta.
 		$miembro = null;
-		if ( class_exists( '\Convoca\Members\Member_Auth' ) && \Convoca\Members\Member_Auth::is_authenticated() ) {
-			$miembro_id = (int) \Convoca\Members\Member_Auth::get_current_member_id();
+		if ( \Convoca\Core\Member_Identity::is_authenticated() ) {
+			$miembro_id = \Convoca\Core\Member_Identity::current_member_id();
 			$ficha      = $miembro_id ? get_post( $miembro_id ) : null;
 			if ( $ficha ) {
 				$miembro = array(
@@ -205,7 +205,7 @@ class Form_Inscripcion {
 		// está inscribiéndose a sí mismo, así que el importe es el de socio de día, igual que lo que guarda
 		// el motor. Sin esto la página cobraba la tarifa de socio y la ficha quedaba como socio de día:
 		// dos precios para la misma inscripción. Issue #17.
-		$es_socio_real = class_exists( '\Convoca\Members\Member_Auth' ) && \Convoca\Members\Member_Auth::is_authenticated();
+		$es_socio_real = \Convoca\Core\Member_Identity::is_authenticated();
 		if ( ! $es_socio_real || $es_menor ) {
 			$tipo_inscripcion = 'socio_dia';
 			$es_socio         = false;

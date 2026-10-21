@@ -24,7 +24,7 @@ class FormularioAutocompletadoTest extends TestCase {
 
 	public function test_el_formulario_recibe_los_datos_del_socio(): void {
 		$codigo = file_get_contents( dirname( __DIR__, 2 ) . '/public/class-form-inscripcion.php' );
-		$this->assertStringContainsString( 'Member_Auth::is_authenticated()', $codigo, 'El formulario tiene que mirar la sesión' );
+		$this->assertStringContainsString( 'Member_Identity::is_authenticated()', $codigo, 'El formulario tiene que mirar la sesión' );
 		$this->assertStringContainsString( '$miembro = array(', $codigo, 'Y pasar los datos a la plantilla' );
 		$this->assertStringContainsString( "'_convoca_email'", $codigo );
 		$this->assertStringContainsString( "'_convoca_dni'", $codigo );

@@ -410,4 +410,8 @@ date_default_timezone_set('Europe/Madrid');
 
     // El doble del Mailer del nucleo (el real no vive aqui: el CI clona este repositorio solo).
     require_once __DIR__ . '/StubMailer.php';
+
+    // El contrato de identidad del socio también vive en Core (el CI clona este repositorio solo):
+    // se dobla con los valores por defecto del núcleo, nadie autenticado y prioridad concedida.
+    require_once __DIR__ . '/dobles/member-identity.php';
 }
