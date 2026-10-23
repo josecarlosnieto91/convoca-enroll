@@ -62,7 +62,8 @@ final class ReportsEsperaTest extends TestCase {
 		if ( isset( $GLOBALS['_wpdb_doble'] ) ) {
 			$GLOBALS['wpdb'] = $GLOBALS['_wpdb_doble'];
 		}
-		$GLOBALS['_test_caps'] = array( 'manage_options' => true );
+		$GLOBALS['convoca_test_posts'] = array();
+		$GLOBALS['_test_caps']         = array( 'manage_options' => true );
 		$this->informes        = new Admin_Reports();
 	}
 
@@ -71,7 +72,7 @@ final class ReportsEsperaTest extends TestCase {
 	 */
 	protected function tearDown(): void {
 		$GLOBALS['_wp_stores'] = $this->previo;
-		unset( $GLOBALS['_test_caps'] );
+		unset( $GLOBALS['_test_caps'], $GLOBALS['convoca_test_posts'] );
 	}
 
 	/**

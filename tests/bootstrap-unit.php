@@ -329,29 +329,13 @@ if (!function_exists('get_posts')) {
      */
     function get_posts($a) {
         $todo = $GLOBALS['convoca_test_posts'] ?? array();
-        if (!empty($todo)) {
-            // Modo antiguo: la prueba fija una lista y se devuelven ids.
-            $ids = array();
-            foreach ((array) $todo as $post) {
-                $ids[] = is_object($post) ? $post->ID : (int) $post;
-            }
-            return $ids;
-        }
-        // Sin lista fijada, se consulta el almacén como WordPress: objetos filtrados por tipo y estado. Sin esto,
-        // cualquier informe que recorra actividades recibía ids y leía `->ID` de un entero (filas vacías).
-        $posts  = (array) ($GLOBALS['_wp_stores']['posts'] ?? array());
-        $tipos  = (array) ($a['post_type'] ?? 'post');
-        $estados = (array) ($a['post_status'] ?? array('publish'));
-        $limite = (int) ($a['posts_per_page'] ?? 5);
+        if (empty($todo)) { return array(); }
+        // Se devuelve **lo que la prueba fijó**, tal cual: ids si son ids, objetos si son objetos. Convertir los
+        // objetos a id dejaba a los informes leyendo `->ID` de un entero (filas vacías).
         $salida = array();
-        foreach ($posts as $p) {
-            if (!is_object($p)) { continue; }
-            if (!in_array($p->post_type ?? '', $tipos, true)) { continue; }
-            if (!in_array('any', $estados, true) && !in_array($p->post_status ?? 'publish', $estados, true)) { continue; }
-            $salida[] = $p;
-            if ($limite > 0 && count($salida) >= $limite) { break; }
+        foreach ((array) $todo as $post) {
+            $salida[] = $post;
         }
-
         return $salida;
     }
 }

@@ -63,7 +63,8 @@ final class ReportsFinancieroTest extends TestCase {
 		if ( isset( $GLOBALS['_wpdb_doble'] ) ) {
 			$GLOBALS['wpdb'] = $GLOBALS['_wpdb_doble'];
 		}
-		$GLOBALS['_test_caps'] = array( 'manage_options' => true );
+		$GLOBALS['convoca_test_posts'] = array();
+		$GLOBALS['_test_caps']         = array( 'manage_options' => true );
 		$this->informes        = new Admin_Reports();
 	}
 
@@ -72,7 +73,7 @@ final class ReportsFinancieroTest extends TestCase {
 	 */
 	protected function tearDown(): void {
 		$GLOBALS['_wp_stores'] = $this->previo;
-		unset( $GLOBALS['_test_caps'] );
+		unset( $GLOBALS['_test_caps'], $GLOBALS['convoca_test_posts'] );
 	}
 
 	/**
@@ -106,6 +107,7 @@ final class ReportsFinancieroTest extends TestCase {
 		$p->post_status                        = 'publish';
 		$p->post_title                         = $titulo;
 		$GLOBALS['_wp_stores']['posts'][ $id ] = $p;
+		$GLOBALS['convoca_test_posts'][]      = $p;
 	}
 
 	/**

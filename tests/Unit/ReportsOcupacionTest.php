@@ -63,7 +63,8 @@ final class ReportsOcupacionTest extends TestCase {
 		if ( isset( $GLOBALS['_wpdb_doble'] ) ) {
 			$GLOBALS['wpdb'] = $GLOBALS['_wpdb_doble'];
 		}
-		$GLOBALS['_test_caps'] = array( 'manage_options' => true );
+		$GLOBALS['convoca_test_posts'] = array();
+		$GLOBALS['_test_caps']         = array( 'manage_options' => true );
 		unset( $_GET['start_date'], $_GET['end_date'], $_GET['status'] );
 		$this->informes        = new Admin_Reports();
 	}
@@ -109,6 +110,7 @@ final class ReportsOcupacionTest extends TestCase {
 		$p->post_status                        = 'publish';
 		$p->post_title                         = $titulo;
 		$GLOBALS['_wp_stores']['posts'][ $id ] = $p;
+		$GLOBALS['convoca_test_posts'][]      = $p;
 		$GLOBALS['_wp_stores']['post_meta'][ $id ] = array(
 			'_convoca_fecha_inicio'       => '2026-11-07 10:00:00',
 			'_convoca_plazas_totales'     => (string) $total,
