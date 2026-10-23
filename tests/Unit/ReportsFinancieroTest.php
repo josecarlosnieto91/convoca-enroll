@@ -144,12 +144,20 @@ final class ReportsFinancieroTest extends TestCase {
 	 */
 	public function test_la_tabla_y_el_total_general(): void {
 		$this->actividad( 50, 'Excursión' );
-		$GLOBALS['_wp_stores']['col'] = array( '50' );
+		// Dos actividades: con una sola, el «total general» sería igual que la fila y no se podría afirmar que suma.
+		$this->actividad( 51, 'Taller' );
+		$GLOBALS['_wp_stores']['col'] = array( '50', '51' );
 		$GLOBALS['_wp_stores']['results_mapa'] = array(
 			'meta_value = 50' => array(
 				(object) array(
 					'method' => 'tarjeta',
 					'total'  => '4550.00',
+				),
+			),
+			'meta_value = 51' => array(
+				(object) array(
+					'method' => 'bizum',
+					'total'  => '2000.00',
 				),
 			),
 		);
@@ -160,6 +168,7 @@ final class ReportsFinancieroTest extends TestCase {
 		$this->assertStringContainsString( 'Excursión', $html );
 		$this->assertStringContainsString( '45,50 €', $html, 'formato español' );
 		$this->assertStringContainsString( 'TOTAL GENERAL', $html );
+		$this->assertStringContainsString( '65,50 €', $html, '45,50 + 20,00' );
 		$this->assertStringContainsString( '0,00 €', $html, 'sin pendientes' );
 	}
 
