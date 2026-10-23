@@ -14,11 +14,6 @@ use Convoca\Enroll\Admin_Reports;
 use Convoca\Enroll\CPT_Inscripcion;
 use PHPUnit\Framework\TestCase;
 
-// El informe consulta si hay licencia PRO: la clase vive en el núcleo hermano.
-$convoca_licencia = dirname( __DIR__, 3 ) . '/convoca-core/includes/License_Manager.php';
-if ( file_exists( $convoca_licencia ) ) {
-	require_once $convoca_licencia;
-}
 require_once dirname( __DIR__, 2 ) . '/includes/CPT_Inscripcion.php';
 require_once dirname( __DIR__, 2 ) . '/admin/class-admin-reports.php';
 

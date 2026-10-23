@@ -14,10 +14,6 @@ namespace Convoca\Enroll\Tests;
 use Convoca\Enroll\Admin_Reports;
 use PHPUnit\Framework\TestCase;
 
-$convoca_licencia = dirname( __DIR__, 3 ) . '/convoca-core/includes/License_Manager.php';
-if ( file_exists( $convoca_licencia ) ) {
-	require_once $convoca_licencia;
-}
 require_once dirname( __DIR__, 2 ) . '/includes/CPT_Inscripcion.php';
 require_once dirname( __DIR__, 2 ) . '/admin/class-admin-reports.php';
 

@@ -587,10 +587,8 @@ if (file_exists($autoload)) {
 
 date_default_timezone_set('Europe/Madrid');
 
-    // El doble del Mailer del nucleo (el real no vive aqui: el CI clona este repositorio solo).
-    require_once __DIR__ . '/StubMailer.php';
-
-    // El contrato de identidad del socio también vive en Core (el CI clona este repositorio solo):
-    // se dobla con los valores por defecto del núcleo, nadie autenticado y prioridad concedida.
-    require_once __DIR__ . '/dobles/member-identity.php';
-}
+// Dobles de contratos que viven en el núcleo (el CI clona este repositorio solo).
+require_once __DIR__ . '/StubMailer.php';
+require_once __DIR__ . '/dobles/member-identity.php';
+require_once __DIR__ . '/dobles/license-manager.php';
+} // namespace
