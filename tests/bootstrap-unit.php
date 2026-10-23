@@ -15,7 +15,15 @@ namespace Convoca\Core {
             }
             public static function validar_dni(string $dni): bool { return self::validate_dni($dni); }
             public static function do_action(string $new_hook, string $old_hook = '', ...$args): void {}
-            public static function check_rate_limit(string $action, int $max = 10, int $window = 300): bool { return true; }
+            /**
+             * Límite de peticiones que la prueba puede agotar: por defecto deja pasar, y con
+             * `$GLOBALS['convoca_test_rate_ok'][ accion ] = false` se simula el 429.
+             */
+            public static function check_rate_limit(string $action, int $max = 10, int $window = 300): bool {
+                return (bool) ($GLOBALS['convoca_test_rate_ok'][ $action ] ?? true);
+            }
+            /** Caché de respuestas: ejecuta el generador, que es lo que hace la real sin caché. */
+            public static function rest_cache_get(string $key, int $ttl, callable $generador) { return $generador(); }
             // Sal persistente del sitio: la firma del enlace de check-in se calcula con
             // ella, así que la prueba la puede fijar para comprobar el positivo y el negativo.
             public static function get_persistent_salt(): string { return (string) ($GLOBALS['convoca_test_salt'] ?? 'sal-de-prueba'); }
@@ -270,10 +278,12 @@ if (!function_exists('get_post')) {
     // defecto sigue siendo 'post', como antes.
     function get_post($id = null) {
         if (!$id) return null;
-        $p = new stdClass();
+        // WP_Post y no stdClass: el código real tipa contra WP_Post, así que el doble tiene que serlo.
+        $p = new WP_Post();
         $p->ID = $id;
         $p->post_type = $GLOBALS['convoca_test_post_types'][$id] ?? 'post';
         $p->post_status = 'publish';
+        $p->post_title = 'Actividad ' . $id;
         return $p;
     }
 }
@@ -365,7 +375,7 @@ if (!class_exists('WP_Post')) {
     class WP_Post {
         public $ID = 0; public $post_title = ''; public $post_type = 'post';
         public $post_status = 'publish'; public $post_content = '';
-        public $post_date = '';
+        public $post_excerpt = ''; public $post_date = '';
     }
 }
 
@@ -402,10 +412,13 @@ if (!isset($GLOBALS['wpdb'])) {
 // WP_REST_Response
 if (!class_exists('WP_REST_Response')) {
     class WP_REST_Response {
-        private $data; private $status;
+        private $data; private $status; private $headers = array();
         public function __construct($data = null, $status = 200) { $this->data = $data; $this->status = $status; }
         public function get_data() { return $this->data; }
         public function get_status() { return $this->status; }
+        /** Cabeceras de la respuesta: el listado pagina con X-WP-Total y compañía. */
+        public function header($k, $v) { $this->headers[$k] = $v; return $this; }
+        public function get_headers() { return $this->headers; }
     }
 }
 
@@ -433,7 +446,7 @@ if (!class_exists('WP_REST_Request')) {
     /**
      * Petición de mentira: los parámetros que la prueba le meta.
      */
-    class WP_REST_Request {
+    class WP_REST_Request implements ArrayAccess {
         private $params;
         public function __construct($params = array()) { $this->params = (array) $params; }
         public function get_param($k) { return $this->params[$k] ?? null; }
@@ -441,6 +454,12 @@ if (!class_exists('WP_REST_Request')) {
         public function set_param($k, $v) { $this->params[$k] = $v; }
         public function get_header($k) { unset($k); return ''; }
         public function get_json_params() { return $this->params; }
+        // WordPress permite `$req['id']`, y el código de la API lo usa: sin esto, la petición no se lee.
+        public function offsetExists($k): bool { return isset($this->params[$k]); }
+        #[\ReturnTypeWillChange]
+        public function offsetGet($k) { return $this->params[$k] ?? null; }
+        public function offsetSet($k, $v): void { $this->params[$k] = $v; }
+        public function offsetUnset($k): void { unset($this->params[$k]); }
     }
 }
 
