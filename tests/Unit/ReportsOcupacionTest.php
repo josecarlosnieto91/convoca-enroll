@@ -203,8 +203,10 @@ final class ReportsOcupacionTest extends TestCase {
 		$html = $this->pintar();
 
 		$this->assertStringContainsString( 'href="https://example.test/wp-admin/post.php?post=5"', $html );
-		$this->assertStringContainsString( 'Sin enlace', $html );
-		// Un solo enlace: el de la actividad 5. La 6 sale como texto.
+		// La que no tiene enlace sale como texto, **no** dentro de un `<a href="">` (que además daba un
+		// `PHP Deprecated` al pasarle `null` a `esc_url`).
+		$this->assertStringContainsString( '<strong>Sin enlace</strong>', $html );
+		$this->assertStringNotContainsString( 'href=""', $html );
 		$this->assertSame( 1, substr_count( $html, 'post.php?post=5' ) );
 	}
 
