@@ -271,7 +271,13 @@ if (!function_exists('wp_date')) { function wp_date($f, $ts = null) { return dat
 if (!function_exists('wp_timezone_string')) { function wp_timezone_string() { return 'Europe/Madrid'; } }
 
 // Posts
-if (!function_exists('get_the_title')) { function get_the_title($id) { return "Post $id"; } }
+if (!function_exists('get_the_title')) { function get_the_title($id) {
+        // El título del post del almacén manda; «Post N» es el respaldo cuando la prueba no lo ha sembrado.
+        $p = $GLOBALS['_wp_stores']['posts'][(int) $id] ?? null;
+        if (is_object($p) && isset($p->post_title) && '' !== (string) $p->post_title) { return (string) $p->post_title; }
+
+        return "Post $id";
+    } }
 if (!function_exists('get_post_status')) { function get_post_status($id) { return 'publish'; } }
 if (!function_exists('get_post')) {
     // El tipo se puede fijar por id con `$GLOBALS['convoca_test_post_types']`; por
@@ -425,21 +431,70 @@ if (!isset($GLOBALS['wpdb'])) {
     $GLOBALS['wpdb'] = new class {
         public $prefix = 'wp_'; public $posts = 'wp_posts'; public $postmeta = 'wp_postmeta';
         public $options = 'wp_options'; public $insert_id = 42;
-        public function get_var($q = null, $x = 0, $y = 0) { return '0'; }
-        public function get_results($q = null, $o = 'OBJECT') { return []; }
-        public function get_row($q = null) { return null; }
-        public function query($q) { return 1; }
+        /**
+         * Respuestas por consulta: `get_var_mapa`/`results_mapa` casan por aguja en el SQL. Sin esto, cualquier
+         * informe que cuente filas devolvía siempre `'0'` y sus series salían a cero: la prueba pasaba sin medir.
+         */
+        public function get_var($q = null, $x = 0, $y = 0) {
+            $sql = (string) (is_string($q) ? $q : '');
+            foreach (($GLOBALS['_wp_stores']['get_var_mapa'] ?? []) as $aguja => $valor) {
+                if ('' !== $aguja && false !== strpos(str_replace('\\\\', '', $sql), (string) $aguja)) { return $valor; }
+            }
+            if (is_string($q) && preg_match("/SHOW TABLES LIKE '?([A-Za-z0-9_]+)'?/i", $q, $m)) { return $m[1]; }
+
+            return (string) ($GLOBALS['_wp_stores']['get_var'] ?? '0');
+        }
+        public function get_results($q = null, $o = 'OBJECT') {
+            $sql = (string) (is_string($q) ? $q : '');
+            foreach (($GLOBALS['_wp_stores']['results_mapa'] ?? []) as $aguja => $filas) {
+                if ('' !== $aguja && false !== strpos($sql, (string) $aguja)) { return $filas; }
+            }
+
+            return (array) ($GLOBALS['_wp_stores']['results'] ?? []);
+        }
+        public function get_col($q = null, $x = 0) {
+            if (!empty($GLOBALS['_wp_stores']['col_cola'])) { return array_shift($GLOBALS['_wp_stores']['col_cola']); }
+
+            return (array) ($GLOBALS['_wp_stores']['col'] ?? []);
+        }
+        public function get_row($q = null) {
+            foreach (($GLOBALS['_wp_stores']['get_row_mapa'] ?? []) as $aguja => $valor) {
+                if (false !== strpos((string) $q, (string) $aguja)) { return $valor; }
+            }
+
+            return null;
+        }
+        public function query($q) {
+            $GLOBALS['_wp_stores']['queries'][] = (string) $q;
+
+            return 1;
+        }
+        /** `esc_like()`: escapa `%` y `_` para un LIKE, como WordPress. */
+        public function esc_like($texto) { return addcslashes((string) $texto, '_%\\\\'); }
         public function insert($t, $d, $f = []) { $this->insert_id = 42; return 1; }
         public function update($t, $d, $w) { return 1; }
         public function delete($t, $w) { return 1; }
         public function prepare($q, ...$a) {
-            $sql = $q;
-            foreach ($a as $arg) { $p = strpos($sql, '%'); if ($p !== false) { $sql = substr_replace($sql, (string)$arg, $p, 2); } }
-            return $sql;
+            if (1 === count($a) && is_array($a[0])) { $a = array_values($a[0]); }
+            $i = 0;
+            return preg_replace_callback(
+                '/%%|%[sdf]/',
+                function ($m) use (&$i, $a) {
+                    if ('%%' === $m[0]) { return '%'; }
+                    $v = $a[$i++] ?? '';
+                    if ('%s' !== $m[0]) { return (string) $v; }
+
+                    return "'" . addslashes((string) $v) . "'";
+                },
+                (string) $q
+            );
         }
         public function escape($d) { return addslashes($d); }
         public function get_charset_collate() { return 'DEFAULT CHARSET=utf8mb4'; }
     };
+    // Se guarda una referencia: alguna prueba sustituye `$GLOBALS['wpdb']` por un doble mudo y, a partir de ahí,
+    // las siguientes leen `[]` sin saber por qué. Las que necesitan el doble completo lo restauran.
+    $GLOBALS['_wpdb_doble'] = $GLOBALS['wpdb'];
 }
 
 // WP_REST_Response
