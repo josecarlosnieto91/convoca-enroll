@@ -318,7 +318,16 @@ if (!function_exists('wp_clear_scheduled_hook')) { function wp_clear_scheduled_h
 if (!function_exists('register_post_type')) { function register_post_type($s, $a) { return null; } }
 if (!function_exists('register_post_meta')) { function register_post_meta($t, $k, $a) { return true; } }
 if (!function_exists('register_taxonomy')) { function register_taxonomy($s, $t, $a) { return null; } }
-if (!function_exists('register_rest_route')) { function register_rest_route($n, $r, $a) { return true; } }
+if (!function_exists('register_rest_route')) {
+    /**
+     * Apunta las rutas en vez de descartarlas: una prueba tiene que poder decir qué endpoints hay,
+     * con qué método y con qué permiso.
+     */
+    function register_rest_route($n, $r, $a = array()) {
+        $GLOBALS['_enr_routes'][] = array_merge(array('namespace' => $n, 'route' => $r), (array) $a);
+        return true;
+    }
+}
 if (!function_exists('wp_redirect')) { function wp_redirect($u) {} }
 if (!function_exists('wp_die')) { function wp_die($m = '', $t = '', $a = []) {} }
 if (!function_exists('wp_cache_delete')) { function wp_cache_delete($k, $g = '') { return true; } }
@@ -397,6 +406,41 @@ if (!class_exists('WP_REST_Response')) {
         public function __construct($data = null, $status = 200) { $this->data = $data; $this->status = $status; }
         public function get_data() { return $this->data; }
         public function get_status() { return $this->status; }
+    }
+}
+
+
+// Lo que le falta a enroll para probar su API.
+if (!function_exists('get_permalink')) {
+    /**
+     * Enlace de una entrada, con el prefijo que fije la prueba.
+     */
+    function get_permalink($p = 0) {
+        $id = is_object($p) ? ($p->ID ?? 0) : (int) $p;
+        return 'https://example.org/?p=' . $id;
+    }
+}
+if (!function_exists('get_the_date')) {
+    /**
+     * Fecha de una entrada, la que fije la prueba.
+     */
+    function get_the_date($formato = '', $p = null) {
+        unset($formato, $p);
+        return '2026-10-23 18:00';
+    }
+}
+if (!class_exists('WP_REST_Request')) {
+    /**
+     * Petición de mentira: los parámetros que la prueba le meta.
+     */
+    class WP_REST_Request {
+        private $params;
+        public function __construct($params = array()) { $this->params = (array) $params; }
+        public function get_param($k) { return $this->params[$k] ?? null; }
+        public function get_params() { return $this->params; }
+        public function set_param($k, $v) { $this->params[$k] = $v; }
+        public function get_header($k) { unset($k); return ''; }
+        public function get_json_params() { return $this->params; }
     }
 }
 
