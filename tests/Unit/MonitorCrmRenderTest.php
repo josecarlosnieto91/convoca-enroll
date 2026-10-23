@@ -163,7 +163,11 @@ final class MonitorCrmRenderTest extends TestCase {
 	 * La tabla de inscritos: nombre completo, contacto, estado y check-in; en lista de espera, la posición.
 	 */
 	public function test_la_tabla_de_inscritos(): void {
-		$items = array( $this->inscrito( 70, 'Ana', 'López', 'García', 'confirmada', 'si' ), $this->inscrito( 71, 'Luis', '', '', 'pendiente', '' ) );
+		$items = array(
+			$this->inscrito( 70, 'Ana', 'López', 'García', 'confirmada', 'si' ),
+			$this->inscrito( 72, 'Marta', 'Ruiz', '', 'confirmada', '' ),
+			$this->inscrito( 71, 'Luis', '', '', 'pendiente', '' ),
+		);
 
 		$html = $this->render( 'render_table', $items, 61, false );
 
@@ -171,7 +175,8 @@ final class MonitorCrmRenderTest extends TestCase {
 		$this->assertStringContainsString( 'ana70@example.test', $html );
 		$this->assertStringContainsString( 'status-confirmada', $html, 'el estado con su clase' );
 		$this->assertStringContainsString( 'Check-in', $html );
-		$this->assertSame( 1, substr_count( $html, 'mark-attendance active' ), 'solo quien tiene «sí» sale marcado' );
+		$this->assertSame( 1, substr_count( $html, 'mark-attendance active' ), 'de dos confirmadas, solo la que dijo «sí» sale marcada' );
+		$this->assertStringContainsString( 'data-status="si"', $html, 'y a la otra se le puede marcar' );
 		$this->assertStringNotContainsString( 'Posición', $html, 'la posición es de la lista de espera' );
 
 		$espera = $this->render( 'render_table', $items, 61, true );
