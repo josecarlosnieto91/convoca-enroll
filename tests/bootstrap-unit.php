@@ -297,6 +297,49 @@ if (!function_exists('wp_nonce_url')) {
         return $url . (false === strpos((string) $url, '?') ? '?' : '&') . $nombre . '=nonce-' . $accion;
     }
 }
+/** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
+class Convoca_Json_Cortado extends \Exception {
+
+    /** Respuesta enviada. */
+    public $respuesta = null;
+
+    /**
+     * Constructor.
+     *
+     * @param mixed $respuesta Respuesta.
+     */
+    public function __construct( $respuesta = null ) {
+        parent::__construct( 'json' );
+        $this->respuesta = $respuesta;
+    }
+}
+
+if (!function_exists('wp_send_json_success')) {
+    function wp_send_json_success($datos = null, $codigo = 200) {
+        unset($codigo);
+        $GLOBALS['_wp_json'][] = array('ok' => true, 'data' => $datos);
+        throw new Convoca_Json_Cortado(array('ok' => true, 'data' => $datos));
+    }
+}
+
+if (!function_exists('wp_send_json_error')) {
+    function wp_send_json_error($datos = null, $codigo = 200) {
+        unset($codigo);
+        $GLOBALS['_wp_json'][] = array('ok' => false, 'data' => $datos);
+        throw new Convoca_Json_Cortado(array('ok' => false, 'data' => $datos));
+    }
+}
+
+if (!function_exists('check_ajax_referer')) {
+    function check_ajax_referer($accion = -1, $campo = false, $morir = true) {
+        unset($campo, $morir);
+        if (!empty($GLOBALS['nonces_invalidos'][ $accion ])) {
+            throw new Convoca_Json_Cortado('nonce');
+        }
+        return true;
+    }
+}
+
 /** Quita claves de la URL actual (los botones «Volver» y «Panel normal» del CRM). */
 if (!function_exists('remove_query_arg')) {
     function remove_query_arg($claves, $url = '') {
