@@ -271,7 +271,33 @@ if (!function_exists('wp_date')) { function wp_date($f, $ts = null) { return dat
 if (!function_exists('wp_timezone_string')) { function wp_timezone_string() { return 'Europe/Madrid'; } }
 
 // Posts
-if (!function_exists('get_the_title')) { function get_the_title($id) {
+if (!function_exists('get_the_title')) { /** `selected()`: pinta `selected='selected'` si coinciden. Los `<select>` de los filtros lo usan. */
+if (!function_exists('selected')) {
+    function selected($a, $b = true, $echo = true) {
+        $out = ((string) $a === (string) $b) ? " selected='selected'" : '';
+        if ($echo) { echo $out; }
+        return $out;
+    }
+}
+/** Enlace de edición: la prueba lo fija por id; sin él, `null` (como un post no editable). */
+if (!function_exists('get_edit_post_link')) {
+    function get_edit_post_link($id = 0, $contexto = 'display') { return $GLOBALS['_wp_stores']['edit_links'][(int) $id] ?? null; }
+}
+/** Añade parámetros a una URL. */
+if (!function_exists('add_query_arg')) {
+    function add_query_arg($args, $url = '') {
+        $args = is_array($args) ? $args : array($args => func_get_arg(1));
+        $sep  = (false === strpos((string) $url, '?')) ? '?' : '&';
+        return $url . $sep . http_build_query($args);
+    }
+}
+/** URL con nonce. */
+if (!function_exists('wp_nonce_url')) {
+    function wp_nonce_url($url, $accion = -1, $nombre = '_wpnonce') {
+        return $url . (false === strpos((string) $url, '?') ? '?' : '&') . $nombre . '=nonce-' . $accion;
+    }
+}
+function get_the_title($id) {
         // El título del post del almacén manda; «Post N» es el respaldo cuando la prueba no lo ha sembrado.
         $p = $GLOBALS['_wp_stores']['posts'][(int) $id] ?? null;
         if (is_object($p) && isset($p->post_title) && '' !== (string) $p->post_title) { return (string) $p->post_title; }
@@ -303,12 +329,30 @@ if (!function_exists('get_posts')) {
      */
     function get_posts($a) {
         $todo = $GLOBALS['convoca_test_posts'] ?? array();
-        if (empty($todo)) { return array(); }
-        $ids = array();
-        foreach ((array) $todo as $post) {
-            $ids[] = is_object($post) ? $post->ID : (int) $post;
+        if (!empty($todo)) {
+            // Modo antiguo: la prueba fija una lista y se devuelven ids.
+            $ids = array();
+            foreach ((array) $todo as $post) {
+                $ids[] = is_object($post) ? $post->ID : (int) $post;
+            }
+            return $ids;
         }
-        return $ids;
+        // Sin lista fijada, se consulta el almacén como WordPress: objetos filtrados por tipo y estado. Sin esto,
+        // cualquier informe que recorra actividades recibía ids y leía `->ID` de un entero (filas vacías).
+        $posts  = (array) ($GLOBALS['_wp_stores']['posts'] ?? array());
+        $tipos  = (array) ($a['post_type'] ?? 'post');
+        $estados = (array) ($a['post_status'] ?? array('publish'));
+        $limite = (int) ($a['posts_per_page'] ?? 5);
+        $salida = array();
+        foreach ($posts as $p) {
+            if (!is_object($p)) { continue; }
+            if (!in_array($p->post_type ?? '', $tipos, true)) { continue; }
+            if (!in_array('any', $estados, true) && !in_array($p->post_status ?? 'publish', $estados, true)) { continue; }
+            $salida[] = $p;
+            if ($limite > 0 && count($salida) >= $limite) { break; }
+        }
+
+        return $salida;
     }
 }
 
