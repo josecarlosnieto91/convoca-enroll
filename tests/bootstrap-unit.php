@@ -290,7 +290,21 @@ if (!function_exists('get_post')) {
 if (!function_exists('post_type_exists')) { function post_type_exists($t) { return in_array($t, ['post','page','actividad','miembro'], true); } }
 if (!function_exists('wp_insert_post')) { function wp_insert_post($d) { static $c = 100; $c++; return $c; } }
 if (!function_exists('wp_update_post')) { function wp_update_post($d) { return $d['ID'] ?? wp_insert_post($d); } }
-if (!function_exists('get_posts')) { function get_posts($a) { return []; } }
+if (!function_exists('get_posts')) {
+    /**
+     * Posts según lo que fije la prueba en `convoca_test_posts`; por defecto, ninguno — que es lo
+     * que el resto de pruebas de este arnés espera.
+     */
+    function get_posts($a) {
+        $todo = $GLOBALS['convoca_test_posts'] ?? array();
+        if (empty($todo)) { return array(); }
+        $ids = array();
+        foreach ((array) $todo as $post) {
+            $ids[] = is_object($post) ? $post->ID : (int) $post;
+        }
+        return $ids;
+    }
+}
 
 // URLs
 if (!function_exists('home_url')) { function home_url($p = '') { return "https://example.com$p"; } }
@@ -346,14 +360,33 @@ if (!function_exists('remove_action')) { function remove_action($h, $c, $p = 10)
 if (!function_exists('load_plugin_textdomain')) { function load_plugin_textdomain($d, $dep, $p) {} }
 if (!function_exists('get_user_by')) { function get_user_by($f, $v) { return false; } }
 if (!function_exists('get_users')) { function get_users($a = []) { return []; } }
-if (!function_exists('get_userdata')) { function get_userdata($id) { if ($id <= 0) return false; $u = new stdClass(); $u->ID = $id; $u->display_name = "User $id"; $u->user_email = "user$id@test.com"; return $u; } }
+if (!function_exists('get_userdata')) {
+    /** Usuario con los roles que fije la prueba (por defecto, suscriptor). */
+    function get_userdata($id) {
+        if ($id <= 0) return false;
+        $u = new stdClass();
+        $u->ID = $id;
+        $u->display_name = "User $id";
+        $u->user_email = "user$id@test.com";
+        $u->roles = (array) ($GLOBALS['convoca_test_roles'][ $id ] ?? array( 'subscriber' ));
+        return $u;
+    }
+}
 if (!function_exists('get_current_screen')) { function get_current_screen() { return null; } }
 if (!function_exists('wp_enqueue_style')) { function wp_enqueue_style($h, $s = '', $d = [], $v = '', $m = 'all') {} }
 if (!function_exists('wp_register_style')) { function wp_register_style($h, $s, $d = [], $v = '', $m = 'all') { return true; } }
 if (!function_exists('wp_set_script_translations')) { function wp_set_script_translations($h, $d, $p) {} }
 if (!function_exists('wp_kses_post')) { function wp_kses_post($s) { return $s; } }
 if (!function_exists('wp_rand')) { function wp_rand($min = 0, $max = PHP_INT_MAX) { return rand($min, $max); } }
-if (!function_exists('user_can')) { function user_can($user, $cap) { return true; } }
+if (!function_exists('user_can')) {
+    /**
+     * Permisos que la prueba puede negar por capacidad. Por defecto concede, como antes.
+     */
+    function user_can($user, $cap) {
+        unset($user);
+        return (bool) ($GLOBALS['convoca_test_user_can'][ $cap ] ?? true);
+    }
+}
 
 // WP_Error
 if (!class_exists('WP_Error')) {
