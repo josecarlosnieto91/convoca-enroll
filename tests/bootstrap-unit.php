@@ -297,6 +297,23 @@ if (!function_exists('wp_nonce_url')) {
         return $url . (false === strpos((string) $url, '?') ? '?' : '&') . $nombre . '=nonce-' . $accion;
     }
 }
+/** Quita claves de la URL actual (los botones «Volver» y «Panel normal» del CRM). */
+if (!function_exists('remove_query_arg')) {
+    function remove_query_arg($claves, $url = '') {
+        $claves = (array) $claves;
+        $url    = (string) $url;
+        if ('' === $url) { $url = $GLOBALS['_test_url_actual'] ?? 'https://example.test/wp-admin/admin.php'; }
+        $partes = parse_url($url);
+        $query  = array();
+        if (!empty($partes['query'])) {
+            parse_str($partes['query'], $query);
+            foreach ($claves as $c) { unset($query[$c]); }
+        }
+        $base = ($partes['scheme'] ?? 'https') . '://' . ($partes['host'] ?? 'example.test') . ($partes['path'] ?? '');
+
+        return empty($query) ? $base : $base . '?' . http_build_query($query);
+    }
+}
 function get_the_title($id) {
         // El título del post del almacén manda; «Post N» es el respaldo cuando la prueba no lo ha sembrado.
         $p = $GLOBALS['_wp_stores']['posts'][(int) $id] ?? null;
@@ -310,6 +327,9 @@ if (!function_exists('get_post')) {
     // defecto sigue siendo 'post', como antes.
     function get_post($id = null) {
         if (!$id) return null;
+        // El post del almacén manda: inventar siempre «Actividad {id}» de tipo `post` hacía que las pantallas de una
+        // actividad dijeran «no encontrada» teniendo el post sembrado con su título.
+        if (isset($GLOBALS['_wp_stores']['posts'][(int) $id])) { return $GLOBALS['_wp_stores']['posts'][(int) $id]; }
         // WP_Post y no stdClass: el código real tipa contra WP_Post, así que el doble tiene que serlo.
         $p = new WP_Post();
         $p->ID = $id;
