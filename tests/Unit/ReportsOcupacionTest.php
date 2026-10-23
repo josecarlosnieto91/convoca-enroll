@@ -34,6 +34,13 @@ final class ReportsOcupacionTest extends TestCase {
 	private array $previo = array();
 
 	/**
+	 * `$wpdb` que había antes de esta prueba: se restaura al terminar.
+	 *
+	 * @var mixed
+	 */
+	private $wpdb_previo = null;
+
+	/**
 	 * Informes.
 	 *
 	 * @var Admin_Reports
@@ -60,6 +67,7 @@ final class ReportsOcupacionTest extends TestCase {
 			'col'          => array(),
 			'col_cola'     => array(),
 		);
+		$this->wpdb_previo = $GLOBALS['wpdb'] ?? null;
 		if ( isset( $GLOBALS['_wpdb_doble'] ) ) {
 			$GLOBALS['wpdb'] = $GLOBALS['_wpdb_doble'];
 		}
@@ -74,6 +82,11 @@ final class ReportsOcupacionTest extends TestCase {
 	 */
 	protected function tearDown(): void {
 		$GLOBALS['_wp_stores'] = $this->previo;
+		// La lista que lee `get_posts()` es global: si se queda, la siguiente prueba ve actividades ajenas.
+		unset( $GLOBALS['convoca_test_posts'] );
+		if ( null !== $this->wpdb_previo ) {
+			$GLOBALS['wpdb'] = $this->wpdb_previo;
+		}
 		unset( $GLOBALS['_test_caps'], $_GET['start_date'], $_GET['end_date'], $_GET['status'] );
 	}
 

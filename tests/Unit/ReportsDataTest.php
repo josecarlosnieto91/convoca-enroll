@@ -35,6 +35,13 @@ final class ReportsDataTest extends TestCase {
 	private array $previo = array();
 
 	/**
+	 * `$wpdb` que había antes de esta prueba: se restaura al terminar.
+	 *
+	 * @var mixed
+	 */
+	private $wpdb_previo = null;
+
+	/**
 	 * Informes.
 	 *
 	 * @var Admin_Reports
@@ -61,6 +68,7 @@ final class ReportsDataTest extends TestCase {
 			'col_cola'     => array(),
 		);
 		// Otra prueba puede haber dejado un `$wpdb` mudo: se restaura el del arnés (con mapas de respuesta).
+		$this->wpdb_previo = $GLOBALS['wpdb'] ?? null;
 		if ( isset( $GLOBALS['_wpdb_doble'] ) ) {
 			$GLOBALS['wpdb'] = $GLOBALS['_wpdb_doble'];
 		}
@@ -73,6 +81,9 @@ final class ReportsDataTest extends TestCase {
 	 */
 	protected function tearDown(): void {
 		$GLOBALS['_wp_stores'] = $this->previo;
+		if ( null !== $this->wpdb_previo ) {
+			$GLOBALS['wpdb'] = $this->wpdb_previo;
+		}
 		unset( $GLOBALS['_test_caps'] );
 	}
 

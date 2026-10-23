@@ -39,6 +39,9 @@ class FichaActividadFormTest extends TestCase
 		// Sin setAccessible(): desde PHP 8.1 no hace nada (y desde 8.5 está deprecado),
 		// porque las propiedades privadas ya se leen y escriben por reflexión.
 		( new ReflectionProperty( CPT_Actividad::class, 'formulario_pintado' ) )->setValue( null, false );
+		// La fecha de la actividad no puede heredarse de otra prueba: con una fecha pasada, el escenario «sin
+		// formulario» recibía «Esta actividad ya ha finalizado» y la prueba fallaba según el orden.
+		unset( $GLOBALS['_wp_stores']['post_meta'][812]['_convoca_fecha_inicio'] );
 	}
 
 	private function preparar( int $actividad = 812, string $fecha_inicio = '+30 days' ): CPT_Actividad {
