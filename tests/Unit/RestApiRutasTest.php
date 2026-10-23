@@ -213,21 +213,35 @@ final class RestApiRutasTest extends TestCase {
 	}
 
 	/**
-	 * `'0'` no es socio: la comparación es estricta.
+	 * La condición de socio se resuelve con la cadena exacta `'1'`.
+	 *
+	 * Es la semántica que hay hoy, y conviene tenerla escrita entera: el alta guarda `'1'`/`'0'`
+	 * (`Motor_Inscripcion`), así que funciona. Pero un socio cuya meta venga como **entero** `1` —de un
+	 * import o de otra vía— no se reconoce. Está reportado como incidencia; esta prueba es la que
+	 * avisará si alguien cambia el operador, porque con `==` el entero `1` pasaría a ser socio.
 	 *
 	 * @return void
 	 */
-	public function test_cero_no_es_socio(): void {
-		$GLOBALS['_wp_stores']['post_meta'] = array(
-			43 => array( CPT_Inscripcion::META_PREFIX . 'es_socio' => '0' ),
-		);
-
+	public function test_la_condicion_de_socio_es_la_cadena_uno(): void {
 		$api    = new Rest_API();
 		$metodo = new \ReflectionMethod( Rest_API::class, 'fmt_inscription' );
 
-		$datos = $metodo->invoke( $api, $this->post( 43 ) );
+		$casos = array(
+			"'1' (lo que guarda el alta)" => array( '1', true ),
+			"'0'"                        => array( '0', false ),
+			'1 como entero'              => array( 1, false ),
+			'vacío'                      => array( '', false ),
+		);
 
-		$this->assertFalse( $datos['es_socio'], "con == , '0' también sería socio" );
+		foreach ( $casos as $etiqueta => $caso ) {
+			$GLOBALS['_wp_stores']['post_meta'] = array(
+				45 => array( CPT_Inscripcion::META_PREFIX . 'es_socio' => $caso[0] ),
+			);
+
+			$datos = $metodo->invoke( $api, $this->post( 45 ) );
+
+			$this->assertSame( $caso[1], $datos['es_socio'], $etiqueta );
+		}
 	}
 
 	/**
