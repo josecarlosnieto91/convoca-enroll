@@ -320,7 +320,16 @@ if (!function_exists('remove_all_filters')) { function remove_all_filters($t) { 
 if (!function_exists('__return_false')) { function __return_false() { return false; } }
 if (!function_exists('__return_true')) { function __return_true() { return true; } }
 if (!function_exists('do_action')) { function do_action($t, ...$a) {} }
-if (!function_exists('add_action')) { function add_action($t, $c, $p = 10, $a = 1) { return true; } }
+if (!function_exists('add_action')) {
+    /**
+     * Apunta el hook en un registro pasivo (`_convoca_acciones`). `do_action` no lo consume: esto sirve para decir
+     * **qué** se engancha, no para dispararlo.
+     */
+    function add_action($t, $c, $p = 10, $a = 1) {
+        $GLOBALS['_convoca_acciones'][$t][] = $c;
+        return true;
+    }
+}
 if (!function_exists('add_filter')) { function add_filter($t, $c, $p = 10, $a = 1) { $GLOBALS['_wp_filters'][$t][$p][] = $c; return true; } }
 
 // Shortcodes — registro mínimo pero real, para poder comprobar qué se pinta.
@@ -867,7 +876,13 @@ if (!function_exists('wp_schedule_event')) { function wp_schedule_event($ts, $r,
 if (!function_exists('wp_clear_scheduled_hook')) { function wp_clear_scheduled_hook($h) { return true; } }
 
 // Misc
-if (!function_exists('register_post_type')) { function register_post_type($s, $a) { return null; } }
+if (!function_exists('register_post_type')) {
+    /** Apunta el tipo y sus argumentos: hay que poder afirmar cómo se registra, no solo que no explota. */
+    function register_post_type($s, $a) {
+        $GLOBALS['_convoca_tipos_registrados'][$s] = $a;
+        return null;
+    }
+}
 if (!function_exists('register_post_meta')) { function register_post_meta($t, $k, $a) { return true; } }
 if (!function_exists('register_taxonomy')) { function register_taxonomy($s, $t, $a) { return null; } }
 if (!function_exists('register_rest_route')) {
