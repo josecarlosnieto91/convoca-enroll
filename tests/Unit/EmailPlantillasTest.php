@@ -118,6 +118,7 @@ final class EmailPlantillasTest extends TestCase {
 		$html = Email_Automation::preview_html( 'confirmacion_plaza' );
 
 		$this->assertSame( 1, substr_count( $html, 'email-btn' ), 'un solo botón' );
+		$this->assertStringNotContainsString( 'Ver mi reserva', $html, 'no se añade el CTA de la plantilla' );
 	}
 
 	/**

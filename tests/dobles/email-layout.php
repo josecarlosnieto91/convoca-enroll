@@ -63,6 +63,8 @@ class Email_Layout {
 	 * @return string
 	 */
 	public static function button_html( $url, $texto ) {
-		return '<a href="' . $url . '">' . $texto . '</a>';
+		// La clase es la que usa el producto para saber si el cuerpo ya trae su propio boton
+		// (`preview_html` busca `email-btn`): sin ella, un CTA duplicado pasaba inadvertido.
+		return '<a class="email-btn" href="' . $url . '">' . $texto . '</a>';
 	}
 }
