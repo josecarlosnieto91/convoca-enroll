@@ -170,6 +170,14 @@ class Admin_Inscripcion_Form {
 							<label for="conv-admin-notas">Notas</label>
 							<textarea id="conv-admin-notas" name="notas" rows="3" style="height: auto;"></textarea>
 						</div>
+
+						<?php // `Motor_Inscripcion::inscribir()` exige consentimiento: sin este campo, dar de alta desde el panel fallaba siempre. ?>
+						<div class="convoca-field" style="grid-column: 1 / -1;">
+							<label style="display:flex; gap:8px; align-items:flex-start;">
+								<input type="checkbox" name="rgpd" value="1" required>
+								<span>La persona ha aceptado la política de privacidad (se guarda la versión y la fecha).</span>
+							</label>
+						</div>
 					</div>
 
 					<div style="margin-top: 40px; display: flex; justify-content: flex-end; gap: 15px; align-items: center;">
@@ -256,6 +264,7 @@ class Admin_Inscripcion_Form {
 		$nombre = sanitize_text_field( $data['nombre'] ?? '' );
 		$email  = sanitize_email( $data['email'] ?? '' );
 		$estado = sanitize_text_field( $data['estado'] ?? 'confirmada' );
+		$rgpd   = ! empty( $data['rgpd'] ) ? '1' : '';
 
 		$errors = array();
 		if ( ! $actividad_id ) {
@@ -269,6 +278,9 @@ class Admin_Inscripcion_Form {
 		}
 		if ( ! in_array( $estado, CPT_Inscripcion::STATES, true ) ) {
 			$errors[] = 'Estado no válido.';
+		}
+		if ( '' === $rgpd ) {
+			$errors[] = 'Falta el consentimiento de la política de privacidad.';
 		}
 
 		if ( ! empty( $errors ) ) {
@@ -314,6 +326,7 @@ class Admin_Inscripcion_Form {
 				'tipo_inscripcion' => sanitize_text_field( $data['tipo_inscripcion'] ?? 'general' ),
 				'notas'            => sanitize_textarea_field( $data['notas'] ?? '' ),
 				'estado_forzado'   => $estado,
+				'rgpd'             => $rgpd,
 			)
 		);
 
