@@ -45,6 +45,7 @@ final class VolunteerHoursTest extends TestCase {
 			'usuarios'   => array(),
 		);
 		$GLOBALS['__ledger']           = array( 'logs' => array(), 'llamadas' => array(), 'puede' => array() );
+		$GLOBALS['db_inserts']         = array();
 		$GLOBALS['convoca_test_users'] = array(
 			'ana@example.test' => (object) array(
 				'ID'           => 7,
@@ -60,6 +61,7 @@ final class VolunteerHoursTest extends TestCase {
 	protected function tearDown(): void {
 		$GLOBALS['_wp_stores']         = $this->previo;
 		$GLOBALS['__ledger']           = null;
+		$GLOBALS['db_inserts']         = array();
 		$GLOBALS['convoca_test_users'] = array();
 	}
 
@@ -220,6 +222,31 @@ final class VolunteerHoursTest extends TestCase {
 		$revoke = $this->llamadas()[0];
 		$this->assertSame( 'revoke', $revoke[0] );
 		$this->assertSame( 'responsable', $revoke[1] );
+	}
+
+	/**
+	 * Si ya tenía horas acreditadas, solo se ajusta **la diferencia**: no se suman dos veces.
+	 */
+	public function test_ajusta_solo_la_diferencia(): void {
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_responsables'] = '9';
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_horas_actividad'] = '6';
+		$GLOBALS['__ledger']['puede'][9] = true;
+		$GLOBALS['convoca_test_posts']   = array( 70 );
+
+		// Ya había 4 h acreditadas de esta misma actividad.
+		$GLOBALS['__ledger']['logs'][901] = array(
+			'origen'    => 'responsable',
+			'origen_id' => 61000009,
+			'user_id'   => 9,
+			'horas'     => 4.0,
+			'estado'    => 'activo',
+		);
+		$GLOBALS['_wp_stores']['post_meta'][901]['_convoca_horas'] = '4';
+
+		$this->llamar( 'sincronizar_responsables', 61 );
+
+		$insert = end( $GLOBALS['db_inserts'] );
+		$this->assertSame( 2.0, (float) ( $insert['datos']['meta_value'] ?? 0 ), 'solo las 2 h de diferencia' );
 	}
 
 	/**
