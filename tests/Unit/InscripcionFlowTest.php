@@ -19,6 +19,8 @@ class InscripcionFlowTest extends TestCase
     protected function setUp(): void
     {
         $this->loadClass();
+        // El motor no debe depender de lo que dejara otra prueba: se parte de una lista vacía.
+        $GLOBALS['convoca_test_posts'] = array();
     }
 
     public function test_generar_codigo_length(): void
