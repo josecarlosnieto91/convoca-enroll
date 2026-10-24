@@ -680,6 +680,13 @@ if (!function_exists('submit_button')) {
     }
 }
 
+if (!function_exists('esc_js')) {
+    /** Escapa para JavaScript (dentro de comillas simples o dobles). */
+    function esc_js($texto) {
+        return str_replace(array("\\", "'", '"', "\n", "\r", '<', '>', '&'), array('\\\\', "\\'", '&quot;', '\\n', '\\r', '&lt;', '&gt;', '&amp;'), (string) $texto);
+    }
+}
+
 /** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
 class Convoca_Json_Cortado extends \Exception {
 
