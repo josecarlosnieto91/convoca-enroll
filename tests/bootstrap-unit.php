@@ -885,7 +885,11 @@ if (!isset($GLOBALS['wpdb'])) {
             $this->insert_id = 42;
             return 1;
         }
-        public function update($t, $d, $w) { return 1; }
+        public function update($t, $d, $w) {
+            // Se apunta qué se actualiza y con qué: sin esto no se puede afirmar que el reintento vuelve a «pending».
+            $GLOBALS['db_updates'][] = array('tabla' => $t, 'datos' => $d, 'donde' => $w);
+            return 1;
+        }
         public function delete($t, $w) { return 1; }
         public function prepare($q, ...$a) {
             if (1 === count($a) && is_array($a[0])) { $a = array_values($a[0]); }
