@@ -1313,13 +1313,7 @@ if (!function_exists('get_userdata')) {
     /** Usuario con los roles que fije la prueba (por defecto, suscriptor). */
     function get_userdata($id) {
         if ($id <= 0) return false;
-        // Si la prueba fija la lista de personas que existen, un id fuera de ella **no existe** (como en WordPress).
-        if (isset($GLOBALS['convoca_test_users']) && is_array($GLOBALS['convoca_test_users'])
-            && !in_array((int) $id, array_map('intval', $GLOBALS['convoca_test_users']), true)) { return false; }
         // Si la prueba dio de alta la persona, se usa esa: nombre y correo reales.
-        if (isset($GLOBALS['_wp_stores']['usuarios'][ $id ]) && is_object($GLOBALS['_wp_stores']['usuarios'][ $id ])) {
-            return $GLOBALS['_wp_stores']['usuarios'][ $id ];
-        }
         $u = new stdClass();
         $u->ID = $id;
         $u->display_name = "User $id";

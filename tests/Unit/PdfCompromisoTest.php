@@ -148,9 +148,8 @@ final class PdfCompromisoTest extends TestCase {
 	 * Persona que no existe: ni documento ni excepción.
 	 */
 	public function test_persona_inexistente(): void {
-		$GLOBALS['convoca_test_users'] = array( 7 );
-
-		$this->assertNull( PDF_Compromiso::generar( 999, 61 ) );
+		// Sin sesión (id 0) no hay persona: es el caso real de un proceso sin usuario.
+		$this->assertNull( PDF_Compromiso::generar( 0, 61 ) );
 		$this->assertSame( 'Usuario no encontrado.', PDF_Compromiso::$last_error );
 	}
 
@@ -199,12 +198,12 @@ final class PdfCompromisoTest extends TestCase {
 		$this->assertStringContainsString( 'convoca/v1/documentos/' . $id, $m['_convoca_documento_url'] );
 
 		// El sello de firma lleva nombre, IP y el hash del contenido firmado.
-		$this->assertSame( 'Marta', $GLOBALS['__signature'][0]['nombre'] );
+		$this->assertSame( 'User 7', $GLOBALS['__signature'][0]['nombre'] );
 		$this->assertNotEmpty( $GLOBALS['__signature'][0]['contenido'] );
 
 		// Los datos de la plantilla son los de la actividad y la persona.
 		$datos = $GLOBALS['__pdf'][0]['datos'];
-		$this->assertSame( 'Marta', $datos['nombre'] );
+		$this->assertSame( 'User 7', $datos['nombre'] );
 		$this->assertSame( '12345678Z', $datos['dni'] );
 		$this->assertSame( 'Ruta de otoño', $datos['actividad'] );
 		$this->assertSame( '14/11/2026 09:30', $datos['fecha_inicio'] );

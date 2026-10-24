@@ -65,6 +65,8 @@ final class EvaluacionEditorTest extends TestCase {
 		$GLOBALS['_wp_redirects']          = array();
 		$GLOBALS['_wp_posts_creados']      = array();
 		$GLOBALS['_wp_insert_args']        = array();
+		$GLOBALS['_wp_insert_falla']       = false;
+		$GLOBALS['_wp_insert_lanza']       = false;
 		$_POST                             = array();
 		$_GET                              = array();
 
@@ -86,6 +88,8 @@ final class EvaluacionEditorTest extends TestCase {
 		$GLOBALS['nonce_invalido']     = false;
 		$GLOBALS['_wp_die_lanza']      = false;
 		$GLOBALS['_wp_redirects']      = array();
+		$GLOBALS['_wp_insert_falla']   = false;
+		$GLOBALS['_wp_insert_lanza']   = false;
 		$_POST                         = $this->post_previo;
 		$_GET                          = $this->get_previo;
 	}

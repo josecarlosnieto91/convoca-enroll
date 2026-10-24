@@ -24,6 +24,13 @@ use PHPUnit\Framework\TestCase;
  */
 class CPTActividadTest extends TestCase
 {
+
+    protected function setUp(): void
+    {
+        // Este bloque asume que quien pregunta es administrador: se fija aquí, no se hereda de otra prueba.
+        $GLOBALS['convoca_test_user_can'] = array( 'manage_options' => true );
+    }
+
     /**
      * Test that META_PREFIX is defined correctly.
      *
