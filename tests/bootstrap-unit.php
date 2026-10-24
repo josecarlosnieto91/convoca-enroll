@@ -187,6 +187,28 @@ namespace Convoca\Core {
     }
 }
 
+namespace Convoca\Core {
+
+	if ( ! class_exists( 'Convoca\Core\License_Manager' ) ) {
+
+		/**
+		 * Licencia: qué funciones PRO están activas. Por defecto ninguna; la prueba enciende las que necesita.
+		 */
+		class License_Manager {
+
+			/**
+			 * ¿Está activa la función?
+			 *
+			 * @param string $funcion Función.
+			 * @return bool
+			 */
+			public static function has_pro( string $funcion ): bool {
+				return (bool) ( $GLOBALS['convoca_test_pro'][ $funcion ] ?? false );
+			}
+		}
+	}
+}
+
 namespace Convoca\Core\Admin {
 
     // El andamiaje de las pantallas de administración vive en el núcleo (convoca-core#16): las
