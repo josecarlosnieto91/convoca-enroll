@@ -117,8 +117,10 @@ final class GoogleCalendarTest extends TestCase {
 	 */
 	public function test_el_borrador_no_sincroniza(): void {
 		$this->configurar();
-		$post               = $GLOBALS['_wp_stores']['posts'][61];
-		$post->post_status  = 'draft';
+		// Con la sincronización automática encendida: la **única** guarda que puede frenar es el estado del post.
+		$GLOBALS['_wp_stores']['options']['convoca_enroll_settings']['google_calendar_auto_sync'] = 1;
+		$post              = $GLOBALS['_wp_stores']['posts'][61];
+		$post->post_status = 'draft';
 
 		( new Google_Calendar() )->sync_on_save( 61, $post, true );
 
@@ -130,6 +132,7 @@ final class GoogleCalendarTest extends TestCase {
 	 */
 	public function test_sin_permiso_no_sincroniza(): void {
 		$this->configurar();
+		$GLOBALS['_wp_stores']['options']['convoca_enroll_settings']['google_calendar_auto_sync'] = 1;
 		$GLOBALS['convoca_test_caps']['edit_post'] = false;
 
 		( new Google_Calendar() )->sync_on_save( 61, $GLOBALS['_wp_stores']['posts'][61], true );
