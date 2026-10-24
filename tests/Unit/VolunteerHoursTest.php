@@ -15,6 +15,7 @@ namespace Convoca\Enroll\Tests;
 use Convoca\Enroll\Volunteer_Hour_Tracker;
 use PHPUnit\Framework\TestCase;
 
+require_once dirname( __DIR__, 2 ) . '/tests/dobles/hour-ledger.php';
 require_once dirname( __DIR__, 2 ) . '/includes/CPT_Actividad.php';
 require_once dirname( __DIR__, 2 ) . '/includes/CPT_Inscripcion.php';
 require_once dirname( __DIR__, 2 ) . '/includes/Volunteer_Hour_Tracker.php';
@@ -43,13 +44,115 @@ final class VolunteerHoursTest extends TestCase {
 			'posts'      => array(),
 			'usuarios'   => array(),
 		);
+		$GLOBALS['__ledger']           = array( 'logs' => array(), 'llamadas' => array(), 'puede' => array() );
+		$GLOBALS['convoca_test_users'] = array(
+			'ana@example.test' => (object) array(
+				'ID'           => 7,
+				'display_name' => 'Ana',
+				'user_email'   => 'ana@example.test',
+			),
+		);
 	}
 
 	/**
 	 * Devuelve el almacén a como estaba.
 	 */
 	protected function tearDown(): void {
-		$GLOBALS['_wp_stores'] = $this->previo;
+		$GLOBALS['_wp_stores']         = $this->previo;
+		$GLOBALS['__ledger']           = null;
+		$GLOBALS['convoca_test_users'] = array();
+	}
+
+	/**
+	 * Llamadas al libro de horas.
+	 *
+	 * @return array
+	 */
+	private function llamadas(): array {
+		return (array) ( $GLOBALS['__ledger']['llamadas'] ?? array() );
+	}
+
+	/**
+	 * La puerta del libro está cerrada por defecto: no se acredita nada.
+	 */
+	public function test_sin_permiso_de_acreditar(): void {
+		$GLOBALS['_wp_stores']['post_meta'][70] = array(
+			'_convoca_actividad_id' => 61,
+			'_convoca_email'        => 'ana@example.test',
+		);
+
+		Volunteer_Hour_Tracker::handle_asistencia( 70, 'si' );
+
+		$this->assertSame( array(), $this->llamadas() );
+	}
+
+	/**
+	 * Con la puerta abierta se acreditan las horas **de la actividad** y se marca la inscripción.
+	 */
+	public function test_acredita_las_horas(): void {
+		$GLOBALS['_wp_stores']['post_meta'][70] = array(
+			'_convoca_actividad_id' => 61,
+			'_convoca_email'        => 'ana@example.test',
+		);
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_horas_actividad'] = '6';
+		$GLOBALS['__ledger']['puede'][7] = true;
+
+		Volunteer_Hour_Tracker::handle_asistencia( 70, 'si' );
+
+		$credit = $this->llamadas()[0];
+		$this->assertSame( 'credit', $credit[0] );
+		$this->assertSame( 'inscripcion', $credit[1] );
+		$this->assertSame( 70, $credit[2] );
+		$this->assertSame( 7, $credit[3] );
+		$this->assertSame( 6.0, $credit[4], 'las horas que declara la actividad' );
+
+		// El marcador se escribe con SQL directo (`INSERT … ON DUPLICATE KEY`): se afirma la consulta, no el meta.
+		$sql = implode( "\n", (array) ( $GLOBALS['_wp_stores']['queries'] ?? array() ) );
+		$this->assertStringContainsString( '_convoca_horas_contadas', $sql, 'la inscripción queda marcada' );
+		$this->assertStringContainsString( 'ON DUPLICATE KEY UPDATE', $sql, 'y marcarla dos veces no duplica' );
+	}
+
+	/**
+	 * Desmarcar la asistencia invalida el registro (no lo borra) y libera el marcador.
+	 */
+	public function test_retira_las_horas(): void {
+		$GLOBALS['_wp_stores']['post_meta'][70] = array(
+			'_convoca_actividad_id'    => 61,
+			'_convoca_email'           => 'ana@example.test',
+			'_convoca_horas_contadas'  => '1',
+		);
+		$GLOBALS['_wp_stores']['post_meta'][70]['_convoca_actividad_id'] = 61;
+		$GLOBALS['__ledger']['puede'][7] = true;
+		$GLOBALS['__ledger']['logs'][900] = array(
+			'origen'    => 'inscripcion',
+			'origen_id' => 70,
+			'user_id'   => 7,
+			'horas'     => 6.0,
+			'estado'    => 'activo',
+		);
+		$GLOBALS['_wp_stores']['post_meta'][900]['_convoca_horas'] = '6';
+
+		Volunteer_Hour_Tracker::handle_asistencia( 70, 'no' );
+
+		$revoke = $this->llamadas()[0];
+		$this->assertSame( 'revoke', $revoke[0] );
+		$this->assertSame( 70, $revoke[2] );
+		$this->assertSame( '', $GLOBALS['_wp_stores']['post_meta'][70]['_convoca_horas_contadas'] ?? '' );
+	}
+
+	/**
+	 * Si nunca se contaron, desmarcar no revoca nada.
+	 */
+	public function test_desmarcar_sin_horas_contadas(): void {
+		$GLOBALS['_wp_stores']['post_meta'][70] = array(
+			'_convoca_actividad_id' => 61,
+			'_convoca_email'        => 'ana@example.test',
+		);
+
+		Volunteer_Hour_Tracker::handle_asistencia( 70, 'no' );
+
+		$tipos = array_column( $this->llamadas(), 0 );
+		$this->assertNotContains( 'revoke', $tipos );
 	}
 
 	/**

@@ -1245,7 +1245,13 @@ if (!function_exists('wp_cache_delete')) { function wp_cache_delete($k, $g = '')
 if (!function_exists('flush_rewrite_rules')) { function flush_rewrite_rules() {} }
 if (!function_exists('remove_action')) { function remove_action($h, $c, $p = 10) { return true; } }
 if (!function_exists('load_plugin_textdomain')) { function load_plugin_textdomain($d, $dep, $p) {} }
-if (!function_exists('get_user_by')) { function get_user_by($f, $v) { return false; } }
+if (!function_exists('get_user_by')) {
+    /** Usuario por campo: la prueba siembra en `convoca_test_users[email]`. Sin siembra, no hay. */
+    function get_user_by($campo, $valor) {
+        if ('email' === $campo) { return $GLOBALS['convoca_test_users'][ (string) $valor ] ?? false; }
+        return false;
+    }
+}
 if (!function_exists('get_users')) { function get_users($a = []) { return []; } }
 if (!function_exists('get_userdata')) {
     /** Usuario con los roles que fije la prueba (por defecto, suscriptor). */
@@ -1336,7 +1342,8 @@ if (!class_exists('WP_User')) {
 // $wpdb
 if (!isset($GLOBALS['wpdb'])) {
     $GLOBALS['wpdb'] = new class {
-        public $prefix = 'wp_'; public $posts = 'wp_posts'; public $postmeta = 'wp_postmeta';
+        public $prefix = 'wp_'; public $posts = 'wp_posts'; public $usermeta = 'wp_usermeta';
+        public $postmeta = 'wp_postmeta';
         public $options = 'wp_options'; public $rows_affected = 1; // filas afectadas por la última consulta, como `wpdb`.
         public $insert_id = 42;
         /**
