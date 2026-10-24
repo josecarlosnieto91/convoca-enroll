@@ -805,6 +805,10 @@ if (!function_exists('get_posts')) {
      */
     function get_posts($a) {
         $GLOBALS['convoca_test_get_posts_args'][] = $a;
+        // Cola de respuestas: dos consultas distintas en la misma función (correo y luego DNI) no pueden ver lo mismo.
+        if (isset($GLOBALS['convoca_test_get_posts_cola']) && is_array($GLOBALS['convoca_test_get_posts_cola'])) {
+            return (array) (array_shift($GLOBALS['convoca_test_get_posts_cola']) ?? array());
+        }
         $todo = $GLOBALS['convoca_test_posts'] ?? array();
         if (empty($todo)) { return array(); }
         // Se devuelve **lo que la prueba fijó**, tal cual: ids si son ids, objetos si son objetos. Convertir los

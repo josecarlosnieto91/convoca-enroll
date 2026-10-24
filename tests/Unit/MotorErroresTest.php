@@ -46,6 +46,7 @@ final class MotorErroresTest extends TestCase {
 		);
 		$GLOBALS['convoca_test_posts']          = array();
 		$GLOBALS['convoca_test_get_posts_args'] = array();
+		$GLOBALS['convoca_test_get_posts_cola'] = null;
 		$GLOBALS['convoca_test_dns']            = array( 'example.com' );
 		$GLOBALS['convoca_test_caps']           = array(
 			'manage_options'        => false,
@@ -65,6 +66,7 @@ final class MotorErroresTest extends TestCase {
 		$GLOBALS['_wp_stores']                  = $this->previo;
 		$GLOBALS['convoca_test_posts']          = array();
 		$GLOBALS['convoca_test_get_posts_args'] = array();
+		$GLOBALS['convoca_test_get_posts_cola'] = null;
 		$GLOBALS['convoca_test_dns']            = null;
 		$GLOBALS['convoca_test_caps']           = array();
 		$GLOBALS['_wp_insert_lanza']            = false;
@@ -255,6 +257,42 @@ final class MotorErroresTest extends TestCase {
 
 		$this->assertInstanceOf( \WP_Error::class, $error );
 		$this->assertSame( 'confirm_failed', $error->get_error_code() );
+	}
+
+	/**
+	 * Con el límite de una reserva activa por persona, la segunda se rechaza.
+	 */
+	public function test_limite_de_reservas(): void {
+		$this->actividad();
+		$GLOBALS['_wp_stores']['options']['convoca_enroll_settings'] = array( 'limite_una_reserva' => 1 );
+
+		$previa                        = new \WP_Post();
+		$previa->ID                    = 80;
+		$previa->post_type             = 'inscripcion';
+		$GLOBALS['convoca_test_posts'] = array( $previa );
+
+		$error = Motor_Inscripcion::inscribir( 61, $this->datos() );
+
+		$this->assertInstanceOf( \WP_Error::class, $error );
+		$this->assertSame( 'limite_reservas', $error->get_error_code() );
+	}
+
+	/**
+	 * El DNI ya está inscrito en esa actividad: se ve antes de abrir la transacción.
+	 */
+	public function test_duplicado_por_dni_previo(): void {
+		$this->actividad();
+		$previa                        = new \WP_Post();
+		$previa->ID                    = 80;
+		$previa->post_type             = 'inscripcion';
+		// El correo va limpio (no hay duplicado por correo); el DNI sí está.
+		$GLOBALS['convoca_test_get_posts_cola'] = array( array(), array( $previa ) );
+
+		$error = Motor_Inscripcion::inscribir( 61, $this->datos( array( 'dni' => '12345678Z' ) ) );
+
+		$this->assertInstanceOf( \WP_Error::class, $error );
+		$this->assertSame( 'duplicate_dni', $error->get_error_code() );
+		$this->assertStringNotContainsString( 'START TRANSACTION', $this->consultas(), 'ni se abre la transacción' );
 	}
 
 	/**
