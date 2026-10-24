@@ -285,6 +285,111 @@ if (!function_exists('wpautop')) {
     }
 }
 
+if (!function_exists('get_post_modified_time')) {
+    /** Marca de modificación del post (para la clave de caché). */
+    function get_post_modified_time($formato = 'U', $gmt = false, $post = null, $traducir = false) {
+        $obj  = is_object($post) ? $post : ( $GLOBALS['_wp_stores']['posts'][ (int) $post ] ?? null );
+        $fecha = (string) ($obj->post_modified ?? '2026-10-01 00:00:00');
+        return 'U' === $formato ? (string) strtotime($fecha) : $fecha;
+    }
+}
+
+if (!function_exists('get_theme_mod')) {
+    /** Ajuste del tema: lo que fije la prueba, o el valor por defecto. */
+    function get_theme_mod($clave, $por_defecto = false) {
+        return $GLOBALS['_convoca_theme_mods'][ $clave ] ?? $por_defecto;
+    }
+}
+if (!function_exists('set_theme_mod')) {
+    function set_theme_mod($clave, $valor) {
+        $GLOBALS['_convoca_theme_mods'][ $clave ] = $valor;
+        return true;
+    }
+}
+if (!function_exists('get_permalink')) {
+    /** Enlace permanente del post. */
+    function get_permalink($post = 0) {
+        $id = is_object($post) ? (int) $post->ID : (int) ($post ?: get_the_ID());
+        return 'https://example.test/?p=' . $id;
+    }
+}
+
+if (!function_exists('wp_cache_get')) {
+    /** Caché de objetos en memoria para la prueba (sin persistencia). */
+    function wp_cache_get($clave, $grupo = '') {
+        return $GLOBALS['_convoca_cache'][ $grupo ][ $clave ] ?? false;
+    }
+    function wp_cache_set($clave, $valor, $grupo = '', $ttl = 0) {
+        $GLOBALS['_convoca_cache'][ $grupo ][ $clave ] = $valor;
+        return true;
+    }
+    function wp_cache_add($clave, $valor, $grupo = '', $ttl = 0) {
+        if (isset($GLOBALS['_convoca_cache'][ $grupo ][ $clave ])) { return false; }
+        return wp_cache_set($clave, $valor, $grupo, $ttl);
+    }
+    function wp_cache_delete($clave, $grupo = '') {
+        unset($GLOBALS['_convoca_cache'][ $grupo ][ $clave ]);
+        return true;
+    }
+}
+
+if (!function_exists('get_post_thumbnail_id')) {
+    /** Imagen destacada: la que fije la prueba en `convoca_test_thumbnail`. */
+    function get_post_thumbnail_id($id = 0) {
+        return (int) ($GLOBALS['convoca_test_thumbnail'][ (int) $id ] ?? 0);
+    }
+}
+if (!function_exists('wp_get_attachment_image_url')) {
+    /** URL de la imagen (sin tocar disco). */
+    function wp_get_attachment_image_url($id, $size = 'full') {
+        return $GLOBALS['convoca_test_thumbnail_url'] ?? '';
+    }
+}
+if (!function_exists('get_attached_file')) {
+    /** Fichero en disco del adjunto: ninguno por defecto. */
+    function get_attached_file($id) {
+        return $GLOBALS['convoca_test_attached'][ (int) $id ] ?? '';
+    }
+}
+
+if (!function_exists('trailingslashit')) {
+    /** Añade la barra final si no la tiene. */
+    function trailingslashit($cadena) {
+        return rtrim((string) $cadena, '/\\') . '/';
+    }
+}
+if (!function_exists('untrailingslashit')) {
+    /** Quita la barra final. */
+    function untrailingslashit($cadena) {
+        return rtrim((string) $cadena, '/\\');
+    }
+}
+
+if (!function_exists('wp_mkdir_p')) {
+    /** Crea el directorio (y sus padres) como WordPress. */
+    function wp_mkdir_p($dir) {
+        return is_dir($dir) || @mkdir($dir, 0775, true);
+    }
+}
+
+if (!function_exists('wp_upload_dir')) {
+    /**
+     * Directorio de subidas bajo control de la prueba (`$GLOBALS['convoca_test_uploads']`), por defecto en el
+     * directorio temporal: generar carteles no debe escribir dentro del repo.
+     */
+    function wp_upload_dir($time = null) {
+        $base = $GLOBALS['convoca_test_uploads'] ?? (sys_get_temp_dir() . '/convoca-enroll-uploads');
+        wp_mkdir_p($base);
+        return array(
+            'path'    => $base,
+            'url'     => 'https://example.test/uploads',
+            'basedir' => $base,
+            'baseurl' => 'https://example.test/uploads',
+            'error'   => false,
+        );
+    }
+}
+
 if (!function_exists('is_email')) { function is_email($e) { return (bool) filter_var($e, FILTER_VALIDATE_EMAIL); } }
 if (!function_exists('wp_mail')) {
     function wp_mail($to, $subject, $message, $headers = '', $attachments = array()) {
@@ -790,7 +895,10 @@ if (!function_exists('remove_query_arg')) {
         return empty($query) ? $base : $base . '?' . http_build_query($query);
     }
 }
-function get_the_title($id) {
+function get_the_title($id = 0) {
+        // Acepta id **o** el propio post, como WordPress: pasar el objeto es lo normal en los temas y en el motor
+        // de carteles (`get_the_title( $post )`), y castearlo a int reventaba.
+        if (is_object($id)) { return (string) ($id->post_title ?? ''); }
         // El título del post del almacén manda; «Post N» es el respaldo cuando la prueba no lo ha sembrado.
         $p = $GLOBALS['_wp_stores']['posts'][(int) $id] ?? null;
         if (is_object($p) && isset($p->post_title) && '' !== (string) $p->post_title) { return (string) $p->post_title; }
@@ -1019,6 +1127,8 @@ if (!class_exists('WP_Post')) {
         public $ID = 0; public $post_title = ''; public $post_type = 'post';
         public $post_status = 'publish'; public $post_content = '';
         public $post_excerpt = ''; public $post_date = '';
+        // Las usa la clave de caché de los carteles: crearlas al vuelo es deprecado en PHP 8.5.
+        public $post_modified = '';
     }
 }
 
