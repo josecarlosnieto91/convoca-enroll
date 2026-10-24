@@ -37,6 +37,18 @@ namespace Convoca\Core {
              * @param string $tipo    info|success|warning|error.
              * @return void
              */
+            /**
+             * Pinta un aviso en la pantalla.
+             *
+             * @param string $mensaje Texto.
+             * @param string $tipo    Tipo.
+             * @return void
+             */
+            public static function admin_notice( $mensaje, $tipo = 'info' ) {
+                echo '<div class="notice notice-' . esc_attr( $tipo ) . '"><p>' . esc_html( $mensaje ) . '</p></div>';
+                $GLOBALS['_wp_notices'][] = array( 'mensaje' => $mensaje, 'tipo' => $tipo );
+            }
+
             public static function set_admin_notice( $mensaje, $tipo = 'info' ) {
                 $GLOBALS['_wp_stores']['transients']['_convoca_notices'][] = array( 'mensaje' => $mensaje, 'tipo' => $tipo );
             }
@@ -632,7 +644,14 @@ if (!function_exists('get_userdata')) {
         return $u;
     }
 }
-if (!function_exists('get_current_screen')) { function get_current_screen() { return null; } }
+if (!function_exists('get_current_screen')) {
+    /** Pantalla actual: la prueba la fija en `$GLOBALS['_wp_screen']` (por omisión, `dashboard`). */
+    function get_current_screen() {
+        $screen      = new stdClass();
+        $screen->id  = $GLOBALS['_wp_screen'] ?? 'dashboard';
+        return $screen;
+    }
+}
 if (!function_exists('wp_enqueue_style')) { function wp_enqueue_style($h, $s = '', $d = [], $v = '', $m = 'all') {} }
 if (!function_exists('wp_register_style')) { function wp_register_style($h, $s, $d = [], $v = '', $m = 'all') { return true; } }
 if (!function_exists('wp_set_script_translations')) { function wp_set_script_translations($h, $d, $p) {} }
