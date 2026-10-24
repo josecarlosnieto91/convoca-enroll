@@ -177,7 +177,7 @@ final class AdminActividadesEditorTest extends TestCase {
 			return is_string( $valor ) && '' !== $valor ? $valor : $impreso;
 		};
 
-		$this->assertStringContainsString( '30', $columna( 'column_plazas', $item ) );
+		$this->assertSame( '6/30', $columna( 'column_plazas', $item ), 'ocupadas/totales (30 - 24 = 6), no al revés' );
 		$this->assertStringContainsString( 'Centro Social', $columna( 'column_ubicacion', $item ) );
 
 		// Sin datos de espera, un guion.

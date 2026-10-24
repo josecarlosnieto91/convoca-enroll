@@ -132,6 +132,10 @@ final class AdminActividadesDuplicateTest extends TestCase {
 		$this->assertCount( 1, $GLOBALS['_wp_posts_creados'], 'se crea la copia' );
 		$nuevo = $GLOBALS['_wp_posts_creados'][0];
 
+		// Nace en borrador: duplicar no debe publicar la copia sin querer.
+		$this->assertSame( 'draft', $GLOBALS['_wp_insert_args'][0]['post_status'] );
+		$this->assertStringContainsString( '(copia)', $GLOBALS['_wp_insert_args'][0]['post_title'] );
+
 		$meta = $GLOBALS['_wp_stores']['post_meta'][ $nuevo ];
 		$this->assertSame( '30', $meta['_convoca_plazas_totales'], 'las plazas se copian' );
 		$this->assertSame( '60,50', $meta['_convoca_precio_socio'] );

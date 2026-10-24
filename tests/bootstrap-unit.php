@@ -772,6 +772,7 @@ if (!function_exists('wp_insert_post')) {
         static $c = 100;
         $c++;
         $GLOBALS['_wp_posts_creados'][] = $c;
+        $GLOBALS['_wp_insert_args'][]   = $d;
         return $c;
     }
 }
