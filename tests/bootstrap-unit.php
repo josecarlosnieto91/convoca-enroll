@@ -714,7 +714,14 @@ if (!function_exists('esc_js')) {
 }
 
 /** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
-class Convoca_Json_Cortado extends \Exception {
+/**
+ * Corta el flujo como el `wp_die()` real de `wp_send_json_*`.
+ *
+ * Extiende **`Error`, no `Exception`**: el `wp_die()` de WordPress no es una excepcion, y un producto con
+ * `try { ... wp_send_json_success(); ... } catch ( \Exception $e )` se tragaba nuestro corte y respondia **error**
+ * despues de haber respondido bien. Es el mismo motivo por el que `exit` no se puede capturar.
+ */
+class Convoca_Json_Cortado extends \Error {
 
     /** Respuesta enviada. */
     public $respuesta = null;
@@ -900,7 +907,21 @@ if (!function_exists('register_post_type')) {
         return null;
     }
 }
-if (!function_exists('register_post_meta')) { function register_post_meta($t, $k, $a) { return true; } }
+if (!function_exists('add_meta_box')) {
+    /** Apunta la caja: hay que poder afirmar dónde se pinta y con qué callback. */
+    function add_meta_box($id, $titulo, $cb, $pantalla = 'post', $contexto = 'normal', $prioridad = 'default') {
+        $GLOBALS['_convoca_cajas'][] = compact('id', 'titulo', 'cb', 'pantalla', 'contexto', 'prioridad');
+        return null;
+    }
+}
+
+if (!function_exists('register_post_meta')) {
+    /** Apunta las metas registradas por tipo: hay que poder afirmar **cómo** se registran, no solo que no explota. */
+    function register_post_meta($t, $k, $a) {
+        $GLOBALS['_convoca_metas_registrados'][ $t ][ $k ] = $a;
+        return true;
+    }
+}
 if (!function_exists('register_taxonomy')) { function register_taxonomy($s, $t, $a) { return null; } }
 if (!function_exists('register_rest_route')) {
     /**
