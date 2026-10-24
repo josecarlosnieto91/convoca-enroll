@@ -9,6 +9,23 @@
 namespace Convoca\Core {
     if (!class_exists('Utils')) {
         class Utils {
+            /**
+             * «Emite» un CSV: apunta el nombre, la cabecera y las filas, y corta el flujo como el `exit` real.
+             *
+             * El `stream_csv()` de verdad abre la salida y termina el proceso: en una prueba se llevaría por delante
+             * a PHPUnit. Se recorre el iterable igual, que es lo que hay que medir.
+             *
+             * @param string   $nombre   Fichero.
+             * @param array    $cabecera Columnas.
+             * @param iterable $filas    Filas.
+             */
+            public static function stream_csv($nombre, array $cabecera, $filas) {
+                $datos = array();
+                foreach ($filas as $fila) { $datos[] = $fila; }
+                $GLOBALS['_csv'][] = array('fichero' => $nombre, 'cabecera' => $cabecera, 'filas' => $datos);
+                throw new \Convoca_Json_Cortado(array('csv' => $nombre));
+            }
+
             public static function validate_dni(string $dni): bool {
                 // Quick validation: 8 digits + letter, or X/Y/Z + 7 digits + letter
                 return (bool) preg_match('/^(\d{8}|[XYZ]\d{7})[A-Z]$/', strtoupper(trim($dni)));
@@ -155,7 +172,23 @@ if (!function_exists('sanitize_text_field')) { function sanitize_text_field($s) 
 if (!function_exists('sanitize_key')) { function sanitize_key($k) { return preg_replace('/[^a-z0-9_\-]/', '', strtolower((string) $k)); } }
 if (!function_exists('date_i18n')) { function date_i18n($f, $t = null) { return date($f, $t ?? time()); } }
 if (!function_exists('wp_strip_all_tags')) { function wp_strip_all_tags($s) { return trim(strip_tags((string) $s)); } }
-if (!function_exists('sanitize_title')) { function sanitize_title($t) { return strtolower(str_replace(' ', '-', trim($t))); } }
+if (!function_exists('sanitize_title')) {
+    /** Como el de WordPress: minúsculas, sin acentos y solo letras, números y guiones (un «ñ» no rompe el slug). */
+    function sanitize_title($t) {
+        $t = strtolower(trim((string) $t));
+        $t = strtr($t, array(
+            'á' => 'a', 'à' => 'a', 'ä' => 'a', 'â' => 'a', 'ã' => 'a',
+            'é' => 'e', 'è' => 'e', 'ë' => 'e', 'ê' => 'e',
+            'í' => 'i', 'ì' => 'i', 'ï' => 'i', 'î' => 'i',
+            'ó' => 'o', 'ò' => 'o', 'ö' => 'o', 'ô' => 'o', 'õ' => 'o',
+            'ú' => 'u', 'ù' => 'u', 'ü' => 'u', 'û' => 'u',
+            'ñ' => 'n', 'ç' => 'c',
+        ));
+        $t = preg_replace('/[^a-z0-9]+/', '-', $t);
+
+        return trim((string) $t, '-');
+    }
+}
 if (!function_exists('sanitize_email')) { function sanitize_email($e) { return filter_var($e, FILTER_SANITIZE_EMAIL); } }
 if (!function_exists('absint')) { function absint($v) { return abs((int)$v); } }
 if (!function_exists('wp_unslash')) { function wp_unslash($s) { return is_string($s) ? stripslashes($s) : $s; } }
@@ -336,6 +369,16 @@ if (!function_exists('wp_send_json_error')) {
     }
 }
 
+if (!function_exists('check_admin_referer')) {
+    function check_admin_referer($accion = -1, $campo = '_wpnonce') {
+        unset($campo);
+        if (!empty($GLOBALS['nonces_invalidos'][ $accion ])) {
+            throw new Convoca_Json_Cortado('nonce');
+        }
+        return true;
+    }
+}
+
 if (!function_exists('check_ajax_referer')) {
     function check_ajax_referer($accion = -1, $campo = false, $morir = true) {
         unset($campo, $morir);
@@ -397,6 +440,7 @@ if (!function_exists('get_posts')) {
      * que el resto de pruebas de este arnés espera.
      */
     function get_posts($a) {
+        $GLOBALS['convoca_test_get_posts_args'][] = $a;
         $todo = $GLOBALS['convoca_test_posts'] ?? array();
         if (empty($todo)) { return array(); }
         // Se devuelve **lo que la prueba fijó**, tal cual: ids si son ids, objetos si son objetos. Convertir los
