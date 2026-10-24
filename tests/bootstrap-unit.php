@@ -629,6 +629,16 @@ if (!class_exists('WP_List_Table')) {
         public function display() {}
 
         /**
+         * Acciones de fila (el real las pinta bajo el título).
+         *
+         * @param array $acciones Acciones.
+         * @return string
+         */
+        public function row_actions($acciones = array()) {
+            return '<div class="row-actions">' . implode(' | ', (array) $acciones) . '</div>';
+        }
+
+        /**
          * Página actual del listado.
          *
          * @return int
