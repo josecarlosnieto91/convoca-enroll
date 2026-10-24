@@ -41,6 +41,8 @@ final class ReportsMemoriaTest extends TestCase {
 	 * Prepara el caso.
 	 */
 	protected function setUp(): void {
+		// Sin lista de personas fijada por otra prueba.
+		unset( $GLOBALS['convoca_test_users'] );
 		$this->previo          = $GLOBALS['_wp_stores'] ?? array();
 		$GLOBALS['_wp_stores'] = array(
 			'options'      => array(),

@@ -1313,6 +1313,13 @@ if (!function_exists('get_userdata')) {
     /** Usuario con los roles que fije la prueba (por defecto, suscriptor). */
     function get_userdata($id) {
         if ($id <= 0) return false;
+        // Si la prueba fija la lista de personas que existen, un id fuera de ella **no existe** (como en WordPress).
+        if (isset($GLOBALS['convoca_test_users']) && is_array($GLOBALS['convoca_test_users'])
+            && !in_array((int) $id, array_map('intval', $GLOBALS['convoca_test_users']), true)) { return false; }
+        // Si la prueba dio de alta la persona, se usa esa: nombre y correo reales.
+        if (isset($GLOBALS['_wp_stores']['usuarios'][ $id ]) && is_object($GLOBALS['_wp_stores']['usuarios'][ $id ])) {
+            return $GLOBALS['_wp_stores']['usuarios'][ $id ];
+        }
         $u = new stdClass();
         $u->ID = $id;
         $u->display_name = "User $id";
@@ -1419,6 +1426,10 @@ if (!isset($GLOBALS['wpdb'])) {
          */
         public function get_var($q = null, $x = 0, $y = 0) {
             $sql = (string) (is_string($q) ? $q : '');
+            // Cola: dos consultas distintas en la misma función (antes y dentro de la transacción) no ven lo mismo.
+            if (isset($GLOBALS['_wp_stores']['get_var_cola']) && is_array($GLOBALS['_wp_stores']['get_var_cola'])) {
+                return array_shift($GLOBALS['_wp_stores']['get_var_cola']);
+            }
             foreach (($GLOBALS['_wp_stores']['get_var_mapa'] ?? []) as $aguja => $valor) {
                 if ('' !== $aguja && false !== strpos(str_replace('\\\\', '', $sql), (string) $aguja)) { return $valor; }
             }
@@ -1604,5 +1615,47 @@ if (!function_exists('wp_count_posts')) {
 if (!function_exists('is_admin')) {
     /** Modo administración, controlable por la prueba. */
     function is_admin() { return (bool) ($GLOBALS['convoca_test_is_admin'] ?? false); }
+}
+
+if (!function_exists('get_user_meta')) {
+    /**
+     * Meta de usuario, con el valor por defecto cuando no hay nada.
+     *
+     * @param int    $id      Usuario.
+     * @param string $clave   Clave.
+     * @param bool   $unico   ¿Un valor?
+     * @return mixed
+     */
+    function get_user_meta($id, $clave = '', $unico = true) {
+        if ('' === $clave) { return (array) ($GLOBALS['_wp_stores']['usermeta'][ $id ] ?? []); }
+        $v = $GLOBALS['_wp_stores']['usermeta'][ $id ][ $clave ] ?? '';
+        return $v;
+    }
+}
+
+if (!function_exists('rest_url')) {
+    /**
+     * URL de la API.
+     *
+     * @param string $ruta Ruta.
+     * @return string
+     */
+    function rest_url($ruta = '') { return 'http://sitio.example.test/wp-json/' . ltrim((string) $ruta, '/'); }
+}
+
+if (!function_exists('wp_delete_post')) {
+    /**
+     * Borrar un post: lo apunta para poder afirmar que el borrador huérfano se retiró.
+     *
+     * @param int  $id      Id.
+     * @param bool $forzar  ¿Saltar papelera?
+     * @return \WP_Post|null
+     */
+    function wp_delete_post($id, $forzar = false) {
+        unset($forzar);
+        $GLOBALS['_wp_posts_borrados'][] = (int) $id;
+        unset($GLOBALS['_wp_stores']['posts'][ $id ], $GLOBALS['_wp_stores']['post_meta'][ $id ]);
+        return null;
+    }
 }
 }
