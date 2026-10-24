@@ -96,7 +96,7 @@ final class PosterEngineTest extends TestCase {
 					'location'  => 'Centro Social',
 					'places'    => 3,
 					'price'     => '5,00 €',
-					'organizer' => 'Biodevas',
+					'organizer' => 'Asociación de ejemplo',
 					'age'       => 'Familias',
 				)
 			)
