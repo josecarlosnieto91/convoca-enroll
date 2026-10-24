@@ -227,8 +227,16 @@ final class CheckinHandlerTest extends TestCase {
 	 */
 	public function test_marcar_es_idempotente(): void {
 		$this->inscripcion( 'tok-bueno', 'confirmada', 'si' );
+		// La hora del primer escaneo: si el segundo la reescribe, el rastro de la puerta miente.
+		$GLOBALS['_wp_stores']['post_meta'][70]['_convoca_checkin_hora'] = '2026-11-14 18:03:00';
 
 		$this->assertTrue( $this->checkin->mark_as_attended_by_token( 'tok-bueno' ) );
+
+		$this->assertSame(
+			'2026-11-14 18:03:00',
+			$GLOBALS['_wp_stores']['post_meta'][70]['_convoca_checkin_hora'],
+			'el segundo escaneo no reescribe la hora'
+		);
 	}
 
 	/**
