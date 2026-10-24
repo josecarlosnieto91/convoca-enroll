@@ -441,7 +441,11 @@ if (!function_exists('wp_generate_password')) {
     /** Contraseña/token aleatorio: basta con que sea largo y distinto cada vez. */
     function wp_generate_password($largo = 12, $especial = true, $extra = false) {
         unset($especial, $extra);
-        return substr(bin2hex(random_bytes((int) ceil($largo / 2) + 1)), 0, (int) $largo);
+        // Sin 0/O ni 1/I: son los caracteres que el producto evita porque se confunden al leerlos de un papel.
+        $alfabeto = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        $salida   = '';
+        for ($i = 0; $i < (int) $largo; $i++) { $salida .= $alfabeto[ random_int(0, strlen($alfabeto) - 1) ]; }
+        return $salida;
     }
 }
 

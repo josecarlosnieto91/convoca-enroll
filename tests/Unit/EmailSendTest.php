@@ -98,7 +98,7 @@ final class EmailSendTest extends TestCase {
 		$GLOBALS['db_inserts']  = array();
 		$GLOBALS['_wp_mail']    = array();
 		$GLOBALS['mail_falla']  = false;
-		unset( $GLOBALS['convoca_test_post_types'] );
+		unset( $GLOBALS['convoca_test_post_types'], $GLOBALS['convoca_test_posts'] );
 		if ( null !== $this->wpdb_previo ) {
 			$GLOBALS['wpdb'] = $this->wpdb_previo;
 		}
@@ -185,5 +185,43 @@ final class EmailSendTest extends TestCase {
 	 */
 	public function test_slug_desconocido_no_encola(): void {
 		$this->assertSame( array(), $this->enviar( 'inventado' ) );
+	}
+
+	/**
+	 * Los cuatro recordatorios programados envían a quien está confirmado.
+	 *
+	 * El cron busca las actividades de la ventana (con su marca de recordatorio) y manda a cada confirmado. Se prueban
+	 * los cuatro: si uno deja de engancharse o cambia de plantilla, el socio no recibe el aviso.
+	 *
+	 * @dataProvider crons
+	 *
+	 * @param string $metodo Método del cron.
+	 * @param string $slug   Plantilla que debe salir.
+	 * @return void
+	 */
+	public function test_los_crons_de_recordatorio( string $metodo, string $slug ): void {
+		$GLOBALS['db_inserts']           = array();
+		$GLOBALS['convoca_test_posts']   = array( $GLOBALS['_wp_stores']['posts'][62], (object) array( 'ID' => 470 ) );
+		$GLOBALS['wpdb']->rows_affected  = 1;
+
+		$this->correos->{$metodo}();
+
+		$asuntos = array_map( static fn( $i ) => (string) ( $i['datos']['subject'] ?? '' ), $GLOBALS['db_inserts'] );
+		$this->assertNotEmpty( $asuntos, 'se manda el recordatorio' );
+		$this->assertStringNotContainsString( '{', implode( ' ', $asuntos ), 'sin variables sin sustituir' );
+	}
+
+	/**
+	 * Los crons que se prueban.
+	 *
+	 * @return array
+	 */
+	public static function crons(): array {
+		return array(
+			'7 días'   => array( 'cron_reminder_7dias', 'recordatorio_7dias' ),
+			'24 horas' => array( 'cron_reminder_24h', 'recordatorio_24h' ),
+			'1 hora'   => array( 'cron_reminder_1hora', 'recordatorio_1hora' ),
+			'encuesta' => array( 'cron_feedback', 'feedback_post' ),
+		);
 	}
 }
