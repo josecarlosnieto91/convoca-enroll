@@ -178,7 +178,21 @@ namespace Convoca\Core\Admin {
             public function __construct() {}
             protected function registrar_subpagina( ?string $padre, string $titulo, string $menu, string $capacidad, string $slug, callable $callback ): string { return ''; }
             protected function encolar_estilo_comun(): void {}
-            protected function exigir_guardado( string $nonce, string $capacidad, string $mensaje ): void {}
+            /**
+             * Guarda real: nonce válido y capacidad. Era un no-op, así que ninguna prueba podía comprobar que un
+             * guardado sin nonce o sin permiso se corta.
+             *
+             * @param string $nonce     Acción del nonce.
+             * @param string $capacidad Capacidad exigida.
+             * @param string $mensaje   Mensaje del `wp_die`.
+             * @return void
+             */
+            protected function exigir_guardado( string $nonce, string $capacidad, string $mensaje ): void {
+                check_admin_referer( $nonce );
+                if ( ! current_user_can( $capacidad ) ) {
+                    wp_die( $mensaje );
+                }
+            }
             public function redirigir_editor_propio(): void {}
             public function apuntar_nodo_barra( $wp_admin_bar ): void {}
         }
@@ -579,6 +593,40 @@ if (!function_exists('get_query_var')) {
 if (!function_exists('language_attributes')) { function language_attributes() { echo 'lang="es-ES"'; } }
 if (!function_exists('body_class')) { function body_class($c = '') { return 'class="' . esc_attr((string) $c) . '"'; } }
 
+if (!class_exists('WP_List_Table')) {
+    /**
+     * Tabla de administración de WordPress: el mínimo que usan las pantallas. Existe para que los ficheros que la
+     * requieren (`ABSPATH . wp-admin/includes/...`) no intenten abrir un fichero que aquí no está.
+     */
+    class WP_List_Table {
+        /** Filas de la tabla. */
+        public $items = array();
+
+        /**
+         * Constructor.
+         *
+         * @param array $args Argumentos.
+         */
+        public function __construct($args = array()) {
+            unset($args);
+        }
+
+        /**
+         * Columnas.
+         *
+         * @return array
+         */
+        public function get_columns() { return array(); }
+
+        /**
+         * Pinta la tabla.
+         *
+         * @return void
+         */
+        public function display() {}
+    }
+}
+
 /** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
 class Convoca_Json_Cortado extends \Exception {
 
@@ -675,7 +723,15 @@ if (!function_exists('get_post')) {
     }
 }
 if (!function_exists('post_type_exists')) { function post_type_exists($t) { return in_array($t, ['post','page','actividad','miembro'], true); } }
-if (!function_exists('wp_insert_post')) { function wp_insert_post($d) { static $c = 100; $c++; return $c; } }
+if (!function_exists('wp_insert_post')) {
+    /** Alta: devuelve un id nuevo y lo apunta (`_wp_posts_creados`) para poder afirmar sobre él. */
+    function wp_insert_post($d) {
+        static $c = 100;
+        $c++;
+        $GLOBALS['_wp_posts_creados'][] = $c;
+        return $c;
+    }
+}
 if (!function_exists('wp_update_post')) { function wp_update_post($d) { return $d['ID'] ?? wp_insert_post($d); } }
 if (!function_exists('get_posts')) {
     /**
