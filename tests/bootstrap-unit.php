@@ -250,7 +250,13 @@ if (!function_exists('wp_get_current_user')) {
 }
 if (!function_exists('get_current_user_id')) { function get_current_user_id() { return 1; } }
 if (!function_exists('wp_create_nonce')) { function wp_create_nonce($a = -1) { return 'test_nonce'; } }
-if (!function_exists('wp_verify_nonce')) { function wp_verify_nonce($n, $a = -1) { return true; } }
+if (!function_exists('wp_verify_nonce')) {
+    /** Con `$GLOBALS['nonce_invalido']` a true se simula el nonce caducado. */
+    function wp_verify_nonce($n, $a = -1) {
+        unset($n, $a);
+        return empty($GLOBALS['nonce_invalido']);
+    }
+}
 
 // HTTP
 if (!function_exists('wp_remote_get')) { function wp_remote_get($u, $a = []) { return ['response' => ['code' => 200], 'body' => '{}']; } }
@@ -424,7 +430,16 @@ if (!function_exists('add_menu_page')) {
 if (!function_exists('add_submenu_page')) {
     function add_submenu_page(...$a) { $GLOBALS['_convoca_submenu_prueba'][] = $a; return (string) ($a[4] ?? ''); }
 }
-if (!function_exists('wp_safe_redirect')) { function wp_safe_redirect($u, $s = 302) { $GLOBALS['_convoca_redirects'][] = array($u, $s); return true; } }
+if (!function_exists('wp_safe_redirect')) {
+    /**
+     * En producción el `exit` inmediato termina la petición: aquí se corta igual, para poder afirmar que se redirige
+     * sin que el proceso de PHPUnit muera.
+     */
+    function wp_safe_redirect($u, $s = 302) {
+        $GLOBALS['_convoca_redirects'][] = array($u, $s);
+        throw new Convoca_Json_Cortado(array('redirect' => $u));
+    }
+}
 if (!function_exists('wp_redirect')) { function wp_redirect($u, $s = 302) { $GLOBALS['_convoca_redirects'][] = array($u, $s); return true; } }
 if (!function_exists('plugin_basename')) { function plugin_basename($f) { return basename($f); } }
 if (!function_exists('plugin_dir_path')) { function plugin_dir_path($f) { return dirname($f) . '/'; } }
@@ -450,7 +465,16 @@ if (!function_exists('register_rest_route')) {
     }
 }
 if (!function_exists('wp_redirect')) { function wp_redirect($u) {} }
-if (!function_exists('wp_die')) { function wp_die($m = '', $t = '', $a = []) {} }
+if (!function_exists('wp_die')) {
+    /**
+     * `wp_die` termina la petición: aquí corta con la excepción del arnés. Devolver sin más dejaba que el código
+     * siguiera ejecutándose después de una guarda, que es justo lo que no pasa en producción.
+     */
+    function wp_die($m = '', $t = '', $a = []) {
+        unset($t, $a);
+        throw new Convoca_Json_Cortado(array('die' => $m));
+    }
+}
 if (!function_exists('wp_cache_delete')) { function wp_cache_delete($k, $g = '') { return true; } }
 if (!function_exists('flush_rewrite_rules')) { function flush_rewrite_rules() {} }
 if (!function_exists('remove_action')) { function remove_action($h, $c, $p = 10) { return true; } }
