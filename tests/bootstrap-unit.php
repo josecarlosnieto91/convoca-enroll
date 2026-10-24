@@ -472,6 +472,7 @@ if (!function_exists('media_handle_sideload')) {
 if (!function_exists('wp_strip_all_tags')) {
     /** Quita etiquetas y espacios sobrantes. */
     function wp_strip_all_tags($texto, $quitar_saltos = false) {
+        // `strip_tags(null)` es deprecado en PHP 8.5: se castea antes.
         $texto = strip_tags((string) $texto);
         return $quitar_saltos ? trim(preg_replace('/\s+/', ' ', $texto)) : trim($texto);
     }
@@ -561,10 +562,10 @@ if (!function_exists('wp_mail')) {
         return true;
     }
 }
-if (!function_exists('esc_html')) { function esc_html($t) { return htmlspecialchars($t, ENT_QUOTES, 'UTF-8'); } }
-if (!function_exists('esc_attr')) { function esc_attr($t) { return htmlspecialchars($t, ENT_QUOTES, 'UTF-8'); } }
+if (!function_exists('esc_html')) { function esc_html($t) { return htmlspecialchars((string) $t, ENT_QUOTES, 'UTF-8'); } }
+if (!function_exists('esc_attr')) { function esc_attr($t) { return htmlspecialchars((string) $t, ENT_QUOTES, 'UTF-8'); } }
 if (!function_exists('esc_url')) { function esc_url($u) { return filter_var($u, FILTER_SANITIZE_URL); } }
-if (!function_exists('sanitize_text_field')) { function sanitize_text_field($s) { return trim(strip_tags($s)); } }
+if (!function_exists('sanitize_text_field')) { function sanitize_text_field($s) { return trim(strip_tags((string) $s)); } }
 if (!function_exists('sanitize_key')) { function sanitize_key($k) { return preg_replace('/[^a-z0-9_\-]/', '', strtolower((string) $k)); } }
 if (!function_exists('date_i18n')) { function date_i18n($f, $t = null) { return date($f, $t ?? time()); } }
 if (!function_exists('wp_strip_all_tags')) { function wp_strip_all_tags($s) { return trim(strip_tags((string) $s)); } }
@@ -1311,6 +1312,17 @@ if (!class_exists('WP_Error')) {
         public function __construct($code = '', $message = '', $data = '') {
             if ($code) { $this->errors[$code] = [$message]; $this->error_data[$code] = $data; }
         }
+        /**
+         * Datos del error (status HTTP y demás), como el `WP_Error` real.
+         *
+         * @param int|string $codigo Código.
+         * @return mixed
+         */
+        public function get_error_data($codigo = '') {
+            if ('' === $codigo) { return $this->error_data; }
+            return $this->error_data[ $codigo ] ?? null;
+        }
+
         public function get_error_code() { return key($this->errors); }
         public function get_error_message($code = '') {
             if (!$code) $code = $this->get_error_code();
