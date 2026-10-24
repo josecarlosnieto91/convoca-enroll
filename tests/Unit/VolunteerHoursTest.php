@@ -80,6 +80,8 @@ final class VolunteerHoursTest extends TestCase {
 			'_convoca_actividad_id' => 61,
 			'_convoca_email'        => 'ana@example.test',
 		);
+		// Con horas que acreditar: si la puerta no estuviera, se acreditarían.
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_horas_actividad'] = '6';
 
 		Volunteer_Hour_Tracker::handle_asistencia( 70, 'si' );
 
