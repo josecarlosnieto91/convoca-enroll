@@ -47,6 +47,8 @@ final class BlogPostManagerTest extends TestCase {
 		$GLOBALS['_convoca_thumbnails_fijados'] = array();
 		$GLOBALS['convoca_test_terms']   = array();
 		$GLOBALS['convoca_test_thumbnail'] = array();
+		$GLOBALS['_wp_insert_falla']       = false;
+		$GLOBALS['_wp_insert_lanza']       = false;
 
 		$actividad                          = new \WP_Post();
 		$actividad->ID                      = 61;
@@ -76,6 +78,9 @@ final class BlogPostManagerTest extends TestCase {
 		$GLOBALS['_convoca_thumbnails_fijados'] = array();
 		$GLOBALS['convoca_test_terms']          = array();
 		$GLOBALS['convoca_test_thumbnail']      = array();
+		// Las banderas del alta son globales: si una prueba las deja puestas, todas las siguientes fallan.
+		$GLOBALS['_wp_insert_falla']            = false;
+		$GLOBALS['_wp_insert_lanza']            = false;
 	}
 
 	/**
