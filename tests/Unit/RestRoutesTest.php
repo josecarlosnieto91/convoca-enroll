@@ -50,6 +50,7 @@ final class RestRoutesTest extends TestCase {
 			'usuarios'   => array(),
 		);
 		$GLOBALS['_enr_routes']       = array();
+		$GLOBALS['convoca_test_roles'] = array();
 		$GLOBALS['convoca_test_caps'] = array( 'manage_inscripciones' => false, 'manage_options' => false );
 
 		( new Rest_API() )->register_routes();
@@ -62,7 +63,8 @@ final class RestRoutesTest extends TestCase {
 	protected function tearDown(): void {
 		$GLOBALS['_wp_stores']        = $this->previo;
 		$GLOBALS['_enr_routes']       = array();
-		$GLOBALS['convoca_test_caps'] = array();
+		$GLOBALS['convoca_test_caps']  = array();
+		$GLOBALS['convoca_test_roles'] = array();
 	}
 
 	/**
@@ -156,6 +158,18 @@ final class RestRoutesTest extends TestCase {
 
 		$GLOBALS['convoca_test_caps']['manage_inscripciones'] = true;
 		$this->assertTrue( $this->pasa( $ruta ), 'quien gestiona inscripciones, sí' );
+	}
+
+	/**
+	 * Y el voluntario aprobado: es quien está en la puerta con el móvil.
+	 */
+	public function test_el_voluntario_aprobado_entra(): void {
+		$ruta = $this->ruta( '/checkin' );
+
+		$GLOBALS['convoca_test_caps']['manage_inscripciones'] = false;
+		$GLOBALS['convoca_test_roles']                        = array( 'voluntario_aprobado' );
+
+		$this->assertTrue( $this->pasa( $ruta ), 'el voluntario aprobado puede marcar' );
 	}
 
 	/**
