@@ -268,6 +268,23 @@ if (!function_exists('esc_attr__')) { function esc_attr__($t, $d = 'default') { 
 if (!function_exists('esc_html_e')) { function esc_html_e($t, $d = 'default') { echo htmlspecialchars((string) $t, ENT_QUOTES); } }
 if (!function_exists('esc_attr_e')) { function esc_attr_e($t, $d = 'default') { echo htmlspecialchars((string) $t, ENT_QUOTES); } }
 if (!function_exists('_e')) { function _e($t, $d = 'default') { echo $t; } }
+if (!function_exists('wpautop')) {
+    /**
+     * Párrafos como WordPress: los bloques separados por línea en blanco van en `<p>` y los saltos sueltos, en `<br>`.
+     * Si el texto ya trae párrafos, se respeta.
+     */
+    function wpautop($texto) {
+        $texto = (string) $texto;
+        if ('' === trim($texto) || false !== strpos($texto, '<p')) { return $texto; }
+        $bloques = preg_split('/\n\s*\n/', trim($texto));
+        $salida  = '';
+        foreach ($bloques as $bloque) {
+            $salida .= '<p>' . nl2br($bloque) . "</p>\n";
+        }
+        return $salida;
+    }
+}
+
 if (!function_exists('is_email')) { function is_email($e) { return (bool) filter_var($e, FILTER_VALIDATE_EMAIL); } }
 if (!function_exists('wp_mail')) {
     function wp_mail($to, $subject, $message, $headers = '', $attachments = array()) {
