@@ -197,7 +197,12 @@ final class AdminPageDetalleTest extends TestCase {
 		$this->inscripcion( array( 'actividad_id' => 0 ) );
 		$GLOBALS['convoca_test_tipos'][70] = 'inscripcion';
 
-		$this->assertStringContainsString( '—', $this->detalle( 70 ) );
+		// En la celda de la actividad, no en cualquier otro hueco de la ficha (hay más guiones).
+		$this->assertMatchesRegularExpression(
+			'/<th>Actividad<\/th>\s*<td>\s*—\s*<\/td>/',
+			$this->detalle( 70 ),
+			'sin actividad, un guion en su celda'
+		);
 	}
 
 	/**
