@@ -1252,7 +1252,10 @@ if (!function_exists('get_user_by')) {
         return false;
     }
 }
-if (!function_exists('get_users')) { function get_users($a = []) { return []; } }
+if (!function_exists('get_users')) {
+    /** Lista de usuarios que fije la prueba en `convoca_test_users_lista`. */
+    function get_users($a = []) { return (array) ($GLOBALS['convoca_test_users_lista'] ?? []); }
+}
 if (!function_exists('get_userdata')) {
     /** Usuario con los roles que fije la prueba (por defecto, suscriptor). */
     function get_userdata($id) {
