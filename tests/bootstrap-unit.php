@@ -531,6 +531,8 @@ if (!function_exists('get_the_excerpt')) {
 
 if (!function_exists('get_the_ID')) { function get_the_ID() { return (int) ($GLOBALS['_wp_current_id'] ?? 0); } }
 
+if (!function_exists('update_meta_cache')) { function update_meta_cache($tipo = 'post', $ids = array()) { unset($tipo); return is_array($ids) ? count($ids) : 0; } }
+
 /** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
 class Convoca_Json_Cortado extends \Exception {
 
@@ -728,6 +730,9 @@ if (!function_exists('get_userdata')) {
         $u->ID = $id;
         $u->display_name = "User $id";
         $u->user_email = "user$id@test.com";
+        // El `WP_User` real trae el login y el nicename: el exportador de evaluaciones los usa.
+        $u->user_login = "user$id";
+        $u->user_nicename = "user$id";
         $u->roles = (array) ($GLOBALS['convoca_test_roles'][ $id ] ?? array( 'subscriber' ));
         return $u;
     }
