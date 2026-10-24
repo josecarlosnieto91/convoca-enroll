@@ -25,6 +25,18 @@ namespace Convoca\Core {
              * @return void
              */
             /**
+             * Fecha formateada en la zona del sitio.
+             *
+             * @param string $fecha  Fecha (Y-m-d H:i:s).
+             * @param string $formato Formato.
+             * @return string
+             */
+            public static function format_date( $fecha, $formato = 'd/m/Y' ) {
+                $ts = strtotime( (string) $fecha );
+                return $ts ? date( $formato, $ts ) : '';
+            }
+
+            /**
              * ¿Está activo el plugin? Con `$GLOBALS['plugins_inactivos'][ slug ]` se simula que no.
              *
              * @param string $slug Plugin.
@@ -767,7 +779,11 @@ if (!class_exists('WP_Post')) {
 // WP_User
 if (!class_exists('WP_User')) {
     class WP_User {
-        public $ID = 0; public $roles = ['administrator'];
+        public $ID = 0;
+        public $roles = ['administrator'];
+        /** Nombre visible y correo: los tiene el `WP_User` real y las pruebas los fijan. */
+        public $display_name = '';
+        public $user_email = '';
         public function exists() { return $this->ID > 0; }
     }
 }
