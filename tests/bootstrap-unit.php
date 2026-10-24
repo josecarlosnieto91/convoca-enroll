@@ -776,7 +776,8 @@ if (!class_exists('WP_User')) {
 if (!isset($GLOBALS['wpdb'])) {
     $GLOBALS['wpdb'] = new class {
         public $prefix = 'wp_'; public $posts = 'wp_posts'; public $postmeta = 'wp_postmeta';
-        public $options = 'wp_options'; public $insert_id = 42;
+        public $options = 'wp_options'; public $rows_affected = 1; // filas afectadas por la última consulta, como `wpdb`.
+        public $insert_id = 42;
         /**
          * Respuestas por consulta: `get_var_mapa`/`results_mapa` casan por aguja en el SQL. Sin esto, cualquier
          * informe que cuente filas devolvía siempre `'0'` y sus series salían a cero: la prueba pasaba sin medir.
