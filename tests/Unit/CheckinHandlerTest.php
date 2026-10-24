@@ -165,4 +165,99 @@ final class CheckinHandlerTest extends TestCase {
 
 		$this->assertStringContainsString( 'no corresponde a ninguna inscripción', (string) ( $respuesta['die'] ?? '' ) );
 	}
+
+	/**
+	 * Siembra la inscripción con su token.
+	 *
+	 * @param string $token      Token guardado.
+	 * @param string $estado     Estado.
+	 * @param string $asistencia Asistencia.
+	 * @return void
+	 */
+	private function inscripcion( string $token = 'tok-bueno', string $estado = 'confirmada', string $asistencia = 'no_registrada' ): void {
+		$inscripcion                        = new \WP_Post();
+		$inscripcion->ID                    = 70;
+		$inscripcion->post_type             = 'inscripcion';
+		$GLOBALS['_wp_stores']['posts'][70] = $inscripcion;
+
+		$GLOBALS['_wp_stores']['post_meta'][70] = array(
+			'_convoca_checkin_token' => $token,
+			'_convoca_estado'        => $estado,
+			'_convoca_asistencia'    => $asistencia,
+		);
+		$GLOBALS['_wp_stores']['get_var_mapa']['_convoca_checkin_token'] = '70';
+	}
+
+	/**
+	 * Marcar sin token encontrado: error y `ROLLBACK`.
+	 */
+	public function test_marcar_token_que_no_existe(): void {
+		$GLOBALS['_wp_stores']['get_var_mapa'] = array();
+
+		$r = $this->checkin->mark_as_attended_by_token( 'tok-malo' );
+
+		$this->assertInstanceOf( \WP_Error::class, $r );
+		$this->assertSame( 'invalid_token', $r->get_error_code() );
+	}
+
+	/**
+	 * La fila aparece pero el token guardado no coincide (carrera): tampoco vale.
+	 */
+	public function test_marcar_token_que_no_coincide(): void {
+		$this->inscripcion( 'otro-token' );
+
+		$r = $this->checkin->mark_as_attended_by_token( 'tok-malo' );
+
+		$this->assertSame( 'invalid_token', $r->get_error_code() );
+	}
+
+	/**
+	 * Una inscripción sin confirmar no se da por presente.
+	 */
+	public function test_marcar_sin_confirmar(): void {
+		$this->inscripcion( 'tok-bueno', 'pendiente' );
+
+		$r = $this->checkin->mark_as_attended_by_token( 'tok-bueno' );
+
+		$this->assertSame( 'not_confirmed', $r->get_error_code() );
+	}
+
+	/**
+	 * Escanear dos veces no cuenta dos: la segunda no toca nada y contesta que sí.
+	 */
+	public function test_marcar_es_idempotente(): void {
+		$this->inscripcion( 'tok-bueno', 'confirmada', 'si' );
+
+		$this->assertTrue( $this->checkin->mark_as_attended_by_token( 'tok-bueno' ) );
+	}
+
+	/**
+	 * Con todo en orden, marca la asistencia y deja la hora.
+	 */
+	public function test_marcar_deja_la_hora(): void {
+		$this->inscripcion();
+
+		$this->assertTrue( $this->checkin->mark_as_attended_by_token( 'tok-bueno' ) );
+
+		$meta = $GLOBALS['_wp_stores']['post_meta'][70];
+		$this->assertSame( 'si', $meta['_convoca_asistencia'] );
+		$this->assertNotEmpty( $meta['_convoca_checkin_hora'], 'sin hora, el check-in no deja rastro' );
+	}
+
+	/**
+	 * La pantalla del escáner se pinta entera.
+	 */
+	public function test_la_pantalla_del_escaner(): void {
+		$metodo = new \ReflectionMethod( Checkin_Handler::class, 'render_scanner_page' );
+		ob_start();
+		try {
+			$metodo->invoke( $this->checkin );
+		} finally {
+			$html = (string) ob_get_clean();
+		}
+
+		$this->assertStringContainsString( '<!DOCTYPE html>', $html );
+		$this->assertStringContainsString( 'Check-in Convoca', $html );
+		$this->assertGreaterThan( 5000, strlen( $html ), 'es la pantalla completa, no un aviso' );
+	}
 }

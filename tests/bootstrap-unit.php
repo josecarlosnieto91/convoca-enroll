@@ -333,6 +333,23 @@ if (!function_exists('wp_cache_get')) {
     }
 }
 
+if (!function_exists('bloginfo')) {
+    /** Imprime un dato del sitio (`charset`, `name`…). */
+    function bloginfo($clave = 'name') {
+        echo 'charset' === $clave ? 'UTF-8' : (string) ( $GLOBALS['convoca_test_blogname'] ?? 'Sitio de ejemplo' );
+    }
+}
+if (!function_exists('language_attributes')) {
+    /** Atributos del `<html>`: el idioma del sitio. */
+    function language_attributes() {
+        echo 'lang="es-ES"';
+    }
+}
+if (!function_exists('wp_head')) {
+    /** Cabecera del tema: en la prueba no hay nada que imprimir. */
+    function wp_head() {}
+}
+
 if (!function_exists('get_post_thumbnail_id')) {
     /** Imagen destacada: la que fije la prueba en `convoca_test_thumbnail`. */
     function get_post_thumbnail_id($id = 0) {
