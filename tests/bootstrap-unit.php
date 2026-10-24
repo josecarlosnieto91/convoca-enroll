@@ -816,7 +816,14 @@ if (!function_exists('checked')) {
     }
 }
 if (!function_exists('esc_textarea')) { function esc_textarea($t) { return htmlspecialchars((string) $t, ENT_QUOTES, 'UTF-8'); } }
-if (!function_exists('wp_nonce_field')) { function wp_nonce_field($a = -1, $n = '_wpnonce', $ref = true, $echo = true) { $s = '<input type=\"hidden\" name=\"' . $n . '\" value=\"nonce\">'; if ($echo) { echo $s; } return $s; } }
+if (!function_exists('wp_nonce_field')) {
+    /** Campo oculto del nonce, con el nombre que se le pida (el de por defecto es `_wpnonce`). */
+    function wp_nonce_field($a = -1, $n = '_wpnonce', $ref = true, $echo = true) {
+        $s = '<input type="hidden" name="' . $n . '" value="nonce">';
+        if ($echo) { echo $s; }
+        return $s;
+    }
+}
 
 if (!function_exists('wp_editor')) {
     /** Editor clásico: en la prueba basta con el área de texto y su contenido. */
@@ -1140,7 +1147,13 @@ if (!function_exists('get_post')) {
         return null;
     }
 }
-if (!function_exists('post_type_exists')) { function post_type_exists($t) { return in_array($t, ['post','page','actividad','miembro'], true); } }
+if (!function_exists('post_type_exists')) {
+    /** ¿Existe el tipo? La prueba puede fijar la lista con `convoca_test_post_types`. */
+    function post_type_exists($t) {
+        $tipos = $GLOBALS['convoca_test_post_types'] ?? ['post','page','actividad','miembro','inscripcion'];
+        return in_array((string) $t, $tipos, true);
+    }
+}
 if (!function_exists('wp_insert_post')) {
     /** Alta: devuelve un id nuevo y lo apunta (`_wp_posts_creados`) para poder afirmar sobre él. */
     function wp_insert_post($d) {
@@ -1576,6 +1589,18 @@ namespace Convoca\Enroll {
         }
     }
 
+if (!function_exists('wp_count_posts')) {
+    /**
+     * Recuento por estado, como WordPress (`publish`, `draft`, ...).
+     *
+     * @param string $tipo Tipo de post.
+     * @return object
+     */
+    function wp_count_posts($tipo = 'post') {
+        $cuentas = (array) ($GLOBALS['convoca_test_count_posts'][ $tipo ] ?? array());
+        return (object) $cuentas;
+    }
+}
 if (!function_exists('is_admin')) {
     /** Modo administración, controlable por la prueba. */
     function is_admin() { return (bool) ($GLOBALS['convoca_test_is_admin'] ?? false); }
