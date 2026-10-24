@@ -94,8 +94,14 @@ final class ActividadSchemaTest extends TestCase {
 	 * En una página que no es una actividad no se pinta nada.
 	 */
 	public function test_solo_en_la_ficha_de_una_actividad(): void {
+		// Con datos completos: lo **único** que impide pintarlo es no estar en la ficha de la actividad.
+		$GLOBALS['_wp_stores']['post_meta'][61] = array(
+			'_convoca_fecha_inicio'       => '2026-11-14 18:00:00',
+			'_convoca_plazas_disponibles' => '8',
+		);
 		$GLOBALS['convoca_test_query']['es_singular'] = false;
-		$this->assertNull( $this->schema() );
+
+		$this->assertNull( $this->schema(), 'en un listado o en una página no se pinta' );
 	}
 
 	/**
