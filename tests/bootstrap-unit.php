@@ -602,6 +602,9 @@ if (!class_exists('WP_List_Table')) {
         /** Filas de la tabla. */
         public $items = array();
 
+        /** Cabeceras de columna (el real las declara; asignarla sin declarar era deprecado en PHP 8.5). */
+        public $_column_headers = array();
+
         /**
          * Constructor.
          *
@@ -624,6 +627,46 @@ if (!class_exists('WP_List_Table')) {
          * @return void
          */
         public function display() {}
+
+        /**
+         * Página actual del listado.
+         *
+         * @return int
+         */
+        public function get_pagenum() {
+            return max( 1, (int) ( $_GET['paged'] ?? 1 ) );
+        }
+
+        /**
+         * Argumentos de paginación.
+         *
+         * @param array $args Argumentos.
+         * @return void
+         */
+        public function set_pagination_args( $args ) {
+            $GLOBALS['_wp_paginacion'] = $args;
+        }
+
+        /**
+         * Caja de búsqueda.
+         *
+         * @param string $texto      Texto del botón.
+         * @param string $input_id   Id del campo.
+         * @return void
+         */
+        public function search_box( $texto, $input_id ) {
+            unset( $texto );
+            echo '<input type="search" name="s" id="' . esc_attr( $input_id ) . '">';
+        }
+    }
+}
+
+if (!function_exists('submit_button')) {
+    function submit_button($texto = 'Guardar', $tipo = 'primary', $nombre = 'submit', $wrap = true, $otros = array()) {
+        unset($tipo, $otros);
+        $boton = '<button type="submit" name="' . esc_attr($nombre) . '" class="button">' . esc_html($texto) . '</button>';
+        if ($wrap) { echo $boton; }
+        return $boton;
     }
 }
 
