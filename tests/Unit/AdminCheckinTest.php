@@ -213,6 +213,26 @@ final class AdminCheckinTest extends TestCase {
 	}
 
 	/**
+	 * La búsqueda viaja **a la consulta**: se filtra por nombre y correo, no en PHP después.
+	 */
+	public function test_la_busqueda_va_a_la_consulta(): void {
+		$this->actividad( 13, current_time( 'Y-m-d' ) );
+		$_GET['actividad_id'] = '13';
+		$_GET['s']            = 'ana';
+		$GLOBALS['convoca_test_get_posts_cola'] = array( array( $GLOBALS['_wp_stores']['posts'][13] ), array() );
+
+		$this->pintar();
+
+		$consultas = $GLOBALS['convoca_test_get_posts_args'];
+		$ultima    = end( $consultas );
+
+		$planas = (string) wp_json_encode( $ultima );
+		$this->assertStringContainsString( '_convoca_nombre', $planas, 'busca por nombre' );
+		$this->assertStringContainsString( '_convoca_email', $planas, 'y por correo' );
+		$this->assertStringContainsString( 'ana', $planas, 'con el texto buscado' );
+	}
+
+	/**
 	 * Sin licencia PRO se avisa de la función bloqueada, no se esconde.
 	 */
 	public function test_el_aviso_de_licencia(): void {
