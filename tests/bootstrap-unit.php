@@ -1125,3 +1125,25 @@ require_once __DIR__ . '/dobles/license-manager.php';
 require_once __DIR__ . '/dobles/email-layout.php';
 require_once __DIR__ . '/dobles/google-client.php';
 } // namespace
+
+
+namespace Convoca\Enroll {
+    if (!function_exists('Convoca\\Enroll\\checkdnsrr')) {
+        /**
+         * Resolución DNS controlada por la prueba: `$GLOBALS['convoca_test_dns']` con la lista de dominios que sí
+         * resuelven. Sin lista, `.test` no resuelve y el resto sí — nunca se sale a la red desde una prueba.
+         *
+         * @param string $dominio Dominio.
+         * @param string $tipo    MX|A.
+         * @return bool
+         */
+        function checkdnsrr($dominio, $tipo = 'MX') {
+            $lista = $GLOBALS['convoca_test_dns'] ?? null;
+            $dominio = strtolower((string) $dominio);
+            if (is_array($lista)) {
+                return in_array($dominio, array_map('strtolower', $lista), true);
+            }
+            return '.test' !== substr($dominio, -5);
+        }
+    }
+}
