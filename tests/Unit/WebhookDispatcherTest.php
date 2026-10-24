@@ -194,11 +194,13 @@ final class WebhookDispatcherTest extends TestCase {
 	 */
 	public function test_sin_cerrojo_no_procesa(): void {
 		$this->con_webhook();
+		// Hay trabajo pendiente: si la guarda no estuviera, este envío saldría.
+		$this->preparar_cola( array( $this->item( 1, 0 ) ) );
 		$GLOBALS['convoca_test_lock'] = false;
 
 		( new Webhook_Dispatcher() )->process_queue();
 
-		$this->assertSame( array(), $GLOBALS['_wp_http_posts'] );
+		$this->assertSame( array(), $GLOBALS['_wp_http_posts'], 'sin cerrojo no se envía nada' );
 	}
 
 	/**
