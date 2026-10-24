@@ -537,6 +537,27 @@ if (!defined('ARRAY_A')) { define('ARRAY_A', 'ARRAY_A'); }
 if (!defined('ARRAY_N')) { define('ARRAY_N', 'ARRAY_N'); }
 if (!defined('OBJECT')) { define('OBJECT', 'OBJECT'); }
 
+if (!function_exists('number_format_i18n')) {
+    /** Número con separador decimal del sitio: coma, como en español. */
+    function number_format_i18n($numero, $decimales = 0) {
+        return number_format((float) $numero, (int) $decimales, ',', '.');
+    }
+}
+
+if (!function_exists('attachment_url_to_postid')) {
+    function attachment_url_to_postid($url) {
+        return (int) ($GLOBALS['_wp_attachment_ids'][ (string) $url ] ?? 0);
+    }
+}
+
+if (!function_exists('_n')) {
+    /** Plural de WordPress: el singular para uno, el plural para el resto. */
+    function _n($singular, $plural, $numero = 0, $dominio = null) {
+        unset($dominio);
+        return 1 === (int) $numero ? $singular : $plural;
+    }
+}
+
 /** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
 class Convoca_Json_Cortado extends \Exception {
 
