@@ -98,9 +98,20 @@ namespace Convoca\Core {
                 throw new \Convoca_Json_Cortado(array('csv' => $nombre));
             }
 
+            /**
+             * DNI/NIE con la **letra correcta**, como el del núcleo: una regex sola acepta cualquier letra y
+             * deja pasar un DNI inventado (12345678A en vez de 12345678Z).
+             */
             public static function validate_dni(string $dni): bool {
-                // Quick validation: 8 digits + letter, or X/Y/Z + 7 digits + letter
-                return (bool) preg_match('/^(\d{8}|[XYZ]\d{7})[A-Z]$/', strtoupper(trim($dni)));
+                $dni = strtoupper(str_replace(array(' ', '-'), '', trim($dni)));
+                if ('' === $dni) { return false; }
+                if (!preg_match('/^([0-9]{8}|[XYZ][0-9]{7})[A-Z]$/', $dni)) { return false; }
+
+                $letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
+                $numero = substr($dni, 0, -1);
+                $numero = strtr($numero[0], array('X' => '0', 'Y' => '1', 'Z' => '2')) . substr($numero, 1);
+
+                return $letras[ ((int) $numero) % 23 ] === substr($dni, -1);
             }
             public static function validar_dni(string $dni): bool { return self::validate_dni($dni); }
             public static function do_action(string $new_hook, string $old_hook = '', ...$args): void {}
