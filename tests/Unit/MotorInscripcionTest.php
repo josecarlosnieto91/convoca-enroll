@@ -22,6 +22,13 @@ use PHPUnit\Framework\TestCase;
  */
 class MotorInscripcionTest extends TestCase
 {
+
+    protected function setUp(): void
+    {
+        // Sin lista fijada por otra prueba: `get_posts` devuelve lo que se le fija.
+        $GLOBALS['convoca_test_posts'] = array();
+    }
+
     /**
      * Test generar_codigo produces an 8-character alphanumeric code.
      *
