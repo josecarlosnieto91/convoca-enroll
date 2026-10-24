@@ -56,8 +56,11 @@ final class AdminPageAjaxTest extends TestCase {
 		$GLOBALS['convoca_test_user_can'] = array();
 		$_POST                            = array();
 
-		// `set_asistencia()` comprueba el tipo de post: el doble tiene que devolver una inscripción.
-		$GLOBALS['convoca_test_post_types'][410] = 'inscripcion';
+		// `set_asistencia()` comprueba el tipo de post y **que exista**: se siembra la inscripción.
+		$inscripcion                        = new \WP_Post();
+		$inscripcion->ID                    = 410;
+		$inscripcion->post_type             = 'inscripcion';
+		$GLOBALS['_wp_stores']['posts'][410] = $inscripcion;
 		$GLOBALS['_wp_stores']['post_meta'][410] = array(
 			'_convoca_actividad_id' => 61,
 			'_convoca_estado'       => 'pendiente',

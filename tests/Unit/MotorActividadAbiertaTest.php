@@ -53,7 +53,11 @@ class MotorActividadAbiertaTest extends TestCase
 	public function test_el_motor_no_deja_inscribirse_en_una_actividad_pasada(): void {
 		// La prueba que importa: el motor usa LA MISMA regla, no una copia propia.
 		$this->conFecha( 7004, '-3 days' );
-		$GLOBALS['convoca_test_post_types'] = array( 7004 => 'actividad' );
+		$actividad                          = new \WP_Post();
+		$actividad->ID                      = 7004;
+		$actividad->post_type               = 'actividad';
+		$actividad->post_title              = 'Actividad pasada';
+		$GLOBALS['_wp_stores']['posts'][7004] = $actividad;
 
 		$resultado = Motor_Inscripcion::inscribir(
 			7004,

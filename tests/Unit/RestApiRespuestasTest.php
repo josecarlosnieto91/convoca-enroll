@@ -138,7 +138,11 @@ final class RestApiRespuestasTest extends TestCase {
 	 * @return void
 	 */
 	public function test_una_actividad_valida_se_devuelve(): void {
-		$GLOBALS['convoca_test_post_types'] = array( 12 => 'actividad' );
+		$actividad                        = new \WP_Post();
+		$actividad->ID                    = 12;
+		$actividad->post_type             = 'actividad';
+		$actividad->post_title            = 'Actividad de ejemplo';
+		$GLOBALS['_wp_stores']['posts'][12] = $actividad;
 
 		$respuesta = ( new Rest_API() )->get_activity( $this->peticion( array( 'id' => 12 ) ) );
 

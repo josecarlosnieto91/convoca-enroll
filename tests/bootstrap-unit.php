@@ -115,6 +115,28 @@ namespace Convoca\Core {
             }
             public static function validar_dni(string $dni): bool { return self::validate_dni($dni); }
             public static function do_action(string $new_hook, string $old_hook = '', ...$args): void {}
+
+            /**
+             * Cerrojo cooperativo: por defecto se adquiere; una prueba puede negarlo.
+             *
+             * @param string $clave  Clave.
+             * @param int    $segundos Caducidad.
+             * @return bool
+             */
+            public static function acquire_lock(string $clave, int $segundos = 300): bool {
+                $GLOBALS['_convoca_locks_pedidos'][] = $clave;
+                return (bool) ($GLOBALS['convoca_test_lock'] ?? true);
+            }
+
+            /**
+             * Suelta el cerrojo.
+             *
+             * @param string $clave Clave.
+             * @return void
+             */
+            public static function release_lock(string $clave): void {
+                $GLOBALS['_convoca_locks_soltados'][] = $clave;
+            }
             /**
              * Límite de peticiones que la prueba puede agotar: por defecto deja pasar, y con
              * `$GLOBALS['convoca_test_rate_ok'][ accion ] = false` se simula el 429.
@@ -571,7 +593,24 @@ if (!function_exists('wp_verify_nonce')) {
 
 // HTTP
 if (!function_exists('wp_remote_get')) { function wp_remote_get($u, $a = []) { return ['response' => ['code' => 200], 'body' => '{}']; } }
-if (!function_exists('wp_remote_post')) { function wp_remote_post($u, $a = []) { return ['response' => ['code' => 200], 'body' => '{}']; } }
+if (!function_exists('wp_remote_post')) {
+    /**
+     * POST remoto bajo control de la prueba (`$GLOBALS['convoca_test_http']`): código, error o cuerpo. Se apunta
+     * la llamada -URL y argumentos- porque lo que hay que afirmar es **qué** se envía y con qué cabeceras.
+     */
+    function wp_remote_post($u, $a = []) {
+        $GLOBALS['_wp_http_posts'][] = array('url' => $u, 'args' => $a);
+        $r = $GLOBALS['convoca_test_http'] ?? array('code' => 200, 'body' => '{}');
+        if (!empty($r['error'])) { return new WP_Error('http_request_failed', $r['error']); }
+        return array('response' => array('code' => (int) ($r['code'] ?? 200)), 'body' => (string) ($r['body'] ?? '{}'));
+    }
+}
+if (!function_exists('wp_remote_retrieve_response_code')) {
+    /** Código HTTP de la respuesta. */
+    function wp_remote_retrieve_response_code($r) {
+        return is_array($r) ? (int) ($r['response']['code'] ?? 0) : 0;
+    }
+}
 if (!function_exists('is_wp_error')) { function is_wp_error($t) { return $t instanceof WP_Error; } }
 if (!function_exists('wp_json_encode')) { function wp_json_encode($d, $o = 0, $d2 = 512) { return json_encode($d, $o, $d2); } }
 if (!function_exists('wp_safe_remote_get')) { function wp_safe_remote_get($u, $a = []) { return wp_remote_get($u, $a); } }
@@ -951,13 +990,9 @@ if (!function_exists('get_post')) {
         // El post del almacén manda: inventar siempre «Actividad {id}» de tipo `post` hacía que las pantallas de una
         // actividad dijeran «no encontrada» teniendo el post sembrado con su título.
         if (isset($GLOBALS['_wp_stores']['posts'][(int) $id])) { return $GLOBALS['_wp_stores']['posts'][(int) $id]; }
-        // WP_Post y no stdClass: el código real tipa contra WP_Post, así que el doble tiene que serlo.
-        $p = new WP_Post();
-        $p->ID = $id;
-        $p->post_type = $GLOBALS['convoca_test_post_types'][$id] ?? 'post';
-        $p->post_status = 'publish';
-        $p->post_title = 'Actividad ' . $id;
-        return $p;
+        // Un id que no está en el almacén **no existe**: `get_post()` devuelve null, como WordPress. Inventarlo hacía
+        // que las guardas «si no hay post, no hagas nada» fueran decorativas.
+        return null;
     }
 }
 if (!function_exists('post_type_exists')) { function post_type_exists($t) { return in_array($t, ['post','page','actividad','miembro'], true); } }
