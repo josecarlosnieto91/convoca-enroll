@@ -197,7 +197,8 @@ final class MotorCancelarTest extends TestCase {
 		$socio->post_type                = 'inscripcion';
 		$socio->post_date                = '2026-10-05 09:00:00';
 
-		$GLOBALS['convoca_test_posts'] = array( $socio, $no_socio );
+		// En el orden en que llegaron: primero el que no es socio.
+		$GLOBALS['convoca_test_posts'] = array( $no_socio, $socio );
 		$GLOBALS['_wp_stores']['post_meta'][71] = array( '_convoca_es_socio' => '0', '_convoca_estado' => 'lista_espera' );
 		$GLOBALS['_wp_stores']['post_meta'][72] = array( '_convoca_es_socio' => '1', '_convoca_estado' => 'lista_espera' );
 
