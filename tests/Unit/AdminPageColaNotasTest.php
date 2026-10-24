@@ -159,13 +159,16 @@ final class AdminPageColaNotasTest extends TestCase {
 	public function test_guardar_nota(): void {
 		$_POST = array(
 			'id'    => '410',
-			'notas' => "Alergia a los frutos secos\nRecoge su madre",
+			// Con HTML: la nota se guarda saneada (un `<script>` no entra en la ficha de una persona).
+			'notas' => "<script>alert(1)</script>Alergia a los frutos secos\nRecoge su madre",
 		);
 
 		$respuesta = $this->llamar( 'ajax_save_nota' );
 
 		$this->assertTrue( $respuesta['ok'] );
-		$this->assertStringContainsString( 'Alergia', (string) $GLOBALS['_wp_stores']['post_meta'][410]['_convoca_notas'] );
+		$guardada = (string) $GLOBALS['_wp_stores']['post_meta'][410]['_convoca_notas'];
+		$this->assertStringContainsString( 'Alergia', $guardada );
+		$this->assertStringNotContainsString( '<script', $guardada, 'sin HTML' );
 		$this->assertNotEmpty( $GLOBALS['_wp_logs'], 'la nota queda registrada en el log' );
 	}
 
