@@ -120,4 +120,83 @@ final class AdminPagePiezasTest extends TestCase {
 		ob_end_clean();
 		$this->assertSame( array(), $GLOBALS['_wp_notices'] );
 	}
+
+	/**
+	 * El menú: el principal y los ocho submenús, cada uno con su permiso.
+	 *
+	 * La pantalla de Delegados es la que reparte actividades entre monitores: estuvo escrita y sin registrar (código
+	 * muerto), así que se comprueba que está.
+	 */
+	public function test_el_menu(): void {
+		$GLOBALS['_convoca_menu_prueba']    = array();
+		$GLOBALS['_convoca_submenu_prueba'] = array();
+
+		( new Admin_Page() )->add_menu();
+
+		$menu = $GLOBALS['_convoca_menu_prueba'];
+		$this->assertCount( 1, $menu, 'un menú principal' );
+		$this->assertSame( 'Actividades', $menu[0][1] );
+		$this->assertSame( 'gestionar_miembros', $menu[0][2] );
+		$this->assertSame( 'convoca-enroll', $menu[0][3] );
+
+		$submenus = array();
+		foreach ( $GLOBALS['_convoca_submenu_prueba'] as $sub ) {
+			$submenus[ $sub[4] ] = $sub;
+		}
+
+		foreach ( array( 'convoca-enroll', 'convoca-enroll-delegados', 'conv-nueva-inscripcion', 'conv-checkin', 'conv-informes', 'conv-ajustes', 'convoca_enroll-logs', 'conv-email-queue' ) as $slug ) {
+			$this->assertArrayHasKey( $slug, $submenus, 'submenú: ' . $slug );
+		}
+
+		$this->assertSame( 'convoca_view_reports', $submenus['convoca-enroll-delegados'][3], 'los delegados ven informes' );
+		$this->assertSame( 'manage_options', $submenus['conv-ajustes'][3], 'los ajustes son de administración' );
+		$this->assertSame( 'common_view_logs', $submenus['convoca_enroll-logs'][3] );
+	}
+
+	/**
+	 * Los assets: solo en las pantallas del plugin, y cada una con lo suyo.
+	 */
+	public function test_los_assets(): void {
+		define( 'CONVOCA_ENROLL_URL', 'https://example.test/plugin/' );
+		define( 'CONVOCA_ENROLL_VERSION', '2.6.0' );
+		$page                              = new Admin_Page();
+		$GLOBALS['_wp_encolados']          = array();
+
+		// Otra pantalla: no se encola nada.
+		$page->assets( 'edit.php' );
+		$this->assertSame( array(), $GLOBALS['_wp_encolados'] );
+
+		// La pantalla del plugin: su CSS, su JS y el nonce del ajax.
+		$page->assets( 'toplevel_page_convoca-enroll' );
+		$this->assertContains( 'conv-admin', $GLOBALS['_wp_encolados']['scripts'] );
+		$this->assertArrayHasKey( 'bdeAdmin', $GLOBALS['_wp_encolados']['localizados'] );
+		$this->assertSame( 'nonce-convoca_enroll_admin_nonce', $GLOBALS['_wp_encolados']['localizados']['bdeAdmin']['nonce'] );
+		$this->assertEmpty( $GLOBALS['_wp_encolados']['media'] ?? null, 'los ajustes aún no' );
+
+		// Ajustes: además, el selector de medios.
+		$page->assets( 'convoca-enroll_page_conv-ajustes' );
+		$this->assertTrue( $GLOBALS['_wp_encolados']['media'] ?? false );
+
+		// Informes: Chart.js.
+		$_GET['page'] = 'conv-informes';
+		$page->assets( 'convoca-enroll_page_conv-informes' );
+		$this->assertContains( 'chart-js', $GLOBALS['_wp_encolados']['scripts'] );
+
+		// El CRM: su JS y su nonce de asistencia (el hook es `actividades_page_`, en plural).
+		$page->assets( 'actividades_page_conv-monitor-crm' );
+		$this->assertContains( 'conv-crm', $GLOBALS['_wp_encolados']['scripts'] );
+		$this->assertSame( 'nonce-convoca_enroll_attendance_nonce', $GLOBALS['_wp_encolados']['localizados']['bdeCrm']['nonce'] );
+	}
+
+	/**
+	 * El widget del escritorio se registra con su callback.
+	 */
+	public function test_el_widget(): void {
+		$GLOBALS['_wp_widgets'] = array();
+
+		( new Admin_Page() )->dashboard_widget();
+
+		$this->assertCount( 1, $GLOBALS['_wp_widgets'] );
+		$this->assertSame( 'convoca_enroll_stats', $GLOBALS['_wp_widgets'][0]['id'] );
+	}
 }

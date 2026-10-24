@@ -342,7 +342,7 @@ if (!function_exists('wp_get_current_user')) {
     }
 }
 if (!function_exists('get_current_user_id')) { function get_current_user_id() { return 1; } }
-if (!function_exists('wp_create_nonce')) { function wp_create_nonce($a = -1) { return 'test_nonce'; } }
+if (!function_exists('wp_create_nonce')) { function wp_create_nonce($a = -1) { return 'nonce-' . $a; } }
 if (!function_exists('wp_verify_nonce')) {
     /** Con `$GLOBALS['nonce_invalido']` a true se simula el nonce caducado. */
     function wp_verify_nonce($n, $a = -1) {
@@ -442,6 +442,36 @@ if (!function_exists('esc_url_raw')) {
     }
 }
 if (!function_exists('sanitize_textarea_field')) { function sanitize_textarea_field($t) { return trim(strip_tags((string) $t)); } }
+
+if (!function_exists('wp_enqueue_script')) {
+    function wp_enqueue_script($h, $s = '', $d = array(), $v = '', $pie = false) {
+        unset($d, $v, $pie);
+        $GLOBALS['_wp_encolados']['scripts'][] = $h;
+    }
+}
+if (!function_exists('wp_localize_script')) { function wp_localize_script($h, $n, $d) { $GLOBALS['_wp_encolados']['localizados'][$n] = $d; return true; } }
+if (!function_exists('wp_enqueue_media')) { function wp_enqueue_media($a = array()) { $GLOBALS['_wp_encolados']['media'] = true; } }
+if (!function_exists('wp_add_dashboard_widget')) { function wp_add_dashboard_widget($id, $t, $cb = null) { $GLOBALS['_wp_widgets'][] = array('id' => $id, 'titulo' => $t); } }
+
+if (!class_exists('WP_Query')) {
+    /** Consulta: se apoya en `get_posts()` del arnés para que los filtros de la prueba sigan valiendo. */
+    class WP_Query {
+        /** Posts. */
+        public $posts = array();
+        /** Total. */
+        public $found_posts = 0;
+
+        /**
+         * Constructor.
+         *
+         * @param array $args Argumentos.
+         */
+        public function __construct($args = array()) {
+            $this->posts       = get_posts($args);
+            $this->found_posts = count($this->posts);
+        }
+    }
+}
 
 /** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
 class Convoca_Json_Cortado extends \Exception {
