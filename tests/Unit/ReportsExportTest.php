@@ -81,6 +81,7 @@ final class ReportsExportTest extends TestCase {
 	 * Devuelve el almacén a como estaba.
 	 */
 	protected function tearDown(): void {
+		$GLOBALS['db_reads']                    = array();
 		$GLOBALS['_wp_stores']                  = $this->previo;
 		$GLOBALS['_csv']                        = array();
 		$GLOBALS['nonce_invalido']              = false;
@@ -223,5 +224,15 @@ final class ReportsExportTest extends TestCase {
 		$this->assertSame( 'ID', $csv['cabecera'][0] );
 		$this->assertSame( 501, $csv['filas'][0][0], 'el id de la evaluación' );
 		$this->assertSame( '5', $csv['filas'][0][4], 'la puntuación de gestión' );
+
+		$consultas = implode( ' ', (array) ( $GLOBALS['db_reads'] ?? array() ) );
+		$this->assertMatchesRegularExpression( '/pm_act\.meta_value\s*=\s*\'?61\'?/', $consultas, 'el filtro por actividad viaja en el SQL' );
+
+		// Y sin filtro, la consulta no lo lleva.
+		$GLOBALS['db_reads']       = array();
+		$GLOBALS['_csv']           = array();
+		$this->exportar( 'evaluaciones' );
+		$sin_filtro = implode( ' ', (array) $GLOBALS['db_reads'] );
+		$this->assertDoesNotMatchRegularExpression( '/pm_act\.meta_value\s*=/', $sin_filtro, 'sin filtro no se restringe' );
 	}
 }

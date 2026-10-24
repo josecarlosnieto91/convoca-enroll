@@ -834,6 +834,7 @@ if (!isset($GLOBALS['wpdb'])) {
             return (array) ($GLOBALS['_wp_stores']['results'] ?? []);
         }
         public function get_col($q = null, $x = 0) {
+            $GLOBALS['db_reads'][] = (string) $q;
             if (!empty($GLOBALS['_wp_stores']['col_cola'])) { return array_shift($GLOBALS['_wp_stores']['col_cola']); }
 
             return (array) ($GLOBALS['_wp_stores']['col'] ?? []);

@@ -1155,17 +1155,21 @@ endif;
 						$batch     = 0;
 						$per_batch = 200;
 						do {
-							$meta_where = "pm_act.meta_key = '_convoca_eval_actividad_id'";
+							// El filtro por actividad se construía en `$meta_where`… y no se usaba en la consulta: no
+							// filtraba y, al sobrar un argumento, los `%d` se corrían (`LIMIT` recibía el id de la
+							// actividad y `OFFSET` el tamaño del lote): la exportación se saltaba las primeras 200
+							// filas y devolvía tantas como el id de la actividad. Ahora el filtro viaja en el SQL.
+							$filtro_sql = '';
 							$meta_args  = array();
 							if ( $filter_act > 0 ) {
-								$meta_where .= ' AND pm_act.meta_value = %d';
+								$filtro_sql  = ' AND pm_act.meta_value = %d';
 								$meta_args[] = $filter_act;
 							}
 							$eval_ids = $wpdb->get_col(
 								$wpdb->prepare(
 									"SELECT p.ID FROM {$wpdb->posts} p
 						JOIN {$wpdb->postmeta} pm_act ON p.ID = pm_act.post_id AND pm_act.meta_key = '_convoca_eval_actividad_id'
-                         WHERE p.post_type = 'convoca_evaluacion' AND p.post_status = 'publish'
+                         WHERE p.post_type = 'convoca_evaluacion' AND p.post_status = 'publish'{$filtro_sql}
                          ORDER BY p.ID ASC LIMIT %d OFFSET %d",
 									array_merge( $meta_args, array( $per_batch, $batch * $per_batch ) )
 								)
