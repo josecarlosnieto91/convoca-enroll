@@ -786,6 +786,10 @@ if (!function_exists('post_type_exists')) { function post_type_exists($t) { retu
 if (!function_exists('wp_insert_post')) {
     /** Alta: devuelve un id nuevo y lo apunta (`_wp_posts_creados`) para poder afirmar sobre él. */
     function wp_insert_post($d) {
+        // Una prueba puede pedir que el alta falle o reviente: es el único modo de recorrer el `catch`
+        // de la transacción sin tocar la base.
+        if (!empty($GLOBALS['_wp_insert_lanza'])) { throw new RuntimeException('fallo simulado al insertar'); }
+        if (!empty($GLOBALS['_wp_insert_falla'])) { return 0; }
         static $c = 100;
         $c++;
         $GLOBALS['_wp_posts_creados'][] = $c;
@@ -1016,6 +1020,14 @@ if (!isset($GLOBALS['wpdb'])) {
         }
         public function query($q) {
             $GLOBALS['_wp_stores']['queries'][] = (string) $q;
+            $lanza = $GLOBALS['convoca_test_query_lanza'] ?? false;
+            if (true === $lanza || (is_string($lanza) && false !== strpos((string) $q, $lanza))) {
+                throw new RuntimeException('fallo simulado en la consulta');
+            }
+            // Retorno por patrón: el UPDATE de plazas tiene que poder devolver 0 («no había plazas»).
+            foreach ((array) ($GLOBALS['convoca_test_query_retorno'] ?? []) as $aguja => $valor) {
+                if (false !== strpos((string) $q, (string) $aguja)) { return $valor; }
+            }
 
             return 1;
         }
