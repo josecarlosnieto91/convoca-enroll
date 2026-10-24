@@ -33,7 +33,20 @@ namespace Convoca\Core {
              */
             public static function format_date( $fecha, $formato = 'd/m/Y' ) {
                 $ts = strtotime( (string) $fecha );
-                return $ts ? date( $formato, $ts ) : '';
+                if ( ! $ts ) { return ''; }
+                $salida = date( $formato, $ts );
+                // El sitio está en español: `wp_date()` traduce el mes. `date()` lo deja en inglés y las pruebas
+                // leerían «14 November 2026» como si el producto fallara.
+                if ( false !== strpos( $formato, 'F' ) ) {
+                    $meses = array(
+                        'January' => 'enero', 'February' => 'febrero', 'March' => 'marzo', 'April' => 'abril',
+                        'May' => 'mayo', 'June' => 'junio', 'July' => 'julio', 'August' => 'agosto',
+                        'September' => 'septiembre', 'October' => 'octubre', 'November' => 'noviembre',
+                        'December' => 'diciembre',
+                    );
+                    $salida = strtr( $salida, $meses );
+                }
+                return $salida;
             }
 
             /**
@@ -370,6 +383,76 @@ if (!function_exists('language_attributes')) {
 if (!function_exists('wp_head')) {
     /** Cabecera del tema: en la prueba no hay nada que imprimir. */
     function wp_head() {}
+}
+
+if (!function_exists('wp_trim_words')) {
+    /** Recorta a N palabras con puntos suspensivos. */
+    function wp_trim_words($texto, $num = 55, $mas = '…') {
+        $palabras = preg_split('/\s+/', trim(wp_strip_all_tags((string) $texto)));
+        if (count($palabras) <= $num) { return implode(' ', $palabras); }
+        return implode(' ', array_slice($palabras, 0, $num)) . $mas;
+    }
+}
+if (!function_exists('get_post_field')) {
+    /** Campo del post; el autor lo fija la prueba en `convoca_test_autores`. */
+    function get_post_field($campo, $post = null, $contexto = 'display') {
+        $id = is_object($post) ? (int) $post->ID : (int) $post;
+        if ('post_author' === $campo) { return (int) ($GLOBALS['convoca_test_autores'][ $id ] ?? 1); }
+        $obj = $GLOBALS['_wp_stores']['posts'][ $id ] ?? null;
+        return is_object($obj) ? ($obj->$campo ?? '') : '';
+    }
+}
+if (!function_exists('has_post_thumbnail')) {
+    /** ¿Tiene imagen destacada? */
+    function has_post_thumbnail($id = 0) {
+        return (int) ($GLOBALS['convoca_test_thumbnail'][ (int) $id ] ?? 0) > 0;
+    }
+}
+if (!function_exists('set_post_thumbnail')) {
+    /** Fija la imagen destacada y lo apunta. */
+    function set_post_thumbnail($id, $adjunto) {
+        $GLOBALS['convoca_test_thumbnail'][ (int) $id ] = (int) $adjunto;
+        $GLOBALS['_convoca_thumbnails_fijados'][] = array( (int) $id, (int) $adjunto );
+        return true;
+    }
+}
+if (!function_exists('get_term_by')) {
+    /** Término por campo; la prueba fija los que existen en `convoca_test_terms`. */
+    function get_term_by($campo, $valor, $taxonomia = '') {
+        foreach ((array) ($GLOBALS['convoca_test_terms'] ?? array()) as $term) {
+            if ((string) ($term->$campo ?? '') === (string) $valor) { return $term; }
+        }
+        return false;
+    }
+}
+if (!function_exists('wp_insert_term')) {
+    /** Crea un término; devuelve id y lo apunta. */
+    function wp_insert_term($nombre, $taxonomia, $args = array()) {
+        $id = (int) ($GLOBALS['convoca_test_term_id'] ?? 99);
+        $GLOBALS['_convoca_terms_creados'][] = compact('nombre', 'taxonomia', 'args');
+        return array('term_id' => $id);
+    }
+}
+if (!function_exists('wp_check_filetype')) {
+    /** Tipo de fichero por extensión. */
+    function wp_check_filetype($ruta) {
+        $ext = strtolower(pathinfo((string) $ruta, PATHINFO_EXTENSION));
+        return array('ext' => $ext, 'type' => 'image/' . $ext);
+    }
+}
+if (!function_exists('media_handle_sideload')) {
+    /** Adjunto desde un fichero: devuelve el id que fije la prueba. */
+    function media_handle_sideload($fichero, $post_id = 0) {
+        $GLOBALS['_convoca_sideloads'][] = array($fichero, $post_id);
+        return (int) ($GLOBALS['convoca_test_sideload_id'] ?? 500);
+    }
+}
+if (!function_exists('wp_strip_all_tags')) {
+    /** Quita etiquetas y espacios sobrantes. */
+    function wp_strip_all_tags($texto, $quitar_saltos = false) {
+        $texto = strip_tags((string) $texto);
+        return $quitar_saltos ? trim(preg_replace('/\s+/', ' ', $texto)) : trim($texto);
+    }
 }
 
 if (!function_exists('get_post_thumbnail_id')) {
@@ -1010,7 +1093,19 @@ if (!function_exists('wp_insert_post')) {
         return $c;
     }
 }
-if (!function_exists('wp_update_post')) { function wp_update_post($d) { return $d['ID'] ?? wp_insert_post($d); } }
+if (!function_exists('wp_update_post')) {
+    /** Actualiza: apunta los datos y los aplica al post del almacén. */
+    function wp_update_post($d) {
+        $GLOBALS['_wp_post_updates'][] = $d;
+        $id = (int) ($d['ID'] ?? 0);
+        if ($id && isset($GLOBALS['_wp_stores']['posts'][ $id ])) {
+            foreach ($d as $campo => $valor) {
+                if ('ID' !== $campo) { $GLOBALS['_wp_stores']['posts'][ $id ]->$campo = $valor; }
+            }
+        }
+        return $id ?: wp_insert_post($d);
+    }
+}
 if (!function_exists('get_posts')) {
     /**
      * Posts según lo que fije la prueba en `convoca_test_posts`; por defecto, ninguno — que es lo
