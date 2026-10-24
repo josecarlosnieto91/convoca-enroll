@@ -153,10 +153,10 @@ final class AdminActividadesSaveTest extends TestCase {
 		$this->assertSame( '2026-11-14 18:00', $meta['_convoca_fecha_inicio'], 'sin la T del formulario' );
 		$this->assertSame( '2026-11-14 20:30', $meta['_convoca_fecha_fin'] );
 		$this->assertSame( 'Centro Social', $meta['_convoca_ubicacion'] );
-		$this->assertSame( 10, $meta['_convoca_plazas_totales'] );
+		$this->assertSame( 10, (int) $meta['_convoca_plazas_totales'] );
 		$this->assertSame( '60,50', $meta['_convoca_precio_socio'] );
 		$this->assertSame( '7,9', $meta['_convoca_responsables'], 'la lista de responsables' );
-		$this->assertSame( 0, $meta['_convoca_requiere_pago'], 'sin marcar' );
+		$this->assertSame( 0, (int) $meta['_convoca_requiere_pago'], 'sin marcar' );
 	}
 
 	/**
@@ -183,7 +183,7 @@ final class AdminActividadesSaveTest extends TestCase {
 
 		$this->assertSame(
 			5,
-			$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_plazas_disponibles'],
+			(int) $GLOBALS['_wp_stores']['post_meta'][61]['_convoca_plazas_disponibles'],
 			'10 plazas nuevas menos 5 ya comprometidas (no 7: las pendientes cuentan)'
 		);
 	}

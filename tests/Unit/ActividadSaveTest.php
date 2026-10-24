@@ -118,11 +118,12 @@ final class ActividadSaveTest extends TestCase {
 
 		$this->assertSame( '2026-11-14 18:00', $this->meta( 'fecha_inicio' ) );
 		$this->assertSame( '2026-11-14 20:30', $this->meta( 'fecha_fin' ) );
-		$this->assertSame( 2.5, $this->meta( 'horas_actividad' ) );
-		$this->assertSame( 30, $this->meta( 'plazas_totales' ) );
-		$this->assertSame( 12, $this->meta( 'plazas_disponibles' ) );
-		$this->assertSame( 60.5, $this->meta( 'precio_socio' ), 'la coma decimal no se pierde' );
-		$this->assertSame( 15.0, $this->meta( 'precio_socio_dia' ) );
+		// La meta se lee de la base como texto, igual que en WordPress.
+		$this->assertSame( 2.5, (float) $this->meta( 'horas_actividad' ) );
+		$this->assertSame( 30, (int) $this->meta( 'plazas_totales' ) );
+		$this->assertSame( 12, (int) $this->meta( 'plazas_disponibles' ) );
+		$this->assertSame( 60.5, (float) $this->meta( 'precio_socio' ), 'la coma decimal no se pierde' );
+		$this->assertSame( 15.0, (float) $this->meta( 'precio_socio_dia' ) );
 		$this->assertSame( 'Centro Social', $this->meta( 'ubicacion' ) );
 		$this->assertSame( '7,9', $this->meta( 'responsables' ), 'los responsables se guardan como lista' );
 		$this->assertStringContainsString( 'Abrir', (string) $this->meta( 'funciones' ) );

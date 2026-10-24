@@ -10,6 +10,17 @@ namespace Convoca\Core {
     if (!class_exists('Utils')) {
         class Utils {
             /**
+             * Etiqueta de la aportación según el contexto (en core es configurable; aquí, la de por defecto).
+             *
+             * @param string $contexto Contexto.
+             * @return string
+             */
+            public static function get_aportacion_label(string $contexto = 'singular'): string {
+                if ('plural' === $contexto) { return 'Aportaciones'; }
+                return 'Aportación';
+            }
+
+            /**
              * «Emite» un CSV: apunta el nombre, la cabecera y las filas, y corta el flujo como el `exit` real.
              *
              * El `stream_csv()` de verdad abre la salida y termina el proceso: en una prueba se llevaría por delante
@@ -314,7 +325,16 @@ if (!function_exists('get_post_meta')) {
         if ($v === null) return $s ? '' : [];
         return $s ? $v : (is_array($v) ? $v : [$v]);
     }
-    function update_post_meta($id, $k, $v) { $GLOBALS['_wp_stores']['post_meta'][$id][$k] = $v; return true; }
+    /**
+     * Guarda la meta como lo hace WordPress: los escalares se leen de la base como texto.
+     *
+     * Sin esto, el producto compara `=== '1'` contra un entero y la validación nunca entra: la prueba mediría un
+     * camino que en producción no existe.
+     */
+    function update_post_meta($id, $k, $v) {
+        $GLOBALS['_wp_stores']['post_meta'][$id][$k] = is_scalar($v) ? (string) $v : $v;
+        return true;
+    }
     function delete_post_meta($id, $k) { unset($GLOBALS['_wp_stores']['post_meta'][$id][$k]); return true; }
 }
 
@@ -567,7 +587,26 @@ if (!function_exists('esc_attr')) { function esc_attr($t) { return htmlspecialch
 if (!function_exists('esc_url')) { function esc_url($u) { return filter_var($u, FILTER_SANITIZE_URL); } }
 if (!function_exists('sanitize_text_field')) { function sanitize_text_field($s) { return trim(strip_tags((string) $s)); } }
 if (!function_exists('sanitize_key')) { function sanitize_key($k) { return preg_replace('/[^a-z0-9_\-]/', '', strtolower((string) $k)); } }
-if (!function_exists('date_i18n')) { function date_i18n($f, $t = null) { return date($f, $t ?? time()); } }
+if (!function_exists('date_i18n')) {
+    /**
+     * `date_i18n` con el locale del sitio (`es_ES`): los nombres de mes y día salen en castellano.
+     *
+     * Se traduce el resultado de `date()` porque el formato que usa el producto es el de WordPress, no `strftime`.
+     *
+     * @param string   $formato Formato.
+     * @param int|null $marca   Marca de tiempo.
+     * @return string
+     */
+    function date_i18n($formato, $marca = null) {
+        $salida = date($formato, $marca ?? time());
+        $meses  = array('January' => 'enero', 'February' => 'febrero', 'March' => 'marzo', 'April' => 'abril',
+            'May' => 'mayo', 'June' => 'junio', 'July' => 'julio', 'August' => 'agosto', 'September' => 'septiembre',
+            'October' => 'octubre', 'November' => 'noviembre', 'December' => 'diciembre',
+            'Monday' => 'lunes', 'Tuesday' => 'martes', 'Wednesday' => 'miércoles', 'Thursday' => 'jueves',
+            'Friday' => 'viernes', 'Saturday' => 'sábado', 'Sunday' => 'domingo');
+        return strtr($salida, $meses);
+    }
+}
 if (!function_exists('wp_strip_all_tags')) { function wp_strip_all_tags($s) { return trim(strip_tags((string) $s)); } }
 if (!function_exists('sanitize_title')) {
     /** Como el de WordPress: minúsculas, sin acentos y solo letras, números y guiones (un «ñ» no rompe el slug). */
@@ -1536,4 +1575,9 @@ namespace Convoca\Enroll {
             return '.test' !== substr($dominio, -5);
         }
     }
+
+if (!function_exists('is_admin')) {
+    /** Modo administración, controlable por la prueba. */
+    function is_admin() { return (bool) ($GLOBALS['convoca_test_is_admin'] ?? false); }
+}
 }
