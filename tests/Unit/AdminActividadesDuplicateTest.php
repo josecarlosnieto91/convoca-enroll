@@ -55,6 +55,7 @@ final class AdminActividadesDuplicateTest extends TestCase {
 		$GLOBALS['convoca_test_caps']  = array( 'edit_posts' => true );
 		$GLOBALS['convoca_test_tipos'] = array();
 		$GLOBALS['_wp_posts_creados']  = array();
+		$GLOBALS['_wp_insert_args']    = array();
 		$GLOBALS['_wp_logs']           = array();
 		$_GET                          = array();
 
@@ -71,6 +72,7 @@ final class AdminActividadesDuplicateTest extends TestCase {
 		$GLOBALS['convoca_test_caps']  = array();
 		$GLOBALS['convoca_test_tipos'] = array();
 		$GLOBALS['_wp_posts_creados']  = array();
+		$GLOBALS['_wp_insert_args']    = array();
 		$GLOBALS['_wp_logs']           = array();
 		$_GET                          = array();
 	}
