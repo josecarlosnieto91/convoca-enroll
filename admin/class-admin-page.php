@@ -348,7 +348,10 @@ class Admin_Page {
 		$table = new Inscriptions_List();
 		$table->prepare_items();
 		echo '<form method="get"><input type="hidden" name="page" value="convoca-enroll">';
-		wp_nonce_field( 'bulk-inscripciones', '_convoca_nonce', true, false );
+		// El nonce tiene que llamarse `_wpnonce` (es lo que busca `check_admin_referer( 'bulk-inscripciones' )`) y
+		// tienen que pintarse: con `$display = false` el formulario no lo llevaba y «Confirmar plazas» en lote moría
+		// siempre con «¿Seguro que quieres hacer esto?».
+		wp_nonce_field( 'bulk-inscripciones', '_wpnonce', true, true );
 		$table->search_box( __( 'Buscar', 'convoca-enroll' ), 'convoca-enroll-search' );
 		$table->display();
 		echo '</form></div>';
