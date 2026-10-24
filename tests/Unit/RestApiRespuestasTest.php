@@ -124,7 +124,12 @@ final class RestApiRespuestasTest extends TestCase {
 	 * @return void
 	 */
 	public function test_una_entrada_que_no_es_actividad_da_404(): void {
-		$GLOBALS['convoca_test_post_types'] = array( 12 => 'post' );
+		// Sembrada de verdad: una entrada normal, que existe pero no es una actividad.
+		$entrada                        = new \WP_Post();
+		$entrada->ID                    = 12;
+		$entrada->post_type             = 'post';
+		$entrada->post_title            = 'Una entrada';
+		$GLOBALS['_wp_stores']['posts'][12] = $entrada;
 
 		$resultado = ( new Rest_API() )->get_activity( $this->peticion( array( 'id' => 12 ) ) );
 
