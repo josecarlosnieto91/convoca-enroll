@@ -34,7 +34,15 @@ final class AdminSettingsRenderTest extends TestCase {
 	/**
 	 * Prepara el caso.
 	 */
+	/**
+	 * `$wpdb` anterior.
+	 *
+	 * @var mixed
+	 */
+	private $wpdb_previo = null;
+
 	protected function setUp(): void {
+		$this->wpdb_previo = $GLOBALS['wpdb'] ?? null;
 		$this->previo          = $GLOBALS['_wp_stores'] ?? array();
 		$GLOBALS['_wp_stores'] = array(
 			'options'    => array(),
@@ -55,6 +63,9 @@ final class AdminSettingsRenderTest extends TestCase {
 	 * Devuelve el almacén a como estaba.
 	 */
 	protected function tearDown(): void {
+		if ( null !== $this->wpdb_previo ) {
+			$GLOBALS['wpdb'] = $this->wpdb_previo;
+		}
 		$GLOBALS['_wp_stores']         = $this->previo;
 		$GLOBALS['plugins_inactivos']  = array();
 		$_GET                          = array();

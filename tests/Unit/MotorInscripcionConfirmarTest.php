@@ -116,9 +116,13 @@ class MotorInscripcionConfirmarTest extends TestCase
 
     private TrackingWpdb $wpdb;
 
+    /** `$wpdb` que había antes: se devuelve al terminar. */
+    private $wpdb_previo = null;
+
     protected function setUp(): void
     {
         // wpdb que registra consultas (para detectar el decremento de plaza).
+        $this->wpdb_previo     = $GLOBALS['wpdb'] ?? null;
         $this->wpdb            = new TrackingWpdb();
         $GLOBALS['wpdb']       = $this->wpdb;
         $GLOBALS['_wp_stores']['post_meta'] = array();
@@ -218,5 +222,13 @@ class MotorInscripcionConfirmarTest extends TestCase
 
         $this->assertTrue( $result );
         $this->assertSame( array(), $this->wpdb->queries, 'No debe ejecutarse ninguna consulta' );
+    }
+
+    protected function tearDown(): void
+    {
+        // El `wpdb` es global: dejarlo sustituido rompe a cualquier prueba que venga después (le faltan métodos).
+        if ( null !== $this->wpdb_previo ) {
+            $GLOBALS['wpdb'] = $this->wpdb_previo;
+        }
     }
 }
