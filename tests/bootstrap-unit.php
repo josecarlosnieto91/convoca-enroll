@@ -496,7 +496,11 @@ if (!class_exists('WP_Query')) {
          * @param array $args Argumentos.
          */
         public function __construct($args = array()) {
-            $this->posts       = get_posts($args);
+            $this->posts = get_posts($args);
+            // Con `fields => 'ids'` WordPress devuelve ids, no objetos: el producto hace `(int) $post`.
+            if (isset($args['fields']) && 'ids' === $args['fields']) {
+                $this->posts = array_map(static function ($p) { return is_object($p) ? (int) $p->ID : (int) $p; }, $this->posts);
+            }
             $this->found_posts = count($this->posts);
         }
     }
@@ -524,6 +528,8 @@ if (!function_exists('get_the_excerpt')) {
         return (string) ($GLOBALS['_wp_stores']['excerpt'] ?? '');
     }
 }
+
+if (!function_exists('get_the_ID')) { function get_the_ID() { return (int) ($GLOBALS['_wp_current_id'] ?? 0); } }
 
 /** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
 class Convoca_Json_Cortado extends \Exception {
