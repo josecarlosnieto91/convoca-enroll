@@ -569,6 +569,16 @@ if (!function_exists('_n')) {
     }
 }
 
+if (!function_exists('get_query_var')) {
+    /** Variables de la consulta: se fijan en `$GLOBALS['_wp_query_vars']`. */
+    function get_query_var($var, $defecto = '') {
+        return $GLOBALS['_wp_query_vars'][ $var ] ?? $defecto;
+    }
+}
+
+if (!function_exists('language_attributes')) { function language_attributes() { echo 'lang="es-ES"'; } }
+if (!function_exists('body_class')) { function body_class($c = '') { return 'class="' . esc_attr((string) $c) . '"'; } }
+
 /** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
 class Convoca_Json_Cortado extends \Exception {
 
