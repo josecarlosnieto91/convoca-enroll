@@ -19,6 +19,43 @@ namespace Convoca\Core {
              * @param array    $cabecera Columnas.
              * @param iterable $filas    Filas.
              */
+            /**
+             * Avisos guardados en la opción temporal: los pinta la pantalla de ajustes.
+             *
+             * @return void
+             */
+            /**
+             * ¿Está activo el plugin? Con `$GLOBALS['plugins_inactivos'][ slug ]` se simula que no.
+             *
+             * @param string $slug Plugin.
+             * @return bool
+             */
+            /**
+             * Panel de diagnóstico: una fila por comprobación.
+             *
+             * @param array $checks Comprobaciones.
+             * @return void
+             */
+            public static function render_diagnostic_panel( array $checks ) {
+                echo '<div class="conv-diagnostico">';
+                foreach ( $checks as $check ) {
+                    echo '<div class="conv-check conv-check-' . esc_attr( $check['status'] ) . '">'
+                        . esc_html( $check['title'] ) . ': ' . esc_html( $check['message'] ) . '</div>';
+                }
+                echo '</div>';
+            }
+
+            public static function is_plugin_active_safe( $slug ) {
+                return empty( $GLOBALS['plugins_inactivos'][ $slug ] );
+            }
+
+            public static function render_stored_notices() {
+                $avisos = $GLOBALS['_wp_stores']['transients']['_convoca_notices'] ?? array();
+                foreach ( (array) $avisos as $aviso ) {
+                    echo '<div class="notice">' . esc_html( (string) $aviso ) . '</div>';
+                }
+            }
+
             public static function stream_csv($nombre, array $cabecera, $filas) {
                 $datos = array();
                 foreach ($filas as $fila) { $datos[] = $fila; }
@@ -336,6 +373,42 @@ if (!function_exists('wp_nonce_url')) {
         return $url . (false === strpos((string) $url, '?') ? '?' : '&') . $nombre . '=nonce-' . $accion;
     }
 }
+if (!function_exists('get_bloginfo')) {
+    /** Datos del sitio: se siembran en `_wp_stores['bloginfo']`. */
+    function get_bloginfo($que = 'name', $filtro = 'raw') {
+        unset($filtro);
+        $datos = array('name' => 'Convoca', 'description' => 'Asociación', 'url' => 'https://example.test', 'admin_email' => 'hola@example.test');
+        return $GLOBALS['_wp_stores']['bloginfo'][ $que ] ?? ( $datos[ $que ] ?? '' );
+    }
+}
+if (!function_exists('checked')) {
+    /** Marca el atributo `checked` comparando (como el de WordPress). */
+    function checked($a, $b = true, $echo = true) {
+        $si = ( is_array( $b ) ? in_array( $a, $b, true ) : (string) $a === (string) $b );
+        $salida = $si ? " checked='checked'" : '';
+        if ( $echo ) { echo $salida; }
+        return $salida;
+    }
+}
+if (!function_exists('esc_textarea')) { function esc_textarea($t) { return htmlspecialchars((string) $t, ENT_QUOTES, 'UTF-8'); } }
+if (!function_exists('wp_nonce_field')) { function wp_nonce_field($a = -1, $n = '_wpnonce', $ref = true, $echo = true) { $s = '<input type=\"hidden\" name=\"' . $n . '\" value=\"nonce\">'; if ($echo) { echo $s; } return $s; } }
+
+if (!function_exists('wp_editor')) {
+    /** Editor clásico: en la prueba basta con el área de texto y su contenido. */
+    function wp_editor($contenido, $id, $ajustes = array()) {
+        unset($ajustes);
+        echo '<textarea id="' . esc_attr($id) . '" name="' . esc_attr($id) . '">' . esc_textarea((string) $contenido) . '</textarea>';
+    }
+}
+
+if (!function_exists('wp_generate_password')) {
+    /** Contraseña/token aleatorio: basta con que sea largo y distinto cada vez. */
+    function wp_generate_password($largo = 12, $especial = true, $extra = false) {
+        unset($especial, $extra);
+        return substr(bin2hex(random_bytes((int) ceil($largo / 2) + 1)), 0, (int) $largo);
+    }
+}
+
 /** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
 class Convoca_Json_Cortado extends \Exception {
 
@@ -722,4 +795,6 @@ date_default_timezone_set('Europe/Madrid');
 require_once __DIR__ . '/StubMailer.php';
 require_once __DIR__ . '/dobles/member-identity.php';
 require_once __DIR__ . '/dobles/license-manager.php';
+require_once __DIR__ . '/dobles/email-layout.php';
+require_once __DIR__ . '/dobles/google-client.php';
 } // namespace
