@@ -36,6 +36,26 @@ class Email_Layout {
 	}
 
 	/**
+	 * Marco del correo: devuelve el cuerpo dentro de un documento con el asunto.
+	 *
+	 * @param string $cuerpo     Cuerpo.
+	 * @param string $asunto     Asunto.
+	 * @param array  $opciones   Opciones (botón, pie).
+	 * @return string
+	 */
+	public static function render( $cuerpo, $asunto = '', $opciones = array() ) {
+		$html = '<html><head><title>' . $asunto . '</title></head><body>' . $cuerpo;
+		if ( ! empty( $opciones['button_url'] ) ) {
+			$html .= self::button_html( $opciones['button_url'], $opciones['button_text'] ?? '' );
+		}
+		if ( ! empty( $opciones['footer_text'] ) ) {
+			$html .= '<footer>' . $opciones['footer_text'] . '</footer>';
+		}
+
+		return $html . '</body></html>';
+	}
+
+	/**
 	 * Botón.
 	 *
 	 * @param string $url    Destino.

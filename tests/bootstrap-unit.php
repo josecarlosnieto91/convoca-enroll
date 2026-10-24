@@ -108,10 +108,23 @@ namespace Convoca\Core {
     }
     if (!class_exists('Logger')) {
         class Logger {
-            public static function info(string $message, string $context = '', int $id = 0): void {}
-            public static function warning(string $message, string $context = '', int $id = 0): void {}
-            public static function error(string $message, string $context = '', int $id = 0): void {}
-            public static function log(string $message, string $level = 'info', string $context = '', int $id = 0): void {}
+            /**
+             * Apunta el registro para poder afirmar qué se dijo (y con qué contexto).
+             *
+             * @param string $message Mensaje.
+             * @param string $level   Nivel.
+             * @param string $context Contexto.
+             * @param int    $id      Entidad.
+             * @return void
+             */
+            public static function anotar(string $message, string $level, string $context, int $id = 0): void {
+                $GLOBALS['_wp_logs'][] = compact('message', 'level', 'context', 'id');
+            }
+            public static function debug(string $message, string $context = '', int $id = 0): void { self::anotar($message, 'debug', $context, $id); }
+            public static function info(string $message, string $context = '', int $id = 0): void { self::anotar($message, 'info', $context, $id); }
+            public static function warning(string $message, string $context = '', int $id = 0): void { self::anotar($message, 'warning', $context, $id); }
+            public static function error(string $message, string $context = '', int $id = 0): void { self::anotar($message, 'error', $context, $id); }
+            public static function log(string $message, string $level = 'info', string $context = '', int $id = 0): void { self::anotar($message, $level, $context, $id); }
         }
     }
 }
@@ -473,6 +486,22 @@ if (!class_exists('WP_Query')) {
     }
 }
 
+if (!function_exists('get_pages')) {
+    /** Páginas del sitio: se siembran en `_wp_stores['pages']` (por omisión, ninguna). */
+    function get_pages($args = array()) {
+        unset($args);
+        return (array) ($GLOBALS['_wp_stores']['pages'] ?? array());
+    }
+}
+
+if (!function_exists('wp_schedule_single_event')) {
+    /** Evento único de cron: se apunta como los demás. */
+    function wp_schedule_single_event($marca, $hook, $args = array()) {
+        $GLOBALS['_wp_cron']['programados'][ $hook ][] = array( 'marca' => $marca, 'args' => $args );
+        return true;
+    }
+}
+
 /** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
 class Convoca_Json_Cortado extends \Exception {
 
@@ -784,7 +813,12 @@ if (!isset($GLOBALS['wpdb'])) {
         }
         /** `esc_like()`: escapa `%` y `_` para un LIKE, como WordPress. */
         public function esc_like($texto) { return addcslashes((string) $texto, '_%\\\\'); }
-        public function insert($t, $d, $f = []) { $this->insert_id = 42; return 1; }
+        public function insert($t, $d, $f = []) {
+            // Se apunta la fila: sin esto no se puede afirmar **qué** se ha encolado (a quién, con qué asunto).
+            $GLOBALS['db_inserts'][] = array('tabla' => $t, 'datos' => $d, 'formatos' => $f);
+            $this->insert_id = 42;
+            return 1;
+        }
         public function update($t, $d, $w) { return 1; }
         public function delete($t, $w) { return 1; }
         public function prepare($q, ...$a) {
