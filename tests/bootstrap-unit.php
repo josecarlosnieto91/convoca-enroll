@@ -518,6 +518,13 @@ if (!function_exists('wp_schedule_single_event')) {
     }
 }
 
+if (!function_exists('get_the_excerpt')) {
+    function get_the_excerpt($id = 0) {
+        unset($id);
+        return (string) ($GLOBALS['_wp_stores']['excerpt'] ?? '');
+    }
+}
+
 /** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
 class Convoca_Json_Cortado extends \Exception {
 
