@@ -790,6 +790,10 @@ if (!function_exists('get_posts')) {
         // objetos a id dejaba a los informes leyendo `->ID` de un entero (filas vacías).
         $salida = array();
         foreach ((array) $todo as $post) {
+            // Si el post dice su tipo, se respeta el `post_type` de la consulta: dos `WP_Query` seguidas (actividades
+            // y luego inscripciones) tienen que ver cosas distintas.
+            $tipo = is_object($post) ? (string) ($post->post_type ?? '') : '';
+            if ('' !== $tipo && !empty($a['post_type']) && $a['post_type'] !== $tipo) { continue; }
             $salida[] = $post;
         }
         return $salida;

@@ -150,6 +150,7 @@ final class MotorReglasTest extends TestCase {
 
 		$inscripcion                         = new \WP_Post();
 		$inscripcion->ID                     = 70;
+		$inscripcion->post_type              = 'inscripcion';
 		$GLOBALS['convoca_test_posts']       = array( $inscripcion );
 
 		$this->assertSame( 70, Motor_Inscripcion::buscar_por_codigo( 'ana@example.test', 'aaaabbbb' )->ID, 'el código se busca en mayúsculas' );
