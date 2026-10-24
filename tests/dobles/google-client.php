@@ -34,6 +34,15 @@ class Client {
 	}
 
 	/**
+	 * Token de acceso: el producto solo pregunta si hay (truthy) para montar el servicio.
+	 *
+	 * @return array
+	 */
+	public function getAccessToken() {
+		return array( 'access_token' => 'token-de-prueba', 'expires_in' => 3600 );
+	}
+
+	/**
 	 * URL de autorización.
 	 *
 	 * @return string

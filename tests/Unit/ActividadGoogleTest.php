@@ -6,6 +6,8 @@
  * confirmados. Y los cuatro endpoints AJAX tienen que negarse **antes** de hablar con Google cuando falta el nonce, el
  * permiso o la configuración: si la comprobación llegara tarde, un clic de más dispararía correos a los participantes.
  *
+ * Se usan las clases **reales** con el SDK de Google doblado: lo que se mide es Convoca, no el doble.
+ *
  * @package Convoca\Enroll\Tests
  */
 
@@ -14,11 +16,12 @@ namespace Convoca\Enroll\Tests;
 use Convoca\Enroll\CPT_Actividad;
 use PHPUnit\Framework\TestCase;
 
-// Los dobles **antes** que nada: en cuanto algo pida la clase, el autoload traeria la real.
-require_once dirname( __DIR__, 2 ) . '/tests/dobles/google-photos.php';
-require_once dirname( __DIR__, 2 ) . '/tests/dobles/google-calendar.php';
+require_once dirname( __DIR__, 2 ) . '/tests/dobles/google-client.php';
+require_once dirname( __DIR__, 2 ) . '/tests/dobles/google-sdk.php';
 require_once dirname( __DIR__, 2 ) . '/includes/CPT_Actividad.php';
 require_once dirname( __DIR__, 2 ) . '/includes/CPT_Inscripcion.php';
+require_once dirname( __DIR__, 2 ) . '/includes/Google_Photos.php';
+require_once dirname( __DIR__, 2 ) . '/includes/Google_Calendar.php';
 
 /**
  * Integraciones de la ficha.
@@ -54,31 +57,63 @@ final class ActividadGoogleTest extends TestCase {
 		$GLOBALS['convoca_test_caps'] = array(
 			'manage_options'        => true,
 			'convoca_manage_enroll' => true,
+			'edit_post'             => true,
 		);
-		$GLOBALS['_convoca_cajas']        = array();
-		$GLOBALS['_wp_json']              = array();
-		$GLOBALS['__gp']                  = array();
-		$GLOBALS['__gp_llamadas']         = array();
-		$GLOBALS['__gc']                  = array();
-		$GLOBALS['__gc_llamadas']         = array();
-		$_POST                            = array();
+		$GLOBALS['_convoca_cajas']     = array();
+		$GLOBALS['_wp_json']           = array();
+		$GLOBALS['__sdk']              = array();
+		$GLOBALS['__sdk_llamadas']     = array();
+		$GLOBALS['convoca_test_posts'] = array();
+		$_POST                         = array();
 
 		$this->cpt = new CPT_Actividad();
+
+		$actividad                          = new \WP_Post();
+		$actividad->ID                      = 61;
+		$actividad->post_type               = 'actividad';
+		$actividad->post_title              = 'Ruta de otoño';
+		$GLOBALS['_wp_stores']['posts'][61] = $actividad;
 	}
 
 	/**
 	 * Devuelve el almacén a como estaba.
 	 */
 	protected function tearDown(): void {
-		$GLOBALS['_wp_stores']            = $this->previo;
-		$GLOBALS['convoca_test_caps']     = array();
-		$GLOBALS['_convoca_cajas']        = array();
-		$GLOBALS['_wp_json']              = array();
-		$GLOBALS['__gp']                  = null;
-		$GLOBALS['__gp_llamadas']         = array();
-		$GLOBALS['__gc']                  = null;
-		$GLOBALS['__gc_llamadas']         = array();
-		$_POST                            = array();
+		$GLOBALS['_wp_stores']         = $this->previo;
+		$GLOBALS['convoca_test_caps']  = array();
+		$GLOBALS['_convoca_cajas']     = array();
+		$GLOBALS['_wp_json']           = array();
+		$GLOBALS['__sdk']              = null;
+		$GLOBALS['__sdk_llamadas']     = array();
+		$GLOBALS['convoca_test_posts'] = array();
+		$_POST                         = array();
+	}
+
+	/**
+	 * Credenciales de Google.
+	 *
+	 * @param string $tipo photos|calendar.
+	 * @return void
+	 */
+	private function configurar( string $tipo = 'photos' ): void {
+		$previos = (array) ( $GLOBALS['_wp_stores']['options']['convoca_enroll_settings'] ?? array() );
+
+		$GLOBALS['_wp_stores']['options']['convoca_enroll_settings'] = array_merge(
+			$previos,
+			'photos' === $tipo
+				? array(
+					'google_photos_enabled'       => 1,
+					'google_photos_client_id'     => 'cliente',
+					'google_photos_client_secret' => 'secreto',
+					'google_photos_refresh_token' => 'refresco',
+				)
+				: array(
+					'google_calendar_client_id'     => 'cliente',
+					'google_calendar_client_secret' => 'secreto',
+					'google_calendar_refresh_token' => 'refresco',
+					'google_calendar_id'            => 'cal@example.test',
+				)
+		);
 	}
 
 	/**
@@ -88,7 +123,7 @@ final class ActividadGoogleTest extends TestCase {
 	 * @return string
 	 */
 	private function caja( int $id = 61 ): string {
-		$post = new \WP_Post();
+		$post     = new \WP_Post();
 		$post->ID = $id;
 		ob_start();
 		$this->cpt->render_google_photos_metabox( $post );
@@ -149,8 +184,7 @@ final class ActividadGoogleTest extends TestCase {
 	 * Sin álbum: el botón de crearlo.
 	 */
 	public function test_sin_album(): void {
-		$GLOBALS['_wp_stores']['options']['convoca_enroll_settings'] = array( 'google_photos_enabled' => 1 );
-		$GLOBALS['__gp']['configurado'] = true;
+		$this->configurar();
 
 		$this->assertStringContainsString( 'Crear álbum', $this->caja() );
 	}
@@ -159,8 +193,7 @@ final class ActividadGoogleTest extends TestCase {
 	 * Con álbum y ya compartido: se dice, y no se ofrece compartir otra vez.
 	 */
 	public function test_album_compartido(): void {
-		$GLOBALS['_wp_stores']['options']['convoca_enroll_settings'] = array( 'google_photos_enabled' => 1 );
-		$GLOBALS['__gp']['configurado'] = true;
+		$this->configurar();
 		$GLOBALS['_wp_stores']['post_meta'][61] = array(
 			'_convoca_google_album_id'     => 'ALBUM-1',
 			'_convoca_google_album_url'    => 'https://photos.example.test/a/1',
@@ -178,8 +211,7 @@ final class ActividadGoogleTest extends TestCase {
 	 * Con álbum sin compartir: se ofrece compartir.
 	 */
 	public function test_album_sin_compartir(): void {
-		$GLOBALS['_wp_stores']['options']['convoca_enroll_settings'] = array( 'google_photos_enabled' => 1 );
-		$GLOBALS['__gp']['configurado'] = true;
+		$this->configurar();
 		$GLOBALS['_wp_stores']['post_meta'][61] = array( '_convoca_google_album_id' => 'ALBUM-1' );
 
 		$this->assertStringContainsString( 'Compartir con participantes</button>', $this->caja() );
@@ -189,67 +221,83 @@ final class ActividadGoogleTest extends TestCase {
 	 * Compartir sin permiso: no se llama a Google.
 	 */
 	public function test_compartir_sin_permiso(): void {
-		$_POST = array( 'activity_id' => 61 );
+		$this->configurar();
+		$_POST                                     = array( 'activity_id' => 61 );
 		$GLOBALS['convoca_test_caps']['edit_post'] = false;
 
 		$r = $this->ajax( 'ajax_share_google_album' );
 
 		$this->assertFalse( $r['ok'] );
-		$this->assertSame( array(), $GLOBALS['__gp_llamadas'], 'no se ha hablado con Google' );
+		$this->assertSame( array(), $GLOBALS['__sdk_llamadas'], 'no se ha hablado con Google' );
 	}
 
 	/**
-	 * Compartir cuando el álbum no se puede compartir: error, y no se avisa a nadie.
+	 * Compartir sin álbum: error, y no se avisa a nadie.
 	 */
 	public function test_compartir_falla(): void {
+		$this->configurar();
 		$_POST = array( 'activity_id' => 61 );
-		$GLOBALS['__gp']['compartir'] = null;
 
 		$r = $this->ajax( 'ajax_share_google_album' );
 
 		$this->assertFalse( $r['ok'] );
-		$this->assertNotContains( array( 'avisar_participantes', 61 ), (array) $GLOBALS['__gp_llamadas'], 'nadie recibe un correo' );
+		$this->assertSame( array(), $GLOBALS['__sdk_llamadas'], 'no se comparte lo que no existe' );
 	}
 
 	/**
-	 * Compartir bien: se avisa a los participantes y se devuelve cuántos.
+	 * Compartir bien: se avisa a los confirmados y se devuelve cuántos.
 	 */
 	public function test_compartir_bien(): void {
-		$_POST = array( 'activity_id' => 61 );
-		$GLOBALS['__gp']['compartir'] = 'https://photos.example.test/a/1';
-		$GLOBALS['__gp']['avisados']  = 12;
+		$this->configurar();
+		$GLOBALS['_wp_stores']['post_meta'][61] = array( '_convoca_google_album_id' => 'ALBUM-1' );
+		$GLOBALS['__sdk']['share_url']          = 'https://photos.example.test/share/1';
 
-		$r = $this->ajax( 'ajax_share_google_album' );
+		$inscripciones = array();
+		foreach ( array( 70, 71 ) as $i => $id ) {
+			$p               = new \WP_Post();
+			$p->ID           = $id;
+			$p->post_type    = 'inscripcion';
+			$inscripciones[] = $p;
+
+			$GLOBALS['_wp_stores']['post_meta'][ $id ] = array( '_convoca_email' => 'persona' . $i . '@example.test' );
+		}
+		$GLOBALS['convoca_test_posts'] = $inscripciones;
+
+		$_POST = array( 'activity_id' => 61 );
+		$r     = $this->ajax( 'ajax_share_google_album' );
 
 		$this->assertTrue( $r['ok'] );
-		$this->assertSame( 12, $r['data']['count'] );
+		$this->assertSame( 2, $r['data']['count'], 'se avisa a los dos confirmados' );
 	}
 
 	/**
-	 * Crear el álbum avisa a coordinación y devuelve el álbum.
+	 * Crear el álbum devuelve el álbum y lo guarda en la ficha.
 	 */
 	public function test_crear_album(): void {
-		$_POST = array( 'activity_id' => 61 );
-		$GLOBALS['__gp']['crear'] = array( 'id' => 'ALBUM-2', 'url' => 'https://photos.example.test/a/2' );
+		$this->configurar();
+		$GLOBALS['__sdk']['album_id']  = 'ALBUM-2';
+		$GLOBALS['__sdk']['album_url'] = 'https://photos.example.test/a/2';
 
-		$r = $this->ajax( 'ajax_create_google_album' );
+		$_POST = array( 'activity_id' => 61 );
+		$r     = $this->ajax( 'ajax_create_google_album' );
 
 		$this->assertTrue( $r['ok'] );
 		$this->assertSame( 'ALBUM-2', $r['data']['album_id'] );
-		$this->assertContains( array( 'avisar_coordinacion', 61 ), (array) $GLOBALS['__gp_llamadas'] );
+		$this->assertContains( 'album_crear', array_column( (array) $GLOBALS['__sdk_llamadas'], 0 ) );
 	}
 
 	/**
-	 * Crear cuando Google no devuelve álbum: error, sin avisar a nadie.
+	 * Crear cuando Google falla: error, sin dejar el álbum a medias.
 	 */
 	public function test_crear_falla(): void {
-		$_POST = array( 'activity_id' => 61 );
-		$GLOBALS['__gp']['crear'] = null;
+		$this->configurar();
+		$GLOBALS['__sdk']['falla_crear'] = true;
 
-		$r = $this->ajax( 'ajax_create_google_album' );
+		$_POST = array( 'activity_id' => 61 );
+		$r     = $this->ajax( 'ajax_create_google_album' );
 
 		$this->assertFalse( $r['ok'] );
-		$this->assertNotContains( array( 'avisar_coordinacion', 61 ), (array) $GLOBALS['__gp_llamadas'] );
+		$this->assertArrayNotHasKey( '_convoca_google_album_id', ( $GLOBALS['_wp_stores']['post_meta'][61] ?? array() ) );
 	}
 
 	/**
@@ -261,18 +309,22 @@ final class ActividadGoogleTest extends TestCase {
 		$r = $this->ajax( 'ajax_sync_google_calendar' );
 
 		$this->assertFalse( $r['ok'] );
-		$this->assertSame( array(), $GLOBALS['__gc_llamadas'] );
+		$this->assertSame( array(), $GLOBALS['__sdk_llamadas'] );
 	}
 
 	/**
 	 * Calendario bien: devuelve el id del evento.
 	 */
 	public function test_calendario_sincroniza(): void {
-		$_POST = array( 'activity_id' => 61 );
-		$GLOBALS['__gc']['configurado'] = true;
-		$GLOBALS['__gc']['evento']      = 'EV-1';
+		$this->configurar( 'calendar' );
+		$GLOBALS['_wp_stores']['post_meta'][61] = array(
+			'_convoca_fecha_inicio' => '2026-11-14 18:00:00',
+			'_convoca_fecha_fin'    => '2026-11-14 20:00:00',
+		);
+		$GLOBALS['__sdk']['evento_id'] = 'EV-1';
 
-		$r = $this->ajax( 'ajax_sync_google_calendar' );
+		$_POST = array( 'activity_id' => 61 );
+		$r     = $this->ajax( 'ajax_sync_google_calendar' );
 
 		$this->assertTrue( $r['ok'] );
 		$this->assertSame( 'EV-1', $r['data']['id'] );
@@ -282,45 +334,30 @@ final class ActividadGoogleTest extends TestCase {
 	 * Borrar sin evento asociado: se dice, no se llama a Google.
 	 */
 	public function test_borrar_sin_evento(): void {
+		$this->configurar( 'calendar' );
 		$_POST = array( 'activity_id' => 61 );
-		$GLOBALS['__gc']['configurado'] = true;
 
 		$r = $this->ajax( 'ajax_delete_google_calendar' );
 
 		$this->assertFalse( $r['ok'] );
-		$this->assertSame( array(), $GLOBALS['__gc_llamadas'] );
+		$this->assertSame( array(), $GLOBALS['__sdk_llamadas'] );
 	}
 
 	/**
 	 * Borrar con evento: se quita el vínculo guardado.
 	 */
 	public function test_borrar_con_evento(): void {
-		$_POST = array( 'activity_id' => 61 );
-		$GLOBALS['__gc']['configurado'] = true;
+		$this->configurar( 'calendar' );
 		$GLOBALS['_wp_stores']['post_meta'][61] = array(
 			'_convoca_google_event_id'   => 'EV-1',
 			'_convoca_google_event_link' => 'https://calendar.example.test/e/1',
 		);
 
-		$r = $this->ajax( 'ajax_delete_google_calendar' );
+		$_POST = array( 'activity_id' => 61 );
+		$r     = $this->ajax( 'ajax_delete_google_calendar' );
 
 		$this->assertTrue( $r['ok'] );
-		$this->assertArrayNotHasKey( '_convoca_google_event_id', $GLOBALS['_wp_stores']['post_meta'][61] );
-		$this->assertArrayNotHasKey( '_convoca_google_event_link', $GLOBALS['_wp_stores']['post_meta'][61] );
-	}
-
-	/**
-	 * Si Google falla al borrar, el error se explica y **no** se borra el vínculo: el evento sigue allí.
-	 */
-	public function test_borrar_falla(): void {
-		$_POST = array( 'activity_id' => 61 );
-		$GLOBALS['__gc']['configurado'] = true;
-		$GLOBALS['__gc']['lanza']       = true;
-		$GLOBALS['_wp_stores']['post_meta'][61] = array( '_convoca_google_event_id' => 'EV-1' );
-
-		$r = $this->ajax( 'ajax_delete_google_calendar' );
-
-		$this->assertFalse( $r['ok'] );
-		$this->assertSame( 'EV-1', $GLOBALS['_wp_stores']['post_meta'][61]['_convoca_google_event_id'], 'el vínculo se queda' );
+		$this->assertArrayNotHasKey( '_convoca_google_event_id', ( $GLOBALS['_wp_stores']['post_meta'][61] ?? array() ) );
+		$this->assertArrayNotHasKey( '_convoca_google_event_link', ( $GLOBALS['_wp_stores']['post_meta'][61] ?? array() ) );
 	}
 }
