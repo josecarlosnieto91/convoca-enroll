@@ -73,6 +73,8 @@ final class AdminPantallasTest extends TestCase {
 		$GLOBALS['convoca_test_pro']       = array();
 		$GLOBALS['convoca_test_posts']     = array();
 		$GLOBALS['convoca_test_count_posts'] = array();
+		// Tipos que existen en una instalación real: el escritorio depende de que `inscripcion` esté entre ellos.
+		$GLOBALS['convoca_test_post_types']  = array( 'post', 'page', 'actividad', 'miembro', 'inscripcion' );
 		$GLOBALS['_wp_die_lanza']          = true;
 		$_GET                              = array();
 		$_POST                             = array();
@@ -89,7 +91,7 @@ final class AdminPantallasTest extends TestCase {
 		$GLOBALS['convoca_test_pro']         = array();
 		$GLOBALS['convoca_test_posts']       = array();
 		$GLOBALS['convoca_test_count_posts'] = array();
-		$GLOBALS['convoca_test_post_types']  = array( 'post', 'page', 'actividad', 'miembro', 'inscripcion' );
+		$GLOBALS['convoca_test_post_types']  = array();
 		$GLOBALS['_wp_die_lanza']            = false;
 		$_GET                                = $this->get_previo;
 		$_POST                               = $this->post_previo;
