@@ -158,6 +158,113 @@ final class VolunteerHoursTest extends TestCase {
 	}
 
 	/**
+	 * La lista de responsables se limpia: comas, espacios, repetidos y ceros.
+	 */
+	public function test_los_responsables(): void {
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_responsables'] = '7, 9,7 0';
+
+		$this->assertSame( array( 7, 9 ), $this->llamar( 'responsables_de', 61 ) );
+
+		unset( $GLOBALS['_wp_stores']['post_meta'][61]['_convoca_responsables'] );
+		$this->assertSame( array(), $this->llamar( 'responsables_de', 61 ), 'sin responsables, lista vacía' );
+	}
+
+	/**
+	 * El identificador del hecho «esta persona imparte esta actividad» no colisiona.
+	 */
+	public function test_el_origen_del_responsable(): void {
+		$this->assertSame( 61000007, $this->llamar( 'origen_responsable', 61, 7 ) );
+		$this->assertNotSame(
+			$this->llamar( 'origen_responsable', 61, 7 ),
+			$this->llamar( 'origen_responsable', 62, 7 ),
+			'dos actividades no comparten origen'
+		);
+	}
+
+	/**
+	 * Con asistencia marcada, el responsable suma sus horas aunque no esté inscrito.
+	 */
+	public function test_el_responsable_suma(): void {
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_responsables'] = '9';
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_horas_actividad'] = '6';
+		$GLOBALS['__ledger']['puede'][9] = true;
+		$GLOBALS['convoca_test_posts']   = array( 70 );
+
+		$this->llamar( 'sincronizar_responsables', 61 );
+
+		$credit = $this->llamadas()[0];
+		$this->assertSame( 'credit', $credit[0] );
+		$this->assertSame( 'responsable', $credit[1] );
+		$this->assertSame( 9, $credit[3] );
+		$this->assertSame( 6.0, $credit[4] );
+	}
+
+	/**
+	 * Sin ninguna asistencia marcada, la actividad no se ha dado: sus horas se retiran.
+	 */
+	public function test_sin_asistencia_se_retiran(): void {
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_responsables'] = '9';
+		$GLOBALS['convoca_test_posts'] = array();
+
+		$GLOBALS['__ledger']['logs'][901] = array(
+			'origen'    => 'responsable',
+			'origen_id' => 61000009,
+			'user_id'   => 9,
+			'horas'     => 6.0,
+			'estado'    => 'activo',
+		);
+		$GLOBALS['_wp_stores']['post_meta'][901]['_convoca_horas'] = '6';
+
+		$this->llamar( 'sincronizar_responsables', 61 );
+
+		$revoke = $this->llamadas()[0];
+		$this->assertSame( 'revoke', $revoke[0] );
+		$this->assertSame( 'responsable', $revoke[1] );
+	}
+
+	/**
+	 * Sin la puerta abierta, el responsable no acredita (aunque haya asistencia).
+	 */
+	public function test_el_responsable_sin_permiso(): void {
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_responsables'] = '9';
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_horas_actividad'] = '6';
+		$GLOBALS['convoca_test_posts'] = array( 70 );
+
+		$this->llamar( 'sincronizar_responsables', 61 );
+
+		$this->assertSame( array(), $this->llamadas() );
+	}
+
+	/**
+	 * Quien ya cobró por su inscripción no se cuenta otra vez como responsable.
+	 */
+	public function test_no_se_cuenta_dos_veces(): void {
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_responsables'] = '9';
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_horas_actividad'] = '6';
+		$GLOBALS['__ledger']['puede'][9] = true;
+		$GLOBALS['convoca_test_posts']   = array( 70 );
+		$excepto = (object) array( 'ID' => 9 );
+
+		$this->llamar( 'sincronizar_responsables', 61, $excepto );
+
+		$this->assertSame( array(), $this->llamadas(), 'ya está acreditado por su inscripción' );
+	}
+
+	/**
+	 * Sin horas en la actividad no se acredita: no se inventan horas.
+	 */
+	public function test_sin_horas_no_acredita(): void {
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_responsables'] = '9';
+		$GLOBALS['__ledger']['puede'][9] = true;
+		$GLOBALS['convoca_test_posts']   = array( 70 );
+		unset( $GLOBALS['_wp_stores']['post_meta'][61]['_convoca_fecha_inicio'] );
+
+		$this->llamar( 'sincronizar_responsables', 61 );
+
+		$this->assertSame( array(), $this->llamadas() );
+	}
+
+	/**
 	 * Llama a un método privado.
 	 *
 	 * @param string $metodo Método.
