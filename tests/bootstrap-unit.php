@@ -533,6 +533,10 @@ if (!function_exists('get_the_ID')) { function get_the_ID() { return (int) ($GLO
 
 if (!function_exists('update_meta_cache')) { function update_meta_cache($tipo = 'post', $ids = array()) { unset($tipo); return is_array($ids) ? count($ids) : 0; } }
 
+if (!defined('ARRAY_A')) { define('ARRAY_A', 'ARRAY_A'); }
+if (!defined('ARRAY_N')) { define('ARRAY_N', 'ARRAY_N'); }
+if (!defined('OBJECT')) { define('OBJECT', 'OBJECT'); }
+
 /** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
 class Convoca_Json_Cortado extends \Exception {
 
@@ -827,6 +831,7 @@ if (!isset($GLOBALS['wpdb'])) {
         }
         public function get_results($q = null, $o = 'OBJECT') {
             $sql = (string) (is_string($q) ? $q : '');
+            $GLOBALS['db_reads'][] = $sql;
             foreach (($GLOBALS['_wp_stores']['results_mapa'] ?? []) as $aguja => $filas) {
                 if ('' !== $aguja && false !== strpos($sql, (string) $aguja)) { return $filas; }
             }

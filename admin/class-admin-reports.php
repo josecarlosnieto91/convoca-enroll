@@ -1054,13 +1054,10 @@ endif;
 
 		$data = array();
 		foreach ( $grouped as $act ) {
-			$c                    = $act['count'];
-			$act['gestion']       = $act['gestion'] / $c;
-			$act['instalaciones'] = $act['instalaciones'] / $c;
-			$act['participantes'] = $act['participantes'] / $c;
-			$act['comunicacion']  = $act['comunicacion'] / $c;
-			$act['media_global']  = ( $act['gestion'] + $act['instalaciones'] + $act['participantes'] + $act['comunicacion'] ) / 4;
-			$data[]               = $act;
+			// Las cuatro cifras ya vienen como `AVG()` del SQL: dividirlas otra vez por el número de evaluaciones
+			// daba medias falsas (con 8 evaluaciones de 4,25 salía 0,53 y así se pintaba en la tabla y el CSV).
+			$act['media_global'] = ( $act['gestion'] + $act['instalaciones'] + $act['participantes'] + $act['comunicacion'] ) / 4;
+			$data[]              = $act;
 		}
 
 		usort(
