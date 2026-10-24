@@ -277,6 +277,31 @@ namespace Google\Service\Calendar {
 		 */
 		class Event {
 
+			/**
+			 * Constructor: el SDK real acepta el array de datos (`summary`, `description`, `location`,
+			 * `start`/`end` como arrays) y de el saca las propiedades. Sin esto, el producto parecia
+			 * enviar un evento vacio.
+			 *
+			 * @param array $datos Datos del evento.
+			 */
+			public function __construct( $datos = array() ) {
+				if ( ! is_array( $datos ) ) {
+					return;
+				}
+				$this->summary     = (string) ( $datos['summary'] ?? '' );
+				$this->description = (string) ( $datos['description'] ?? '' );
+				$this->location    = (string) ( $datos['location'] ?? '' );
+
+				foreach ( array( 'start' => 'start', 'end' => 'end' ) as $clave => $propiedad ) {
+					if ( empty( $datos[ $clave ]['dateTime'] ) ) {
+						continue;
+					}
+					$cuando = new \Google\Service\Calendar\EventDateTime();
+					$cuando->setDateTime( $datos[ $clave ]['dateTime'] );
+					$this->$propiedad = $cuando;
+				}
+			}
+
 			/** @var string */
 			private $summary = '';
 			/** @var string */

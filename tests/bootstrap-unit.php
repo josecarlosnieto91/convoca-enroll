@@ -382,6 +382,26 @@ if (!function_exists('untrailingslashit')) {
     }
 }
 
+if (!function_exists('wp_hash')) {
+    /** Hash con la sal del sitio; para el nombre de fichero basta con que sea estable. */
+    function wp_hash($texto, $esquema = 'auth') {
+        return hash_hmac('md5', (string) $texto, 'sal-de-prueba-' . $esquema);
+    }
+}
+
+if (!function_exists('get_temp_dir')) {
+    /** Directorio temporal del sistema, con barra final (como WordPress). */
+    function get_temp_dir() {
+        return rtrim(sys_get_temp_dir(), '/') . '/';
+    }
+}
+if (!function_exists('wp_delete_file')) {
+    /** Borra un fichero; devuelve si existia. */
+    function wp_delete_file($ruta) {
+        return file_exists($ruta) ? @unlink($ruta) : false;
+    }
+}
+
 if (!function_exists('wp_mkdir_p')) {
     /** Crea el directorio (y sus padres) como WordPress. */
     function wp_mkdir_p($dir) {
