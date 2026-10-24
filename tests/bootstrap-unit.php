@@ -1318,7 +1318,9 @@ if (!function_exists('get_userdata')) {
         $u->ID = $id;
         $u->display_name = "User $id";
         $u->user_email = "user$id@test.com";
-        // El `WP_User` real trae el login y el nicename: el exportador de evaluaciones los usa.
+        // El `WP_User` real trae estas propiedades (las lee el compromiso y el exportador de evaluaciones).
+        $u->first_name = '';
+        $u->last_name = '';
         $u->user_login = "user$id";
         $u->user_nicename = "user$id";
         $u->roles = (array) ($GLOBALS['convoca_test_roles'][ $id ] ?? array( 'subscriber' ));
