@@ -20,11 +20,15 @@
       <directory suffix="Test.php">./tests/Unit</directory>
     </testsuite>
   </testsuites>
+  <!-- `public/` y `social/` son endpoints y publicación en redes: código de producto, entra. `templates/` queda
+       fuera por ser presentación. -->
   <source>
     <include>
       <directory suffix=".php">./includes</directory>
       <directory suffix=".php">./admin</directory>
       <directory suffix=".php">./media</directory>
+      <directory suffix=".php">./public</directory>
+      <directory suffix=".php">./social</directory>
     </include>
   </source>
 </phpunit>
