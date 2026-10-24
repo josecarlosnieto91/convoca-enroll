@@ -31,6 +31,17 @@ namespace Convoca\Core {
              * @return bool
              */
             /**
+             * Guarda un aviso para la siguiente pantalla.
+             *
+             * @param string $mensaje Texto.
+             * @param string $tipo    info|success|warning|error.
+             * @return void
+             */
+            public static function set_admin_notice( $mensaje, $tipo = 'info' ) {
+                $GLOBALS['_wp_stores']['transients']['_convoca_notices'][] = array( 'mensaje' => $mensaje, 'tipo' => $tipo );
+            }
+
+            /**
              * Panel de diagnóstico: una fila por comprobación.
              *
              * @param array $checks Comprobaciones.
@@ -409,6 +420,17 @@ if (!function_exists('wp_generate_password')) {
     }
 }
 
+if (!function_exists('esc_url_raw')) {
+    /** URL limpia: solo http(s) (y rutas relativas); un `javascript:` no pasa. */
+    function esc_url_raw($u) {
+        $u = trim((string) $u);
+        if ('' === $u) { return ''; }
+        if (preg_match('/^[a-z][a-z0-9+.-]*:/i', $u) && !preg_match('#^https?://#i', $u)) { return ''; }
+        return $u;
+    }
+}
+if (!function_exists('sanitize_textarea_field')) { function sanitize_textarea_field($t) { return trim(strip_tags((string) $t)); } }
+
 /** Corta el flujo cuando el producto responde por ajax (el real acaba en `wp_die`). */
 class Convoca_Json_Cortado extends \Exception {
 
@@ -614,7 +636,17 @@ if (!function_exists('get_current_screen')) { function get_current_screen() { re
 if (!function_exists('wp_enqueue_style')) { function wp_enqueue_style($h, $s = '', $d = [], $v = '', $m = 'all') {} }
 if (!function_exists('wp_register_style')) { function wp_register_style($h, $s, $d = [], $v = '', $m = 'all') { return true; } }
 if (!function_exists('wp_set_script_translations')) { function wp_set_script_translations($h, $d, $p) {} }
-if (!function_exists('wp_kses_post')) { function wp_kses_post($s) { return $s; } }
+if (!function_exists('wp_kses_post')) {
+    /**
+     * Como el real en lo que importa aquí: el HTML permitido se queda y un `<script>` (o un `on*=`) no pasa.
+     * Devolver el texto tal cual hacía que ninguna prueba de XSS pudiera fallar.
+     */
+    function wp_kses_post($s) {
+        $s = preg_replace('#<script\b[^>]*>.*?</script>#is', '', (string) $s);
+        $s = preg_replace('#<style\b[^>]*>.*?</style>#is', '', (string) $s);
+        return preg_replace('/\son[a-z]+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', (string) $s);
+    }
+}
 if (!function_exists('wp_rand')) { function wp_rand($min = 0, $max = PHP_INT_MAX) { return rand($min, $max); } }
 if (!function_exists('user_can')) {
     /**
