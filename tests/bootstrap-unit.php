@@ -1181,6 +1181,47 @@ if (!function_exists('wp_update_post')) {
         return $id ?: wp_insert_post($d);
     }
 }
+if (!function_exists('_convoca_meta_encaja')) {
+    /**
+     * ¿La meta de una entrada cumple la consulta? Entiende `=`, `!=`, `LIKE`, `EXISTS`, `NOT EXISTS`, `IN` y
+     * `BETWEEN` (fechas), con `relation` AND/OR — que es lo que usan las consultas del plugin.
+     *
+     * @param int   $id Entrada.
+     * @param array $mq Consulta de meta.
+     * @return bool
+     */
+    function _convoca_meta_encaja($id, $mq) {
+        $mq = (array) $mq;
+        $relacion = strtoupper((string) ($mq['relation'] ?? 'AND'));
+
+        $resultados = array();
+        foreach ($mq as $clave => $clausula) {
+            if ('relation' === $clave || !is_array($clausula) || empty($clausula['key'])) { continue; }
+            $meta  = $GLOBALS['_wp_stores']['post_meta'][$id] ?? array();
+            $tiene = array_key_exists((string) $clausula['key'], $meta);
+            $valor = $tiene ? $meta[(string) $clausula['key']] : null;
+            $esperado = $clausula['value'] ?? null;
+            $comp = strtoupper((string) ($clausula['compare'] ?? (is_array($esperado) ? 'IN' : '=')));
+
+            if ('NOT EXISTS' === $comp) { $resultados[] = !$tiene; continue; }
+            if ('EXISTS' === $comp) { $resultados[] = $tiene; continue; }
+            if ('BETWEEN' === $comp) {
+                $v = $tiene ? strtotime((string) $valor) : false;
+                $resultados[] = $v && is_array($esperado) && $v >= strtotime((string) $esperado[0]) && $v <= strtotime((string) $esperado[1]);
+                continue;
+            }
+            if ('IN' === $comp) { $resultados[] = $tiene && in_array((string) $valor, array_map('strval', (array) $esperado), true); continue; }
+            if ('!=' === $comp) { $resultados[] = !$tiene || (string) $valor !== (string) $esperado; continue; }
+            if ('LIKE' === $comp) { $resultados[] = $tiene && false !== strpos((string) $valor, (string) $esperado); continue; }
+            $resultados[] = $tiene && (string) $valor === (string) $esperado;
+        }
+
+        if (empty($resultados)) { return true; }
+
+        return 'OR' === $relacion ? in_array(true, $resultados, true) : !in_array(false, $resultados, true);
+    }
+}
+
 if (!function_exists('get_posts')) {
     /**
      * Posts según lo que fije la prueba en `convoca_test_posts`; por defecto, ninguno — que es lo
@@ -1202,6 +1243,11 @@ if (!function_exists('get_posts')) {
             // y luego inscripciones) tienen que ver cosas distintas.
             $tipo = is_object($post) ? (string) ($post->post_type ?? '') : '';
             if ('' !== $tipo && !empty($a['post_type']) && $a['post_type'] !== $tipo) { continue; }
+            // `meta_query`: por defecto el doble devuelve todo lo del tipo (32 pruebas del repo dependen de eso
+            // hoy, ver enroll#44). Con `convoca_test_meta_estricto` se filtra por meta, que es el contrato real.
+            if (!empty($a['meta_query']) && is_object($post) && !empty($GLOBALS['convoca_test_meta_estricto'])) {
+                if (!_convoca_meta_encaja((int) $post->ID, (array) $a['meta_query'])) { continue; }
+            }
             $salida[] = $post;
         }
         return $salida;

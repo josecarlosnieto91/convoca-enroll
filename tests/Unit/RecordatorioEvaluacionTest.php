@@ -35,6 +35,8 @@ class RecordatorioEvaluacionTest extends TestCase {
 		$GLOBALS['_convoca_acciones'] = array();
 		$GLOBALS['db_inserts']        = array();
 		$GLOBALS['_test_users']       = array();
+		$GLOBALS['convoca_test_posts'] = array();
+		unset( $GLOBALS['convoca_test_meta_estricto'] );
 	}
 
 	/**
@@ -42,7 +44,8 @@ class RecordatorioEvaluacionTest extends TestCase {
 	 */
 	protected function tearDown(): void {
 		$GLOBALS['_wp_stores'] = array( 'options' => array() );
-		unset( $GLOBALS['_convoca_acciones'], $GLOBALS['db_inserts'], $GLOBALS['_test_users'] );
+		$GLOBALS['convoca_test_posts'] = array();
+		unset( $GLOBALS['_convoca_acciones'], $GLOBALS['db_inserts'], $GLOBALS['_test_users'], $GLOBALS['convoca_test_meta_estricto'] );
 	}
 
 	/**
@@ -196,5 +199,36 @@ class RecordatorioEvaluacionTest extends TestCase {
 		$this->assertStringContainsString( 'Persona 7', (string) ( $correo['body_html'] ?? '' ), 'y el cuerpo, el nombre de quien evalúa' );
 
 		$this->assertArrayHasKey( '_convoca_reminder_eval_sent', $GLOBALS['_wp_stores']['post_meta'][55], 'la inscripción queda marcada' );
+	}
+
+	/**
+	 * El tope por pasada es 30: con más inscripciones elegibles no se encola la 31.
+	 *
+	 * Enciende el filtro de meta del arnés (`convoca_test_meta_estricto`): sin él, `get_posts()` devuelve todo
+	 * lo del tipo y la prueba mediría el vacío o de más (enroll#44).
+	 */
+	public function test_el_tope_por_pasada_es_treinta(): void {
+		$GLOBALS['convoca_test_meta_estricto'] = true;
+
+		for ( $i = 1; $i <= 40; $i++ ) {
+			$this->usuario( $i, array( 'voluntario_aprobado' ) );
+			$inscripcion                  = new \stdClass();
+			$inscripcion->ID              = 100 + $i;
+			$inscripcion->post_type       = 'inscripcion';
+			$inscripcion->post_status     = 'publish';
+			$inscripcion->post_title      = 'Inscripción ' . $i;
+
+			// `get_posts()` del arnés de enroll lee `convoca_test_posts`; la meta, en cambio, sale de
+			// `_wp_stores['post_meta']`. Mezclar los dos almacenes era la razón de que la consulta no viera nada.
+			$GLOBALS['convoca_test_posts'][ 100 + $i ] = $inscripcion;
+			$GLOBALS['_wp_stores']['post_meta'][ 100 + $i ]['_convoca_actividad_id'] = '21';
+			$GLOBALS['_wp_stores']['post_meta'][ 100 + $i ]['_convoca_estado']       = 'confirmada';
+			$GLOBALS['_wp_stores']['post_meta'][ 100 + $i ]['_convoca_asistencia']   = 'si';
+			$GLOBALS['_wp_stores']['post_meta'][ 100 + $i ]['_convoca_user_id']      = (string) $i;
+		}
+
+		$enviados = $this->privado( 'process_activity', array( 21, 'Asunto', 'Cuerpo', '', '', 30 ) );
+
+		$this->assertSame( 30, $enviados, 'no se pasa de treinta recordatorios por pasada' );
 	}
 }
