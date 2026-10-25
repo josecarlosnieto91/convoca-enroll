@@ -80,15 +80,15 @@ final class ActividadShortcodesTest extends TestCase {
 	}
 
 	/**
-	 * `precio_socio` sale **sin** formatear.
+	 * Los campos de precio salen formateados.
 	 *
-	 * DEFECTO ANOTADO (sin corregir): el shortcode solo formatea cuando el campo se llama `precio`, y `precio` **no
-	 * es ninguna meta** del plugin (`META_KEYS` tiene `precio_socio`, `precio_socio_dia`). Así que la plantilla que
-	 * pida `field="precio_socio"` recibe `60.5`, sin coma ni euro; y la que pida `field="precio"` no recibe nada.
-	 * Se fija el comportamiento actual para no fingir que formatea.
+	 * Antes solo se formateaba `precio`, que **no es ninguna meta** del plugin: las de verdad son `precio_socio`,
+	 * `precio_socio_dia` y `precio_general`. Así que la plantilla pedía `field="precio_socio"` y recibía `60.5`
+	 * crudo, sin coma ni euro (enroll#37).
 	 */
-	public function test_precio_socio_sale_crudo(): void {
-		$this->assertSame( '60.5', $this->cpt->shortcode_actividad_meta( array( 'field' => 'precio_socio' ) ) );
+	public function test_los_precios_salen_formateados(): void {
+		$this->assertSame( '60,50 €', $this->cpt->shortcode_actividad_meta( array( 'field' => 'precio_socio' ) ) );
+
 	}
 
 	/**

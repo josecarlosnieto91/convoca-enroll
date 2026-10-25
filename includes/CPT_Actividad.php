@@ -983,7 +983,11 @@ class CPT_Actividad {
 			return '';
 		}
 
-		if ( 'precio' === $atts['field'] ) {
+		// **`precio` no es ninguna meta.** Las de la actividad son `precio_socio`, `precio_socio_dia` y
+		// `precio_general`, así que el formateo y el campo real no se cruzaban nunca: `field="precio_socio"`
+		// devolvía `60.5` crudo y `field="precio"` devolvía vacío porque la meta no existe (enroll#37).
+		$campos_de_precio = array( 'precio', 'precio_socio', 'precio_socio_dia', 'precio_general' );
+		if ( in_array( $atts['field'], $campos_de_precio, true ) ) {
 			return (float) $value > 0 ? number_format( (float) $value, 2, ',', '.' ) . ' €' : 'Gratis';
 		}
 		if ( 'plazas_disponibles' === $atts['field'] ) {
