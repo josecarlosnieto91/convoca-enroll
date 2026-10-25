@@ -80,6 +80,24 @@ class Media_Rest_API {
 		) );
 	}
 
+
+	/**
+	 * Resuelve un colaborador del módulo de medios, permitiendo sustituirlo con un filtro.
+	 *
+	 * El endpoint no tiene por qué construir sus colaboradores a pelo: sin nadie enganchado al filtro el
+	 * comportamiento es exactamente el de antes (se usa la clase real), y una prueba puede aportar su propio
+	 * motor sin arrastrar Imagick ni la base de datos. Es aditivo y reversible.
+	 *
+	 * @param string   $nombre  Nombre corto del colaborador (`poster`, `qr`, `templates`, `blog`).
+	 * @param callable $defecto Implementación real, usada si nadie filtra.
+	 * @return callable
+	 */
+	private function colaborador( string $nombre, callable $defecto ): callable {
+		$inyectado = apply_filters( 'convoca_media_' . $nombre, null );
+
+		return is_callable( $inyectado ) ? $inyectado : $defecto;
+	}
+
 	public function render_poster( \WP_REST_Request $request ): \WP_REST_Response {
 		$actividad_id = (int) $request->get_param( 'actividad_id' );
 		$template     = $request->get_param( 'template' ) ?: 'naturaleza';
@@ -88,7 +106,11 @@ class Media_Rest_API {
 		$force        = (bool) $request->get_param( 'force' );
 		$export       = $request->get_param( 'export' ) ?: 'png';
 
-		$result = Poster_Engine::render( $actividad_id, $template, array(
+		$render = $this->colaborador( 'poster', static function ( $id, $slug, $opciones ) {
+			return Poster_Engine::render( $id, $slug, $opciones );
+		} );
+
+		$result = $render( $actividad_id, $template, array(
 			'formats'  => array( $format ),
 			'image_id' => $image_id,
 			'force'    => $force,
@@ -112,9 +134,15 @@ class Media_Rest_API {
 		$actividad_id = (int) $request->get_param( 'actividad_id' );
 		$template     = $request->get_param( 'template' ) ?: 'naturaleza';
 
-		QR_Generator::invalidate( $actividad_id );
+		$invalidar = $this->colaborador( 'qr', static function ( $id ) {
+			QR_Generator::invalidate( $id );
+		} );
+		$invalidar( $actividad_id );
 
-		$result = Poster_Engine::render( $actividad_id, $template, array( 'force' => true ) );
+		$render = $this->colaborador( 'poster', static function ( $id, $slug, $opciones ) {
+			return Poster_Engine::render( $id, $slug, $opciones );
+		} );
+		$result = $render( $actividad_id, $template, array( 'force' => true ) );
 
 		if ( is_wp_error( $result ) ) {
 			return new \WP_REST_Response( array( 'error' => $result->get_error_message() ), 400 );
@@ -128,12 +156,18 @@ class Media_Rest_API {
 	}
 
 	public function list_templates(): \WP_REST_Response {
-		$templates = Template_Manager::get_all();
+		$listar    = $this->colaborador( 'templates', static function () {
+			return Template_Manager::get_all();
+		} );
+		$templates = $listar();
 		return new \WP_REST_Response( $templates, 200 );
 	}
 
 	public function get_template( \WP_REST_Request $request ): \WP_REST_Response {
-		$tpl = Template_Manager::get( (int) $request->get_param( 'id' ) );
+		$buscar = $this->colaborador( 'template', static function ( $id ) {
+			return Template_Manager::get( $id );
+		} );
+		$tpl    = $buscar( (int) $request->get_param( 'id' ) );
 		if ( ! $tpl ) {
 			return new \WP_REST_Response( array( 'error' => __( 'Template not found', 'convoca-enroll' ) ), 404 );
 		}
@@ -144,7 +178,10 @@ class Media_Rest_API {
 		$actividad_id = (int) $request->get_param( 'actividad_id' );
 		$status       = $request->get_param( 'status' ) ?: 'draft';
 
-		$post_id = Blog_Post_Manager::create_or_update( $actividad_id, null, $status );
+		$crear   = $this->colaborador( 'blog', static function ( $id, $previo, $estado ) {
+			return Blog_Post_Manager::create_or_update( $id, $previo, $estado );
+		} );
+		$post_id = $crear( $actividad_id, null, $status );
 		if ( is_wp_error( $post_id ) ) {
 			return new \WP_REST_Response( array( 'error' => $post_id->get_error_message() ), 400 );
 		}
