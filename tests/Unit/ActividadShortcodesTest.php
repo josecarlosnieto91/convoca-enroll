@@ -149,7 +149,13 @@ final class ActividadShortcodesTest extends TestCase {
 	 * Las próximas actividades: publicadas, con fecha, en orden y solo las que aún no han pasado.
 	 */
 	public function test_las_proximas(): void {
-		$GLOBALS['convoca_test_posts'] = array( (object) array( 'ID' => 61 ) );
+		$proxima             = new \WP_Post();
+		$proxima->ID         = 61;
+		$proxima->post_type  = 'actividad';
+		$GLOBALS['convoca_test_posts'] = array( $proxima );
+		// `get_upcoming()` filtra por `_convoca_fecha_inicio >= ahora`: sin la meta, la actividad no está en la
+		// lista para el doble estricto (enroll#44).
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_fecha_inicio'] = wp_date( 'Y-m-d H:i', strtotime( '+3 days' ) );
 
 		$lista = CPT_Actividad::get_upcoming( 5 );
 

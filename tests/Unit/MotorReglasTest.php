@@ -126,7 +126,13 @@ final class MotorReglasTest extends TestCase {
 		$this->assertTrue( Motor_Inscripcion::check_limite_reservas( 'ana@example.test' ), 'sin reservas, entra' );
 
 		$GLOBALS['convoca_test_posts'] = array( (object) array( 'ID' => 70 ) );
-		$error                         = Motor_Inscripcion::check_limite_reservas( 'ana@example.test' );
+		// La consulta filtra por email y estado: sin esas metas el doble estricto no cuenta la reserva (enroll#44).
+		$GLOBALS['_wp_stores']['post_meta'][70] = array(
+			'_convoca_email'        => 'ana@example.test',
+			'_convoca_estado'       => 'confirmada',
+			'_convoca_actividad_id' => '61',
+		);
+		$error = Motor_Inscripcion::check_limite_reservas( 'ana@example.test' );
 
 		$this->assertInstanceOf( \WP_Error::class, $error );
 		$this->assertSame( 'limite_reservas', $error->get_error_code() );
@@ -152,6 +158,10 @@ final class MotorReglasTest extends TestCase {
 		$inscripcion->ID                     = 70;
 		$inscripcion->post_type              = 'inscripcion';
 		$GLOBALS['convoca_test_posts']       = array( $inscripcion );
+		$GLOBALS['_wp_stores']['post_meta'][70] = array(
+			'_convoca_email'  => 'ana@example.test',
+			'_convoca_codigo_reserva' => 'AAAABBBB',
+		);
 
 		$this->assertSame( 70, Motor_Inscripcion::buscar_por_codigo( 'ana@example.test', 'aaaabbbb' )->ID, 'el código se busca en mayúsculas' );
 	}

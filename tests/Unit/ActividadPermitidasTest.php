@@ -96,6 +96,9 @@ final class ActividadPermitidasTest extends TestCase {
 		$actividad->ID                    = 63;
 		$actividad->post_type             = 'actividad';
 		$GLOBALS['convoca_test_posts']    = array( $actividad );
+		// `get_allowed_activities_ids()` busca el id en `_convoca_responsables` con REGEXP; sin la meta no la ve
+		// (enroll#44). `get_current_user_id()` del arnés devuelve 1.
+		$GLOBALS['_wp_stores']['post_meta'][63] = array( '_convoca_responsables' => '1' );
 
 		$this->assertSame( array( 63 ), CPT_Actividad::get_allowed_activities_ids() );
 	}
@@ -117,7 +120,12 @@ final class ActividadPermitidasTest extends TestCase {
 		$inscripcion->ID                    = 70;
 		$inscripcion->post_type             = 'inscripcion';
 		$GLOBALS['convoca_test_posts']      = array( $inscripcion );
-		$GLOBALS['_wp_stores']['post_meta'][70] = array( '_convoca_actividad_id' => 64 );
+		// También el correo y el estado: la consulta de la inscripción confirmada los filtra (enroll#44).
+		$GLOBALS['_wp_stores']['post_meta'][70] = array(
+			'_convoca_actividad_id' => 64,
+			'_convoca_email'        => 'user1@test.com',
+			'_convoca_estado'       => 'confirmada',
+		);
 
 		$this->assertContains( 64, CPT_Actividad::get_allowed_activities_ids(), 'la actividad de su inscripción' );
 	}

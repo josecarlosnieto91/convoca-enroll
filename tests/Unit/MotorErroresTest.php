@@ -270,6 +270,13 @@ final class MotorErroresTest extends TestCase {
 		$previa->ID                    = 80;
 		$previa->post_type             = 'inscripcion';
 		$GLOBALS['convoca_test_posts'] = array( $previa );
+		// Las metas que la consulta **filtra**: `actividad_id`, `email` y `estado`. Sin ellas el doble estricto
+		// no ve la reserva previa y el límite no se aplica (enroll#44).
+		$GLOBALS['_wp_stores']['post_meta'][80] = array(
+			'_convoca_actividad_id' => '61',
+			'_convoca_email'        => 'ana@example.com',
+			'_convoca_estado'       => 'confirmada',
+		);
 
 		$error = Motor_Inscripcion::inscribir( 61, $this->datos() );
 

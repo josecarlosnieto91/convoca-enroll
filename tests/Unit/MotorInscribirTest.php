@@ -198,6 +198,12 @@ final class MotorInscribirTest extends TestCase {
 		$existente->ID           = 70;
 		$existente->post_type    = 'inscripcion';
 		$GLOBALS['convoca_test_posts'] = array( $existente );
+		// Las metas que la consulta filtra; sin ellas el doble estricto no ve el duplicado (enroll#44).
+		$GLOBALS['_wp_stores']['post_meta'][70] = array(
+			'_convoca_actividad_id' => '61',
+			'_convoca_email'        => 'ana@example.com',
+			'_convoca_estado'       => 'confirmada',
+		);
 
 		$this->assertWPErrorCode( 'duplicate', Motor_Inscripcion::inscribir( 61, $this->datos() ) );
 	}

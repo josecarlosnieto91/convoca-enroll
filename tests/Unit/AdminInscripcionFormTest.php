@@ -190,6 +190,12 @@ final class AdminInscripcionFormTest extends TestCase {
 		$existente->ID                 = 70;
 		$existente->post_type          = 'inscripcion';
 		$GLOBALS['convoca_test_posts'] = array( $existente );
+		// Metas que la consulta de duplicado filtra (enroll#44).
+		$GLOBALS['_wp_stores']['post_meta'][70] = array(
+			'_convoca_actividad_id' => '61',
+			'_convoca_email'        => 'ana@example.com',
+			'_convoca_estado'       => 'confirmada',
+		);
 
 		$_POST = array( 'actividad_id' => 61, 'nombre' => 'Ana', 'email' => 'ana@example.com', 'rgpd' => '1' );
 

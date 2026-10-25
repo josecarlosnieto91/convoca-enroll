@@ -30,7 +30,6 @@ class FormularioEvaluacionTest extends TestCase {
 		$GLOBALS['convoca_test_caps']  = array();
 		$GLOBALS['_wp_json']           = array();
 		$GLOBALS['_convoca_acciones']  = array();
-		$GLOBALS['convoca_test_meta_estricto'] = true;
 		$_POST                        = array();
 	}
 
@@ -41,7 +40,7 @@ class FormularioEvaluacionTest extends TestCase {
 		$GLOBALS['_wp_stores']         = array( 'options' => array() );
 		$GLOBALS['convoca_test_posts'] = array();
 		$_POST                         = array();
-		unset( $GLOBALS['_test_users'], $GLOBALS['_test_caps'], $GLOBALS['convoca_test_caps'], $GLOBALS['_wp_json'], $GLOBALS['convoca_test_meta_estricto'] );
+		unset( $GLOBALS['_test_users'], $GLOBALS['_test_caps'], $GLOBALS['convoca_test_caps'], $GLOBALS['_wp_json'] );
 	}
 
 	/**

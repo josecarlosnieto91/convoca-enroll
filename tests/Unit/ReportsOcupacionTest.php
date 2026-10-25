@@ -69,7 +69,11 @@ final class ReportsOcupacionTest extends TestCase {
 		}
 		$GLOBALS['convoca_test_posts'] = array();
 		$GLOBALS['_test_caps']         = array( 'manage_options' => true );
-		unset( $_GET['start_date'], $_GET['end_date'], $_GET['status'] );
+		// Las actividades de prueba son de noviembre de 2026 y la pestaña, sin fechas, mira **el mes en curso**:
+		// con el rango por defecto el `meta_query` las descarta todas (enroll#44).
+		$_GET['start_date'] = '2026-11-01';
+		$_GET['end_date']   = '2026-11-30';
+		unset( $_GET['status'] );
 		$this->informes        = new Admin_Reports();
 	}
 

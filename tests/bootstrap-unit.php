@@ -1475,8 +1475,44 @@ if (!function_exists('_convoca_meta_encaja')) {
                 continue;
             }
             if ('IN' === $comp) { $resultados[] = $tiene && in_array((string) $valor, array_map('strval', (array) $esperado), true); continue; }
+            // `NOT IN`: como en WordPress, solo cuentan las entradas que **tienen** la meta y su valor no está en la
+            // lista. Una entrada sin la meta no casa — sin esto, el motor daba por «no cancelada» lo que no tenía
+            // estado y dejaba pasar un duplicado (enroll#44).
+            if ('NOT IN' === $comp) { $resultados[] = $tiene && !in_array((string) $valor, array_map('strval', (array) $esperado), true); continue; }
             if ('!=' === $comp) { $resultados[] = !$tiene || (string) $valor !== (string) $esperado; continue; }
             if ('LIKE' === $comp) { $resultados[] = $tiene && false !== strpos((string) $valor, (string) $esperado); continue; }
+            // `REGEXP`: WordPress lo usa para «el id está en una lista separada por comas», con el patrón
+            // `(^|,)ID(,|$)`. Sin esto, `get_allowed_activities_ids()` no devolvía nunca ninguna actividad
+            // (enroll#44).
+            if ('REGEXP' === $comp || 'RLIKE' === $comp) {
+                if (!$tiene) { $resultados[] = false; continue; }
+                // @ suppressing: un patrón mal formado devuelve false, que es lo que hace MySQL con un error.
+                $casa = @preg_match('#' . str_replace('#', '\\#', (string) $esperado) . '#', (string) $valor);
+                $resultados[] = 1 === $casa;
+                continue;
+            }
+            // Los cuatro comparadores de orden. Comparan como fecha si alguno de los dos lados lo parece —que es
+            // como WordPress los usa con `type => 'DATETIME'`— y como número o cadena si no. Sin ellos, el
+            // `>=` de `get_upcoming()` caía en la comparación de igualdad y no devolvía nada (enroll#44).
+            if (in_array($comp, array('>', '>=', '<', '<='), true)) {
+                if (!$tiene) { $resultados[] = false; continue; }
+                $izq = (string) $valor;
+                $der = (string) $esperado;
+                if (false !== strtotime($izq) && false !== strtotime($der)) {
+                    $izq = (string) strtotime($izq);
+                    $der = (string) strtotime($der);
+                } else {
+                    $izq = (string) (float) $izq;
+                    $der = (string) (float) $der;
+                }
+                $resultados[] = match ($comp) {
+                    '>'  => (float) $izq > (float) $der,
+                    '>=' => (float) $izq >= (float) $der,
+                    '<'  => (float) $izq < (float) $der,
+                    '<=' => (float) $izq <= (float) $der,
+                };
+                continue;
+            }
             $resultados[] = $tiene && (string) $valor === (string) $esperado;
         }
 
@@ -1507,9 +1543,12 @@ if (!function_exists('get_posts')) {
             // y luego inscripciones) tienen que ver cosas distintas.
             $tipo = is_object($post) ? (string) ($post->post_type ?? '') : '';
             if ('' !== $tipo && !empty($a['post_type']) && $a['post_type'] !== $tipo) { continue; }
-            // `meta_query`: por defecto el doble devuelve todo lo del tipo (32 pruebas del repo dependen de eso
-            // hoy, ver enroll#44). Con `convoca_test_meta_estricto` se filtra por meta, que es el contrato real.
-            if (!empty($a['meta_query']) && is_object($post) && !empty($GLOBALS['convoca_test_meta_estricto'])) {
+            // `meta_query`: **se filtra por meta**, que es el contrato real de `get_posts()`.
+            //
+            // Antes era opt-in (`convoca_test_meta_estricto`) porque al activarlo rompían 22 pruebas que
+            // sembraban escenarios imposibles: inscripciones sin actividad ni estado, actividades sin fecha. Eran
+            // pruebas que pasaban por el doble, no por el producto. Ahora ninguna depende de eso (enroll#44).
+            if (!empty($a['meta_query']) && is_object($post)) {
                 if (!_convoca_meta_encaja((int) $post->ID, (array) $a['meta_query'])) { continue; }
             }
             $salida[] = $post;

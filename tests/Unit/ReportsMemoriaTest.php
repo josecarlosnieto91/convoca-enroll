@@ -156,6 +156,8 @@ final class ReportsMemoriaTest extends TestCase {
 	 */
 	public function test_sin_datos_de_participantes(): void {
 		$GLOBALS['convoca_test_posts'] = array( $GLOBALS['_wp_stores']['posts'][61] );
+		// La fecha de la actividad, que es por lo que filtra el informe del año (enroll#44).
+		$GLOBALS['_wp_stores']['post_meta'][61] = array( '_convoca_fecha_inicio' => '2025-11-14 18:00:00' );
 		$GLOBALS['_wp_stores']['get_row_mapa'] = array();
 
 		$filas = $this->llamar( 'get_memoria_data', 2025 );
@@ -171,6 +173,10 @@ final class ReportsMemoriaTest extends TestCase {
 	 */
 	public function test_la_pestana(): void {
 		$GLOBALS['convoca_test_posts'] = array( $GLOBALS['_wp_stores']['posts'][61] );
+		// La actividad es de 2025 y la pestaña mira el año pedido: sin `year` usa el actual y la fila no sale
+		// (enroll#44).
+		$GLOBALS['_wp_stores']['post_meta'][61] = array( '_convoca_fecha_inicio' => '2025-11-14 18:00:00' );
+		$_GET['year'] = 2025;
 
 		ob_start();
 		try {
@@ -180,6 +186,6 @@ final class ReportsMemoriaTest extends TestCase {
 		}
 
 		$this->assertStringContainsString( 'Ruta de otoño', $html );
-		$this->assertStringContainsString( (string) (int) wp_date( 'Y' ), $html, 'el año en el selector' );
+		$this->assertStringContainsString( '2025', $html, 'el año pedido en el selector' );
 	}
 }

@@ -199,10 +199,15 @@ final class EmailSendTest extends TestCase {
 	 * @param string $slug   Plantilla que debe salir.
 	 * @return void
 	 */
-	public function test_los_crons_de_recordatorio( string $metodo, string $slug ): void {
+	public function test_los_crons_de_recordatorio( string $metodo, string $slug, string $reminder_key, string $campo, string $fecha ): void {
 		$GLOBALS['db_inserts']           = array();
 		$GLOBALS['convoca_test_posts']   = array( $GLOBALS['_wp_stores']['posts'][62], (object) array( 'ID' => 470 ) );
 		$GLOBALS['wpdb']->rows_affected  = 1;
+
+		// El cron busca las actividades por dos metas: la marca de ese recordatorio y la fecha en su ventana. Sin
+		// ellas el doble estricto no devuelve la actividad y no se manda nada (enroll#44).
+		$GLOBALS['_wp_stores']['post_meta'][62][ '_convoca_' . $reminder_key ] = '1';
+		$GLOBALS['_wp_stores']['post_meta'][62][ $campo ]                     = wp_date( 'Y-m-d\TH:i', strtotime( $fecha ) );
 
 		$this->correos->{$metodo}();
 
@@ -217,11 +222,12 @@ final class EmailSendTest extends TestCase {
 	 * @return array
 	 */
 	public static function crons(): array {
+		// El cuarto y el quinto son la marca que el cron exige y la fecha que tiene que caer en su ventana.
 		return array(
-			'7 días'   => array( 'cron_reminder_7dias', 'recordatorio_7dias' ),
-			'24 horas' => array( 'cron_reminder_24h', 'recordatorio_24h' ),
-			'1 hora'   => array( 'cron_reminder_1hora', 'recordatorio_1hora' ),
-			'encuesta' => array( 'cron_feedback', 'feedback_post' ),
+			'7 días'   => array( 'cron_reminder_7dias', 'recordatorio_7dias', 'reminder_7dias', '_convoca_fecha_inicio', '+7 days' ),
+			'24 horas' => array( 'cron_reminder_24h', 'recordatorio_24h', 'reminder_1dia', '_convoca_fecha_inicio', '+24 hours' ),
+			'1 hora'   => array( 'cron_reminder_1hora', 'recordatorio_1hora', 'reminder_1hora', '_convoca_fecha_inicio', '+1 hour' ),
+			'encuesta' => array( 'cron_feedback', 'feedback_post', 'reminder_post_evento', '_convoca_fecha_fin', '-7 days' ),
 		);
 	}
 }

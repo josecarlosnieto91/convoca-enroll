@@ -209,8 +209,17 @@ final class GooglePhotosTest extends TestCase {
 		$b->post_type             = 'inscripcion';
 		$GLOBALS['convoca_test_posts'] = array( $a, $b );
 
-		$GLOBALS['_wp_stores']['post_meta'][70] = array( '_convoca_email' => 'ana@example.test' );
-		$GLOBALS['_wp_stores']['post_meta'][71] = array( '_convoca_email' => 'ana@example.test' );
+		// Las dos inscripciones, con las metas que la consulta filtra: actividad y estado confirmado (enroll#44).
+		$GLOBALS['_wp_stores']['post_meta'][70] = array(
+			'_convoca_email'        => 'ana@example.test',
+			'_convoca_actividad_id' => '61',
+			'_convoca_estado'       => 'confirmada',
+		);
+		$GLOBALS['_wp_stores']['post_meta'][71] = array(
+			'_convoca_email'        => 'ana@example.test',
+			'_convoca_actividad_id' => '61',
+			'_convoca_estado'       => 'confirmada',
+		);
 
 		$this->assertSame( array( 'ana@example.test' ), ( new Google_Photos() )->get_participants_emails( 61 ) );
 	}

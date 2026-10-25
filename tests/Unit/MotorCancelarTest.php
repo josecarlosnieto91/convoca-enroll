@@ -199,8 +199,9 @@ final class MotorCancelarTest extends TestCase {
 
 		// En el orden en que llegaron: primero el que no es socio.
 		$GLOBALS['convoca_test_posts'] = array( $no_socio, $socio );
-		$GLOBALS['_wp_stores']['post_meta'][71] = array( '_convoca_es_socio' => '0', '_convoca_estado' => 'lista_espera' );
-		$GLOBALS['_wp_stores']['post_meta'][72] = array( '_convoca_es_socio' => '1', '_convoca_estado' => 'lista_espera' );
+		// `actividad_id` también: la consulta de la lista de espera lo filtra, no solo el estado (enroll#44).
+		$GLOBALS['_wp_stores']['post_meta'][71] = array( '_convoca_es_socio' => '0', '_convoca_estado' => 'lista_espera', '_convoca_actividad_id' => '61' );
+		$GLOBALS['_wp_stores']['post_meta'][72] = array( '_convoca_es_socio' => '1', '_convoca_estado' => 'lista_espera', '_convoca_actividad_id' => '61' );
 
 		$this->assertTrue( Motor_Inscripcion::cancelar( 70 ) );
 
