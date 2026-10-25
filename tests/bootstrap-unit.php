@@ -216,7 +216,10 @@ namespace Convoca\Core {
             public static function info(string $message, string $context = '', int $id = 0): void { self::anotar($message, 'info', $context, $id); }
             public static function warning(string $message, string $context = '', int $id = 0): void { self::anotar($message, 'warning', $context, $id); }
             public static function error(string $message, string $context = '', int $id = 0): void { self::anotar($message, 'error', $context, $id); }
-            public static function log(string $message, string $level = 'info', string $context = '', int $id = 0): void { self::anotar($message, $level, $context, $id); }
+            // El `log()` del núcleo declara `?int $object_id = null`: el doble pedía `int`, así que un
+            // llamador que pasaba `null` —que en producción es correcto— reventaba con TypeError SOLO en las
+            // pruebas. El doble tiene que copiar la firma real, no una más estricta.
+            public static function log(string $message, string $level = 'info', string $context = '', ?int $id = null): void { self::anotar($message, $level, $context, (int) $id); }
         }
     }
 }
