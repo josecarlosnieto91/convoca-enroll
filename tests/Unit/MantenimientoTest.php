@@ -165,7 +165,7 @@ class MantenimientoTest extends TestCase {
 
 		$this->assertNotEmpty( $delete, 'se lanza la limpieza' );
 		$this->assertStringContainsString( "'%Enroll%'", $delete[0], 'solo los registros de Enroll' );
-		$this->assertStringContainsString( 'INTERVAL 90 DAY', str_replace( '90', '90', $delete[0] ), 'con la retención configurada' );
+		$this->assertStringContainsString( 'INTERVAL 90 DAY', $delete[0], 'con la retención configurada, no con el valor por defecto' );
 		$this->assertSame( 7, $stats['logs_cleaned'], 'se informa de cuántos se borraron' );
 	}
 
