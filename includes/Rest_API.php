@@ -390,8 +390,12 @@ class Rest_API {
 		}
 
 		// Update for assistance.
-		$result   = Motor_Inscripcion::set_asistencia( $insc_id, 'si' );
-		$affected = is_wp_error( $result ) ? 0 : 1;
+		// **`set_asistencia()` es idempotente**: devuelve `true` también cuando ya estaba en `si`, así que
+		// `$affected` era siempre 1 y `already_checked` nunca podía ser true (enroll#42). `cambiar_asistencia()`
+		// devuelve además si el valor cambió de verdad.
+		$result   = Motor_Inscripcion::cambiar_asistencia( $insc_id, 'si' );
+		$error    = is_wp_error( $result );
+		$affected = ( ! $error && $result['cambiada'] ) ? 1 : 0;
 
 		if ( $affected > 0 ) {
 			\Convoca\Core\Logger::info( "Check-in exitoso vía QR por usuario #$monitor_id", 'Enroll/Checkin', $monitor_id, array( 'inscripcion_id' => $insc_id ) );

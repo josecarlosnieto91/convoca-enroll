@@ -950,6 +950,26 @@ class Motor_Inscripcion {
 	 * @return bool|\WP_Error
 	 */
 	public static function set_asistencia( int $inscripcion_id, string $asistencia ): bool|\WP_Error {
+		$resultado = self::cambiar_asistencia( $inscripcion_id, $asistencia );
+
+		return is_wp_error( $resultado ) ? $resultado : true;
+	}
+
+	/**
+	 * Marca la asistencia y dice si hubo cambio real.
+	 *
+	 * `set_asistencia()` es idempotente por diseño —devuelve `true` tanto si acaba de marcar como si ya estaba en
+	 * `si`—, y con eso el endpoint de check-in no podía distinguir un escaneo nuevo de uno repetido: `$affected`
+	 * era siempre 1 y `already_checked` nunca llegaba a true, así que el mensaje «Esta reserva ya había sido
+	 * escaneada» era inalcanzable (enroll#42).
+	 *
+	 * Este método hace lo mismo y devuelve además si el valor cambió, sin tocar el contrato del otro.
+	 *
+	 * @param int    $inscripcion_id Inscripción.
+	 * @param string $asistencia     'si', 'no' o 'no_registrada'.
+	 * @return array{cambiada: bool, anterior: string}|\WP_Error
+	 */
+	public static function cambiar_asistencia( int $inscripcion_id, string $asistencia ): array|\WP_Error {
 		$post = get_post( $inscripcion_id );
 		if ( ! $post || $post->post_type !== 'inscripcion' ) {
 			return new \WP_Error( 'not_found', __( 'Inscripción no encontrada.', 'convoca-enroll' ) );
@@ -959,6 +979,8 @@ class Motor_Inscripcion {
 		if ( ! in_array( $asistencia, $valid_states, true ) ) {
 			return new \WP_Error( 'invalid_state', __( 'Estado de asistencia no válido. Valores permitidos: si, no, no_registrada.', 'convoca-enroll' ) );
 		}
+
+		$anterior = (string) CPT_Inscripcion::get_meta( $inscripcion_id, 'asistencia' );
 
 		$user_id = get_current_user_id();
 		CPT_Inscripcion::update_meta( $inscripcion_id, 'asistencia', $asistencia );
@@ -972,7 +994,12 @@ class Motor_Inscripcion {
 
 		\Convoca\Core\Utils::do_action( 'convoca_enroll_asistencia_cambiada', 'convoca_asistencia_cambiada', $inscripcion_id, $asistencia );
 
-		return true;
+		\Convoca\Core\Utils::do_action( 'convoca_enroll_asistencia_cambiada', 'convoca_asistencia_cambiada', $inscripcion_id, $asistencia );
+
+		return array(
+			'cambiada' => $anterior !== $asistencia,
+			'anterior' => $anterior,
+		);
 	}
 
 	/**

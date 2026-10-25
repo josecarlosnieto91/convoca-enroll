@@ -194,9 +194,10 @@ final class RestEndpointsTest extends TestCase {
 
 		$respuesta = $this->api->handle_checkin( $this->peticion( array( 'code' => 'tok-1' ) ) );
 
-		// Comportamiento **actual**: `set_asistencia()` no distingue «ya estaba» de «acabo de marcarlo», así que
-		// `already_checked` es siempre false y el mensaje de «ya escaneada» es inalcanzable. Anotado como defecto.
-		$this->assertFalse( $respuesta->get_data()['already_checked'] );
+		// Un segundo escaneo SÍ se distingue: `cambiar_asistencia()` devuelve si hubo cambio real (enroll#42).
+		// Antes esta prueba afirmaba lo contrario —`assertFalse`— porque el endpoint no podía saberlo.
+		$this->assertTrue( $respuesta->get_data()['already_checked'] );
+		$this->assertStringContainsString( 'ya había sido escaneada', (string) $respuesta->get_data()['message'] );
 		$this->assertSame( 'si', $GLOBALS['_wp_stores']['post_meta'][70]['_convoca_asistencia'], 'sigue marcado' );
 	}
 
