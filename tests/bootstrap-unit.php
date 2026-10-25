@@ -1046,6 +1046,25 @@ if (!class_exists('WP_List_Table')) {
          * @param array $args Argumentos.
          * @return void
          */
+        /**
+         * Acción de la fila o del bloque: WordPress la lee de la petición (`action`), y del
+         * `_wp_http_referer` cuando la acción viaja en el formulario de arriba. Sin esto, las bajas y los
+         * reenvíos masivos no se podían probar: `current_action()` no existía en el doble.
+         *
+         * @return string|false
+         */
+        public function current_action() {
+            // phpcs:disable WordPress.Security.NonceVerification -- es un doble de prueba.
+            if ( isset( $_REQUEST['action'] ) && '-1' !== $_REQUEST['action'] ) {
+                return sanitize_text_field( wp_unslash( $_REQUEST['action'] ) );
+            }
+            if ( isset( $_REQUEST['action2'] ) && '-1' !== $_REQUEST['action2'] ) {
+                return sanitize_text_field( wp_unslash( $_REQUEST['action2'] ) );
+            }
+            return false;
+            // phpcs:enable
+        }
+
         public function set_pagination_args( $args ) {
             $GLOBALS['_wp_paginacion'] = $args;
         }
@@ -1067,8 +1086,11 @@ if (!class_exists('WP_List_Table')) {
 if (!function_exists('submit_button')) {
     function submit_button($texto = 'Guardar', $tipo = 'primary', $nombre = 'submit', $wrap = true, $otros = array()) {
         unset($tipo, $otros);
-        $boton = '<button type="submit" name="' . esc_attr($nombre) . '" class="button">' . esc_html($texto) . '</button>';
-        if ($wrap) { echo $boton; }
+        // WordPress pinta SIEMPRE el botón; `$wrap` solo decide si lo envuelve en un <p>. Devolverlo sin
+        // pintarlo cuando `$wrap` es false hacía que la mitad de los botones del panel no existieran en las
+        // pruebas (una pantalla sin su botón de filtrar pasaba).
+        $boton = ( $wrap ? '<p class="submit">' : '' ) . '<button type="submit" name="' . esc_attr($nombre) . '" class="button">' . esc_html($texto) . '</button>' . ( $wrap ? '</p>' : '' );
+        echo $boton;
         return $boton;
     }
 }
@@ -1627,6 +1649,9 @@ if (!isset($GLOBALS['wpdb'])) {
             return isset($GLOBALS['convoca_test_delete_afectadas']) ? (int) $GLOBALS['convoca_test_delete_afectadas'] : 1;
         }
         public function prepare($q, ...$a) {
+            // Se apunta toda consulta preparada: sin esto no se puede afirmar que un filtro entra parametrizado
+            // y no pegado al SQL.
+            $GLOBALS['db_prepares'][] = (string) $q;
             if (1 === count($a) && is_array($a[0])) { $a = array_values($a[0]); }
             $i = 0;
             return preg_replace_callback(
