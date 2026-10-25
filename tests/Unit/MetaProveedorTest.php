@@ -101,7 +101,7 @@ class MetaProveedorTest extends TestCase {
 		$proveedor = $this->proveedor();
 		$llave     = 'convoca_lock_' . md5( 'hola' . '' . 'meta' );
 
-		$resultado = $proveedor->publish( 'hola', '', 'https://biodevas.org/x' );
+		$resultado = $proveedor->publish( 'hola', '', 'https://example.test/enlace' );
 
 		$this->assertTrue( $resultado['success'] );
 		$this->assertCount( 1, $GLOBALS['_wp_http_posts'], 'solo una llamada: no hay Instagram sin imagen' );
@@ -109,7 +109,7 @@ class MetaProveedorTest extends TestCase {
 		$llamada = $GLOBALS['_wp_http_posts'][0];
 		$this->assertStringContainsString( '/v19.0/PAGINA/feed', $llamada['url'], 'sin imagen el endpoint es el feed' );
 		$this->assertSame( 'hola', $llamada['args']['body']['message'] );
-		$this->assertSame( 'https://biodevas.org/x', $llamada['args']['body']['link'] );
+		$this->assertSame( 'https://example.test/enlace', $llamada['args']['body']['link'] );
 		$this->assertSame( 'TOKEN', $llamada['args']['body']['access_token'] );
 		$this->assertFalse( get_transient( $llave ), 'el bloqueo se suelta al terminar' );
 	}
@@ -118,12 +118,12 @@ class MetaProveedorTest extends TestCase {
 	 * Con imagen se sube a photos (y la imagen viaja en el cuerpo).
 	 */
 	public function test_publicar_con_imagen_usa_photos(): void {
-		$resultado = $this->proveedor()->publish( 'hola', 'https://biodevas.org/cartel.png' );
+		$resultado = $this->proveedor()->publish( 'hola', 'https://example.test/cartel.png' );
 
 		$this->assertTrue( $resultado['success'] );
 		$llamada = $GLOBALS['_wp_http_posts'][0];
 		$this->assertStringContainsString( '/PAGINA/photos', $llamada['url'] );
-		$this->assertSame( 'https://biodevas.org/cartel.png', $llamada['args']['body']['url'] );
+		$this->assertSame( 'https://example.test/cartel.png', $llamada['args']['body']['url'] );
 		$this->assertSame( 'hola', $llamada['args']['body']['message'] );
 	}
 
@@ -133,13 +133,13 @@ class MetaProveedorTest extends TestCase {
 	public function test_si_falla_la_foto_reintenta_como_texto(): void {
 		$GLOBALS['convoca_test_http'] = array( 'code' => 400, 'body' => '{"error":{"message":"La url de la imagen no es válida"}}' );
 
-		$resultado = $this->proveedor()->publish( 'hola', 'https://biodevas.org/cartel.png', 'https://biodevas.org/x' );
+		$resultado = $this->proveedor()->publish( 'hola', 'https://example.test/cartel.png', 'https://example.test/enlace' );
 
 		$this->assertCount( 2, $GLOBALS['_wp_http_posts'], 'primero la foto y después el texto' );
 		$this->assertStringContainsString( '/photos', $GLOBALS['_wp_http_posts'][0]['url'] );
 		$this->assertStringContainsString( '/feed', $GLOBALS['_wp_http_posts'][1]['url'], 'el reintento va al feed' );
 		$this->assertArrayNotHasKey( 'url', $GLOBALS['_wp_http_posts'][1]['args']['body'], 'sin imagen no se manda la imagen' );
-		$this->assertSame( 'https://biodevas.org/x', $GLOBALS['_wp_http_posts'][1]['args']['body']['link'] );
+		$this->assertSame( 'https://example.test/enlace', $GLOBALS['_wp_http_posts'][1]['args']['body']['link'] );
 		$this->assertFalse( $resultado['success'], 'el reintento también falló con este doble' );
 	}
 
@@ -160,13 +160,13 @@ class MetaProveedorTest extends TestCase {
 	 * Instagram va en dos pasos: contenedor y publicación.
 	 */
 	public function test_instagram_publica_en_dos_pasos(): void {
-		$resultado = $this->proveedor( 'TOKEN', 'PAGINA', 'IGUSER' )->publish( 'hola', 'https://biodevas.org/cartel.png' );
+		$resultado = $this->proveedor( 'TOKEN', 'PAGINA', 'IGUSER' )->publish( 'hola', 'https://example.test/cartel.png' );
 
 		$this->assertTrue( $resultado['success'] );
 		$urls = array_column( $GLOBALS['_wp_http_posts'], 'url' );
 		$this->assertStringContainsString( '/IGUSER/media', $urls[1], 'primero el contenedor' );
 		$this->assertStringContainsString( '/IGUSER/media_publish', $urls[2], 'después la publicación' );
-		$this->assertSame( 'https://biodevas.org/cartel.png', $GLOBALS['_wp_http_posts'][1]['args']['body']['image_url'] );
+		$this->assertSame( 'https://example.test/cartel.png', $GLOBALS['_wp_http_posts'][1]['args']['body']['image_url'] );
 		$this->assertSame( '123_456', $GLOBALS['_wp_http_posts'][2]['args']['body']['creation_id'], 'se publica el contenedor que devolvió Meta' );
 	}
 
@@ -174,7 +174,7 @@ class MetaProveedorTest extends TestCase {
 	 * Sin cuenta de Instagram vinculada, la publicación no la intenta siquiera.
 	 */
 	public function test_sin_instagram_vinculado_no_se_intenta(): void {
-		$resultado = $this->proveedor( 'TOKEN', 'PAGINA', '' )->publish( 'hola', 'https://biodevas.org/cartel.png' );
+		$resultado = $this->proveedor( 'TOKEN', 'PAGINA', '' )->publish( 'hola', 'https://example.test/cartel.png' );
 
 		$this->assertTrue( $resultado['success'] );
 		$this->assertCount( 1, $GLOBALS['_wp_http_posts'], 'solo Facebook: Instagram no está vinculado' );
@@ -191,7 +191,7 @@ class MetaProveedorTest extends TestCase {
 		$proveedor = $this->proveedor( 'TOKEN', 'PAGINA', '' );
 
 		$metodo = new \ReflectionMethod( Meta_Provider::class, 'publish_instagram' );
-		$resultado = $metodo->invoke( $proveedor, 'hola', 'https://biodevas.org/cartel.png' );
+		$resultado = $metodo->invoke( $proveedor, 'hola', 'https://example.test/cartel.png' );
 
 		$this->assertFalse( $resultado['success'] );
 		$this->assertStringContainsString( 'no hay cuenta de Instagram Business', $resultado['message'] );
