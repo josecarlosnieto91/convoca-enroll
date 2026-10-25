@@ -22,7 +22,9 @@ class MigracionYEstilosTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		$GLOBALS['_wp_stores']                  = array( 'options' => array(), 'post_meta' => array() );
-		$GLOBALS['_wp_cli_comandos']            = array();
+		// `_wp_cli_comandos` NO se vacía: lo llena el producto con un `add_command` de nivel de fichero detrás de un
+		// `require_once` que no se repite. Vaciarlo aquí dejaba a esta prueba sin comando en cuanto otra suite
+		// hubiera cargado la clase antes (enroll#49). El registro es del producto, no del caso.
 		$GLOBALS['_wp_cli_salida']              = array();
 		$GLOBALS['convoca_test_get_posts_cola'] = array();
 		$GLOBALS['convoca_test_get_posts_args'] = array();
@@ -33,7 +35,8 @@ class MigracionYEstilosTest extends TestCase {
 	 */
 	protected function tearDown(): void {
 		$GLOBALS['_wp_stores'] = array( 'options' => array() );
-		unset( $GLOBALS['_wp_cli_comandos'], $GLOBALS['_wp_cli_salida'], $GLOBALS['convoca_test_get_posts_cola'], $GLOBALS['convoca_test_get_posts_args'] );
+		// El registro de comandos tampoco se borra al salir, por el mismo motivo.
+		unset( $GLOBALS['_wp_cli_salida'], $GLOBALS['convoca_test_get_posts_cola'], $GLOBALS['convoca_test_get_posts_args'] );
 	}
 
 	/**

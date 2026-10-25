@@ -28,7 +28,10 @@ class PiezasDeArranqueTest extends TestCase {
 		$GLOBALS['_convoca_acciones'] = array();
 		$GLOBALS['_wp_encolados']     = array();
 		$GLOBALS['_wp_cli_salida']    = array();
-		$GLOBALS['_wp_cli_comandos']  = array();
+		// `_wp_cli_comandos` NO se vacía: el comando lo registra el producto al cargarse, una sola vez, detrás de un
+		// `require_once`. Vaciarlo dejaba esta prueba sin 'conv webhooks' si otra suite ya había cargado la clase
+		// (enroll#49). Se conserva lo que registró el producto.
+		$GLOBALS['_wp_cli_comandos']  = $GLOBALS['_wp_cli_comandos'] ?? array();
 		$GLOBALS['_ddl']              = array();
 		$GLOBALS['db_inserts']        = array();
 		$GLOBALS['_bloques_pedidos']  = array();
@@ -42,7 +45,7 @@ class PiezasDeArranqueTest extends TestCase {
 	 */
 	protected function tearDown(): void {
 		$GLOBALS['_wp_stores'] = array( 'options' => array() );
-		unset( $GLOBALS['_convoca_acciones'], $GLOBALS['_wp_encolados'], $GLOBALS['_wp_cli_salida'], $GLOBALS['_wp_cli_comandos'], $GLOBALS['_ddl'], $GLOBALS['db_inserts'], $GLOBALS['_bloques_pedidos'], $GLOBALS['_convoca_tipos_registrados'], $GLOBALS['_wp_shortcodes'], $GLOBALS['bloques_render'] );
+		unset( $GLOBALS['_convoca_acciones'], $GLOBALS['_wp_encolados'], $GLOBALS['_wp_cli_salida'], $GLOBALS['_ddl'], $GLOBALS['db_inserts'], $GLOBALS['_bloques_pedidos'], $GLOBALS['_convoca_tipos_registrados'], $GLOBALS['_wp_shortcodes'], $GLOBALS['bloques_render'] );
 	}
 
 	/* ── CPT de evaluación ─────────────────────────────── */

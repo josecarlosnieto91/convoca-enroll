@@ -226,6 +226,30 @@ namespace Convoca\Core {
 
 namespace Convoca\Core {
 
+	if ( ! class_exists( 'Convoca\Core\Email_Copy' ) ) {
+
+		/**
+		 * Copia informativa de un correo a los responsables.
+		 *
+		 * El núcleo decide a quién copia (monitores de la actividad, o administración si no hay monitor) y si toca
+		 * copiar. Aquí solo se apunta la petición para poder afirmar que la cola la hace —y con qué datos—, porque lo
+		 * que se mide es la COLA, no el núcleo. La llamada real se ejerce con `$pide['send']` cuando la prueba la
+		 * invoca.
+		 */
+		class Email_Copy {
+
+			/**
+			 * ¿Se copió?
+			 *
+			 * @param array $peticion Petición.
+			 * @return void
+			 */
+			public static function maybe_copy( array $peticion ): void {
+				$GLOBALS['_convoca_copias'][] = $peticion;
+			}
+		}
+	}
+
 	if ( ! class_exists( 'Convoca\Core\License_Manager' ) ) {
 
 		/**
@@ -622,8 +646,39 @@ if (!function_exists('wp_upload_dir')) {
 
 if (!function_exists('is_email')) { function is_email($e) { return (bool) filter_var($e, FILTER_VALIDATE_EMAIL); } }
 if (!function_exists('wp_mail')) {
+    /**
+     * `wp_mail` real: DEVUELVE FALSE cuando el transporte falla.
+     *
+     * El doble devolvía siempre `true`, así que la cola de correo no tenía manera de ejercer su camino más
+     * importante: el reintento con backoff y el paso a `failed`. Una prueba que no puede ver un fallo no prueba
+     * una cola. Se controla con `$GLOBALS['convoca_test_mail_falla']`:
+     *   - `true`                 → todos los envíos fallan
+     *   - `array( 'a@x' => true )` → falla solo ese destinatario
+     *
+     * @param string|array $to          Destinatario(s).
+     * @param string       $subject     Asunto.
+     * @param string       $message     Cuerpo.
+     * @param mixed        $headers     Cabeceras.
+     * @param array        $attachments Adjuntos.
+     * @return bool
+     */
     function wp_mail($to, $subject, $message, $headers = '', $attachments = array()) {
-        $GLOBALS['_wp_stores']['sent_mail'][] = array('to' => $to, 'subject' => $subject, 'message' => $message);
+        // Los ADJUNTOS se apuntan: `wp_mail` los recibe en el quinto argumento y sin ellos una inscripción con
+        // justificante salía sin el fichero y la prueba no lo veía. Un doble que se come un argumento convierte
+        // esa parte del contrato en incomprobable.
+        $GLOBALS['_wp_stores']['sent_mail'][] = array(
+            'to'          => $to,
+            'subject'     => $subject,
+            'message'     => $message,
+            'attachments' => $attachments,
+        );
+        $falla = $GLOBALS['convoca_test_mail_falla'] ?? false;
+        if (true === $falla) { return false; }
+        if (is_array($falla)) {
+            foreach ((array) $to as $destino) {
+                if (!empty($falla[$destino])) { return false; }
+            }
+        }
         return true;
     }
 }
@@ -805,8 +860,13 @@ $GLOBALS['convoca_test_caps']  = array();
 $GLOBALS['convoca_test_roles'] = array();
 if (!function_exists('current_user_can')) {
     function current_user_can($c, ...$a) {
-        if (array_key_exists($c, $GLOBALS['convoca_test_caps'])) {
-            return (bool) $GLOBALS['convoca_test_caps'][$c];
+        // `$GLOBALS['convoca_test_caps']` puede NO existir: alguna suite lo borra en su `tearDown` y este doble se
+        // define una sola vez, así que la siguiente llamada —de OTRA suite— reventaba con
+        // `array_key_exists(): Argument #2 must be of type array, null given`. Un doble no puede reventar porque
+        // otra prueba haya limpiado: el core devuelve un booleano siempre. Costaba 3 de 8 semillas (enroll#50).
+        $caps = $GLOBALS['convoca_test_caps'] ?? array();
+        if (is_array($caps) && array_key_exists($c, $caps)) {
+            return (bool) $caps[$c];
         }
         return true;
     }
@@ -1500,7 +1560,21 @@ if (!function_exists('plugin_dir_path')) { function plugin_dir_path($f) { return
 if (!function_exists('plugin_dir_url')) { function plugin_dir_url($f) { return 'https://example.com/wp-content/plugins/' . basename(dirname($f)) . '/'; } }
 
 // Schedule
-if (!function_exists('wp_next_scheduled')) { function wp_next_scheduled($h) { return false; } }
+if (!function_exists('wp_next_scheduled')) {
+    /**
+     * `wp_next_scheduled` real: devuelve la marca del próximo evento o `false` si no hay ninguno.
+     *
+     * El doble devolvía siempre `false`, así que la segunda mitad de la guarda de `enqueue()`
+     * («ya está programado y falta más de 5 s») era inalcanzable y nadie sabía si programa de más.
+     *
+     * @param string $hook Gancho.
+     * @return int|false
+     */
+    function wp_next_scheduled($hook) {
+        $mapa = $GLOBALS['_wp_stores']['next_scheduled'] ?? array();
+        return $mapa[$hook] ?? false;
+    }
+}
 if (!function_exists('wp_schedule_event')) { function wp_schedule_event($ts, $r, $h, $a = []) { return true; } }
 if (!function_exists('wp_clear_scheduled_hook')) { function wp_clear_scheduled_hook($h) { return true; } }
 
