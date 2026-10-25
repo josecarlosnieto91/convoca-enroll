@@ -259,7 +259,14 @@ final class ActividadGoogleTest extends TestCase {
 			$p->post_type    = 'inscripcion';
 			$inscripciones[] = $p;
 
-			$GLOBALS['_wp_stores']['post_meta'][ $id ] = array( '_convoca_email' => 'persona' . $i . '@example.test' );
+			// Las metas que la consulta **filtra**, no solo el correo: sin ellas la inscripción no existe para el
+			// producto —`get_participants_emails()` exige `_convoca_actividad_id` y `_convoca_estado = 'confirmada'`—,
+			// y la prueba pasaba solo porque el doble devolvía todo lo del tipo (enroll#44).
+			$GLOBALS['_wp_stores']['post_meta'][ $id ] = array(
+				'_convoca_email'        => 'persona' . $i . '@example.test',
+				'_convoca_actividad_id' => '61',
+				'_convoca_estado'       => 'confirmada',
+			);
 		}
 		$GLOBALS['convoca_test_posts'] = $inscripciones;
 
