@@ -909,6 +909,22 @@ if (!function_exists('esc_url_raw')) {
 }
 if (!function_exists('sanitize_textarea_field')) { function sanitize_textarea_field($t) { return trim(strip_tags((string) $t)); } }
 
+if (!function_exists('wp_register_script')) {
+    /** Registra un script: se apunta con sus dependencias y versión, que es lo que hay que poder afirmar. */
+    function wp_register_script($handle, $src = '', $deps = array(), $ver = false, $footer = false) {
+        $GLOBALS['_wp_registrados']['scripts'][$handle] = array(
+            'src' => $src, 'deps' => (array) $deps, 'ver' => $ver, 'footer' => $footer,
+        );
+        return true;
+    }
+}
+if (!function_exists('register_block_type')) {
+    /** Registra un bloque: se apunta la ruta y su `render_callback`. */
+    function register_block_type($nombre, $args = array()) {
+        $GLOBALS['_wp_bloques'][$nombre] = (array) $args;
+        return true;
+    }
+}
 if (!function_exists('wp_enqueue_script')) {
     function wp_enqueue_script($h, $s = '', $d = array(), $v = '', $pie = false) {
         unset($d, $v, $pie);

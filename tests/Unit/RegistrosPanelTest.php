@@ -33,8 +33,11 @@ class RegistrosPanelTest extends TestCase {
 	 * Limpia el caso.
 	 */
 	protected function tearDown(): void {
+		// Se RESETEA, no se borra: `current_user_can()` lee este global y sin él revienta la
+		// siguiente prueba de la suite (un `unset` deja el arnés en un estado que no es WordPress).
+		$GLOBALS['convoca_test_caps'] = array();
 		$GLOBALS['_wp_stores'] = array( 'options' => array() );
-		unset( $GLOBALS['db_reads'], $GLOBALS['db_prepares'], $GLOBALS['_wp_paginacion_links'], $GLOBALS['convoca_test_caps'], $GLOBALS['nonces_invalidos'] );
+		unset( $GLOBALS['db_reads'], $GLOBALS['db_prepares'], $GLOBALS['_wp_paginacion_links'], $GLOBALS['nonces_invalidos'] );
 		$_GET = array();
 	}
 

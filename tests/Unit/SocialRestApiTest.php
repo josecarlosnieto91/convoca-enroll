@@ -37,8 +37,11 @@ class SocialRestApiTest extends TestCase {
 	 * Limpia el caso.
 	 */
 	protected function tearDown(): void {
+		// Se RESETEA, no se borra: `current_user_can()` lee este global y sin él revienta la
+		// siguiente prueba de la suite (un `unset` deja el arnés en un estado que no es WordPress).
+		$GLOBALS['convoca_test_caps'] = array();
 		$GLOBALS['_wp_stores'] = array( 'options' => array() );
-		unset( $GLOBALS['_enr_routes'], $GLOBALS['convoca_test_caps'], $GLOBALS['db_deletes'], $GLOBALS['_convoca_acciones'] );
+		unset( $GLOBALS['_enr_routes'], $GLOBALS['db_deletes'], $GLOBALS['_convoca_acciones'] );
 	}
 
 	/**
