@@ -720,6 +720,16 @@ if (!function_exists('current_user_can')) {
 }
 if (!function_exists('wp_get_current_user')) {
     function wp_get_current_user() {
+        // Si la prueba ha dado sesión (`_wp_stores['current_user']` o `_test_users`), se devuelve ESA persona:
+        // antes el usuario actual SIEMPRE tenía ID 0, así que cualquier comprobación de identidad («¿ya evaluó
+        // esta persona?», «¿es suya esta inscripción?») era inmedible.
+        if (!empty($GLOBALS['_wp_stores']['current_user']->ID)) {
+            return $GLOBALS['_wp_stores']['current_user'];
+        }
+        $id = (int) ($GLOBALS['convoca_test_current_user_id'] ?? 0);
+        if ($id > 0 && !empty($GLOBALS['_test_users'][$id])) {
+            return $GLOBALS['_test_users'][$id];
+        }
         $u = new WP_User();
         $u->ID = 0;
         $u->roles = (array) $GLOBALS['convoca_test_roles'];
@@ -1181,6 +1191,42 @@ if (!function_exists('wp_update_post')) {
         return $id ?: wp_insert_post($d);
     }
 }
+if (!function_exists('is_user_logged_in')) {
+    /**
+     * ¿Hay sesión? La prueba la fija en `_wp_stores['current_user']` (WP_User con ID).
+     *
+     * @return bool
+     */
+    function is_user_logged_in() {
+        return !empty($GLOBALS['_wp_stores']['current_user']->ID);
+    }
+}
+
+if (!function_exists('current_datetime')) {
+    /**
+     * Fecha y hora actuales del sitio (el `DateTimeImmutable` que devuelve WordPress).
+     *
+     * @return DateTimeImmutable
+     */
+    function current_datetime() {
+        return new DateTimeImmutable('now', new DateTimeZone('Europe/Madrid'));
+    }
+}
+
+if (!function_exists('plugins_url')) {
+    /**
+     * URL dentro de plugins/.
+     *
+     * @param string $ruta Ruta relativa.
+     * @param string $base Base.
+     * @return string
+     */
+    function plugins_url($ruta = '', $base = '') {
+        unset($base);
+        return 'https://example.test/wp-content/plugins/convoca-enroll/' . ltrim((string) $ruta, '/');
+    }
+}
+
 if (!function_exists('_convoca_meta_encaja')) {
     /**
      * ¿La meta de una entrada cumple la consulta? Entiende `=`, `!=`, `LIKE`, `EXISTS`, `NOT EXISTS`, `IN` y
