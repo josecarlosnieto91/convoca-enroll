@@ -199,7 +199,7 @@ class PanelReservasTest extends TestCase {
 		);
 		$GLOBALS['_wp_stores']['post_meta'][77] = array(
 			'_convoca_fecha_inicio' => '2026-11-14 10:00:00',
-			'_convoca_ubicacion'    => 'Centro Lugg',
+			'_convoca_ubicacion'    => 'Aula del centro',
 		);
 
 		$respuesta = $this->json( array( new Panel_Reservas(), 'ajax_login' ) );
@@ -211,7 +211,7 @@ class PanelReservasTest extends TestCase {
 		$reserva = $respuesta['data']['reservas'][0];
 		$this->assertSame( 501, $reserva['id'] );
 		$this->assertSame( 'Taller de setas', $reserva['actividad'] );
-		$this->assertSame( 'Centro Lugg', $reserva['ubicacion'] );
+		$this->assertSame( 'Aula del centro', $reserva['ubicacion'] );
 		$this->assertSame( 'Ana', $reserva['participante'] );
 		$this->assertSame( 'ABC123', $reserva['codigo'] );
 		$this->assertTrue( $reserva['cancelable'], 'una reserva confirmada se puede cancelar' );
