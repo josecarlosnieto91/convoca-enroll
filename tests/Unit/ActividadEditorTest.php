@@ -89,7 +89,8 @@ final class ActividadEditorTest extends TestCase {
 	private function formulario( array $campos ): void {
 		$_POST = array( 'convoca_enroll_actividad_nonce' => 'nonce-bueno' );
 		foreach ( $campos as $k => $v ) {
-			$_POST[ 'convoca_enroll_' . $k ] = $v;
+			// Lo que EMITE el formulario: `conv_enroll_<clave>` (enroll#38).
+			$_POST[ 'conv_enroll_' . $k ] = $v;
 		}
 	}
 

@@ -361,8 +361,11 @@ class CPT_Actividad {
 			'obligaciones'         => 'sanitize_textarea_field',
 		);
 
+		// **Se lee lo que EMITE el formulario.** `render_metabox()` publica los campos como
+		// `conv_enroll_<clave>` y aquí se buscaba `convoca_enroll_<clave>`: `$_POST` no traía ninguna de las 20 y
+		// cada guardado escribía **vacío** en todas las metas de la actividad, borrando lo que hubiera (enroll#38).
 		foreach ( $fields as $key => $sanitizer ) {
-			$raw = $_POST[ 'convoca_enroll_' . $key ] ?? '';
+			$raw = $_POST[ 'conv_enroll_' . $key ] ?? '';
 			$val = $sanitizer( $raw );
 			update_post_meta( $post_id, '_convoca_' . $key, $val );
 		}

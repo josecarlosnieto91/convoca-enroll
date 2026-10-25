@@ -78,9 +78,12 @@ final class ActividadSaveTest extends TestCase {
 	 * @return void
 	 */
 	private function enviar( array $campos ): void {
+		// **Se simula lo que EMITE el formulario**, `conv_enroll_<clave>`: el metabox publica esos nombres y no
+		// `convoca_enroll_*`. La prueba enviaba el prefijo largo y por eso daba verde con el guardado roto
+		// (enroll#38).
 		$_POST = array( 'convoca_enroll_actividad_nonce' => 'nonce' );
 		foreach ( $campos as $clave => $valor ) {
-			$_POST[ 'convoca_enroll_' . $clave ] = $valor;
+			$_POST[ 'conv_enroll_' . $clave ] = $valor;
 		}
 	}
 
@@ -133,7 +136,7 @@ final class ActividadSaveTest extends TestCase {
 	 * Sin nonce no se guarda nada: ni un campo.
 	 */
 	public function test_sin_nonce_no_guarda(): void {
-		$_POST = array( 'convoca_enroll_plazas_totales' => '99' );
+		$_POST = array( 'conv_enroll_plazas_totales' => '99' );
 
 		$this->cpt->save_metabox( 61 );
 
