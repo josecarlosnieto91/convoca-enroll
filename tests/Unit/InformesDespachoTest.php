@@ -190,18 +190,46 @@ final class InformesDespachoTest extends TestCase {
 	}
 
 	/**
-	 * **Comportamiento actual, y defecto**: la comparación es sensible a mayúsculas (`Confirmad`), pero el producto
-	 * escribe «confirmada» en minúscula. Con los mensajes reales el informe cuenta 0 confirmaciones.
+	 * Los mensajes que el producto escribe de verdad se cuentan.
+	 *
+	 * Antes esta prueba fijaba el defecto —`<td>0</td>`—, porque el informe buscaba `Confirmad` con mayúscula y el
+	 * producto no escribe esa palabra en ningún sitio: el CRM registra `Acción "confirmar" realizada por monitor…`
+	 * (enroll#43).
 	 */
-	public function test_los_mensajes_reales_no_se_cuentan(): void {
+	public function test_los_mensajes_reales_se_cuentan(): void {
 		$GLOBALS['_wp_stores']['results_mapa'] = array(
 			'convoca_logs' => array(
-				(object) array( 'user_id' => 7, 'actividad_id' => 61, 'monitor' => 'Marta', 'actividad' => 'Ruta', 'message' => 'Inscripción confirmada' ),
+				(object) array( 'user_id' => 7, 'actividad_id' => 61, 'monitor' => 'Marta', 'actividad' => 'Ruta', 'message' => 'Acción "confirmar" realizada por monitor sobre inscripción #5.' ),
 			),
 		);
 		$_GET['tab'] = 'monitores';
 		$html        = $this->pagina();
 
-		$this->assertMatchesRegularExpression( '/<strong>Marta<\/strong>.*?<td>0<\/td>/s', $html, 'no se cuenta' );
+		// La columna de confirmaciones sale con 1, no con 0.
+		$this->assertMatchesRegularExpression( '/<strong>Marta<\/strong>.*?<td>1<\/td>/s', $html, 'sí se cuenta' );
+	}
+
+	/**
+	 * Las tres acciones se clasifican por separado, con los textos reales de cada sitio del producto.
+	 */
+	public function test_las_tres_acciones_se_clasifican(): void {
+		$GLOBALS['_wp_stores']['results_mapa'] = array(
+			'convoca_logs' => array(
+				// `class-admin-monitor-crm.php:83`
+				(object) array( 'user_id' => 7, 'actividad_id' => 61, 'monitor' => 'Marta', 'actividad' => 'Ruta', 'message' => 'Acción "confirmar" realizada por monitor sobre inscripción #5.' ),
+				// `class-admin-monitor-crm.php:200`
+				(object) array( 'user_id' => 7, 'actividad_id' => 61, 'monitor' => 'Marta', 'actividad' => 'Ruta', 'message' => 'Acción "cancelar" realizada por monitor sobre inscripción #6.' ),
+				// `Rest_API.php` / `Motor_Inscripcion.php`
+				(object) array( 'user_id' => 7, 'actividad_id' => 61, 'monitor' => 'Marta', 'actividad' => 'Ruta', 'message' => 'Check-in exitoso vía QR por usuario #7' ),
+				// Ruido: no debe contar como nada.
+				(object) array( 'user_id' => 7, 'actividad_id' => 61, 'monitor' => 'Marta', 'actividad' => 'Ruta', 'message' => 'Exportación CSV desde monitor realizada para actividad #61.' ),
+			),
+		);
+		$_GET['tab'] = 'monitores';
+		$html        = $this->pagina();
+
+		// confirmadas=1, canceladas=1, checkins=1
+		$this->assertStringContainsString( '<td>1</td>', $html );
+		$this->assertSame( 3, substr_count( $html, '<td>1</td>' ), 'las tres columnas valen 1 y el ruido no suma' );
 	}
 }

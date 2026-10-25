@@ -693,6 +693,37 @@ endif;
 		<?php
 	}
 
+	/**
+	 * Clasifica un mensaje del registro en una de las tres acciones del informe.
+	 *
+	 * Antes se buscaba `'Confirmad'`/`'Cancelad'`/`'Check-in'` con `strpos` —sensible a mayúsculas— y el producto
+	 * **no escribe ninguna de las tres**: el CRM registra `Acción "confirmar" realizada por monitor…`, el motor
+	 * `Asistencia actualizada a "si"…` y el check-in `Check-in exitoso vía QR…`. Así que las tres columnas valían
+	 * cero siempre (enroll#43).
+	 *
+	 * Se compara en minúscula y contra las palabras que el producto escribe de verdad, no contra las que el informe
+	 * esperaba. Sigue leyendo texto libre —lo sólido sería guardar la acción en una columna—, pero al menos ahora
+	 * reconoce lo que hay.
+	 *
+	 * @param string $mensaje Texto del registro.
+	 * @return string 'confirmada', 'cancelada', 'checkin' o ''.
+	 */
+	private static function clasificar_accion_monitor( string $mensaje ): string {
+		$texto = strtolower( $mensaje );
+
+		if ( false !== strpos( $texto, 'check-in' ) || false !== strpos( $texto, 'asistencia' ) ) {
+			return 'checkin';
+		}
+		if ( false !== strpos( $texto, 'confirmar' ) || false !== strpos( $texto, 'confirmad' ) ) {
+			return 'confirmada';
+		}
+		if ( false !== strpos( $texto, 'cancelar' ) || false !== strpos( $texto, 'cancelad' ) ) {
+			return 'cancelada';
+		}
+
+		return '';
+	}
+
 	private function get_monitor_audit_data(): array {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'convoca_logs';
@@ -720,12 +751,13 @@ endif;
              FROM $table_name l
              LEFT JOIN {$wpdb->users} u ON l.user_id = u.ID
              LEFT JOIN {$wpdb->posts} p ON l.object_id = p.ID
-             WHERE l.context LIKE %s
+             WHERE ( l.context LIKE %s OR l.context LIKE %s )
                AND p.post_type = 'actividad'
                AND l.created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)
              ORDER BY l.created_at DESC
              LIMIT 200",
-				'Enroll/Monitor%'
+				$wpdb->esc_like( 'Enroll/Monitor' ) . '%',
+				$wpdb->esc_like( 'Enroll/Checkin' ) . '%'
 			)
 		);
 
@@ -755,14 +787,16 @@ endif;
 					'checkins'    => 0,
 				);
 			}
-			if ( strpos( $row->message, 'Confirmad' ) !== false ) {
-				++$grouped[ $key ]['confirmadas'];
-			}
-			if ( strpos( $row->message, 'Cancelad' ) !== false ) {
-				++$grouped[ $key ]['canceladas'];
-			}
-			if ( strpos( $row->message, 'Check-in' ) !== false ) {
-				++$grouped[ $key ]['checkins'];
+			switch ( self::clasificar_accion_monitor( (string) $row->message ) ) {
+				case 'confirmada':
+					++$grouped[ $key ]['confirmadas'];
+					break;
+				case 'cancelada':
+					++$grouped[ $key ]['canceladas'];
+					break;
+				case 'checkin':
+					++$grouped[ $key ]['checkins'];
+					break;
 			}
 		}
 
