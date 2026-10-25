@@ -1770,3 +1770,86 @@ if (!function_exists('wp_delete_post')) {
     }
 }
 }
+
+namespace Convoca\Core {
+
+    // El gestor de actualizaciones del núcleo: Enroll y Shifts heredan de él. El arnés no lo tenía, así que
+	// los dos subclases no se podían ni construir y sus migraciones de datos quedaban sin medir. El doble
+	// copia el contrato real (init/maybe_upgrade/force_version_check y las cuatro consultas abstractas).
+    if ( ! class_exists( 'Convoca\Core\Upgrade_Manager' ) ) {
+
+        /**
+         * Gestor de actualizaciones (doble fiel del núcleo).
+         */
+        abstract class Upgrade_Manager {
+
+            /**
+             * Engancha la comprobación de versión.
+             *
+             * @return void
+             */
+            public function init(): void {
+                add_action( 'admin_init', array( $this, 'maybe_upgrade' ) );
+            }
+
+            /**
+             * Ejecuta las migraciones que falten según la versión guardada.
+             *
+             * @return void
+             */
+            public function maybe_upgrade(): void {
+                $guardada = (string) get_option( $this->get_option_name(), '0.0.0' );
+                $actual   = $this->get_db_version();
+
+                if ( version_compare( $guardada, $actual, '>=' ) ) {
+                    return;
+                }
+
+                foreach ( $this->get_upgrade_callbacks() as $version => $callback ) {
+                    if ( version_compare( (string) $version, $guardada, '>' ) && version_compare( (string) $version, $actual, '<=' ) ) {
+                        call_user_func( $callback );
+                    }
+                }
+
+                update_option( $this->get_option_name(), $actual );
+            }
+
+            /**
+             * Fuerza la comprobación (tras actualizar el plugin).
+             *
+             * @return void
+             */
+            public function force_version_check(): void {
+                $this->maybe_upgrade();
+            }
+
+            /**
+             * Versión de la base que pide el plugin.
+             *
+             * @return string
+             */
+            abstract protected function get_db_version(): string;
+
+            /**
+             * Clave de la opción donde vive la versión.
+             *
+             * @return string
+             */
+            abstract protected function get_option_name(): string;
+
+            /**
+             * Prefijo de los transients del gestor.
+             *
+             * @return string
+             */
+            abstract protected function get_transient_prefix(): string;
+
+            /**
+             * Migraciones por versión.
+             *
+             * @return array<string, callable>
+             */
+            abstract protected function get_upgrade_callbacks(): array;
+        }
+    }
+}
