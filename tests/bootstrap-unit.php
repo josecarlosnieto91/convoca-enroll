@@ -1313,7 +1313,12 @@ if (!function_exists('get_userdata')) {
     /** Usuario con los roles que fije la prueba (por defecto, suscriptor). */
     function get_userdata($id) {
         if ($id <= 0) return false;
-        // Si la prueba dio de alta la persona, se usa esa: nombre y correo reales.
+        // Si la prueba dio de alta la persona, se usa ESA (roles, capacidades, nombre y correo). Antes
+        // se devolvía siempre un usuario inventado, así que ninguna regla de permisos sobre usuarios
+        // era medible: la prueba pasaba con un usuario que existía solo dentro del arnés.
+        if (!empty($GLOBALS['_test_users'][(int) $id])) {
+            return $GLOBALS['_test_users'][(int) $id];
+        }
         $u = new stdClass();
         $u->ID = $id;
         $u->display_name = "User $id";
@@ -1322,6 +1327,8 @@ if (!function_exists('get_userdata')) {
         $u->first_name = '';
         $u->last_name = '';
         $u->user_login = "user$id";
+        // El `WP_User` real trae roles: sin ellos, cualquier producto que pregunte por un rol revienta.
+        $u->roles = array('administrator');
         $u->user_nicename = "user$id";
         $u->roles = (array) ($GLOBALS['convoca_test_roles'][ $id ] ?? array( 'subscriber' ));
         return $u;
@@ -1405,7 +1412,18 @@ if (!class_exists('WP_User')) {
         /** Nombre visible y correo: los tiene el `WP_User` real y las pruebas los fijan. */
         public $display_name = '';
         public $user_email = '';
+        /** Capacidades sueltas (las que no vienen del rol). */
+        public $caps = [];
         public function exists() { return $this->ID > 0; }
+
+        /**
+         * ¿Tiene la capacidad? El `WP_User` real la trae; sin ella, cualquier producto que pregunte
+         * por una capacidad del usuario reventaba al probarse.
+         *
+         * @param string $cap Capacidad.
+         * @return bool
+         */
+        public function has_cap($cap) { return ! empty($this->caps[(string) $cap]); }
     }
 }
 
