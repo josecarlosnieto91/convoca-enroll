@@ -766,6 +766,12 @@ if (!function_exists('wp_remote_retrieve_response_code')) {
         return is_array($r) ? (int) ($r['response']['code'] ?? 0) : 0;
     }
 }
+if (!function_exists('wp_remote_retrieve_body')) {
+    /** Cuerpo de la respuesta HTTP (el proveedor de Meta lo decodifica para leer `id` y `error`). */
+    function wp_remote_retrieve_body($r) {
+        return is_array($r) ? (string) ($r['body'] ?? '') : '';
+    }
+}
 if (!function_exists('is_wp_error')) { function is_wp_error($t) { return $t instanceof WP_Error; } }
 if (!function_exists('wp_json_encode')) { function wp_json_encode($d, $o = 0, $d2 = 512) { return json_encode($d, $o, $d2); } }
 if (!function_exists('wp_safe_remote_get')) { function wp_safe_remote_get($u, $a = []) { return wp_remote_get($u, $a); } }
