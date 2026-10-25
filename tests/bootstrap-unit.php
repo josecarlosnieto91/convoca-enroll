@@ -1620,7 +1620,12 @@ if (!isset($GLOBALS['wpdb'])) {
             $GLOBALS['db_updates'][] = array('tabla' => $t, 'datos' => $d, 'donde' => $w);
             return 1;
         }
-        public function delete($t, $w) { return 1; }
+        public function delete($t, $w) {
+            // Se apunta qué se borra y de dónde: un `delete` que no deja rastro no permite afirmar que la baja
+            // de una cuenta borra la fila correcta.
+            $GLOBALS['db_deletes'][] = array('tabla' => $t, 'donde' => $w);
+            return isset($GLOBALS['convoca_test_delete_afectadas']) ? (int) $GLOBALS['convoca_test_delete_afectadas'] : 1;
+        }
         public function prepare($q, ...$a) {
             if (1 === count($a) && is_array($a[0])) { $a = array_values($a[0]); }
             $i = 0;
