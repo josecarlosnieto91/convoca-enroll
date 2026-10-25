@@ -1296,6 +1296,11 @@ if (!function_exists('get_posts')) {
             }
             $salida[] = $post;
         }
+        // `fields => 'ids'`: WordPress devuelve solo identificadores. Sin esto, quien recorre el resultado
+        // esperando un id recibía un objeto (y las tareas de mantenimiento que borran no se podían probar).
+        if (isset($a['fields']) && 'ids' === $a['fields']) {
+            return array_map(static fn($p) => (int) (is_object($p) ? $p->ID : $p), $salida);
+        }
         return $salida;
     }
 }
