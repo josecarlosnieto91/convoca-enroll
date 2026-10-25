@@ -25,8 +25,8 @@ class Admin_Evaluaciones_List {
 
 	public static function init() {
 		// El submenú lo aporta el CPT con show_in_menu; no hay add_action propio.
-		add_filter( 'manage_conv_evaluacion_posts_columns', array( __CLASS__, 'set_custom_columns' ) );
-		add_action( 'manage_conv_evaluacion_posts_custom_column', array( __CLASS__, 'custom_column_content' ), 10, 2 );
+		add_filter( 'manage_convoca_evaluacion_posts_columns', array( __CLASS__, 'set_custom_columns' ) );
+		add_action( 'manage_convoca_evaluacion_posts_custom_column', array( __CLASS__, 'custom_column_content' ), 10, 2 );
 		add_action( 'restrict_manage_posts', array( __CLASS__, 'add_custom_filters' ) );
 		add_action( 'pre_get_posts', array( __CLASS__, 'filter_evaluations_by_activity' ) );
 	}

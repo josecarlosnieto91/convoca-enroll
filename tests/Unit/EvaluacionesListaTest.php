@@ -63,8 +63,12 @@ class EvaluacionesListaTest extends TestCase {
 		$acciones = array_merge( (array) ( $GLOBALS['_wp_stores']['acciones'] ?? array() ), (array) ( $GLOBALS['_convoca_acciones'] ?? array() ) );
 		$filtros  = (array) ( $GLOBALS['_wp_filters'] ?? array() );
 
-		$this->assertNotEmpty( $filtros['manage_conv_evaluacion_posts_columns'] ?? array(), 'faltan las columnas' );
-		foreach ( array( 'manage_conv_evaluacion_posts_custom_column', 'restrict_manage_posts', 'pre_get_posts' ) as $hook ) {
+		// El nombre del hook lo construye WordPress a partir del slug del CPT (`convoca_evaluacion`, ver
+		// includes/CPT_Evaluacion.php). Con `conv_evaluacion` el hook NUNCA se disparaba y las columnas no
+		// salían (enroll#47): la prueba afirma el slug real, no el que el código escriba.
+		$slug = 'convoca_evaluacion';
+		$this->assertNotEmpty( $filtros[ 'manage_' . $slug . '_posts_columns' ] ?? array(), 'faltan las columnas' );
+		foreach ( array( 'manage_' . $slug . '_posts_custom_column', 'restrict_manage_posts', 'pre_get_posts' ) as $hook ) {
 			$this->assertNotEmpty( $acciones[ $hook ] ?? array(), "falta el enganche {$hook}" );
 		}
 	}

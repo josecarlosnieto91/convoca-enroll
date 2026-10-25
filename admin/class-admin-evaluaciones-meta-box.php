@@ -104,7 +104,7 @@ class Admin_Evaluaciones_Meta_Box {
 			</table>
 
 			<p style="margin-top: 15px;">
-				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=conv_evaluacion&filter_actividad=' . $post->ID ) ); ?>" class="button button-primary">
+				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=convoca_evaluacion&filter_actividad=' . $post->ID ) ); ?>" class="button button-primary">
 					<?php esc_html_e( 'Ver todas las evaluaciones', 'convoca-enroll' ); ?>
 				</a>
 			</p>

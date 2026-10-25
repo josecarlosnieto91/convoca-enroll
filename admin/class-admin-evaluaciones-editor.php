@@ -180,7 +180,7 @@ class Admin_Evaluaciones_Editor extends \Convoca\Core\Admin\Pantalla_Admin {
 
 				<div class="conv-form-actions">
 					<?php submit_button( __( 'Guardar Evaluación', 'convoca-enroll' ), 'primary', 'submit', false ); ?>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=conv_evaluacion' ) ); ?>" class="button"><?php esc_html_e( 'Cancelar', 'convoca-enroll' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=convoca_evaluacion' ) ); ?>" class="button"><?php esc_html_e( 'Cancelar', 'convoca-enroll' ); ?></a>
 				</div>
 			</form>
 		</div>
@@ -242,7 +242,7 @@ class Admin_Evaluaciones_Editor extends \Convoca\Core\Admin\Pantalla_Admin {
 			update_post_meta( $post_id, '_convoca_eval_fecha', current_time( 'mysql' ) );
 		}
 
-		wp_safe_redirect( admin_url( 'edit.php?post_type=conv_evaluacion&message=saved' ) );
+		wp_safe_redirect( admin_url( 'edit.php?post_type=convoca_evaluacion&message=saved' ) );
 		exit;
 	}
 }

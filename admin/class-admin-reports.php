@@ -980,7 +980,7 @@ endif;
 					foreach ( $activities as $act ) :
 						?>
 					<tr>
-						<td><strong><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=conv_evaluacion&filter_actividad=' . $act['id'] ) ); ?>"><?php echo esc_html( $act['title'] ); ?></a></strong></td>
+						<td><strong><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=convoca_evaluacion&filter_actividad=' . $act['id'] ) ); ?>"><?php echo esc_html( $act['title'] ); ?></a></strong></td>
 						<td><?php echo (int) $act['count']; ?></td>
 						<td><?php echo number_format( $act['media_global'], 1 ); ?>/5</td>
 						<td><?php echo number_format( $act['gestion'], 1 ); ?>/5</td>

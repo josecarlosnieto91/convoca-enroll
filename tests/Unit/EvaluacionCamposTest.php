@@ -73,7 +73,9 @@ class EvaluacionCamposTest extends TestCase {
 
 		$acciones = array_merge( (array) ( $GLOBALS['_wp_stores']['acciones'] ?? array() ), (array) ( $GLOBALS['_convoca_acciones'] ?? array() ) );
 		$this->assertNotEmpty( $acciones['add_meta_boxes'] ?? array(), 'sin esto no se pinta la caja' );
-		$this->assertNotEmpty( $acciones['save_post_conv_evaluacion'] ?? array(), 'sin esto no se guarda al guardar' );
+		// `save_post_{post_type}`: el post type es `convoca_evaluacion`, así que con el slug corto el
+		// guardado NO se ejecutaba nunca (enroll#47).
+		$this->assertNotEmpty( $acciones['save_post_convoca_evaluacion'] ?? array(), 'sin esto no se guarda al guardar' );
 	}
 
 	/**

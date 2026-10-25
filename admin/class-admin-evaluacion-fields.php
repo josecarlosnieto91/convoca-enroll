@@ -25,7 +25,7 @@ class Admin_Evaluacion_Fields {
 
 	public static function init() {
 		add_action( 'add_meta_boxes', array( __CLASS__, 'add_meta_boxes' ) );
-		add_action( 'save_post_conv_evaluacion', array( __CLASS__, 'save_meta_box' ) );
+		add_action( 'save_post_convoca_evaluacion', array( __CLASS__, 'save_meta_box' ) );
 	}
 
 	public static function add_meta_boxes() {
