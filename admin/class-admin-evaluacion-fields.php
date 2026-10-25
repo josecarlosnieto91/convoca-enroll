@@ -120,10 +120,17 @@ class Admin_Evaluacion_Fields {
 			'comunicacion',
 		);
 
+		// Los nombres son los que EMITE el formulario de arriba (`conv_eval_*`), no `convoca_eval_*`:
+		// con la clave equivocada `isset()` era siempre falso y este meta box no guardaba ni la actividad
+		// ni las cuatro puntuaciones (enroll#46). El metadato guardado sí lleva el prefijo completo.
 		foreach ( $fields as $field ) {
-			$key = 'convoca_eval_' . $field;
-			if ( isset( $_POST[ $key ] ) ) {
-				update_post_meta( $post_id, '_' . $key, sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) );
+			$campo = 'conv_eval_' . $field;
+			if ( isset( $_POST[ $campo ] ) ) {
+				update_post_meta(
+					$post_id,
+					'_convoca_eval_' . $field,
+					sanitize_text_field( wp_unslash( $_POST[ $campo ] ) )
+				);
 			}
 		}
 
