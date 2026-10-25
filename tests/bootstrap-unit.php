@@ -371,6 +371,25 @@ if (!function_exists('esc_attr__')) { function esc_attr__($t, $d = 'default') { 
 if (!function_exists('esc_html_e')) { function esc_html_e($t, $d = 'default') { echo htmlspecialchars((string) $t, ENT_QUOTES); } }
 if (!function_exists('esc_attr_e')) { function esc_attr_e($t, $d = 'default') { echo htmlspecialchars((string) $t, ENT_QUOTES); } }
 if (!function_exists('_e')) { function _e($t, $d = 'default') { echo $t; } }
+if (!function_exists('do_blocks')) {
+    /** Render de bloques: devuelve lo que la prueba fije en `bloques_render` y apunta lo pedido. */
+    function do_blocks($contenido) {
+        $GLOBALS['_bloques_pedidos'][] = (string) $contenido;
+        return (string) ($GLOBALS['bloques_render'] ?? '');
+    }
+}
+if (!function_exists('dbDelta')) {
+    /**
+     * `dbDelta()`: apunta el DDL. En el arnés no hay MySQL, así que lo que se puede afirmar es QUÉ tablas
+     * se crean y con qué columnas, no que el SQL se ejecute.
+     */
+    function dbDelta($sql = '') {
+        foreach ((array) $sql as $sentencia) {
+            $GLOBALS['_ddl'][] = (string) $sentencia;
+        }
+        return array();
+    }
+}
 if (!function_exists('wpautop')) {
     /**
      * Párrafos como WordPress: los bloques separados por línea en blanco van en `<p>` y los saltos sueltos, en `<br>`.
@@ -1582,7 +1601,18 @@ if (!function_exists('get_current_screen')) {
         return $screen;
     }
 }
-if (!function_exists('wp_enqueue_style')) { function wp_enqueue_style($h, $s = '', $d = [], $v = '', $m = 'all') {} }
+if (!function_exists('wp_enqueue_style')) {
+    /**
+     * Encola un estilo y lo APUNTA: era un no-op, así que ninguna prueba podía afirmar que una pantalla
+     * carga su CSS (y una pantalla sin estilo pasaba igual).
+     */
+    function wp_enqueue_style($h, $s = '', $d = [], $v = '', $m = 'all') {
+        unset($v, $m);
+        $GLOBALS['_wp_encolados']['styles'][] = $h;
+        $GLOBALS['_wp_encolados']['style_src'][ $h ] = $s;
+        $GLOBALS['_wp_encolados']['style_deps'][ $h ] = (array) $d;
+    }
+}
 if (!function_exists('wp_register_style')) { function wp_register_style($h, $s, $d = [], $v = '', $m = 'all') { return true; } }
 if (!function_exists('wp_set_script_translations')) { function wp_set_script_translations($h, $d, $p) {} }
 if (!function_exists('wp_kses_post')) {
@@ -1746,6 +1776,15 @@ if (!isset($GLOBALS['wpdb'])) {
         public function update($t, $d, $w) {
             // Se apunta qué se actualiza y con qué: sin esto no se puede afirmar que el reintento vuelve a «pending».
             $GLOBALS['db_updates'][] = array('tabla' => $t, 'datos' => $d, 'donde' => $w);
+            return 1;
+        }
+        /**
+         * `$wpdb->replace()`: como `insert()`, apunta la tabla y los datos (lo usa la siembra de plantillas).
+         * No existía en el doble, así que ese camino reventaba con «undefined method».
+         */
+        public function replace($t, $d, $f = array()) {
+            unset($f);
+            $GLOBALS['db_inserts'][] = array('tabla' => $t, 'datos' => $d);
             return 1;
         }
         public function delete($t, $w) {
