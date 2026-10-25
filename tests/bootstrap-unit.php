@@ -811,6 +811,12 @@ if (!function_exists('wp_date')) { function wp_date($f, $ts = null) { return dat
 if (!function_exists('wp_timezone_string')) { function wp_timezone_string() { return 'Europe/Madrid'; } }
 
 // Posts
+if (!function_exists('get_edit_user_link')) {
+    /** Enlace de edición de la persona: lo fija la prueba en `user_links`. */
+    function get_edit_user_link($id = 0) {
+        return $GLOBALS['_wp_stores']['user_links'][(int) $id] ?? '';
+    }
+}
 if (!function_exists('get_the_title')) { /** `selected()`: pinta `selected='selected'` si coinciden. Los `<select>` de los filtros lo usan. */
 if (!function_exists('selected')) {
     function selected($a, $b = true, $echo = true) {
@@ -1481,6 +1487,10 @@ if (!function_exists('get_userdata')) {
         // era medible: la prueba pasaba con un usuario que existía solo dentro del arnés.
         if (!empty($GLOBALS['_test_users'][(int) $id])) {
             return $GLOBALS['_test_users'][(int) $id];
+        }
+        // Una persona borrada: WordPress devuelve false. Sin esto, «Usuario eliminado» era incomprobable.
+        if (in_array((int) $id, (array) ($GLOBALS['convoca_test_usuarios_borrados'] ?? array()), true)) {
+            return false;
         }
         $u = new stdClass();
         $u->ID = $id;
