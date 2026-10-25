@@ -672,6 +672,54 @@ if (!function_exists('remove_all_filters')) { function remove_all_filters($t) { 
 if (!function_exists('__return_false')) { function __return_false() { return false; } }
 if (!function_exists('__return_true')) { function __return_true() { return true; } }
 if (!function_exists('do_action')) { function do_action($t, ...$a) {} }
+if (!class_exists('WP_CLI_Command')) {
+    /** Clase base de los comandos de WP-CLI (el plugin hereda de ella). */
+    class WP_CLI_Command {}
+}
+if (!class_exists('WP_CLI')) {
+    /**
+     * WP-CLI mínimo: apunta lo que se registra y lo que se imprime, para poder afirmar qué comando
+     * queda disponible y qué dijo cada paso de una migración.
+     */
+    class WP_CLI {
+        /** Comandos registrados. */
+        public static $comandos = array();
+
+        /** Mensajes. */
+        public static $salida = array();
+
+        /** Registra un comando. */
+        public static function add_command($nombre, $clase, $args = array()) {
+            self::$comandos[ $nombre ] = array('clase' => $clase, 'args' => $args);
+            $GLOBALS['_wp_cli_comandos'][] = $nombre;
+        }
+
+        /** Registra un mensaje. */
+        public static function log($mensaje) {
+            self::$salida[] = array('tipo' => 'log', 'mensaje' => $mensaje);
+            $GLOBALS['_wp_cli_salida'][] = $mensaje;
+        }
+
+        /** Registra un éxito. */
+        public static function success($mensaje) {
+            self::$salida[] = array('tipo' => 'success', 'mensaje' => $mensaje);
+            $GLOBALS['_wp_cli_salida'][] = $mensaje;
+        }
+
+        /** Registra un aviso. */
+        public static function warning($mensaje) {
+            self::$salida[] = array('tipo' => 'warning', 'mensaje' => $mensaje);
+            $GLOBALS['_wp_cli_salida'][] = $mensaje;
+        }
+
+        /** Registra un error (no corta, para poder seguir midiendo). */
+        public static function error($mensaje) {
+            self::$salida[] = array('tipo' => 'error', 'mensaje' => $mensaje);
+            $GLOBALS['_wp_cli_salida'][] = $mensaje;
+        }
+    }
+}
+
 if (!function_exists('add_action')) {
     /**
      * Apunta el hook en un registro pasivo (`_convoca_acciones`). `do_action` no lo consume: esto sirve para decir
