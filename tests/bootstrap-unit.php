@@ -15,6 +15,17 @@ namespace Convoca\Core {
              * @param string $contexto Contexto.
              * @return string
              */
+            /**
+             * Logo del centro para el contexto pedido (lo fija la prueba con `convoca_test_logo`).
+             *
+             * @param string $contexto Contexto.
+             * @return string
+             */
+            public static function get_logo_url(string $contexto = ''): string {
+                unset($contexto);
+                return (string) ($GLOBALS['convoca_test_logo'] ?? '');
+            }
+
             public static function get_aportacion_label(string $contexto = 'singular'): string {
                 if ('plural' === $contexto) { return 'Aportaciones'; }
                 return 'Aportación';
@@ -958,6 +969,13 @@ if (!function_exists('_n')) {
     }
 }
 
+if (!function_exists('get_site_icon_url')) {
+    /** Icono del sitio: lo fija la prueba con `convoca_test_site_icon`. */
+    function get_site_icon_url($size = 512) {
+        unset($size);
+        return (string) ($GLOBALS['convoca_test_site_icon'] ?? '');
+    }
+}
 if (!function_exists('get_query_var')) {
     /** Variables de la consulta: se fijan en `$GLOBALS['_wp_query_vars']`. */
     function get_query_var($var, $defecto = '') {
@@ -1665,11 +1683,16 @@ if (!class_exists('WP_REST_Request')) {
      */
     class WP_REST_Request implements ArrayAccess {
         private $params;
+        private $headers = array();
         public function __construct($params = array()) { $this->params = (array) $params; }
         public function get_param($k) { return $this->params[$k] ?? null; }
         public function get_params() { return $this->params; }
         public function set_param($k, $v) { $this->params[$k] = $v; }
-        public function get_header($k) { unset($k); return ''; }
+        // `get_header()` devolvía siempre '' y `set_json_params()` no existía: la mitad de las guardas de las
+        // rutas REST (cabeceras y cuerpo JSON) no se podían probar.
+        public function get_header($k) { return (string) ($this->headers[ strtolower((string) $k) ] ?? ''); }
+        public function set_header($k, $v) { $this->headers[ strtolower((string) $k) ] = (string) $v; }
+        public function set_json_params($p) { $this->params = (array) $p; }
         public function get_json_params() { return $this->params; }
         // WordPress permite `$req['id']`, y el código de la API lo usa: sin esto, la petición no se lee.
         public function offsetExists($k): bool { return isset($this->params[$k]); }
