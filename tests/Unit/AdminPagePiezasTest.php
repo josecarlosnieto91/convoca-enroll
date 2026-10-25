@@ -168,8 +168,14 @@ final class AdminPagePiezasTest extends TestCase {
 	 * Los assets: solo en las pantallas del plugin, y cada una con lo suyo.
 	 */
 	public function test_los_assets(): void {
-		define( 'CONVOCA_ENROLL_URL', 'https://example.test/plugin/' );
-		define( 'CONVOCA_ENROLL_VERSION', '2.6.0' );
+		// Las constantes las define el bootstrap (las necesita más de una prueba): aquí solo se comprueba que
+		// los assets se enganchan con ellas.
+		if ( ! defined( 'CONVOCA_ENROLL_URL' ) ) {
+			define( 'CONVOCA_ENROLL_URL', 'https://example.test/plugin/' );
+		}
+		if ( ! defined( 'CONVOCA_ENROLL_VERSION' ) ) {
+			define( 'CONVOCA_ENROLL_VERSION', '2.6.0' );
+		}
 		$page                              = new Admin_Page();
 		$GLOBALS['_wp_encolados']          = array();
 

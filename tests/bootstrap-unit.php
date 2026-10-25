@@ -1912,3 +1912,14 @@ namespace Convoca\Core {
         }
     }
 }
+
+// ─── Constantes del plugin ────────────────────────────────────────────
+// Las define el arranque del plugin, y sin ellas media docena de clases no se puede ni instanciar fuera de él
+// (el panel de reservas enqueuea usando CONVOCA_ENROLL_URL). Van en su propio bloque `namespace` sin nombre
+// porque un fichero con bloques de namespace no admite código suelto, y porque `define()` crea constantes
+// globales igualmente.
+namespace {
+    if (!defined('CONVOCA_ENROLL_URL')) { define('CONVOCA_ENROLL_URL', 'https://example.test/wp-content/plugins/convoca-enroll/'); }
+    if (!defined('CONVOCA_ENROLL_DIR')) { define('CONVOCA_ENROLL_DIR', dirname(__DIR__) . '/'); }
+    if (!defined('CONVOCA_ENROLL_VERSION')) { define('CONVOCA_ENROLL_VERSION', '9.9.9-pruebas'); }
+}
