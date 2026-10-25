@@ -21,6 +21,18 @@ namespace Convoca\Core {
              * @param string $contexto Contexto.
              * @return string
              */
+            /**
+             * Insignia del nivel de registro. Devuelve el HTML del núcleo real (span con su clase) y marca
+             * los niveles desconocidos, que es lo que hace la de verdad.
+             *
+             * @param string $nivel Nivel.
+             * @return string
+             */
+            public static function render_log_level_badge(string $nivel): string {
+                $clase = 'convoca-badge convoca-badge--' . preg_replace('/[^a-z]/', '', strtolower($nivel));
+                return '<span class="' . $clase . '">' . htmlspecialchars($nivel, ENT_QUOTES) . '</span>';
+            }
+
             public static function get_logo_url(string $contexto = ''): string {
                 unset($contexto);
                 return (string) ($GLOBALS['convoca_test_logo'] ?? '');
@@ -812,6 +824,14 @@ if (!function_exists('get_edit_post_link')) {
     function get_edit_post_link($id = 0, $contexto = 'display') { return $GLOBALS['_wp_stores']['edit_links'][(int) $id] ?? null; }
 }
 /** Añade parámetros a una URL. */
+if (!function_exists('paginate_links')) {
+    /** Paginación: se apunta lo que pide la pantalla (total y página actual). */
+    function paginate_links($args = array()) {
+        $GLOBALS['_wp_paginacion_links'][] = (array) $args;
+        if ((int) ($args['total'] ?? 0) <= 1) { return ''; }
+        return '<span class="page-numbers">1</span>';
+    }
+}
 if (!function_exists('add_query_arg')) {
     function add_query_arg($args, $url = '') {
         $args = is_array($args) ? $args : array($args => func_get_arg(1));
@@ -1590,7 +1610,16 @@ if (!isset($GLOBALS['wpdb'])) {
             foreach (($GLOBALS['_wp_stores']['get_var_mapa'] ?? []) as $aguja => $valor) {
                 if ('' !== $aguja && false !== strpos(str_replace('\\\\', '', $sql), (string) $aguja)) { return $valor; }
             }
-            if (is_string($q) && preg_match("/SHOW TABLES LIKE '?([A-Za-z0-9_]+)'?/i", $q, $m)) { return $m[1]; }
+            // `SHOW TABLES LIKE x` devuelve el nombre SOLO si la tabla existe. Antes devolvía siempre el
+            // nombre, así que la guarda «si la tabla no está, avisa» era incomprobable: la pantalla decía
+            // que existía pasara lo que pasara. La prueba fija qué tablas hay en `tablas_existentes`.
+            if (is_string($q) && preg_match("/SHOW TABLES LIKE '?([A-Za-z0-9_]+)'?/i", $q, $m)) {
+                $existentes = $GLOBALS['_wp_stores']['tablas_existentes'] ?? null;
+                if (is_array($existentes)) {
+                    return in_array($m[1], $existentes, true) ? $m[1] : '';
+                }
+                return $m[1];
+            }
 
             return (string) ($GLOBALS['_wp_stores']['get_var'] ?? '0');
         }
