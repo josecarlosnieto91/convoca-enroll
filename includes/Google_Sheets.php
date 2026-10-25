@@ -56,7 +56,7 @@ class Google_Sheets {
 			$m( 'nombre' ),
 			$m( 'email' ),
 			$m( 'telefono' ),
-			$m( 'es_socio' ) === '1' ? 'Sí' : 'No',
+			CPT_Inscripcion::es_socio( (int) $inscripcion_id ) ? 'Sí' : 'No',
 			CPT_Inscripcion::labels()[ $m( 'estado' ) ] ?? $m( 'estado' ),
 			current_time( 'd/m/Y H:i' ),
 		);

@@ -470,7 +470,7 @@ class Rest_API {
 			'nombre'       => $m( 'nombre' ),
 			'email'        => $m( 'email' ),
 			'telefono'     => $m( 'telefono' ),
-			'es_socio'     => $m( 'es_socio' ) === '1',
+			'es_socio'     => CPT_Inscripcion::es_socio( $p->ID ),
 			'estado'       => $m( 'estado' ),
 			'asistencia'   => $m( 'asistencia' ) ?: 'no_registrada',
 			'actividad_id' => (int) $m( 'actividad_id' ),

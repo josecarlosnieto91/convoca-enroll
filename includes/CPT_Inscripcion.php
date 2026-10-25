@@ -217,6 +217,22 @@ class CPT_Inscripcion {
 	 * @param bool   $single Whether to return a single value.
 	 * @return mixed
 	 */
+	/**
+	 * ¿Esta inscripción es de un socio?
+	 *
+	 * **En un solo sitio.** La condición estaba escrita como `=== '1'` en tres ficheros, y esa comparación estricta
+	 * es falsa para el entero `1`: una ficha guardada como entero —importacion, migracion, cualquier codigo que no
+	 * pasara por el formulario— no se reconocia como socio y perdia su trato preferente (enroll#36).
+	 *
+	 * Comparar como texto acepta `'1'`, `1` y `true`, y sigue rechazando `'0'`, `0`, `''` y `null`.
+	 *
+	 * @param int $post_id Inscripción.
+	 * @return bool
+	 */
+	public static function es_socio( int $post_id ): bool {
+		return '1' === (string) self::get_meta( $post_id, 'es_socio' );
+	}
+
 	public static function get_meta( int $post_id, string $key, bool $single = true ) {
 		$val = get_post_meta( $post_id, self::META_PREFIX . $key, $single );
 

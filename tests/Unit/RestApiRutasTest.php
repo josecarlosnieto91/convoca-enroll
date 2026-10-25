@@ -222,15 +222,17 @@ final class RestApiRutasTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function test_la_condicion_de_socio_es_la_cadena_uno(): void {
+	public function test_la_condicion_de_socio_acepta_cadena_y_entero(): void {
 		$api    = new Rest_API();
 		$metodo = new \ReflectionMethod( Rest_API::class, 'fmt_inscription' );
 
 		$casos = array(
 			"'1' (lo que guarda el alta)" => array( '1', true ),
-			"'0'"                        => array( '0', false ),
-			'1 como entero'              => array( 1, false ),
-			'vacío'                      => array( '', false ),
+			"'0'"                         => array( '0', false ),
+			// Un socio guardado como entero —importación, migración— también es socio (enroll#36). Antes esta
+			// fila esperaba `false`: la prueba afirmaba el defecto.
+			'1 como entero'               => array( 1, true ),
+			'vacío'                       => array( '', false ),
 		);
 
 		foreach ( $casos as $etiqueta => $caso ) {

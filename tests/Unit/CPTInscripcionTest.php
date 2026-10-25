@@ -151,6 +151,36 @@ final class CPTInscripcionTest extends TestCase {
 	}
 
 	/**
+	 * Un socio guardado como entero tambien es socio.
+	 *
+	 * La condicion estaba escrita como `=== '1'` en tres ficheros: con el entero `1` —importacion, migracion,
+	 * cualquier codigo que no pasara por el formulario— daba falso y el socio perdia su trato preferente
+	 * (enroll#36).
+	 */
+	public function test_es_socio_acepta_el_entero_uno(): void {
+		// Lista de pares, no mapa: en PHP las claves `'1'` y `1` son la MISMA, asi que un array asociativo
+		// perdia casos en silencio (la primera version de esta prueba medía 3 aserciones en vez de 6).
+		$casos = array(
+			array( '1', true ),
+			array( 1, true ),
+			array( '0', false ),
+			array( 0, false ),
+			array( '', false ),
+			array( null, false ),
+		);
+
+		foreach ( $casos as list( $valor, $esperado ) ) {
+			$GLOBALS['_wp_stores']['post_meta'][77]['_convoca_es_socio'] = $valor;
+
+			$this->assertSame(
+				$esperado,
+				CPT_Inscripcion::es_socio( 77 ),
+				sprintf( 'con %s', var_export( $valor, true ) )
+			);
+		}
+	}
+
+	/**
 	 * En otra pantalla no se toca nada.
 	 */
 	public function test_otra_pantalla_no_redirige(): void {
