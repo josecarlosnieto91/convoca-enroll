@@ -43,7 +43,9 @@ jobs:
             ${{ runner.os }}-composer-
       - uses: ramsey/composer-install@v3
         with:
-          dependency-versions: highest
+          # El analizador NO se actualiza solo en cada run: con `highest`, PHPStan pasó
+          # de 2.2.2 a 2.3.2 y las reglas nuevas tumbaron el job sin tocar el código.
+          dependency-versions: locked
           composer-options: '--ignore-platform-req=ext-iconv'
       - run: vendor/bin/phpstan analyse --configuration=phpstan.neon --memory-limit=4G
 
