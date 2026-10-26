@@ -100,7 +100,7 @@ class Form_Inscripcion {
 
 		ob_start();
 		include CONVOCA_ENROLL_DIR . 'templates/form-inscripcion.php';
-		return ob_get_clean();
+		return (string) ob_get_clean();
 	}
 
 	/**

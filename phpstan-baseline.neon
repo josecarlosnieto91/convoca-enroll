@@ -373,12 +373,6 @@ parameters:
 			path: admin/class-admin-logs.php
 
 		-
-			message: '#^Parameter \#1 \$text of function esc_html expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: admin/class-admin-logs.php
-
-		-
 			message: '#^Cannot access property \$post_title on WP_Post\|null\.$#'
 			identifier: property.nonObject
 			count: 2
@@ -550,12 +544,6 @@ parameters:
 			message: '#^Offset ''participantes'' might not exist on array\{id\: mixed, title\: mixed, count\: int, gestion\: float, instalaciones\: float, participantes\: float, comunicacion\: float\}\|array\{monitor\: string, actividad\: string, confirmadas\: int, canceladas\: int, checkins\: int\}\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
-			path: admin/class-admin-reports.php
-
-		-
-			message: '#^Parameter \#1 \$text of function esc_attr expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 2
 			path: admin/class-admin-reports.php
 
 		-
@@ -1201,12 +1189,6 @@ parameters:
 			path: includes/Volunteer_Hour_Tracker.php
 
 		-
-			message: '#^Method Convoca\\Enroll\\Volunteer_Hour_Tracker\:\:fecha_de_actividad\(\) should return string but returns string\|false\.$#'
-			identifier: return.type
-			count: 1
-			path: includes/Volunteer_Hour_Tracker.php
-
-		-
 			message: '#^Method Convoca\\Enroll\\Volunteer_Hour_Tracker\:\:subtract_hours\(\) has parameter \$user with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -1513,12 +1495,6 @@ parameters:
 			path: media/class-qr-generator.php
 
 		-
-			message: '#^Method Convoca\\Enroll\\Media\\QR_Generator\:\:resolve_url\(\) should return string\|null but returns string\|false\.$#'
-			identifier: return.type
-			count: 1
-			path: media/class-qr-generator.php
-
-		-
 			message: '#^Method Convoca\\Enroll\\Media\\QR_Generator\:\:url_for\(\) has parameter \$options with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1681,12 +1657,6 @@ parameters:
 			path: public/class-form-inscripcion.php
 
 		-
-			message: '#^Method Convoca\\Enroll\\Form_Inscripcion\:\:render_form\(\) should return string but returns string\|false\.$#'
-			identifier: return.type
-			count: 1
-			path: public/class-form-inscripcion.php
-
-		-
 			message: '#^Method Convoca\\Enroll\\Form_Inscripcion\:\:shortcode\(\) has parameter \$atts with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -1759,12 +1729,6 @@ parameters:
 			path: public/class-pagina-inscripcion.php
 
 		-
-			message: '#^Method Convoca\\Enroll\\Pagina_Inscripcion\:\:shortcode\(\) should return string but returns string\|false\.$#'
-			identifier: return.type
-			count: 1
-			path: public/class-pagina-inscripcion.php
-
-		-
 			message: '#^Method Convoca\\Enroll\\Panel_Reservas\:\:get_reservas_formateadas\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1773,12 +1737,6 @@ parameters:
 		-
 			message: '#^Method Convoca\\Enroll\\Panel_Reservas\:\:shortcode\(\) has parameter \$atts with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: public/class-panel-reservas.php
-
-		-
-			message: '#^Method Convoca\\Enroll\\Panel_Reservas\:\:shortcode\(\) should return string but returns string\|false\.$#'
-			identifier: return.type
 			count: 1
 			path: public/class-panel-reservas.php
 

@@ -156,8 +156,8 @@ class Admin_Reports {
 	/* ── Tab: Ocupacion ────────────────────────── */
 
 	private function tab_ocupacion(): void {
-		$start_date = isset( $_GET['start_date'] ) ? sanitize_text_field( $_GET['start_date'] ) : wp_date( 'Y-m-01' );
-		$end_date   = isset( $_GET['end_date'] ) ? sanitize_text_field( $_GET['end_date'] ) : wp_date( 'Y-m-t' );
+		$start_date = isset( $_GET['start_date'] ) ? sanitize_text_field( $_GET['start_date'] ) : (string) wp_date( 'Y-m-01' );
+		$end_date   = isset( $_GET['end_date'] ) ? sanitize_text_field( $_GET['end_date'] ) : (string) wp_date( 'Y-m-t' );
 		$status     = isset( $_GET['status'] ) ? sanitize_text_field( $_GET['status'] ) : 'todas';
 
 		$activities = $this->get_occupancy_data( $start_date, $end_date, $status );

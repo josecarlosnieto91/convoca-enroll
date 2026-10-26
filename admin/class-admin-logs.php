@@ -103,10 +103,10 @@ class Admin_Logs {
 						<?php foreach ( $logs as $log ) : ?>
 							<tr>
 								<td>
-									<?php echo esc_html( wp_date( 'd/m/Y H:i', strtotime( $log->created_at ) ) ); ?>
+									<?php echo esc_html( (string) wp_date( 'd/m/Y H:i', (int) strtotime( (string) $log->created_at ) ) ); ?>
 								</td>
 								<td>
-									<?php echo wp_kses_post( \Convoca\Core\Utils::render_log_level_badge( $log->level ) ); ?>
+									<?php echo wp_kses_post( (string) \Convoca\Core\Utils::render_log_level_badge( $log->level ) ); ?>
 								</td>
 								<td>
 									<?php echo esc_html( $log->message ); ?>

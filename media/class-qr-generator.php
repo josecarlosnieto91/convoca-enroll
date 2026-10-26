@@ -201,7 +201,7 @@ class QR_Generator {
 	private static function resolve_url( int $actividad_id ): ?string {
 		$blog_post_id = get_post_meta( $actividad_id, '_convoca_media_blog_post_id', true );
 		if ( $blog_post_id && get_post_status( $blog_post_id ) === 'publish' ) {
-			return get_permalink( $blog_post_id );
+			return get_permalink( $blog_post_id ) ?: null;
 		}
 
 		$landing = get_permalink( $actividad_id );
@@ -211,7 +211,7 @@ class QR_Generator {
 
 		$settings = get_option( 'convoca_enroll_settings', array() );
 		if ( ! empty( $settings['inscripcion_url'] ) ) {
-			return $settings['inscripcion_url'];
+			return (string) $settings['inscripcion_url'];
 		}
 
 		return null;

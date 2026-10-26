@@ -56,7 +56,7 @@ class Panel_Reservas {
 
 		ob_start();
 		include CONVOCA_ENROLL_DIR . 'templates/panel-reservas.php';
-		return ob_get_clean();
+		return (string) ob_get_clean();
 	}
 
 	/* ── AJAX: Login (email + code) ────────────── */

@@ -435,7 +435,13 @@ class Volunteer_Hour_Tracker {
 		$inicio = (string) ( $meta['fecha_inicio'] ?? '' );
 		$fecha  = $inicio ? substr( $inicio, 0, 10 ) : '';
 
-		return $fecha ? $fecha : wp_date( 'Y-m-d' );
+		if ( '' !== $fecha ) {
+			return $fecha;
+		}
+
+		$hoy = wp_date( 'Y-m-d' );
+
+		return false === $hoy ? gmdate( 'Y-m-d' ) : $hoy;
 	}
 
 	/**
