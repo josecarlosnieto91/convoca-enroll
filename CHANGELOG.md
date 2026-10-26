@@ -1,3 +1,14 @@
+## [2.7.69] — 2026-10-26
+
+### Cambiado
+
+- **el guardado de la actividad, el checkin y los precios**
+- El guardado de la actividad lee los nombres que emite el formulario.
+- El checkin distingue un escaneo repetido de uno nuevo.
+- Los precios de la actividad salen formateados en el shortcode.
+- El informe de monitores reconoce las acciones que se registran.
+- El doble de get_posts resuelve meta_query.
+
 ## [2.7.68] — 2026-10-21
 
 ### Cambiado
