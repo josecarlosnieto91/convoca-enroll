@@ -34,6 +34,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          # El lock exige PHP ~8.4/8.5 por eluceo/ical: el PHP por defecto del runner
+          # (8.3) no puede instalar las dependencias.
+          php-version: '8.5'
+          coverage: none
       - name: Cache Composer dependencies
         uses: actions/cache@v4
         with:
