@@ -1,0 +1,1999 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades\:\:add_menu\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades\:\:enqueue_assets\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades\:\:enqueue_assets\(\) has parameter \$hook with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades\:\:handle_save_admin\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades\:\:render_editor\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades\:\:render_page\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades_List\:\:column_acciones\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades_List\:\:column_cancelaciones\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades_List\:\:column_espera\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades_List\:\:column_fecha\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades_List\:\:column_ocupacion\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades_List\:\:column_plazas\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades_List\:\:column_titulo\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Actividades_List\:\:column_ubicacion\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Offset ''actividad_externa'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Offset ''fecha_fin'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Offset ''fecha_inicio'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Offset ''plazas_totales'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Offset ''precio_socio'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Offset ''requiere_pago'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Offset ''responsables'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Offset ''ubicacion'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Parameter \#2 \$timestamp of function wp_date expects int\|null, int\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Property WP_List_Table\:\:\$items \(array\<int\|string, mixed\>\) does not accept array\<int\|WP_Post\>\|null\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: admin/class-admin-actividades.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: admin/class-admin-checkin.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluacion_Fields\:\:add_meta_boxes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluacion-fields.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluacion_Fields\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluacion-fields.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluacion_Fields\:\:render_meta_box\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluacion-fields.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluacion_Fields\:\:render_meta_box\(\) has parameter \$post with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-evaluacion-fields.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluacion_Fields\:\:save_meta_box\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluacion-fields.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluacion_Fields\:\:save_meta_box\(\) has parameter \$post_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-evaluacion-fields.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_Editor\:\:add_menu\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluaciones-editor.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_Editor\:\:handle_save_admin\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluaciones-editor.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_Editor\:\:render_editor\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluaciones-editor.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_List\:\:add_custom_filters\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluaciones-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_List\:\:custom_column_content\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluaciones-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_List\:\:custom_column_content\(\) has parameter \$column with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-evaluaciones-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_List\:\:custom_column_content\(\) has parameter \$post_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-evaluaciones-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_List\:\:filter_evaluations_by_activity\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluaciones-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_List\:\:filter_evaluations_by_activity\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-evaluaciones-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_List\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluaciones-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_List\:\:set_custom_columns\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluaciones-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_List\:\:set_custom_columns\(\) has parameter \$columns with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-evaluaciones-list.php
+
+		-
+			message: '#^Parameter \#1 \$url of function esc_url expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: admin/class-admin-evaluaciones-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_Meta_Box\:\:add_meta_box\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluaciones-meta-box.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_Meta_Box\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluaciones-meta-box.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_Meta_Box\:\:render_meta_box\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluaciones-meta-box.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_Meta_Box\:\:render_meta_box\(\) has parameter \$post with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-evaluaciones-meta-box.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_Meta_Box\:\:render_stars\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-evaluaciones-meta-box.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_Meta_Box\:\:render_stars\(\) has parameter \$score with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-evaluaciones-meta-box.php
+
+		-
+			message: '#^Argument of an invalid type array\<int\|WP_Post\>\|null supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: admin/class-admin-inscripcion-form.php
+
+		-
+			message: '#^Cannot access property \$ID on int\|WP_Post\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: admin/class-admin-inscripcion-form.php
+
+		-
+			message: '#^Cannot access property \$post_title on int\|WP_Post\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: admin/class-admin-inscripcion-form.php
+
+		-
+			message: '#^Parameter \#1 \$value of function count expects array\|Countable, array\<int\|WP_Post\>\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: admin/class-admin-inscripcion-form.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_actividad\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_asistencia\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_default\(\) has parameter \$item with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_dni\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_doc_voluntario\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_email\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_es_socio\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_estado\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_fecha\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_fecha\(\) should return string but returns int\|string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_nombre\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_pagado\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_telefono\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_whatsapp\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:pre_fetch_members\(\) has parameter \$items with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Parameter \#1 \$items of method Convoca\\Enroll\\Inscriptions_List\:\:pre_fetch_members\(\) expects array, array\<int\|WP_Post\>\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Property Convoca\\Enroll\\Inscriptions_List\:\:\$member_cache type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Property WP_List_Table\:\:\$items \(array\<int\|string, mixed\>\) does not accept array\<int\|WP_Post\>\|null\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: admin/class-admin-inscripciones.php
+
+		-
+			message: '#^Parameter \#1 \$data of function wp_kses_post expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: admin/class-admin-logs.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: admin/class-admin-logs.php
+
+		-
+			message: '#^Cannot access property \$post_title on WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: admin/class-admin-monitor-crm.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Monitor_CRM\:\:render_summary\(\) has parameter \$items with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-monitor-crm.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Monitor_CRM\:\:render_table\(\) has parameter \$items with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-monitor-crm.php
+
+		-
+			message: '#^Argument of an invalid type array\<int\|WP_Post\>\|null supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: admin/class-admin-page.php
+
+		-
+			message: '#^Cannot access property \$ID on int\|WP_Post\.$#'
+			identifier: property.nonObject
+			count: 4
+			path: admin/class-admin-page.php
+
+		-
+			message: '#^Cannot access property \$id on WP_Screen\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: admin/class-admin-page.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Page\:\:fix_menu_highlight\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-page.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Page\:\:fix_menu_highlight\(\) has parameter \$parent_file with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-page.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Page\:\:fix_submenu_highlight\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-page.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Page\:\:fix_submenu_highlight\(\) has parameter \$submenu_file with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-page.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Page\:\:ids_de_la_peticion\(\) has parameter \$peticion with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-page.php
+
+		-
+			message: '#^Access to an undefined property object\{user_id\: mixed, monitor\: string\|null, actividad\: string\|null, message\: string\}\:\:\$actividad_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Reports\:\:get_evaluaciones_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Reports\:\:get_financial_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Reports\:\:get_memoria_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Reports\:\:get_monitor_audit_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Reports\:\:get_occupancy_data\(\) has parameter \$end with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Reports\:\:get_occupancy_data\(\) has parameter \$start with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Reports\:\:get_occupancy_data\(\) has parameter \$status with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Reports\:\:get_occupancy_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Reports\:\:get_states_distribution\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Reports\:\:get_top_demanded_activities\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Reports\:\:get_trends_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Reports\:\:get_waitlist_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Offset ''comunicacion'' might not exist on array\{id\: mixed, title\: mixed, count\: int, gestion\: float, instalaciones\: float, participantes\: float, comunicacion\: float\}\|array\{monitor\: string, actividad\: string, confirmadas\: int, canceladas\: int, checkins\: int\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Offset ''count'' might not exist on array\{id\: mixed, title\: mixed, count\: int, gestion\: float, instalaciones\: float, participantes\: float, comunicacion\: float, media_global\: float\}\|array\{monitor\: string, actividad\: string, confirmadas\: int, canceladas\: int, checkins\: int, media_global\: float\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 2
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Offset ''gestion'' might not exist on array\{id\: mixed, title\: mixed, count\: int, gestion\: float, instalaciones\: float, participantes\: float, comunicacion\: float\}\|array\{monitor\: string, actividad\: string, confirmadas\: int, canceladas\: int, checkins\: int\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Offset ''instalaciones'' might not exist on array\{id\: mixed, title\: mixed, count\: int, gestion\: float, instalaciones\: float, participantes\: float, comunicacion\: float\}\|array\{monitor\: string, actividad\: string, confirmadas\: int, canceladas\: int, checkins\: int\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Offset ''participantes'' might not exist on array\{id\: mixed, title\: mixed, count\: int, gestion\: float, instalaciones\: float, participantes\: float, comunicacion\: float\}\|array\{monitor\: string, actividad\: string, confirmadas\: int, canceladas\: int, checkins\: int\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_attr expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Property Convoca\\Enroll\\Admin_Reports\:\:\$current_tab has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Property Convoca\\Enroll\\Admin_Reports\:\:\$tabs has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: admin/class-admin-reports.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Settings\:\:find_page_by_shortcode\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: admin/class-admin-settings.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Settings\:\:get_system_checks\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-settings.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Settings\:\:render_tab_emails\(\) has parameter \$templates with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-settings.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Settings\:\:render_tab_eval_reminders\(\) has parameter \$s with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-settings.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Settings\:\:render_tab_general\(\) has parameter \$s with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-settings.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Settings\:\:render_tab_google_calendar\(\) has parameter \$s with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-settings.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Settings\:\:render_tab_google_photos\(\) has parameter \$s with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-settings.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Settings\:\:render_tab_normas\(\) has parameter \$s with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-settings.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Admin_Settings\:\:render_tab_rgpd\(\) has parameter \$s with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/class-admin-settings.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: admin/class-admin-settings.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: admin/class-email-queue-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Queue_List\:\:column_actions\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-email-queue-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Queue_List\:\:column_created_at\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-email-queue-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Queue_List\:\:column_recipient\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-email-queue-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Queue_List\:\:column_retries\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-email-queue-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Queue_List\:\:column_status\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-email-queue-list.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Queue_List\:\:column_subject\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: admin/class-email-queue-list.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: admin/class-email-queue-list.php
+
+		-
+			message: '#^Parameter \#2 \$timestamp of function wp_date expects int\|null, int\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: includes/Activity_Reminder_Cron.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Block_Inscripcion\:\:render_evaluacion\(\) has parameter \$attrs with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Block_Inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Block_Inscripcion\:\:render_inscripcion\(\) has parameter \$attrs with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Block_Inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Block_Inscripcion\:\:render_lista_espera\(\) has parameter \$attrs with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Block_Inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Block_Inscripcion\:\:render_pagina_inscripcion\(\) has parameter \$attrs with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Block_Inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Block_Inscripcion\:\:render_panel_reservas\(\) has parameter \$attrs with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Block_Inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CLI_Webhooks\:\:retry_failed\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: includes/CLI_Webhooks.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CLI_Webhooks\:\:retry_failed\(\) has parameter \$args with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/CLI_Webhooks.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CLI_Webhooks\:\:retry_failed\(\) has parameter \$assoc_args with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/CLI_Webhooks.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:archive_future_only\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:archive_future_only\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:get_allowed_activities_ids\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:get_meta\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:get_meta_value\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:get_upcoming\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:list_columns\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:list_columns\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:list_sortable_columns\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:list_sortable_columns\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:map_monitor_caps\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:map_monitor_caps\(\) has parameter \$caps with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:map_monitor_caps\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:reminder_types\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:render_activity_placeholders\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:render_activity_placeholders\(\) has parameter \$block with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:render_activity_placeholders\(\) has parameter \$html with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:shortcode_actividad_meta\(\) has parameter \$atts with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:update_meta\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Actividad\:\:update_meta\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of function get_post_meta expects int, int\|WP_Post given\.$#'
+			identifier: argument.type
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Parameter \#2 \$post of method Convoca\\Enroll\\Google_Calendar\:\:sync_on_delete\(\) expects WP_Post, WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Property Convoca\\Enroll\\CPT_Actividad\:\:\$formulario_pintado has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: includes/CPT_Actividad.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Evaluacion\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: includes/CPT_Evaluacion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Evaluacion\:\:register_cpt\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: includes/CPT_Evaluacion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Inscripcion\:\:count_by_activity\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/CPT_Inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Inscripcion\:\:get_meta\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: includes/CPT_Inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Inscripcion\:\:labels\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/CPT_Inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Inscripcion\:\:update_meta\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: includes/CPT_Inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\CPT_Inscripcion\:\:update_meta\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/CPT_Inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Checkin_PWA\:\:get_icons\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Checkin_PWA.php
+
+		-
+			message: '#^Parameter \#1 \$str of function sanitize_text_field expects string, array\<mixed\>\|string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: includes/Checkin_PWA.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Automation\:\:build_vars\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Email_Automation.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Automation\:\:clear_panel_cache\(\) has parameter \$meta_id with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Email_Automation.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Automation\:\:default_cta\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Email_Automation.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Automation\:\:get_activities_for_reminder\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Email_Automation.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Automation\:\:get_attachments\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Email_Automation.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Automation\:\:get_confirmed_inscriptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Email_Automation.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Automation\:\:get_default_templates_array\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Email_Automation.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Automation\:\:get_templates\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Email_Automation.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Automation\:\:save_templates\(\) has parameter \$templates with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Email_Automation.php
+
+		-
+			message: '#^Parameter \#1 \$string of function substr expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: includes/Email_Automation.php
+
+		-
+			message: '#^Parameter \#2 \$start of method Convoca\\Enroll\\Email_Automation\:\:get_activities_for_reminder\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 4
+			path: includes/Email_Automation.php
+
+		-
+			message: '#^Parameter \#3 \$end of method Convoca\\Enroll\\Email_Automation\:\:get_activities_for_reminder\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 4
+			path: includes/Email_Automation.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Email_Queue\:\:enqueue\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Email_Queue.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Enroll_Upgrade_Manager\:\:get_upgrade_callbacks\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Enroll_Upgrade_Manager.php
+
+		-
+			message: '#^Cannot access property \$display_name on WP_User\|false\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: includes/Eval_Reminder_Cron.php
+
+		-
+			message: '#^Cannot access property \$user_email on WP_User\|false\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: includes/Eval_Reminder_Cron.php
+
+		-
+			message: '#^Parameter \#2 \$replace of function str_replace expects array\<string\>\|string, array\<int, string\|false\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: includes/Eval_Reminder_Cron.php
+
+		-
+			message: '#^Parameter \#2 \$timestamp of function wp_date expects int\|null, int\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: includes/Eval_Reminder_Cron.php
+
+		-
+			message: '#^Argument of an invalid type list\<string\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: includes/Google_Calendar.php
+
+		-
+			message: '#^Cannot access property \$post_content on WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: includes/Google_Calendar.php
+
+		-
+			message: '#^Cannot access property \$post_title on WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: includes/Google_Calendar.php
+
+		-
+			message: '#^Parameter \#1 \$uri of class Eluceo\\iCal\\Domain\\ValueObject\\Uri constructor expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: includes/Google_Calendar.php
+
+		-
+			message: '#^Property Convoca\\Enroll\\Google_Calendar\:\:\$calendar_id has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: includes/Google_Calendar.php
+
+		-
+			message: '#^Property Convoca\\Enroll\\Google_Calendar\:\:\$client has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: includes/Google_Calendar.php
+
+		-
+			message: '#^Property Convoca\\Enroll\\Google_Calendar\:\:\$service has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: includes/Google_Calendar.php
+
+		-
+			message: '#^Cannot access property \$post_title on WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 3
+			path: includes/Google_Photos.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Google_Photos\:\:create_album\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Google_Photos.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Google_Photos\:\:get_participants_emails\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Google_Photos.php
+
+		-
+			message: '#^Property Convoca\\Enroll\\Google_Photos\:\:\$client has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: includes/Google_Photos.php
+
+		-
+			message: '#^Property Convoca\\Enroll\\Google_Photos\:\:\$service has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: includes/Google_Photos.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Google_Sheets\:\:append_row\(\) has parameter \$row with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Google_Sheets.php
+
+		-
+			message: '#^Parameter \#2 \$args of function wp_remote_post expects array\{method\?\: string, timeout\?\: float, redirection\?\: int, httpversion\?\: string, user\-agent\?\: string, reject_unsafe_urls\?\: bool, blocking\?\: bool, headers\?\: array\|string, \.\.\.\}, array\{headers\: array\{Content\-Type\: ''application/json'', X\-Goog\-Api\-Key\: mixed\}, body\: non\-empty\-string\|false, timeout\: 10\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: includes/Google_Sheets.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Maintenance\:\:reparar_integridad\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Maintenance.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Maintenance\:\:validar_integridad\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Maintenance.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Migrator\:\:ganchos_heredados\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Migrator.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Motor_Inscripcion\:\:get_reservas_por_email\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Motor_Inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Motor_Inscripcion\:\:inscribir\(\) has parameter \$datos with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Motor_Inscripcion.php
+
+		-
+			message: '#^Parameter \#1 \$string of function substr expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: includes/Motor_Inscripcion.php
+
+		-
+			message: '#^Property Convoca\\Enroll\\PDF_Compromiso\:\:\$last_error has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: includes/PDF_Compromiso.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Payment_Listener\:\:on_payment_completed\(\) has parameter \$meta with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Payment_Listener.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Rest_API\:\:fmt_activity\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Rest_API.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Rest_API\:\:fmt_inscription\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Rest_API.php
+
+		-
+			message: '#^Parameter \#1 \$p of method Convoca\\Enroll\\Rest_API\:\:fmt_inscription\(\) expects WP_Post, WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: includes/Rest_API.php
+
+		-
+			message: '#^Parameter \#1 \$p of method Convoca\\Enroll\\Rest_API\:\:fmt_inscription\(\) expects WP_Post, int\|WP_Post given\.$#'
+			identifier: argument.type
+			count: 1
+			path: includes/Rest_API.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, array\<int\|WP_Post\>\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: includes/Rest_API.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Volunteer_Hour_Tracker\:\:add_hours\(\) has parameter \$user with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/Volunteer_Hour_Tracker.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Volunteer_Hour_Tracker\:\:fecha_de_actividad\(\) should return string but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: includes/Volunteer_Hour_Tracker.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Volunteer_Hour_Tracker\:\:subtract_hours\(\) has parameter \$user with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/Volunteer_Hour_Tracker.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\WP_CLI_Migration\:\:rgpd_prices\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: includes/WP_CLI_Migration.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\WP_CLI_Migration\:\:rgpd_prices\(\) has parameter \$args with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/WP_CLI_Migration.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\WP_CLI_Migration\:\:rgpd_prices\(\) has parameter \$assoc_args with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/WP_CLI_Migration.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Webhook_Dispatcher\:\:enqueue\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Webhook_Dispatcher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Webhook_Dispatcher\:\:enqueue_legacy\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: includes/Webhook_Dispatcher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Webhook_Dispatcher\:\:on_asistencia_cambiada\(\) has parameter \$asistencia with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/Webhook_Dispatcher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Webhook_Dispatcher\:\:on_asistencia_cambiada\(\) has parameter \$inscripcion_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/Webhook_Dispatcher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Webhook_Dispatcher\:\:on_inscripcion_state_change\(\) has parameter \$actividad_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/Webhook_Dispatcher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Webhook_Dispatcher\:\:on_inscripcion_state_change\(\) has parameter \$estado with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/Webhook_Dispatcher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Webhook_Dispatcher\:\:on_inscripcion_state_change\(\) has parameter \$inscripcion_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: includes/Webhook_Dispatcher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Blog_Post_Manager\:\:build_content\(\) has parameter \$fecha_fin with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Blog_Post_Manager\:\:build_content\(\) has parameter \$fecha_inicio with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Blog_Post_Manager\:\:build_content\(\) has parameter \$inscripcion_url with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Blog_Post_Manager\:\:build_content\(\) has parameter \$plazas with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Blog_Post_Manager\:\:build_content\(\) has parameter \$precio_socio with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Blog_Post_Manager\:\:build_content\(\) has parameter \$ubicacion with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Blog_Post_Manager\:\:build_schema\(\) has parameter \$fecha_fin with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Blog_Post_Manager\:\:build_schema\(\) has parameter \$fecha_inicio with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Blog_Post_Manager\:\:build_schema\(\) has parameter \$permalink with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Blog_Post_Manager\:\:build_schema\(\) has parameter \$ubicacion with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Blog_Post_Manager\:\:build_schema\(\) should return string but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Blog_Post_Manager\:\:get_tags\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Parameter \#2 \$thumbnail_id of function set_post_thumbnail expects int, int\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: media/class-blog-post-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Event_Style_Registry\:\:all\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-event-style-registry.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Event_Style_Registry\:\:get\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-event-style-registry.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Media_Logger\:\:get\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-media-logger.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Media_Logger\:\:log\(\) has parameter \$context with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-media-logger.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Media_Rest_API\:\:poster_args\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-media-rest-api.php
+
+		-
+			message: '#^Argument of an invalid type list\<string\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 2
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:activity_data\(\) has parameter \$overrides with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:activity_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:all_format_dimensions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:draw\(\) has parameter \$d with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:event_style\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:filas_de_datos\(\) has parameter \$d with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:format_dimensions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:meta_first\(\) has parameter \$keys with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:normalize_formats\(\) has parameter \$overrides with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:normalize_formats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:plain_trim\(\) should return string but returns string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:render\(\) has parameter \$overrides with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:render\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Poster_Engine\:\:split_datetime\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Parameter \#1 \$string of function mb_strlen expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Parameter \#1 \$string of function mb_substr expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Parameter \#1 \$string of function md5 expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Parameter \#1 \$string of function trim expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: media/class-poster-engine.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\QR_Generator\:\:generate\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-qr-generator.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\QR_Generator\:\:generate_for_url\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-qr-generator.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\QR_Generator\:\:get_url\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-qr-generator.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\QR_Generator\:\:resolve_url\(\) should return string\|null but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: media/class-qr-generator.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\QR_Generator\:\:url_for\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-qr-generator.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Defaults\:\:educational_workshop\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-defaults.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Defaults\:\:full_photo_hero\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-defaults.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Defaults\:\:get_defaults\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-defaults.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Defaults\:\:kids_family\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-defaults.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Defaults\:\:mini_template\(\) has parameter \$bg with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-defaults.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Defaults\:\:mini_template\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-defaults.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Defaults\:\:minimal_corporate\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-defaults.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Defaults\:\:modern_ngo\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-defaults.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Defaults\:\:nature_classic\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-defaults.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Defaults\:\:story_focused\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-defaults.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Defaults\:\:volunteer_campaign\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-defaults.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Manager\:\:export_json\(\) has parameter \$slug_or_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: media/class-template-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Manager\:\:export_json\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Manager\:\:get\(\) has parameter \$slug_or_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: media/class-template-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Manager\:\:get\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Manager\:\:get_all\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Manager\:\:get_config\(\) has parameter \$slug_or_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: media/class-template-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Manager\:\:get_config\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Manager\:\:import_json\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: media/class-template-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Manager\:\:import_json\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Manager\:\:save\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: media/class-template-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Manager\:\:save\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Manager\:\:validate_config\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-manager.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Media\\Template_Manager\:\:validate_config\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: media/class-template-manager.php
+
+		-
+			message: '#^Offset ''badge''\|''cta''\|''meta''\|''panel''\|''subtitle''\|''title'' might not exist on array\{\}\|array\{panel\?\: mixed, badge\?\: mixed, title\?\: mixed, subtitle\?\: mixed, meta\?\: mixed, cta\?\: mixed\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 2
+			path: media/poster/class-poster-layout.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Form_Inscripcion\:\:render_form\(\) has parameter \$attrs with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: public/class-form-inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Form_Inscripcion\:\:render_form\(\) should return string but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: public/class-form-inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Form_Inscripcion\:\:shortcode\(\) has parameter \$atts with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: public/class-form-inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Formulario_Evaluacion\:\:enqueue_assets\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: public/class-formulario-evaluacion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Formulario_Evaluacion\:\:get_nonce\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: public/class-formulario-evaluacion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Formulario_Evaluacion\:\:handle_submission\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: public/class-formulario-evaluacion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Formulario_Evaluacion\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: public/class-formulario-evaluacion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Formulario_Evaluacion\:\:render_shortcode\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: public/class-formulario-evaluacion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Formulario_Evaluacion\:\:render_shortcode\(\) has parameter \$atts with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: public/class-formulario-evaluacion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Formulario_Evaluacion\:\:render_star_input\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: public/class-formulario-evaluacion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Formulario_Evaluacion\:\:render_star_input\(\) has parameter \$field_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: public/class-formulario-evaluacion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Formulario_Evaluacion\:\:render_star_input\(\) has parameter \$label with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: public/class-formulario-evaluacion.php
+
+		-
+			message: '#^Parameter \#2 \$src of function wp_register_script expects non\-empty\-string\|false, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: public/class-formulario-evaluacion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Pagina_Inscripcion\:\:shortcode\(\) has parameter \$atts with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: public/class-pagina-inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Pagina_Inscripcion\:\:shortcode\(\) should return string but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: public/class-pagina-inscripcion.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Panel_Reservas\:\:get_reservas_formateadas\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: public/class-panel-reservas.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Panel_Reservas\:\:shortcode\(\) has parameter \$atts with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: public/class-panel-reservas.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Panel_Reservas\:\:shortcode\(\) should return string but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: public/class-panel-reservas.php
+
+		-
+			message: '#^Parameter \#2 \$args of function wp_remote_post expects array\{method\?\: string, timeout\?\: float, redirection\?\: int, httpversion\?\: string, user\-agent\?\: string, reject_unsafe_urls\?\: bool, blocking\?\: bool, headers\?\: array\|string, \.\.\.\}, array\{headers\: array\{Authorization\: non\-falsy\-string, Content\-Type\: ''application/json''\}, body\: non\-empty\-string\|false, timeout\: 30\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: social/class-gbp-provider.php
+
+		-
+			message: '#^Property Convoca\\Enroll\\Social\\GBP_Provider\:\:\$account type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-gbp-provider.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Meta_Provider\:\:publish_facebook\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-meta-provider.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Meta_Provider\:\:publish_instagram\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-meta-provider.php
+
+		-
+			message: '#^Property Convoca\\Enroll\\Social\\Meta_Provider\:\:\$account type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-meta-provider.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_Healthcheck\:\:get_provider\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: social/class-social-healthcheck.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_Healthcheck\:\:get_provider\(\) has parameter \$acct with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-social-healthcheck.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_OAuth\:\:get_accounts\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-social-oauth.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_OAuth\:\:get_token\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-social-oauth.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_Payload\:\:build_message\(\) has parameter \$overrides with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-social-payload.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_Payload\:\:get_whatsapp_link\(\) has parameter \$overrides with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-social-payload.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_Payload\:\:log_api_error\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: social/class-social-payload.php
+
+		-
+			message: '#^Parameter \#1 \$string of function trim expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: social/class-social-payload.php
+
+		-
+			message: '#^Parameter \#2 \$array of function implode expects array, array\<int, string\>\|WP_Error given\.$#'
+			identifier: argument.type
+			count: 1
+			path: social/class-social-payload.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function preg_replace expects array\<float\|int\|string\>\|string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: social/class-social-payload.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_Publisher\:\:publish\(\) should return array\{success\: bool, message\: string\} but returns array\.$#'
+			identifier: return.type
+			count: 3
+			path: social/class-social-publisher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_Publisher\:\:publish_facebook\(\) has parameter \$account with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-social-publisher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_Publisher\:\:publish_facebook\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-social-publisher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_Publisher\:\:publish_google\(\) has parameter \$account with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-social-publisher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_Publisher\:\:publish_google\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-social-publisher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_Publisher\:\:publish_instagram\(\) has parameter \$account with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-social-publisher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_Publisher\:\:publish_instagram\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-social-publisher.php
+
+		-
+			message: '#^Parameter \#2 \$args of function wp_remote_post expects array\{method\?\: string, timeout\?\: float, redirection\?\: int, httpversion\?\: string, user\-agent\?\: string, reject_unsafe_urls\?\: bool, blocking\?\: bool, headers\?\: array\|string, \.\.\.\}, array\{headers\: array\{Authorization\: non\-falsy\-string, Content\-Type\: ''application/json''\}, body\: non\-empty\-string\|false, timeout\: 30\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: social/class-social-publisher.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_Scheduler\:\:queue\(\) has parameter \$account_ids with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-social-scheduler.php
+
+		-
+			message: '#^Method Convoca\\Enroll\\Social\\Social_WhatsApp\:\:share_url\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: social/class-social-whatsapp.php

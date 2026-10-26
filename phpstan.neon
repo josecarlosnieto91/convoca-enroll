@@ -1,8 +1,12 @@
-# includes:
-#     - phpstan-baseline.neon (comentado durante limpieza de deuda; se eliminará al pasar a 0)
+includes:
+    - phpstan-baseline.neon
 
 parameters:
-    level: 5
+    level: 8
+    # La base se genera en local (PHP 8.5) y el CI la evalúa con otra versión: dos entradas
+    # cambian de número de ocurrencias y PHPStan las reporta como «expected to occur N».
+    # No es un error del código; los errores NUEVOS siguen fallando.
+    reportUnmatchedIgnoredErrors: false
     paths:
         - ./
     excludePaths:
