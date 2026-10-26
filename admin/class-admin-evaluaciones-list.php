@@ -49,7 +49,7 @@ class Admin_Evaluaciones_List {
 				if ( $actividad_id ) {
 					$edit_link = get_edit_post_link( $actividad_id );
 					$title     = get_the_title( $actividad_id );
-					echo '<a href="' . esc_url( $edit_link ) . '">' . esc_html( $title ) . '</a>';
+					echo '<a href="' . esc_url( (string) $edit_link ) . '">' . esc_html( $title ) . '</a>';
 				} else {
 					echo '-';
 				}

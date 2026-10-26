@@ -164,7 +164,7 @@ class Admin_Checkin {
 						<?php
 						foreach ( $actividades as $act ) :
 							$fecha     = get_post_meta( $act->ID, '_convoca_fecha_inicio', true );
-							$fecha_fmt = $fecha ? wp_date( 'd/m', strtotime( $fecha ) ) : '';
+							$fecha_fmt = $fecha ? (string) wp_date( 'd/m', (int) strtotime( (string) $fecha ) ) : '';
 							?>
 							<option value="<?php echo esc_attr( (string) $act->ID ); ?>" <?php selected( $actividad_id, $act->ID ); ?>>
 								<?php echo esc_html( $act->post_title ); ?> (<?php echo esc_html( $fecha_fmt ); ?>)

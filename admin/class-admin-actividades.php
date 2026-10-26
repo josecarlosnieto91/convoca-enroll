@@ -164,6 +164,9 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 			$meta[ $key ] = $post_id ? get_post_meta( $post_id, '_convoca_' . $key, true ) : '';
 		}
 
+		// `META_KEYS` fija las claves: se garantizan todas antes de pintar el formulario.
+		$meta = array_merge( array_fill_keys( CPT_Actividad::META_KEYS, '' ), $meta );
+
 		// Defaults for new activity.
 		if ( ! $post_id ) {
 			$meta['fecha_inicio']   = wp_date( 'Y-m-d\TH:i', strtotime( '+1 day 10:00' ) );
@@ -436,10 +439,16 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 		$fecha_ini = get_post_meta( $orig_id, '_convoca_fecha_inicio', true );
 		$fecha_fin = get_post_meta( $orig_id, '_convoca_fecha_fin', true );
 		if ( $fecha_ini ) {
-			update_post_meta( $new_id, '_convoca_fecha_inicio', wp_date( 'Y-m-d\TH:i', strtotime( $fecha_ini . ' +7 days' ) ) );
+			$ts_ini = strtotime( $fecha_ini . ' +7 days' );
+			if ( false !== $ts_ini ) {
+				update_post_meta( $new_id, '_convoca_fecha_inicio', wp_date( 'Y-m-d\TH:i', $ts_ini ) );
+			}
 		}
 		if ( $fecha_fin ) {
-			update_post_meta( $new_id, '_convoca_fecha_fin', wp_date( 'Y-m-d\TH:i', strtotime( $fecha_fin . ' +7 days' ) ) );
+			$ts_fin = strtotime( $fecha_fin . ' +7 days' );
+			if ( false !== $ts_fin ) {
+				update_post_meta( $new_id, '_convoca_fecha_fin', wp_date( 'Y-m-d\TH:i', $ts_fin ) );
+			}
 		}
 
 		\Convoca\Core\Logger::info(

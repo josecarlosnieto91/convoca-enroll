@@ -85,70 +85,10 @@ parameters:
 			path: admin/class-admin-actividades.php
 
 		-
-			message: '#^Offset ''actividad_externa'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: admin/class-admin-actividades.php
-
-		-
-			message: '#^Offset ''fecha_fin'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: admin/class-admin-actividades.php
-
-		-
-			message: '#^Offset ''fecha_inicio'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: admin/class-admin-actividades.php
-
-		-
-			message: '#^Offset ''plazas_totales'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: admin/class-admin-actividades.php
-
-		-
-			message: '#^Offset ''precio_socio'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: admin/class-admin-actividades.php
-
-		-
-			message: '#^Offset ''requiere_pago'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: admin/class-admin-actividades.php
-
-		-
-			message: '#^Offset ''responsables'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: admin/class-admin-actividades.php
-
-		-
-			message: '#^Offset ''ubicacion'' might not exist on non\-empty\-array\{actividad_externa\?\: mixed, fecha_fin\?\: mixed, fecha_inicio\?\: mixed, funciones\?\: mixed, google_album_created_at\?\: mixed, google_album_id\?\: mixed, google_album_shared\?\: mixed, google_album_url\?\: mixed, \.\.\.\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: admin/class-admin-actividades.php
-
-		-
-			message: '#^Parameter \#2 \$timestamp of function wp_date expects int\|null, int\|false given\.$#'
-			identifier: argument.type
-			count: 2
-			path: admin/class-admin-actividades.php
-
-		-
 			message: '#^Property WP_List_Table\:\:\$items \(array\<int\|string, mixed\>\) does not accept array\<int\|WP_Post\>\|null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: admin/class-admin-actividades.php
-
-		-
-			message: '#^Parameter \#1 \$text of function esc_html expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: admin/class-admin-checkin.php
 
 		-
 			message: '#^Method Convoca\\Enroll\\Admin_Evaluacion_Fields\:\:add_meta_boxes\(\) has no return type specified\.$#'
@@ -255,12 +195,6 @@ parameters:
 		-
 			message: '#^Method Convoca\\Enroll\\Admin_Evaluaciones_List\:\:set_custom_columns\(\) has parameter \$columns with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: admin/class-admin-evaluaciones-list.php
-
-		-
-			message: '#^Parameter \#1 \$url of function esc_url expects string, string\|null given\.$#'
-			identifier: argument.type
 			count: 1
 			path: admin/class-admin-evaluaciones-list.php
 
