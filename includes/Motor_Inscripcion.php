@@ -196,7 +196,8 @@ class Motor_Inscripcion {
 			}
 
 			// Validar que el dominio del email tenga registros MX.
-			$domain = substr( strrchr( $email, '@' ), 1 );
+			$arroba = strrchr( $email, '@' );
+			$domain = false === $arroba ? '' : substr( $arroba, 1 );
 			if ( ! empty( $domain ) && ! checkdnsrr( $domain, 'MX' ) && ! checkdnsrr( $domain, 'A' ) ) {
 				return new \WP_Error( 'invalid_email_domain', __( 'El dominio del email no es válido.', 'convoca-enroll' ) );
 			}

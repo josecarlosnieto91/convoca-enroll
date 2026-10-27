@@ -417,8 +417,8 @@ class Email_Automation {
 	/* ── Cron: 7 days before ─────────────────────── */
 
 	public function cron_reminder_7dias(): void {
-		$target_start = wp_date( 'Y-m-d\TH:i', strtotime( '+7 days' ) );
-		$target_end   = wp_date( 'Y-m-d\TH:i', strtotime( '+7 days +2 hours' ) );
+		$target_start = (string) wp_date( 'Y-m-d\TH:i', (int) strtotime( '+7 days' ) );
+		$target_end   = (string) wp_date( 'Y-m-d\TH:i', (int) strtotime( '+7 days +2 hours' ) );
 
 		$activities = $this->get_activities_for_reminder( 'reminder_7dias', $target_start, $target_end, '_convoca_fecha_inicio' );
 
@@ -433,8 +433,8 @@ class Email_Automation {
 	/* ── Cron: 24h before ────────────────────────── */
 
 	public function cron_reminder_24h(): void {
-		$target_start = wp_date( 'Y-m-d\TH:i', strtotime( '+23 hours' ) );
-		$target_end   = wp_date( 'Y-m-d\TH:i', strtotime( '+25 hours' ) );
+		$target_start = (string) wp_date( 'Y-m-d\TH:i', (int) strtotime( '+23 hours' ) );
+		$target_end   = (string) wp_date( 'Y-m-d\TH:i', (int) strtotime( '+25 hours' ) );
 
 		$activities = $this->get_activities_for_reminder( 'reminder_1dia', $target_start, $target_end, '_convoca_fecha_inicio' );
 
@@ -449,8 +449,8 @@ class Email_Automation {
 	/* ── Cron: 1 hour before ──────────────────────── */
 
 	public function cron_reminder_1hora(): void {
-		$target_start = wp_date( 'Y-m-d\TH:i', strtotime( '+1 hour' ) );
-		$target_end   = wp_date( 'Y-m-d\TH:i', strtotime( '+2 hours' ) );
+		$target_start = (string) wp_date( 'Y-m-d\TH:i', (int) strtotime( '+1 hour' ) );
+		$target_end   = (string) wp_date( 'Y-m-d\TH:i', (int) strtotime( '+2 hours' ) );
 
 		$activities = $this->get_activities_for_reminder( 'reminder_1hora', $target_start, $target_end, '_convoca_fecha_inicio' );
 
@@ -791,7 +791,9 @@ class Email_Automation {
 		if ( '' === $dominios ) {
 			// Por defecto, el dominio del propio sitio (el del email configurado arriba): así cada
 			// instalación reconoce los suyos y el código no lleva el nombre de ninguna asociación.
-			$propio   = (string) substr( strrchr( (string) ( $s['admin_email'] ?? get_option( 'admin_email' ) ), '@' ), 1 );
+			$correo   = (string) ( $s['admin_email'] ?? get_option( 'admin_email' ) );
+			$arroba   = strrchr( $correo, '@' );
+			$propio   = false === $arroba ? '' : substr( $arroba, 1 );
 			$dominios = 'getconvoca.app' . ( '' !== $propio ? '|' . $propio : '' );
 		}
 

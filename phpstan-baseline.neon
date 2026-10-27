@@ -895,21 +895,15 @@ parameters:
 			path: includes/Email_Automation.php
 
 		-
-			message: '#^Parameter \#1 \$string of function substr expects string, string\|false given\.$#'
+			message: '#^Parameter \#2 \$start of method Convoca\\Enroll\\Email_Automation\:\:get_activities_for_reminder\(\) expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: includes/Email_Automation.php
 
 		-
-			message: '#^Parameter \#2 \$start of method Convoca\\Enroll\\Email_Automation\:\:get_activities_for_reminder\(\) expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 4
-			path: includes/Email_Automation.php
-
-		-
 			message: '#^Parameter \#3 \$end of method Convoca\\Enroll\\Email_Automation\:\:get_activities_for_reminder\(\) expects string, string\|false given\.$#'
 			identifier: argument.type
-			count: 4
+			count: 1
 			path: includes/Email_Automation.php
 
 		-
@@ -1053,12 +1047,6 @@ parameters:
 		-
 			message: '#^Method Convoca\\Enroll\\Motor_Inscripcion\:\:inscribir\(\) has parameter \$datos with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: includes/Motor_Inscripcion.php
-
-		-
-			message: '#^Parameter \#1 \$string of function substr expects string, string\|false given\.$#'
-			identifier: argument.type
 			count: 1
 			path: includes/Motor_Inscripcion.php
 
