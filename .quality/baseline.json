@@ -1,11 +1,11 @@
 {
   "repo": "convoca-enroll",
-  "fecha": "2026-10-26",
+  "fecha": "2026-10-27",
   "phpstan_errors": 0,
-  "phpmd_total": 205,
+  "phpmd_total": 204,
   "semgrep_errors": 0,
   "composer_advisories": 0,
   "secretos": 0,
   "nota": "Ratchet: estos numeros solo pueden bajar. Subirlos exige justificarlo en el PR.",
-  "motivo_phpmd": "Admin_Settings pasa de 1000 lineas (1045) por los tipos @param que exige PHPStan nivel 8 en sus 8 pestanas. Se sube 1 con la clase ya en el limite: la solucion es separar las pestanas (issue abierto), no borrar la documentacion de tipos."
+  "motivo_phpmd": "Bajado de 205 a 204 al separar las 8 pestanas de Admin_Settings en tres traits (issue #53): la clase pasa de 1074 a 442 lineas y deja de superar ExcessiveClassLength. Los avisos que quedan son de longitud de METODO (HTML de cada pestana), no de la clase."
 }
