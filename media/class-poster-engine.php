@@ -87,7 +87,7 @@ class Poster_Engine {
 
 			$hash = substr(
 				md5(
-					wp_json_encode(
+					(string) wp_json_encode(
 						array(
 							// La versión del motor entra en la clave: si cambia el dibujo, el cartel
 							// se regenera en vez de servirse el viejo.
@@ -376,7 +376,7 @@ class Poster_Engine {
 	}
 
 	private static function plain_trim( string $html, int $limit ): string {
-		$text = preg_replace( '/\s+/', ' ', wp_strip_all_tags( $html ) );
+		$text = (string) preg_replace( '/\s+/', ' ', wp_strip_all_tags( $html ) );
 		return mb_strlen( $text ) > $limit
 			? mb_substr( $text, 0, $limit - 1 ) . '…'
 			: $text;
@@ -468,7 +468,7 @@ class Poster_Engine {
 			};
 
 			$text_box = static function( \Imagick $canvas, string $text, array $box, string $font, string $color, int $size, float $line_height = 1.15, string $align = 'left', bool $shadow = false, int $max_lines = 0, bool $engrosar = false ) use ( $text_draw, $wrap, $ellipsize ): void {
-				$text = trim( preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $text ) );
+				$text = trim( (string) preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $text ) );
 				if ( '' === $text || $box['w'] <= 0 || $box['h'] <= 0 ) { return; }
 				$draw  = $text_draw( $font, $size, $color, $engrosar );
 				$lines = $wrap( $canvas, $text, $font, $size, $box['w'] );
