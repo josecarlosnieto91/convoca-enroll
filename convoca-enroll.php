@@ -22,10 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Load translations.
-
-
-// Load translations.
+// Traducciones: en `init`, como exige WordPress desde 6.7.
 add_action(
 	'init',
 	function () {
@@ -33,10 +30,6 @@ add_action(
 		load_plugin_textdomain( 'convoca-enroll', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	}
 );
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 
 /* ── Composer autoload ─────────────────────────────── */
 $composer_autoload = __DIR__ . '/vendor/autoload.php';
@@ -96,6 +89,11 @@ if ( ! defined( 'CONVOCA_ENROLL_URL' ) ) {
 register_activation_hook(
 	__FILE__,
 	function (): void {
+		// En la activación no ha corrido `init`: sin esto, los CPT y las plantillas
+		// piden traducciones antes de tiempo y WordPress avisa con
+		// `_load_textdomain_just_in_time` (issue #52).
+		load_plugin_textdomain( 'convoca-enroll', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
 		if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
 			wp_die( esc_html__( 'Convoca Enroll requires Convoca Core to be active. Please activate Convoca Core first.', 'convoca-enroll' ) );
