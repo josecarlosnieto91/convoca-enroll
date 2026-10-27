@@ -88,7 +88,7 @@ class Email_Queue_List extends \WP_List_Table {
 	}
 
 	protected function column_created_at( $item ): string {
-		return esc_html( wp_date( 'd/m/Y H:i', strtotime( $item->created_at ) ) );
+		return esc_html( (string) wp_date( 'd/m/Y H:i', (int) strtotime( (string) $item->created_at ) ) );
 	}
 
 	protected function column_actions( $item ): string {

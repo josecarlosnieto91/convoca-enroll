@@ -121,8 +121,8 @@ class Activity_Reminder_Cron {
 
 		$nombre_actividad = get_the_title( $activity_id );
 		$fecha_raw        = (string) get_post_meta( $activity_id, '_convoca_fecha_inicio', true );
-		$fecha            = $fecha_raw ? wp_date( 'd/m/Y', strtotime( $fecha_raw ) ) : '';
-		$hora             = $fecha_raw ? wp_date( 'H:i', strtotime( $fecha_raw ) ) : '';
+		$fecha            = $fecha_raw ? (string) wp_date( 'd/m/Y', (int) strtotime( $fecha_raw ) ) : '';
+		$hora             = $fecha_raw ? (string) wp_date( 'H:i', (int) strtotime( $fecha_raw ) ) : '';
 		$ubicacion        = (string) get_post_meta( $activity_id, '_convoca_ubicacion', true );
 		$link             = get_permalink( $activity_id );
 

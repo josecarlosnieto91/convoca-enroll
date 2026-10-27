@@ -289,12 +289,6 @@ parameters:
 			path: admin/class-admin-inscripciones.php
 
 		-
-			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_fecha\(\) should return string but returns int\|string\|false\.$#'
-			identifier: return.type
-			count: 1
-			path: admin/class-admin-inscripciones.php
-
-		-
 			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_nombre\(\) has parameter \$item with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -335,12 +329,6 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: admin/class-admin-inscripciones.php
-
-		-
-			message: '#^Parameter \#1 \$data of function wp_kses_post expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: admin/class-admin-logs.php
 
 		-
 			message: '#^Cannot access property \$post_title on WP_Post\|null\.$#'
@@ -571,12 +559,6 @@ parameters:
 			path: admin/class-admin-settings.php
 
 		-
-			message: '#^Parameter \#1 \$text of function esc_html expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: admin/class-admin-settings.php
-
-		-
 			message: '#^Access to an undefined property object\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -617,18 +599,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: admin/class-email-queue-list.php
-
-		-
-			message: '#^Parameter \#1 \$text of function esc_html expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: admin/class-email-queue-list.php
-
-		-
-			message: '#^Parameter \#2 \$timestamp of function wp_date expects int\|null, int\|false given\.$#'
-			identifier: argument.type
-			count: 2
-			path: includes/Activity_Reminder_Cron.php
 
 		-
 			message: '#^Method Convoca\\Enroll\\Block_Inscripcion\:\:render_evaluacion\(\) has parameter \$attrs with no value type specified in iterable type array\.$#'
@@ -970,12 +940,6 @@ parameters:
 			message: '#^Parameter \#2 \$replace of function str_replace expects array\<string\>\|string, array\<int, string\|false\> given\.$#'
 			identifier: argument.type
 			count: 2
-			path: includes/Eval_Reminder_Cron.php
-
-		-
-			message: '#^Parameter \#2 \$timestamp of function wp_date expects int\|null, int\|false given\.$#'
-			identifier: argument.type
-			count: 1
 			path: includes/Eval_Reminder_Cron.php
 
 		-

@@ -57,7 +57,7 @@ class Eval_Reminder_Cron {
 
 		// Buscar actividades que terminaron hace exactamente $days días.
 		// Ej: si hoy es 15, y days es 3, buscamos las que terminaron el día 12.
-		$target_day = wp_date( 'Y-m-d', strtotime( "-{$days} days" ) );
+		$target_day = (string) wp_date( 'Y-m-d', (int) strtotime( "-{$days} days" ) );
 
 		$activities = get_posts(
 			array(

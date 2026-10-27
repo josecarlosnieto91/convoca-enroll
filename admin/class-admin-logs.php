@@ -144,7 +144,7 @@ class Admin_Logs {
 					<div class="tablenav-pages">
 						<?php
 						echo wp_kses_post(
-							paginate_links(
+							(string) paginate_links(
 								array(
 									'base'      => add_query_arg( 'paged', '%#%' ),
 									'format'    => '',

@@ -504,7 +504,7 @@ class Admin_Settings {
 						<input type="checkbox" id="eval_reminder_active" name="conv[eval_reminder][active]" value="1" <?php checked( $is_active ); ?>>
 						Enviar emails automáticamente
 					</label>
-					<p class="description">Próxima ejecución del cron: <strong><?php echo esc_html( $next_run_text ); ?></strong></p>
+					<p class="description">Próxima ejecución del cron: <strong><?php echo esc_html( (string) $next_run_text ); ?></strong></p>
 				</td>
 			</tr>
 			<tr>

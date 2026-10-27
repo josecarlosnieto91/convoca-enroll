@@ -476,7 +476,9 @@ class Inscriptions_List extends \WP_List_Table {
 	}
 
 	public function column_fecha( $item ): string {
-		return get_the_date( 'd/m/Y H:i', $item );
+		$fecha = get_the_date( 'd/m/Y H:i', $item );
+
+		return false === $fecha ? '' : (string) $fecha;
 	}
 
 	protected function column_default( $item, $column_name ): string {
