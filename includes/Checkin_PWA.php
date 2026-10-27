@@ -165,6 +165,8 @@ class Checkin_PWA {
 
 	/**
 	 * Get icon list for the manifest.
+	 *
+	 * @return array<int, array<string, string>> mixed>
 	 */
 	private static function get_icons( string $logo_url = '' ): array {
 		$icons = array();
@@ -213,8 +215,10 @@ class Checkin_PWA {
 			$body = $item['body'] ?? '';
 			parse_str( $body, $data );
 
-			$token = sanitize_text_field( $data['id'] ?? '' );
-			$nonce = sanitize_text_field( $data['nonce'] ?? '' );
+			$raw_id    = $data['id'] ?? '';
+			$raw_nonce = $data['nonce'] ?? '';
+			$token     = sanitize_text_field( is_scalar( $raw_id ) ? (string) $raw_id : '' );
+			$nonce     = sanitize_text_field( is_scalar( $raw_nonce ) ? (string) $raw_nonce : '' );
 
 			if ( ! $token || ! $nonce ) {
 				$results[] = array(

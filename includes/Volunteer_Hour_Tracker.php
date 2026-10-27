@@ -106,7 +106,7 @@ class Volunteer_Hour_Tracker {
 	 * registro en lugar de crear otro. El agregado del usuario se ajusta con las horas que
 	 * realmente se habían acreditado, no con las que la actividad tenga ahora.
 	 */
-	private static function subtract_hours( int $inscripcion_id, $user ): void {
+	private static function subtract_hours( int $inscripcion_id, mixed $user ): void {
 		$log_id = \Convoca\Core\Hour_Ledger::find( \Convoca\Core\Hour_Ledger::ORIGEN_INSCRIPCION, $inscripcion_id );
 		$hours  = $log_id ? (float) get_post_meta( $log_id, '_convoca_horas', true ) : 0.0;
 
@@ -149,7 +149,7 @@ class Volunteer_Hour_Tracker {
 	/**
 	 * Add hours to a volunteer.
 	 */
-	private static function add_hours( int $inscripcion_id, $user, float $hours, int $actividad_id ): void {
+	private static function add_hours( int $inscripcion_id, mixed $user, float $hours, int $actividad_id ): void {
 		if ( $hours <= 0 ) {
 			return;
 		}

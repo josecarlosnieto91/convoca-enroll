@@ -84,7 +84,7 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 		);
 	}
 
-	public function add_menu() {
+	public function add_menu(): void {
 		$this->registrar_subpagina(
 			'convoca-enroll',
 			__( 'Actividades', 'convoca-enroll' ),
@@ -104,7 +104,7 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 		);
 	}
 
-	public function render_page() {
+	public function render_page(): void {
 		$table = new Admin_Actividades_List();
 		$table->prepare_items();
 		?>
@@ -146,7 +146,7 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 	/**
 	 * Enqueue assets for the custom editor.
 	 */
-	public function enqueue_assets( $hook ) {
+	public function enqueue_assets( mixed $hook ): void {
 		if ( strpos( $hook, 'convoca-enroll-actividad-editor' ) !== false ) {
 			$this->encolar_estilo_comun();
 		}
@@ -155,7 +155,7 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 	/**
 	 * Render the custom editor page.
 	 */
-	public function render_editor() {
+	public function render_editor(): void {
 		$post_id   = isset( $_GET['id'] ) ? (int) $_GET['id'] : 0;
 		$actividad = $post_id ? get_post( $post_id ) : null;
 
@@ -290,7 +290,7 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 	/**
 	 * Handle save from admin form.
 	 */
-	public function handle_save_admin() {
+	public function handle_save_admin(): void {
 		$this->exigir_guardado(
 			'convoca_enroll_save_actividad_nonce',
 			'edit_posts',
@@ -520,7 +520,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 		}
 
 		$query       = new \WP_Query( $args );
-		$this->items = $query->posts;
+		$this->items = (array) $query->posts;
 		$this->set_pagination_args(
 			array(
 				'total_items' => $query->found_posts,
@@ -529,7 +529,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 		);
 	}
 
-	protected function column_titulo( $item ): string {
+	protected function column_titulo( mixed $item ): string {
 		$edit    = admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $item->ID );
 		$externa = get_post_meta( $item->ID, '_convoca_actividad_externa', true );
 		$badge   = $externa === '1' ? ' <span class="convoca-badge convoca-badge--externa" style="background:#2d5a27;color:#fff;">🌐</span>' : '';
@@ -544,24 +544,24 @@ class Admin_Actividades_List extends \WP_List_Table {
 		return '<a href="' . esc_url( $edit ) . '"><strong>' . esc_html( $item->post_title ) . '</strong></a>' . $badge . $status_badge;
 	}
 
-	protected function column_fecha( $item ): string {
+	protected function column_fecha( mixed $item ): string {
 		$fecha = get_post_meta( $item->ID, '_convoca_fecha_inicio', true );
 		return $fecha ? esc_html( \Convoca\Core\Utils::format_date( $fecha, 'd/m/Y H:i' ) ) : '—';
 	}
 
-	protected function column_ubicacion( $item ): string {
+	protected function column_ubicacion( mixed $item ): string {
 		$ubicacion = get_post_meta( $item->ID, '_convoca_ubicacion', true );
 		return $ubicacion ? esc_html( $ubicacion ) : '—';
 	}
 
-	protected function column_plazas( $item ): string {
+	protected function column_plazas( mixed $item ): string {
 		$total = (int) get_post_meta( $item->ID, '_convoca_plazas_totales', true );
 		$disp  = (int) get_post_meta( $item->ID, '_convoca_plazas_disponibles', true );
 		$used  = $total - $disp;
 		return $used . '/' . $total;
 	}
 
-	protected function column_ocupacion( $item ): string {
+	protected function column_ocupacion( mixed $item ): string {
 		$stats = CPT_Inscripcion::count_by_activity( $item->ID );
 		$total = (int) get_post_meta( $item->ID, '_convoca_plazas_totales', true );
 		if ( $total <= 0 ) {
@@ -579,17 +579,17 @@ class Admin_Actividades_List extends \WP_List_Table {
 		return '<span style="color:' . $color . ';font-weight:bold;">' . $pct . '%</span> (' . $stats['confirmada'] . ')';
 	}
 
-	protected function column_espera( $item ): string {
+	protected function column_espera( mixed $item ): string {
 		$stats = CPT_Inscripcion::count_by_activity( $item->ID );
 		return (string) ( $stats['lista_espera'] ?? 0 );
 	}
 
-	protected function column_cancelaciones( $item ): string {
+	protected function column_cancelaciones( mixed $item ): string {
 		$stats = CPT_Inscripcion::count_by_activity( $item->ID );
 		return (string) ( $stats['cancelada'] ?? 0 );
 	}
 
-	protected function column_acciones( $item ): string {
+	protected function column_acciones( mixed $item ): string {
 		$actions   = array();
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=conv-checkin&actividad_id=' . $item->ID ) ), 'Check-in' );
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_duplicate_actividad&id=' . $item->ID ), 'convoca_enroll_duplicate_' . $item->ID ) ), 'Duplicar' );

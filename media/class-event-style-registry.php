@@ -45,6 +45,7 @@ class Event_Style_Registry {
 	 * All registered styles.
 	 *
 	 * @return array
+	 * @return array<string, mixed>
 	 */
 	public static function all(): array {
 		return array(
@@ -89,6 +90,7 @@ class Event_Style_Registry {
 	 *
 	 * @param string $type Activity type slug.
 	 * @return array
+	 * @return array<string, mixed>
 	 */
 	public static function get( string $type ): array {
 		$all = self::all();

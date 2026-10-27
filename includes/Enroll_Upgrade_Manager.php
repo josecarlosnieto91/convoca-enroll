@@ -62,6 +62,11 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 		return 'conv';
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	protected function get_upgrade_callbacks(): array {
 		return array(
 			'1.2.0' => array( $this, 'upgrade_to_1_2_0' ),

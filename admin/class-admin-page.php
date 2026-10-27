@@ -47,8 +47,10 @@ class Admin_Page {
 
 	/**
 	 * Fix menu highlight for evaluation CPT.
+	 *
+	 * @return mixed
 	 */
-	public function fix_menu_highlight( $parent_file ) {
+	public function fix_menu_highlight( mixed $parent_file ) {
 		global $current_screen;
 		if ( $current_screen->post_type === 'convoca_evaluacion' ) {
 			return 'convoca-enroll';
@@ -58,8 +60,10 @@ class Admin_Page {
 
 	/**
 	 * Fix submenu highlight for evaluation CPT.
+	 *
+	 * @return mixed
 	 */
-	public function fix_submenu_highlight( $submenu_file ) {
+	public function fix_submenu_highlight( mixed $submenu_file ) {
 		global $current_screen;
 		if ( $current_screen->post_type === 'convoca_evaluacion' ) {
 			// El submenú apunta al listado del CPT, no a una página propia.
@@ -70,6 +74,9 @@ class Admin_Page {
 
 	public function notices(): void {
 		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
 		if ( $screen->id !== 'actividad' || ! isset( $_GET['message'] ) ) {
 			return;
 		}
@@ -452,6 +459,7 @@ class Admin_Page {
 	 *
 	 * @param array $peticion Normalmente `$_GET`.
 	 * @return int[] IDs saneados (sin ceros ni duplicados).
+	 * @param array<string, mixed> $peticion
 	 */
 	public static function ids_de_la_peticion( array $peticion ): array {
 		$crudos = $peticion['ids'] ?? $peticion['inscripcion'] ?? array();

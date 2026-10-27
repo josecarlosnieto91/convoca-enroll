@@ -68,6 +68,7 @@ class Social_OAuth {
 
 	/**
 	 * Get a decrypted token for an account.
+	 * @return array<string, mixed>
 	 */
 	public static function get_token( int $account_id ): ?array {
 		global $wpdb;
@@ -157,6 +158,11 @@ class Social_OAuth {
 		);
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public static function get_accounts( string $network = '' ): array {
 		global $wpdb;
 		$where = $network ? $wpdb->prepare( 'WHERE network = %s AND is_active = 1', $network ) : 'WHERE is_active = 1';

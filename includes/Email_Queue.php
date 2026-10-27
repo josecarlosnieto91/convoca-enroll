@@ -68,6 +68,11 @@ class Email_Queue {
 		dbDelta( $sql );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $data
+	 */
 	public static function enqueue( array $data ): int|bool {
 		global $wpdb;
 		$table_name = self::get_table_name();

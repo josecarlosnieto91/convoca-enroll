@@ -192,16 +192,19 @@ class Eval_Reminder_Cron {
 	}
 
 	private static function send_reminder( int $insc_id, int $activity_id, int $user_id, string $subject_template, string $body_template, string $cc_email, string $link_base ): void {
-		$user                = get_userdata( $user_id );
+		$user = get_userdata( $user_id );
+		if ( ! $user instanceof \WP_User ) {
+			return;
+		}
 		$email               = $user->user_email;
 		$nombre              = $user->display_name;
 		$nombre_actividad    = get_the_title( $activity_id );
 		$fecha_actividad_raw = get_post_meta( $activity_id, '_convoca_fecha_fin', true );
-		$fecha_actividad     = $fecha_actividad_raw ? wp_date( 'd/m/Y', strtotime( $fecha_actividad_raw ) ) : '';
+		$fecha_actividad     = $fecha_actividad_raw ? (string) wp_date( 'd/m/Y', (int) strtotime( (string) $fecha_actividad_raw ) ) : '';
 
 		$url = $link_base;
 		if ( empty( $url ) ) {
-			$url = get_permalink( $activity_id );
+			$url = (string) get_permalink( $activity_id );
 		}
 		$link_evaluacion = esc_url( add_query_arg( 'evaluar', '1', $url ) );
 

@@ -41,6 +41,7 @@ class Media_Logger {
 	 * @param string $status      ok|error|warning
 	 * @param array  $context     Additional data as array.
 	 * @param int    $duration_ms Duration in ms (optional).
+	 * @param array<string, mixed> $context
 	 */
 	public static function log( string $object_type, ?int $object_id, string $action, string $status, array $context = array(), int $duration_ms = 0 ): void {
 		global $wpdb;
@@ -67,6 +68,7 @@ class Media_Logger {
 	 * @param int    $object_id   Object ID.
 	 * @param int    $limit       Max logs.
 	 * @return array
+	 * @return array<string, mixed>
 	 */
 	public static function get( string $object_type, int $object_id, int $limit = 20 ): array {
 		global $wpdb;

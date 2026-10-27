@@ -57,6 +57,11 @@ class CPT_Actividad {
 		'obligaciones',
 	);
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public static function reminder_types(): array {
 		return array(
 			'reminder_7dias'       => __( '7 días antes', 'convoca-enroll' ),
@@ -67,7 +72,7 @@ class CPT_Actividad {
 	}
 
 	/** Evita pintar el formulario de inscripción dos veces en la misma petición. */
-	private static $formulario_pintado = false;
+	private static bool $formulario_pintado = false;
 
 	public function __construct() {
 		add_action( 'init', array( __CLASS__, 'register' ) );
@@ -492,6 +497,28 @@ class CPT_Actividad {
 
 	/* ── Helpers ───────────────────────────────── */
 
+	/**
+	 * Id de un post venga como objeto o como número.
+	 *
+	 * @param \WP_Post|int $valor Post o id.
+	 * @return int
+	 */
+	private static function post_id_de( $valor ): int {
+		return $valor instanceof \WP_Post ? $valor->ID : (int) $valor;
+	}
+
+	/**
+	 * Metadatos de la actividad.
+	 *
+	 * @param int $post_id Id de la actividad.
+	 * @return array<string, mixed>
+	 */
+	/**
+	 * Metadatos de la actividad.
+	 *
+	 * @param int $post_id Id de la actividad.
+	 * @return array<string, mixed>
+	 */
 	public static function get_meta( int $post_id ): array {
 		$data = array();
 		foreach ( self::META_KEYS as $key ) {
@@ -502,6 +529,8 @@ class CPT_Actividad {
 
 	/**
 	 * Get a single meta value with the prefix.
+	 *
+	 * @return mixed
 	 */
 	public static function get_meta_value( int $post_id, string $key, bool $single = true ) {
 		return get_post_meta( $post_id, self::META_PREFIX . $key, $single );
@@ -509,11 +538,18 @@ class CPT_Actividad {
 
 	/**
 	 * Update a single meta value with the prefix.
+	 *
+	 * @return mixed
 	 */
-	public static function update_meta( int $post_id, string $key, $value ) {
+	public static function update_meta( int $post_id, string $key, mixed $value ) {
 		return update_post_meta( $post_id, self::META_PREFIX . $key, $value );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, mixed> mixed>
+	 */
 	public static function get_upcoming( int $limit = 20 ): array {
 		return get_posts(
 			array(
@@ -539,6 +575,8 @@ class CPT_Actividad {
 	 * Get allowed activity IDs for the current user.
 	 * If admin, returns null (all activities).
 	 * If monitor, returns array of IDs.
+	 *
+	 * @return array<string, mixed>
 	 */
 	public static function get_allowed_activities_ids(): ?array {
 		if ( current_user_can( 'manage_options' ) ) {
@@ -590,8 +628,9 @@ class CPT_Actividad {
 			$v_query = new \WP_Query( $v_args );
 			if ( ! empty( $v_query->posts ) ) {
 				$act_ids = array();
-				foreach ( $v_query->posts as $ins_id ) {
-					$act_id = (int) get_post_meta( $ins_id, '_convoca_actividad_id', true );
+				foreach ( (array) $v_query->posts as $ins_id ) {
+					$ins_post = self::post_id_de( $ins_id );
+					$act_id   = (int) get_post_meta( $ins_post, '_convoca_actividad_id', true );
 					if ( $act_id ) {
 						$act_ids[] = $act_id;
 					}
@@ -607,6 +646,10 @@ class CPT_Actividad {
 
 	/**
 	 * Map capabilities for monitors.
+	 *
+	 * @param array<int, mixed> $args
+	 * @param array<string, mixed> $caps
+	 * @return array<int|string, mixed>
 	 */
 	public function map_monitor_caps( array $caps, string $cap, int $user_id, array $args ): array {
 		if (
@@ -650,6 +693,18 @@ class CPT_Actividad {
 
 	/* ── List Table Columns ────────────────────── */
 
+	/**
+	 * Columnas del listado.
+	 *
+	 * @param array<string, string> $columns Columnas.
+	 * @return array<string, string>
+	 */
+	/**
+	 * Columnas del listado.
+	 *
+	 * @param array<string, mixed> $columns
+	 * @return array<string, string>
+	 */
 	public function list_columns( array $columns ): array {
 		$new = array();
 		foreach ( $columns as $key => $val ) {
@@ -716,6 +771,12 @@ class CPT_Actividad {
 		}
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $columns
+	 * @return array<string, mixed>
+	 */
 	public function list_sortable_columns( array $columns ): array {
 		$columns['fecha'] = 'fecha_inicio';
 		return $columns;
@@ -949,7 +1010,10 @@ class CPT_Actividad {
 		$calendar_id = $settings['google_calendar_id'] ?? 'primary';
 
 		try {
-			$calendar->sync_on_delete( $activity_id, get_post( $activity_id ) );
+			$post_actividad = get_post( $activity_id );
+			if ( $post_actividad instanceof \WP_Post ) {
+				$calendar->sync_on_delete( $activity_id, $post_actividad );
+			}
 			delete_post_meta( $activity_id, '_convoca_google_event_id' );
 			delete_post_meta( $activity_id, '_convoca_google_event_link' );
 			wp_send_json_success();
@@ -964,7 +1028,7 @@ class CPT_Actividad {
 	 * [convoca_actividad_meta field="ubicacion"]
 	 * Render a single activity meta value, formatted for display.
 	 */
-	public function shortcode_actividad_meta( $atts ): string {
+	public function shortcode_actividad_meta( mixed $atts ): string {
 		$atts = shortcode_atts(
 			array( 'field' => 'ubicacion' ),
 			$atts,
@@ -1047,8 +1111,10 @@ class CPT_Actividad {
 
 	/**
 	 * Replace %%PLACEHOLDER%% tokens in rendered blocks for activity content.
+	 *
+	 * @return mixed
 	 */
-	public function render_activity_placeholders( $html, $block ) {
+	public function render_activity_placeholders( mixed $html, mixed $block ) {
 		if ( strpos( $html, '%%' ) === false ) {
 			return $html;
 		}
@@ -1081,8 +1147,10 @@ class CPT_Actividad {
 
 	/**
 	 * Archive: show only future activities, ordered by start date.
+	 *
+	 * @return mixed
 	 */
-	public function archive_future_only( $query ) {
+	public function archive_future_only( mixed $query ) {
 		if ( ! is_admin() && $query->is_post_type_archive( 'actividad' ) && $query->is_main_query() ) {
 			$query->set( 'meta_key', '_convoca_fecha_inicio' );
 			$query->set( 'meta_compare', '>=' );

@@ -50,6 +50,8 @@ class Migrator {
 	 *     } );
 	 *
 	 * NO los programa ningún fichero del código actual (hay una prueba que lo vigila).
+	 *
+	 * @return array<int, mixed>
 	 */
 	public static function ganchos_heredados(): array {
 		$ganchos = apply_filters( 'convoca_enroll_ganchos_heredados', array() );

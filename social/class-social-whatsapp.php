@@ -34,6 +34,7 @@ class Social_WhatsApp {
 
 	/**
 	 * Generate WhatsApp share URL for an activity.
+	 * @param array<string, mixed> $data
 	 */
 	public static function share_url( int $actividad_id, array $data = array() ): string {
 		$title    = $data['title'] ?? get_the_title( $actividad_id );

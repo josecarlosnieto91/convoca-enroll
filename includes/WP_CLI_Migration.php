@@ -42,7 +42,7 @@ class WP_CLI_Migration extends \WP_CLI_Command {
 	 *
 	 * @when after_wp_load
 	 */
-	public function rgpd_prices( $args, $assoc_args ) {
+	public function rgpd_prices( mixed $args, mixed $assoc_args ): void {
 		global $wpdb;
 
 		\WP_CLI::log( "Iniciando migración de 'general' a 'socio_dia' (Trasgu)..." );

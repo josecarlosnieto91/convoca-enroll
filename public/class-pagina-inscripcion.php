@@ -33,7 +33,7 @@ class Pagina_Inscripcion {
 		add_shortcode( 'convoca_inscripcion_page', array( $this, 'shortcode' ) );
 	}
 
-	public function shortcode( $atts ): string {
+	public function shortcode( mixed $atts ): string {
 		$settings  = get_option( 'convoca_enroll_settings', array() );
 		$intro     = wp_kses_post( $settings['texto_introduccion'] ?? '' );
 		$url_panel = esc_url( $settings['url_panel_reservas'] ?? home_url( '/panel-de-reservas/' ) );

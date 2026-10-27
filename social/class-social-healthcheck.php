@@ -79,6 +79,12 @@ class Social_Healthcheck {
 		echo '</p></div>';
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 * @param array<string, mixed> $acct
+	 */
 	private static function get_provider( array $acct ) {
 		return match ( $acct['network'] ) {
 			'facebook', 'instagram' => new Meta_Provider( (int) $acct['id'] ),

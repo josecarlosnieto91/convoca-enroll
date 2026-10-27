@@ -1,6 +1,3 @@
-includes:
-    - phpstan-baseline.neon
-
 parameters:
     level: 8
     # La base se genera en local (PHP 8.5) y el CI la evalúa con otra versión: dos entradas

@@ -23,11 +23,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class CPT_Evaluacion {
 
-	public static function init() {
+	public static function init(): void {
 		add_action( 'init', array( __CLASS__, 'register_cpt' ) );
 	}
 
-	public static function register_cpt() {
+	public static function register_cpt(): void {
 		$labels = array(
 			'name'               => __( 'Evaluaciones', 'convoca-enroll' ),
 			'singular_name'      => __( 'Evaluación', 'convoca-enroll' ),

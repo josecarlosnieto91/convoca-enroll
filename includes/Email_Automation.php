@@ -106,6 +106,8 @@ class Email_Automation {
 	/**
 	 * Clear panel page ID cache when meta is updated or deleted.
 	 * Note: deleted_post_meta passes $meta_id as an array of IDs.
+	 *
+	 * @param array<string, mixed> $meta_id
 	 */
 	public function clear_panel_cache( int|array $meta_id, int $post_id, string $meta_key ): void {
 		if ( $meta_key === '_convoca_panel_page' ) {
@@ -115,6 +117,16 @@ class Email_Automation {
 
 	/* ── Default templates ─────────────────────── */
 
+	/**
+	 * Plantillas por defecto.
+	 *
+	 * @return array<string, mixed>
+	 */
+	/**
+	 * Plantillas por defecto.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public static function get_default_templates_array(): array {
 		return array(
 			'recepcion'                      => array(
@@ -465,8 +477,8 @@ class Email_Automation {
 	/* ── Cron: post-event feedback (7 days after) ── */
 
 	public function cron_feedback(): void {
-		$target_start = wp_date( 'Y-m-d\T00:00', strtotime( '-7 days' ) );
-		$target_end   = wp_date( 'Y-m-d\T23:59', strtotime( '-7 days' ) );
+		$target_start = (string) wp_date( 'Y-m-d\T00:00', (int) strtotime( '-7 days' ) );
+		$target_end   = (string) wp_date( 'Y-m-d\T23:59', (int) strtotime( '-7 days' ) );
 
 		$activities = $this->get_activities_for_reminder( 'reminder_post_evento', $target_start, $target_end, '_convoca_fecha_fin' );
 
@@ -480,6 +492,11 @@ class Email_Automation {
 
 	/* ── Helper methods for configurable reminders ── */
 
+	/**
+	 * Actividades para un recordatorio.
+	 *
+	 * @return array<int, mixed>
+	 */
 	private function get_activities_for_reminder( string $reminder_key, string $start, string $end, string $date_field ): array {
 		return get_posts(
 			array(
@@ -504,6 +521,11 @@ class Email_Automation {
 		);
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, mixed> mixed>
+	 */
 	private function get_confirmed_inscriptions( int $actividad_id ): array {
 		return get_posts(
 			array(
@@ -666,6 +688,11 @@ class Email_Automation {
 		);
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, mixed> mixed>
+	 */
 	private function get_attachments( string $slug ): array {
 		$templates = self::get_templates();
 		$tpl       = $templates[ $slug ] ?? null;
@@ -680,6 +707,11 @@ class Email_Automation {
 		return array();
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private function build_vars( int $inscripcion_id, int $actividad_id ): array {
 		$m         = fn( $key ) => get_post_meta( $inscripcion_id, '_convoca_' . $key, true );
 		$am        = function ( $key ) use ( $actividad_id ) {
@@ -808,6 +840,11 @@ class Email_Automation {
 		return str_replace( '.', '\.', $dominios );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, mixed> mixed>
+	 */
 	private static function default_cta( string $slug ): array {
 		$panel = array( '{panel_reservas}', __( 'Ver mis reservas', 'convoca-enroll' ) );
 		$ctas  = array(
@@ -872,12 +909,27 @@ class Email_Automation {
 
 	/* ── Admin getters ─────────────────────────── */
 
+	/**
+	 * Plantillas guardadas.
+	 *
+	 * @return array<string, mixed>
+	 */
+	/**
+	 * Plantillas guardadas.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public static function get_templates(): array {
 		$saved    = get_option( self::OPTION, array() );
 		$defaults = self::get_default_templates_array();
 		return array_merge( $defaults, $saved );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $templates
+	 */
 	public static function save_templates( array $templates ): void {
 		update_option( self::OPTION, $templates );
 	}

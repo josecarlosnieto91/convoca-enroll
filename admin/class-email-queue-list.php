@@ -53,21 +53,21 @@ class Email_Queue_List extends \WP_List_Table {
 	/**
 	 * Render row checkbox.
 	 *
-	 * @param object $item Row item (stdClass from wpdb query).
+	 * @param object{id: int|string} $item Fila de la consulta.
 	 */
 	protected function column_cb( $item ): string {
 		return sprintf( '<input type="checkbox" name="email_ids[]" value="%d">', $item->id );
 	}
 
-	protected function column_recipient( $item ): string {
+	protected function column_recipient( mixed $item ): string {
 		return esc_html( $item->recipient );
 	}
 
-	protected function column_subject( $item ): string {
+	protected function column_subject( mixed $item ): string {
 		return esc_html( $item->subject );
 	}
 
-	protected function column_status( $item ): string {
+	protected function column_status( mixed $item ): string {
 		$badges = array(
 			'pending' => 'convoca-badge--warning',
 			'sent'    => 'convoca-badge--success',
@@ -83,15 +83,15 @@ class Email_Queue_List extends \WP_List_Table {
 		return '<span class="convoca-badge ' . ( $badges[ $item->status ] ?? '' ) . '">' . ( $labels[ $item->status ] ?? $item->status ) . '</span>';
 	}
 
-	protected function column_retries( $item ): string {
+	protected function column_retries( mixed $item ): string {
 		return (string) $item->retries;
 	}
 
-	protected function column_created_at( $item ): string {
+	protected function column_created_at( mixed $item ): string {
 		return esc_html( (string) wp_date( 'd/m/Y H:i', (int) strtotime( (string) $item->created_at ) ) );
 	}
 
-	protected function column_actions( $item ): string {
+	protected function column_actions( mixed $item ): string {
 		if ( $item->status === 'failed' || $item->status === 'pending' ) {
 			return '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_enroll_retry_email&id=' . $item->id ), 'convoca_enroll_retry_' . $item->id ) ) . '" class="convoca-btn convoca-btn-outline" style="padding:2px 8px;font-size:11px;">↻ Reenviar</a>';
 		}

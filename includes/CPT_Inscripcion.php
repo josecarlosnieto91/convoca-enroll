@@ -68,6 +68,11 @@ class CPT_Inscripcion {
 		'cancelada',
 	);
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public static function labels(): array {
 		return array(
 			'pendiente'      => __( 'Pendiente', 'convoca-enroll' ),
@@ -178,6 +183,8 @@ class CPT_Inscripcion {
 
 	/**
 	 * Count inscriptions for an activity grouped by state.
+	 *
+	 * @return array<string, mixed>
 	 */
 	public static function count_by_activity( int $actividad_id ): array {
 		global $wpdb;
@@ -233,6 +240,11 @@ class CPT_Inscripcion {
 		return '1' === (string) self::get_meta( $post_id, 'es_socio' );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
 	public static function get_meta( int $post_id, string $key, bool $single = true ) {
 		$val = get_post_meta( $post_id, self::META_PREFIX . $key, $single );
 
@@ -304,7 +316,12 @@ class CPT_Inscripcion {
 		return $formas[ $valor ] ?? '';
 	}
 
-	public static function update_meta( int $post_id, string $key, $value ) {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
+	public static function update_meta( int $post_id, string $key, mixed $value ) {
 		return update_post_meta( $post_id, self::META_PREFIX . $key, $value );
 	}
 }

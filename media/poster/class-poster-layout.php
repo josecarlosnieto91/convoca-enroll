@@ -176,6 +176,11 @@ class Poster_Layout {
 		}
 
 		// El panel contiene al resto a propósito: no cuenta como solape.
+		/**
+		 * Cajas con sus medidas.
+		 *
+		 * @var array<string, array{x: int, y: int, w: int, h: int}> $cajas
+		 */
 		$nombres = array_values( array_diff( array_keys( $cajas ), array( 'panel' ) ) );
 		$total   = count( $nombres );
 		for ( $i = 0; $i < $total; $i++ ) {

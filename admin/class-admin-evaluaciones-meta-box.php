@@ -23,11 +23,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Evaluaciones_Meta_Box {
 
-	public static function init() {
+	public static function init(): void {
 		add_action( 'add_meta_boxes', array( __CLASS__, 'add_meta_box' ) );
 	}
 
-	public static function add_meta_box() {
+	public static function add_meta_box(): void {
 		add_meta_box(
 			'convoca_evaluaciones_summary',
 			__( 'Evaluaciones de la Actividad', 'convoca-enroll' ),
@@ -38,7 +38,7 @@ class Admin_Evaluaciones_Meta_Box {
 		);
 	}
 
-	public static function render_meta_box( $post ) {
+	public static function render_meta_box( mixed $post ): void {
 		$evaluaciones = get_posts(
 			array(
 				'post_type'      => 'convoca_evaluacion',
@@ -112,7 +112,7 @@ class Admin_Evaluaciones_Meta_Box {
 		<?php
 	}
 
-	private static function render_stars( $score ) {
+	private static function render_stars( mixed $score ): void {
 		$stars = '';
 		for ( $s = 1; $s <= 5; $s++ ) {
 			if ( $s <= round( $score ) ) {

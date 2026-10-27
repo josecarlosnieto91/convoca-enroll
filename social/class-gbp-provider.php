@@ -29,6 +29,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class GBP_Provider implements Social_Provider_Interface {
 
+	/**
+	 * Cuenta configurada.
+	 *
+	 * @var array<string, mixed>
+	 */
 	private array $account;
 	private string $access_token;
 	private string $refresh_token;
@@ -112,7 +117,7 @@ class GBP_Provider implements Social_Provider_Interface {
 					'Authorization' => "Bearer {$this->access_token}",
 					'Content-Type'  => 'application/json',
 				),
-				'body'    => wp_json_encode( $post_body ),
+				'body'    => (string) wp_json_encode( $post_body ),
 				'timeout' => 30,
 			)
 		);

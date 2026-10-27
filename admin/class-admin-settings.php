@@ -111,6 +111,11 @@ class Admin_Settings {
 
 	/* ── Tab: General ─────────────────────────── */
 
+	/**
+	 * Pinta la pestaña.
+	 *
+	 * @param array<string, mixed> $s Datos de la pestaña.
+	 */
 	private static function render_tab_general( array $s ): void {
 		?>
 		<h2><?php esc_html_e( 'Configuración General', 'convoca-enroll' ); ?></h2>
@@ -283,6 +288,11 @@ class Admin_Settings {
 
 	/* ── Tab: Normas ──────────────────────────── */
 
+	/**
+	 * Pinta la pestaña.
+	 *
+	 * @param array<string, mixed> $s Datos de la pestaña.
+	 */
 	private static function render_tab_normas( array $s ): void {
 		$default_normas = '<h3>Normas de inscripción</h3> <!-- UTF-8 Fix -->
 <p>En esta primera fase de inscripción cada persona podrá realizar una única reserva de taller.</p>
@@ -315,6 +325,11 @@ class Admin_Settings {
 
 	/* ── Tab: Protección de datos ─────────────── */
 
+	/**
+	 * Pinta la pestaña.
+	 *
+	 * @param array<string, mixed> $s Datos de la pestaña.
+	 */
 	private static function render_tab_rgpd( array $s ): void {
 		?>
 		<div class="convoca-field">
@@ -342,6 +357,11 @@ class Admin_Settings {
 
 	/* ── Tab: Emails ──────────────────────────── */
 
+	/**
+	 * Pinta la pestaña.
+	 *
+	 * @param array<string, mixed> $templates Datos de la pestaña.
+	 */
 	private static function render_tab_emails( array $templates ): void {
 		/**
 		 * Etiquetas legibles por slug.
@@ -479,6 +499,11 @@ class Admin_Settings {
 
 	/* ── Tab: Recordatorios de Evaluación ─────────────── */
 
+	/**
+	 * Pinta la pestaña.
+	 *
+	 * @param array<string, mixed> $s Datos de la pestaña.
+	 */
 	private static function render_tab_eval_reminders( array $s ): void {
 		$settings       = get_option( self::OPTION, array() );
 		$eval_reminders = $settings['eval_reminder'] ?? array();
@@ -550,6 +575,11 @@ class Admin_Settings {
 
 	/* ── Tab: Google Photos ───────────────────────── */
 
+	/**
+	 * Pinta la pestaña.
+	 *
+	 * @param array<string, mixed> $s Datos de la pestaña.
+	 */
 	private static function render_tab_google_photos( array $s ): void {
 		$google_photos = new Google_Photos();
 		$auth_url      = $google_photos->get_auth_url();
@@ -650,6 +680,11 @@ class Admin_Settings {
 
 	/* ── Tab: Google Calendar ─────────────────────── */
 
+	/**
+	 * Pinta la pestaña.
+	 *
+	 * @param array<string, mixed> $s Datos de la pestaña.
+	 */
 	private static function render_tab_google_calendar( array $s ): void {
 		$google_calendar = new Google_Calendar();
 		$auth_url        = $google_calendar->get_auth_url();
@@ -919,6 +954,11 @@ class Admin_Settings {
 		return $bloques;
 	}
 
+	/**
+	 * Comprobaciones del sistema de este plugin.
+	 *
+	 * @return array<int, mixed>
+	 */
 	private static function get_system_checks( bool $force = false ): array {
 		if ( ! $force ) {
 			$cached = get_option( self::CACHE_KEY );
@@ -1022,6 +1062,11 @@ class Admin_Settings {
 		return $checks;
 	}
 
+	/**
+	 * Busca una página publicada por su shortcode.
+	 *
+	 * @return mixed
+	 */
 	private static function find_page_by_shortcode( string $shortcode ) {
 		global $wpdb;
 		return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_content LIKE %s AND post_status = 'publish' AND post_type = 'page' LIMIT 1", '%' . $wpdb->esc_like( $shortcode ) . '%' ) );

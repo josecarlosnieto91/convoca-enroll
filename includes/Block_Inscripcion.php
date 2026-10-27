@@ -112,6 +112,8 @@ class Block_Inscripcion {
 
 	/**
 	 * Render: Formulario de Inscripción.
+	 *
+	 * @param array<string, mixed> $attrs
 	 */
 	public function render_inscripcion( array $attrs ): string {
 		$id = (int) ( $attrs['actividadId'] ?? 0 );
@@ -133,6 +135,8 @@ class Block_Inscripcion {
 
 	/**
 	 * Render: Panel de Reservas.
+	 *
+	 * @param array<string, mixed> $attrs
 	 */
 	public function render_panel_reservas( array $attrs ): string {
 		$panel = new Panel_Reservas();
@@ -141,6 +145,8 @@ class Block_Inscripcion {
 
 	/**
 	 * Render: Página de Inscripciones.
+	 *
+	 * @param array<string, mixed> $attrs
 	 */
 	public function render_pagina_inscripcion( array $attrs ): string {
 		$page = new Pagina_Inscripcion();
@@ -149,11 +155,18 @@ class Block_Inscripcion {
 
 	/**
 	 * Render: Formulario de Evaluación.
+	 *
+	 * @param array<string, mixed> $attrs
 	 */
 	public function render_evaluacion( array $attrs ): string {
 		return \Convoca\Enroll\Formulario_Evaluacion::render_shortcode( $attrs );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $attrs
+	 */
 	public function render_lista_espera( array $attrs ): string {
 		$actividad_id = (int) ( $attrs['actividadId'] ?? 0 );
 		if ( ! $actividad_id ) {

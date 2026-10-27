@@ -88,6 +88,8 @@ class Google_Sheets {
 
 	/**
 	 * Append a row to Google Sheets via API v4.
+	 *
+	 * @param array<int, mixed> $row
 	 */
 	private function append_row( string $sheet_id, array $row ): void {
 		$settings = get_option( 'convoca_enroll_settings', array() );
@@ -109,7 +111,7 @@ class Google_Sheets {
 					'Content-Type'   => 'application/json',
 					'X-Goog-Api-Key' => $api_key,
 				),
-				'body'    => wp_json_encode(
+				'body'    => (string) wp_json_encode(
 					array(
 						'values' => array( $row ),
 					)

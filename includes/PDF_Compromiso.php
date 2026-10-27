@@ -31,6 +31,11 @@ class PDF_Compromiso {
 
 	private const ERROR_TRANSIENT = 'convoca_enroll_pdf_error_';
 
+	/**
+	 * Último error del generador.
+	 *
+	 * @var string
+	 */
 	public static $last_error = '';
 
 	public static function init(): void {

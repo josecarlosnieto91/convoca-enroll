@@ -39,7 +39,9 @@ class Inscriptions_List extends \WP_List_Table {
 	/**
 	 * Cache for member IDs linked to inscriptions on current page.
 	 *
-	 * @var array email => member_id
+	 * Cache de socios por email.
+	 *
+	 * @var array<string, int>
 	 */
 	private $member_cache = array();
 
@@ -259,7 +261,7 @@ class Inscriptions_List extends \WP_List_Table {
 		$args['order']   = $order;
 
 		$query       = new \WP_Query( $args );
-		$this->items = $query->posts;
+		$this->items = (array) $query->posts;
 
 		$this->pre_fetch_members( $this->items );
 
@@ -273,6 +275,8 @@ class Inscriptions_List extends \WP_List_Table {
 
 	/**
 	 * Pre-fetches members by email for all items on the current page to avoid N+1 queries.
+	 *
+	 * @param array<string, mixed> $items
 	 */
 	private function pre_fetch_members( array $items ): void {
 		if ( empty( $items ) ) {
@@ -325,7 +329,7 @@ class Inscriptions_List extends \WP_List_Table {
 		return '<input type="checkbox" name="ids[]" value="' . $item->ID . '">';
 	}
 
-	public function column_nombre( $item ): string {
+	public function column_nombre( mixed $item ): string {
 		$nombre = CPT_Inscripcion::get_meta( $item->ID, 'nombre' ) ?: $item->post_title;
 		$url    = admin_url( 'admin.php?page=convoca-enroll&inscripcion_id=' . $item->ID );
 		$link   = '<a href="' . esc_url( $url ) . '"><strong>' . esc_html( $nombre ) . '</strong></a>';
@@ -351,7 +355,7 @@ class Inscriptions_List extends \WP_List_Table {
 		return $link . $this->row_actions( $actions );
 	}
 
-	public function column_asistencia( $item ): string {
+	public function column_asistencia( mixed $item ): string {
 		$status = CPT_Inscripcion::asistencia( $item->ID );
 		if ( 'si' === $status ) {
 			return '<span class="convoca-badge convoca-badge--success">' . esc_html__( 'Asistió', 'convoca-enroll' ) . '</span>';
@@ -362,7 +366,7 @@ class Inscriptions_List extends \WP_List_Table {
 		return '<span class="convoca-badge convoca-badge--info">' . esc_html__( 'Sin registrar', 'convoca-enroll' ) . '</span>';
 	}
 
-	public function column_doc_voluntario( $item ): string {
+	public function column_doc_voluntario( mixed $item ): string {
 		$doc_id = CPT_Inscripcion::get_meta( $item->ID, 'documento_compromiso_id' );
 		$email  = CPT_Inscripcion::get_meta( $item->ID, 'email' );
 		$act_id = CPT_Inscripcion::get_meta( $item->ID, 'actividad_id' );
@@ -422,7 +426,7 @@ class Inscriptions_List extends \WP_List_Table {
 		return '<span style="color:#999">' . esc_html__( '❌ N/A', 'convoca-enroll' ) . '</span>';
 	}
 
-	public function column_email( $item ): string {
+	public function column_email( mixed $item ): string {
 		$email = CPT_Inscripcion::get_meta( $item->ID, 'email' );
 		if ( ! $email ) {
 			return '—';
@@ -430,11 +434,11 @@ class Inscriptions_List extends \WP_List_Table {
 		return '<a href="mailto:' . esc_attr( $email ) . '">' . esc_html( $email ) . '</a>';
 	}
 
-	public function column_dni( $item ): string {
+	public function column_dni( mixed $item ): string {
 		return esc_html( CPT_Inscripcion::get_meta( $item->ID, 'dni' ) ?: '—' );
 	}
 
-	public function column_telefono( $item ): string {
+	public function column_telefono( mixed $item ): string {
 		$tel = CPT_Inscripcion::get_meta( $item->ID, 'telefono' );
 		if ( ! $tel ) {
 			return '—';
@@ -442,7 +446,7 @@ class Inscriptions_List extends \WP_List_Table {
 		return '<a href="tel:' . esc_attr( $tel ) . '">' . esc_html( $tel ) . '</a>';
 	}
 
-	public function column_whatsapp( $item ): string {
+	public function column_whatsapp( mixed $item ): string {
 		$has_wa = CPT_Inscripcion::get_meta( $item->ID, 'whatsapp' );
 		if ( $has_wa === 'no' ) {
 			return '<span style="color:#999">' . esc_html__( 'No', 'convoca-enroll' ) . '</span>';
@@ -457,30 +461,35 @@ class Inscriptions_List extends \WP_List_Table {
 		return $has_wa === 'si' ? '✅' : '—';
 	}
 
-	public function column_actividad( $item ): string {
+	public function column_actividad( mixed $item ): string {
 		$act_id = CPT_Inscripcion::get_meta( $item->ID, 'actividad_id' );
 		return esc_html( get_the_title( (int) $act_id ) );
 	}
 
-	public function column_estado( $item ): string {
+	public function column_estado( mixed $item ): string {
 		$estado = CPT_Inscripcion::get_meta( $item->ID, 'estado' );
 		return CPT_Inscripcion::badge( $estado );
 	}
 
-	public function column_pagado( $item ): string {
+	public function column_pagado( mixed $item ): string {
 		return CPT_Inscripcion::get_meta( $item->ID, 'pagado' ) === '1' ? '✅' : '<span style="color:#999">—</span>';
 	}
 
-	public function column_es_socio( $item ): string {
+	public function column_es_socio( mixed $item ): string {
 		return CPT_Inscripcion::get_meta( $item->ID, 'es_socio' ) === '1' ? '✅' : '—';
 	}
 
-	public function column_fecha( $item ): string {
+	public function column_fecha( mixed $item ): string {
 		$fecha = get_the_date( 'd/m/Y H:i', $item );
 
 		return false === $fecha ? '' : (string) $fecha;
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $item
+	 */
 	protected function column_default( $item, $column_name ): string {
 		return '';
 	}

@@ -141,6 +141,7 @@ class Motor_Inscripcion {
 	 * @param int   $actividad_id  Activity post ID.
 	 * @param array $datos         { nombre, email, telefono, es_socio, notas }
 	 * @return int|\WP_Error  Inscription post ID or error.
+	 * @param array<string, mixed> $datos
 	 */
 	public static function inscribir( int $actividad_id, array $datos ): int|\WP_Error {
 		// Rate limiting: max 5 enrollment attempts per IP per hour.
@@ -908,6 +909,8 @@ class Motor_Inscripcion {
 
 	/**
 	 * Get all active reservations for an email address.
+	 *
+	 * @return array<int, mixed> mixed>
 	 */
 	public static function get_reservas_por_email( string $email ): array {
 		return get_posts(

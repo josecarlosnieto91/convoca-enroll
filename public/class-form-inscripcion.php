@@ -39,7 +39,7 @@ class Form_Inscripcion {
 	/**
 	 * Shortcode handler.
 	 */
-	public function shortcode( $atts ): string {
+	public function shortcode( mixed $atts ): string {
 		$atts = shortcode_atts(
 			array(
 				'id'              => 0,
@@ -55,6 +55,8 @@ class Form_Inscripcion {
 
 	/**
 	 * Render the inscription form.
+	 *
+	 * @param array<string, mixed> $attrs
 	 */
 	public function render_form( int $actividad_id, array $attrs = array() ): string {
 		if ( ! $actividad_id ) {

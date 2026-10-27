@@ -267,7 +267,10 @@ class Rest_API {
 		}
 
 		$query = new \WP_Query( $args );
-		$items = array_map( fn( $p ) => $this->fmt_inscription( $p ), $query->posts );
+		$items = array_map(
+			fn( $p ) => $this->fmt_inscription( $p ),
+			array_filter( (array) $query->posts, static fn( $p ) => $p instanceof \WP_Post )
+		);
 
 		// Filter items if user is monitor and no activity_id was provided (extra safety).
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -313,7 +316,12 @@ class Rest_API {
 			return $result;
 		}
 
-		return new \WP_REST_Response( $this->fmt_inscription( get_post( $id ) ) );
+		$post = get_post( $id );
+		if ( ! $post instanceof \WP_Post ) {
+			return new \WP_Error( 'convoca_not_found', __( 'Inscripción no encontrada.', 'convoca-enroll' ), array( 'status' => 404 ) );
+		}
+
+		return new \WP_REST_Response( $this->fmt_inscription( $post ) );
 	}
 
 	public function get_stats( \WP_REST_Request $req ): \WP_REST_Response|\WP_Error {
@@ -457,6 +465,11 @@ class Rest_API {
 
 	/* ── Formatters ────────────────────────────── */
 
+	/**
+	 * Formato de una actividad para la API.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private function fmt_activity( \WP_Post $p ): array {
 		$meta = CPT_Actividad::get_meta( $p->ID );
 		return array(
@@ -467,6 +480,11 @@ class Rest_API {
 		) + $meta;
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private function fmt_inscription( \WP_Post $p ): array {
 		$m = fn( $k ) => CPT_Inscripcion::get_meta( $p->ID, $k );
 		return array(

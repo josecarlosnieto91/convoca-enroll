@@ -2,9 +2,10 @@
   "repo": "convoca-enroll",
   "fecha": "2026-10-26",
   "phpstan_errors": 0,
-  "phpmd_total": 204,
+  "phpmd_total": 205,
   "semgrep_errors": 0,
   "composer_advisories": 0,
   "secretos": 0,
-  "nota": "Ratchet: estos numeros solo pueden bajar. Subirlos exige justificarlo en el PR."
+  "nota": "Ratchet: estos numeros solo pueden bajar. Subirlos exige justificarlo en el PR.",
+  "motivo_phpmd": "Admin_Settings pasa de 1000 lineas (1045) por los tipos @param que exige PHPStan nivel 8 en sus 8 pestanas. Se sube 1 con la clase ya en el limite: la solucion es separar las pestanas (issue abierto), no borrar la documentacion de tipos."
 }

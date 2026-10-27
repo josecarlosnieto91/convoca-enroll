@@ -23,12 +23,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Evaluacion_Fields {
 
-	public static function init() {
+	public static function init(): void {
 		add_action( 'add_meta_boxes', array( __CLASS__, 'add_meta_boxes' ) );
 		add_action( 'save_post_convoca_evaluacion', array( __CLASS__, 'save_meta_box' ) );
 	}
 
-	public static function add_meta_boxes() {
+	public static function add_meta_boxes(): void {
 		add_meta_box(
 			'convoca_evaluacion_details',
 			__( 'Detalles de la Evaluación', 'convoca-enroll' ),
@@ -39,7 +39,7 @@ class Admin_Evaluacion_Fields {
 		);
 	}
 
-	public static function render_meta_box( $post ) {
+	public static function render_meta_box( mixed $post ): void {
 		wp_nonce_field( 'convoca_evaluacion_fields', 'convoca_evaluacion_fields_nonce' );
 
 		$actividad_id  = get_post_meta( $post->ID, '_convoca_eval_actividad_id', true );
@@ -95,7 +95,7 @@ class Admin_Evaluacion_Fields {
 		<?php
 	}
 
-	public static function save_meta_box( $post_id ) {
+	public static function save_meta_box( mixed $post_id ): void {
 		if ( ! isset( $_POST['convoca_evaluacion_fields_nonce'] ) ) {
 			return;
 		}

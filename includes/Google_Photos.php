@@ -31,7 +31,18 @@ class Google_Photos {
 
 	private const OPTION = 'convoca_enroll_settings';
 
-	private $client  = null;
+	/**
+	 * Cliente de Google.
+	 *
+	 * @var object|null
+	 */
+	private $client = null;
+
+	/**
+	 * Servicio de Photos.
+	 *
+	 * @var \Google\Service\PhotosLibrary|null
+	 */
 	private $service = null;
 
 	public function __construct() {
@@ -122,6 +133,11 @@ class Google_Photos {
 		return false;
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public function create_album( int $actividad_id ): ?array {
 		if ( ! $this->is_configured() ) {
 			return null;
@@ -142,14 +158,17 @@ class Google_Photos {
 		$fecha           = get_post_meta( $actividad_id, '_convoca_fecha_inicio', true );
 		$fecha_formatted = $fecha ? wp_date( 'd/m/Y', strtotime( $fecha ) ) : '';
 
-		$album_title = $prefix . $actividad->post_title . ( $fecha_formatted ? ' - ' . $fecha_formatted : '' );
+		$album_title = $prefix . ( $actividad->post_title ?? '' ) . ( $fecha_formatted ? ' - ' . $fecha_formatted : '' );
 
 		$album = new \Google\Service\PhotosLibrary\Album();
 		$album->setTitle( $album_title );
 
 		try {
-			$created = $this->service->albums->create( $album );
+			$created = $this->service?->albums->create( $album );
 
+			if ( ! $created instanceof \Google\Service\PhotosLibrary\Album ) {
+				return array( 'error' => 'Sin álbum' );
+			}
 			update_post_meta( $actividad_id, '_convoca_google_album_id', $created->getId() );
 			update_post_meta( $actividad_id, '_convoca_google_album_created_at', current_time( 'mysql' ) );
 
@@ -180,7 +199,11 @@ class Google_Photos {
 
 		try {
 			$share_request  = new \Google\Service\PhotosLibrary\ShareAlbumRequest();
-			$share_response = $this->service->albums->share( $album_id, $share_request );
+			$share_response = $this->service?->albums->share( $album_id, $share_request );
+
+			if ( ! is_object( $share_response ) ) {
+				return null;
+			}
 
 			$shareable_url = $share_response->getShareInfo()->getShareableUrl();
 
@@ -194,6 +217,11 @@ class Google_Photos {
 		}
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, mixed> mixed>
+	 */
 	public function get_participants_emails( int $actividad_id ): array {
 		$inscriptions = get_posts(
 			array(
@@ -259,7 +287,7 @@ class Google_Photos {
 		);
 
 		$vars = array(
-			'{actividad}' => $actividad->post_title,
+			'{actividad}' => ( $actividad->post_title ?? '' ),
 			'{album_url}' => $album_url ?: 'No disponible',
 		);
 
@@ -313,7 +341,7 @@ class Google_Photos {
 			);
 
 			$vars = array(
-				'{actividad}' => $actividad->post_title,
+				'{actividad}' => ( $actividad->post_title ?? '' ),
 				'{album_url}' => $album_url,
 			);
 

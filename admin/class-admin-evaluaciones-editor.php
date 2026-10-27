@@ -58,7 +58,7 @@ class Admin_Evaluaciones_Editor extends \Convoca\Core\Admin\Pantalla_Admin {
 		);
 	}
 
-	public function add_menu() {
+	public function add_menu(): void {
 		$this->registrar_subpagina(
 			'convoca-enroll',
 			__( 'Añadir evaluación', 'convoca-enroll' ),
@@ -72,7 +72,7 @@ class Admin_Evaluaciones_Editor extends \Convoca\Core\Admin\Pantalla_Admin {
 	/**
 	 * Render the custom editor page.
 	 */
-	public function render_editor() {
+	public function render_editor(): void {
 		$post_id = isset( $_GET['id'] ) ? (int) $_GET['id'] : 0;
 		$eval    = $post_id ? get_post( $post_id ) : null;
 
@@ -196,7 +196,7 @@ class Admin_Evaluaciones_Editor extends \Convoca\Core\Admin\Pantalla_Admin {
 	/**
 	 * Handle save from admin form.
 	 */
-	public function handle_save_admin() {
+	public function handle_save_admin(): void {
 		check_admin_referer( 'convoca_enroll_save_evaluacion_nonce' );
 
 		if ( ! current_user_can( 'edit_posts' ) ) {

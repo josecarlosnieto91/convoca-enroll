@@ -43,8 +43,25 @@ class Google_Calendar {
 
 	private const OPTION = 'convoca_enroll_settings';
 
-	private $client      = null;
-	private $service     = null;
+	/**
+	 * Cliente de Google.
+	 *
+	 * @var object|null
+	 */
+	private $client = null;
+
+	/**
+	 * Servicio de Calendar.
+	 *
+	 * @var \Google\Service\Calendar|null
+	 */
+	private $service = null;
+
+	/**
+	 * Calendario por defecto.
+	 *
+	 * @var string
+	 */
 	private $calendar_id = 'primary';
 
 	public function __construct() {
@@ -200,7 +217,7 @@ class Google_Calendar {
 		$calendar_id = $settings['google_calendar_id'] ?? 'primary';
 
 		try {
-			$this->service->events->delete( $calendar_id, $event_id );
+			$this->service?->events->delete( $calendar_id, $event_id );
 		} catch ( \Exception $e ) {
 			\Convoca\Core\Logger::error( '[Google Calendar] Delete Error: ' . $e->getMessage(), 'Google Calendar' );
 		}
@@ -230,8 +247,8 @@ class Google_Calendar {
 		}
 
 		$event_data = array(
-			'summary'     => $actividad->post_title,
-			'description' => wp_strip_all_tags( $actividad->post_content ),
+			'summary'     => ( $actividad->post_title ?? '' ),
+			'description' => wp_strip_all_tags( ( $actividad->post_content ?? '' ) ),
 			'location'    => $ubicacion,
 			'start'       => array(
 				'dateTime' => \Convoca\Core\Utils::format_date( $fecha_inicio, 'c' ),
@@ -242,7 +259,7 @@ class Google_Calendar {
 				'timeZone' => wp_timezone_string(),
 			),
 			'source'      => array(
-				'title' => $actividad->post_title,
+				'title' => ( $actividad->post_title ?? '' ),
 				'url'   => get_permalink( $actividad_id ),
 			),
 		);
@@ -252,15 +269,19 @@ class Google_Calendar {
 
 		try {
 			if ( $event_id ) {
-				$updated_event = $this->service->events->update( $this->calendar_id, $event_id, $event );
+				$updated_event = $this->service?->events->update( $this->calendar_id, $event_id, $event );
 			} else {
-				$updated_event = $this->service->events->insert( $this->calendar_id, $event );
+				$updated_event = $this->service?->events->insert( $this->calendar_id, $event );
+			}
+
+			if ( ! is_object( $updated_event ) ) {
+				return null;
 			}
 
 			update_post_meta( $actividad_id, '_convoca_google_event_id', $updated_event->getId() );
 			update_post_meta( $actividad_id, '_convoca_google_event_link', $updated_event->getHtmlLink() );
 
-			return $updated_event->getId();
+			return (string) $updated_event->getId();
 		} catch ( \Exception $e ) {
 			\Convoca\Core\Logger::error( 'Convoca Enroll: Error syncing with Google Calendar: ' . $e->getMessage(), 'Google Calendar' );
 			return null;
@@ -303,7 +324,7 @@ class Google_Calendar {
 				$vEvent->setLocation( new Location( $act_location ) );
 			}
 
-			$vEvent->setUrl( new Uri( get_permalink( $actividad_id ) ) );
+			$vEvent->setUrl( new Uri( (string) get_permalink( $actividad_id ) ) );
 
 			$vCalendar = new ICalCalendar( array( $vEvent ) );
 
@@ -368,9 +389,10 @@ class Google_Calendar {
 		$temp_dir = get_temp_dir();
 		$pattern  = 'actividad-' . $actividad_id . '-*.ics';
 
-		foreach ( glob( $temp_dir . $pattern ) as $file ) {
-			if ( is_file( $file ) && filemtime( $file ) < time() - DAY_IN_SECONDS ) {
-				wp_delete_file( $file );
+		foreach ( (array) glob( $temp_dir . $pattern ) as $file ) {
+			$ruta = is_string( $file ) ? $file : '';
+			if ( '' !== $ruta && is_file( $ruta ) && (int) filemtime( $ruta ) < time() - DAY_IN_SECONDS ) {
+				wp_delete_file( $ruta );
 			}
 		}
 	}

@@ -115,7 +115,7 @@ class Blog_Post_Manager {
 		if ( $poster_url ) {
 			self::set_featured_image_from_url( $post_id, $poster_url, $actividad_id );
 		} elseif ( has_post_thumbnail( $actividad_id ) ) {
-			set_post_thumbnail( $post_id, get_post_thumbnail_id( $actividad_id ) );
+			set_post_thumbnail( $post_id, (int) get_post_thumbnail_id( $actividad_id ) );
 		}
 
 		\Convoca\Enroll\Media\Media_Logger::log(
@@ -186,7 +186,7 @@ class Blog_Post_Manager {
 	/**
 	 * Build Gutenberg-ready post content.
 	 */
-	private static function build_content( \WP_Post $actividad, ?string $poster_url, $fecha_inicio, $fecha_fin, $ubicacion, $precio_socio, $plazas, $inscripcion_url ): string {
+	private static function build_content( \WP_Post $actividad, ?string $poster_url, mixed $fecha_inicio, mixed $fecha_fin, mixed $ubicacion, mixed $precio_socio, mixed $plazas, mixed $inscripcion_url ): string {
 		$blocks = array();
 
 		// 1. Poster image if available.
@@ -261,7 +261,7 @@ class Blog_Post_Manager {
 	/**
 	 * Build Schema.org Event JSON-LD.
 	 */
-	private static function build_schema( \WP_Post $actividad, $fecha_inicio, $fecha_fin, $ubicacion, $permalink ): string {
+	private static function build_schema( \WP_Post $actividad, mixed $fecha_inicio, mixed $fecha_fin, mixed $ubicacion, mixed $permalink ): string {
 		$schema = array(
 			'@context'    => 'https://schema.org',
 			'@type'       => 'Event',
@@ -276,7 +276,7 @@ class Blog_Post_Manager {
 			) : null,
 		);
 
-		return wp_json_encode( $schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+		return (string) wp_json_encode( $schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 	}
 
 	/**
@@ -307,6 +307,7 @@ class Blog_Post_Manager {
 
 	/**
 	 * Get tags from activity.
+	 * @return array<int, mixed> mixed>
 	 */
 	private static function get_tags( int $actividad_id ): array {
 		$tags = array( 'actividad', 'convoca' );

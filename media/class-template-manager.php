@@ -29,6 +29,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Template_Manager {
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public static function get_all( string $orderby = 'name' ): array {
 		global $wpdb;
 		$orderby = in_array( $orderby, array( 'name', 'slug', 'created_at' ), true ) ? $orderby : 'name';
@@ -45,7 +50,12 @@ class Template_Manager {
 		return $rows ?: array();
 	}
 
-	public static function get( $slug_or_id ): ?array {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public static function get( mixed $slug_or_id ): ?array {
 		global $wpdb;
 		$table = $wpdb->prefix . 'convoca_media_templates';
 
@@ -63,6 +73,12 @@ class Template_Manager {
 		return $row;
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 * @param array<string, mixed> $data
+	 */
 	public static function save( array $data ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'convoca_media_templates';
@@ -103,11 +119,22 @@ class Template_Manager {
 		);
 	}
 
-	public static function get_config( $slug_or_id ): ?array {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public static function get_config( mixed $slug_or_id ): ?array {
 		$tpl = self::get( $slug_or_id );
 		return $tpl ? $tpl['config'] : null;
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $config
+	 * @return array<int, string> mixed>
+	 */
 	public static function validate_config( array $config ): array {
 		$errors = array();
 
@@ -146,8 +173,9 @@ class Template_Manager {
 
 	/**
 	 * Export template as downloadable JSON.
+	 * @return array<string, mixed>
 	 */
-	public static function export_json( $slug_or_id ): array {
+	public static function export_json( mixed $slug_or_id ): array {
 		$tpl = self::get( $slug_or_id );
 		if ( ! $tpl ) {
 			return array( 'error' => __( 'Plantilla no encontrada.', 'convoca-enroll' ) );
@@ -164,6 +192,8 @@ class Template_Manager {
 
 	/**
 	 * Import template from validated JSON array.
+	 * @return mixed
+	 * @param array<string, mixed> $data
 	 */
 	public static function import_json( array $data ) {
 		if ( empty( $data['name'] ) || empty( $data['config'] ) ) {

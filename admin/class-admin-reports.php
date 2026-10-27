@@ -29,7 +29,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Reports {
 
-	private $tabs        = array();
+	/**
+	 * Pestañas disponibles.
+	 *
+	 * @var array<string, string>
+	 */
+	private $tabs = array();
+
+	/**
+	 * Pestaña activa.
+	 *
+	 * @var string
+	 */
 	private $current_tab = 'ocupacion';
 
 	public function __construct() {
@@ -242,7 +253,12 @@ endif;
 		<?php
 	}
 
-	private function get_occupancy_data( $start, $end, $status ): array {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, array<string, mixed>> mixed>
+	 */
+	private function get_occupancy_data( mixed $start, mixed $end, mixed $status ): array {
 		$args = array(
 			'post_type'      => 'actividad',
 			'posts_per_page' => -1,
@@ -382,6 +398,11 @@ endif;
 		<?php
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private function get_trends_data(): array {
 		global $wpdb;
 		$labels = array();
@@ -408,6 +429,11 @@ endif;
 		);
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private function get_states_distribution(): array {
 		global $wpdb;
 		$counts = array_fill_keys( CPT_Inscripcion::STATES, 0 );
@@ -428,6 +454,11 @@ endif;
 		return $counts;
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private function get_top_demanded_activities(): array {
 		global $wpdb;
 		$results = $wpdb->get_results(
@@ -495,6 +526,11 @@ endif;
 		<?php
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, array<string, mixed>> mixed>
+	 */
 	private function get_waitlist_data(): array {
 		global $wpdb;
 		$data = array();
@@ -580,6 +616,11 @@ endif;
 		<?php
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, array<string, mixed>> mixed>
+	 */
 	private function get_financial_data(): array {
 		global $wpdb;
 		$data = array();
@@ -677,8 +718,8 @@ endif;
 					foreach ( $activities as $row ) :
 						?>
 					<tr>
-						<td><strong><?php echo esc_html( $row['monitor'] ); ?></strong></td>
-						<td><?php echo esc_html( $row['actividad'] ); ?></td>
+						<td><strong><?php echo esc_html( (string) $row['monitor'] ); ?></strong></td>
+						<td><?php echo esc_html( (string) $row['actividad'] ); ?></td>
 						<td><?php echo (int) $row['confirmadas']; ?></td>
 						<td><?php echo (int) $row['canceladas']; ?></td>
 						<td><?php echo (int) $row['checkins']; ?></td>
@@ -724,6 +765,11 @@ endif;
 		return '';
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, array<string, int|string>> mixed>
+	 */
 	private function get_monitor_audit_data(): array {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'convoca_logs';
@@ -765,13 +811,13 @@ endif;
 		/**
 		 * Tipado estático para PHPStan.
 		 *
-		 * @var array<string, array{monitor: string, actividad: string, confirmadas: int, canceladas: int, checkins: int}> $grouped
+		 * @var array<string, array<string, mixed>> $grouped
 		 */
 		$grouped = array();
 		/**
 		 * Tipado estático para PHPStan.
 		 *
-		 * @var object{user_id: mixed, monitor: ?string, actividad: ?string, message: string} $row
+		 * @var object{user_id: mixed, monitor: ?string, actividad: ?string, actividad_id: mixed, message: string} $row
 		 */
 		foreach ( $results as $row ) {
 			if ( empty( $row->user_id ) ) {
@@ -880,6 +926,11 @@ endif;
 		<?php
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, array<string, mixed>> mixed>
+	 */
 	private function get_memoria_data( int $year ): array {
 		$args = array(
 			'post_type'      => 'actividad',
@@ -1031,6 +1082,11 @@ endif;
 		<?php
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, array<string, mixed>> mixed>
+	 */
 	private function get_evaluaciones_data( int $actividad_id = 0 ): array {
 		global $wpdb;
 
@@ -1088,6 +1144,11 @@ endif;
 
 		$data = array();
 		foreach ( $grouped as $act ) {
+			/**
+		 * Fila de evaluación.
+		 *
+		 * @var array<string, mixed> $act
+		 */
 			// Las cuatro cifras ya vienen como `AVG()` del SQL: dividirlas otra vez por el número de evaluaciones
 			// daba medias falsas (con 8 evaluaciones de 4,25 salía 0,53 y así se pintaba en la tabla y el CSV).
 			$act['media_global'] = ( $act['gestion'] + $act['instalaciones'] + $act['participantes'] + $act['comunicacion'] ) / 4;

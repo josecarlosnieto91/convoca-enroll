@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Evaluaciones_List {
 
-	public static function init() {
+	public static function init(): void {
 		// El submenú lo aporta el CPT con show_in_menu; no hay add_action propio.
 		add_filter( 'manage_convoca_evaluacion_posts_columns', array( __CLASS__, 'set_custom_columns' ) );
 		add_action( 'manage_convoca_evaluacion_posts_custom_column', array( __CLASS__, 'custom_column_content' ), 10, 2 );
@@ -33,7 +33,12 @@ class Admin_Evaluaciones_List {
 
 
 
-	public static function set_custom_columns( $columns ) {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
+	public static function set_custom_columns( mixed $columns ) {
 		$columns['title']      = __( 'Título', 'convoca-enroll' );
 		$columns['actividad']  = __( 'Actividad', 'convoca-enroll' );
 		$columns['evaluador']  = __( 'Evaluador', 'convoca-enroll' );
@@ -42,7 +47,7 @@ class Admin_Evaluaciones_List {
 		return $columns;
 	}
 
-	public static function custom_column_content( $column, $post_id ) {
+	public static function custom_column_content( mixed $column, mixed $post_id ): void {
 		switch ( $column ) {
 			case 'actividad':
 				$actividad_id = get_post_meta( $post_id, '_convoca_eval_actividad_id', true );
@@ -110,7 +115,7 @@ class Admin_Evaluaciones_List {
 		}
 	}
 
-	public static function add_custom_filters() {
+	public static function add_custom_filters(): void {
 		global $typenow;
 		if ( $typenow === 'convoca_evaluacion' ) {
 			$actividades = get_posts(
@@ -137,7 +142,7 @@ class Admin_Evaluaciones_List {
 		}
 	}
 
-	public static function filter_evaluations_by_activity( $query ) {
+	public static function filter_evaluations_by_activity( mixed $query ): void {
 		global $pagenow;
 		$type = 'post';
 		if ( isset( $_GET['post_type'] ) ) {

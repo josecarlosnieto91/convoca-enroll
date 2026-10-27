@@ -31,6 +31,7 @@ class Social_Payload {
 
 	/**
 	 * Build a social media message from an activity.
+	 * @param array<string, mixed> $overrides
 	 */
 	public static function build_message( int $post_id, array $overrides = array() ): string {
 		$title    = $overrides['title'] ?? get_the_title( $post_id );
@@ -82,6 +83,7 @@ class Social_Payload {
 
 	/**
 	 * Generate WhatsApp share URL.
+	 * @param array<string, mixed> $overrides
 	 */
 	public static function get_whatsapp_link( int $post_id, array $overrides = array() ): string {
 		$message = self::build_message( $post_id, $overrides );
@@ -120,7 +122,10 @@ class Social_Payload {
 
 	private static function get_hashtags( int $post_id ): string {
 		$tags = wp_get_post_tags( $post_id, array( 'fields' => 'names' ) );
-		return $tags ? '#' . implode( ' #', $tags ) : '#Convoca #Actividades';
+		if ( ! is_array( $tags ) || array() === $tags ) {
+			return '#Convoca #Actividades';
+		}
+		return '#' . implode( ' #', $tags );
 	}
 
 	private static function get_badge_text( int $post_id ): string {
@@ -176,7 +181,7 @@ class Social_Payload {
 	/**
 	 * Log API error payload for debugging.
 	 */
-	public static function log_api_error( string $provider, $response, string $endpoint = '' ): void {
+	public static function log_api_error( string $provider, mixed $response, string $endpoint = '' ): void {
 		$class = 'Convoca\\Enroll\\Media\\Media_Logger';
 		if ( class_exists( $class ) ) {
 			$code = wp_remote_retrieve_response_code( $response );

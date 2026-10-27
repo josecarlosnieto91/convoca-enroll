@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Formulario_Evaluacion {
 
-	public static function init() {
+	public static function init(): void {
 		add_shortcode( 'convoca_evaluacion', array( __CLASS__, 'render_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
 		add_action( 'wp_ajax_convoca_submit_evaluacion', array( __CLASS__, 'handle_submission' ) );
@@ -33,17 +33,23 @@ class Formulario_Evaluacion {
 		add_action( 'wp_ajax_nopriv_convoca_eval_get_nonce', array( __CLASS__, 'get_nonce' ) );
 	}
 
-	public static function get_nonce() {
+	public static function get_nonce(): void {
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'convoca_eval_get_nonce', 30, 3600 ) ) {
 			wp_send_json_error( array( 'message' => __( 'Demasiadas peticiones.', 'convoca-enroll' ) ), 429 );
 		}
 		wp_send_json_success( wp_create_nonce( 'convoca_evaluacion_nonce' ) );
 	}
 
-	public static function enqueue_assets() {
+	public static function enqueue_assets(): void {
 		// Enqueued only when shortcode is present, but doing it globally is safer for blocks.
 		wp_register_style( 'conv-evaluacion-css', plugins_url( 'assets/css/evaluacion.css', __DIR__ ), array(), '1.0.0' );
-		wp_register_script( 'conv-evaluacion-js', plugins_url( 'assets/js/star-rating.js', __DIR__ ), array( 'jquery' ), '1.0.0', true );
+		/**
+		 * Ruta del script.
+		 *
+		 * @var non-empty-string $script_src
+		 */
+		$script_src = plugins_url( 'assets/js/star-rating.js', __DIR__ );
+		wp_register_script( 'conv-evaluacion-js', $script_src, array( 'jquery' ), '1.0.0', true );
 
 		wp_localize_script(
 			'conv-evaluacion-js',
@@ -55,7 +61,12 @@ class Formulario_Evaluacion {
 		);
 	}
 
-	public static function render_shortcode( $atts ) {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
+	public static function render_shortcode( mixed $atts ) {
 		wp_enqueue_style( 'conv-evaluacion-css' );
 		wp_enqueue_script( 'conv-evaluacion-js' );
 
@@ -237,7 +248,7 @@ class Formulario_Evaluacion {
 		return ob_get_clean();
 	}
 
-	private static function render_star_input( $field_id, $label ) {
+	private static function render_star_input( mixed $field_id, mixed $label ): void {
 		?>
 		<div class="conv-star-rating-group">
 			<label><?php echo esc_html( $label ); ?></label>
@@ -251,7 +262,7 @@ class Formulario_Evaluacion {
 		<?php
 	}
 
-	public static function handle_submission() {
+	public static function handle_submission(): void {
 		check_ajax_referer( 'convoca_evaluacion_nonce', 'security' );
 
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'convoca_submit_evaluacion', 10, 3600 ) ) {

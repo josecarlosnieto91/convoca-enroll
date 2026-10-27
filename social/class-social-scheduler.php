@@ -34,6 +34,7 @@ class Social_Scheduler {
 
 	/**
 	 * Queue a post for publishing.
+	 * @param array<string, mixed> $account_ids
 	 */
 	public static function queue( int $actividad_id, array $account_ids, string $message, string $image_url = '', ?int $timestamp = null ): int {
 		global $wpdb;

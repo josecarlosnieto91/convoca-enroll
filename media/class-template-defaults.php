@@ -54,6 +54,11 @@ class Template_Defaults {
 		}
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, mixed> mixed>
+	 */
 	public static function get_defaults(): array {
 		return array(
 			self::nature_classic(),
@@ -69,6 +74,7 @@ class Template_Defaults {
 
 	/**
 	 * Template 1: Nature Classic — Full-bleed photo, green accents, outdoors.
+	 * @return array<string, mixed>
 	 */
 	private static function nature_classic(): array {
 		return array(
@@ -225,6 +231,7 @@ class Template_Defaults {
 
 	/**
 	 * Template 2: Modern NGO — Clean, professional, block colors.
+	 * @return array<string, mixed>
 	 */
 	private static function modern_ngo(): array {
 		return array(
@@ -326,30 +333,66 @@ class Template_Defaults {
 	}
 
 	// Helper for remaining 6 templates — returns minimal configs
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private static function educational_workshop(): array {
 		return self::mini_template( 'Educational Workshop', 'educational-workshop', 'Azules didácticos para talleres y formaciones.', array( '#1565c0', '#0d47a1' ), '#bbdefb' );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private static function volunteer_campaign(): array {
 		return self::mini_template( 'Volunteer Campaign', 'volunteer-campaign', 'Tonos teal solidarios para acciones de voluntariado.', array( '#00695c', '#004d40' ), '#b2dfdb' );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private static function kids_family(): array {
 		return self::mini_template( 'Kids & Family', 'kids-family', 'Colores cálidos y divertidos para actividades infantiles y familiares.', array( '#ff6f00', '#e65100' ), '#ffe0b2' );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private static function minimal_corporate(): array {
 		return self::mini_template( 'Minimal Corporate', 'minimal-corporate', 'Blanco y gris, máxima legibilidad. Ideal para comunicados formales.', array( '#ffffff', '#f5f5f5' ), '#1a1a1a', '#1a1a1a' );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private static function full_photo_hero(): array {
 		return self::mini_template( 'Full Photo Hero', 'full-photo-hero', 'La imagen ocupa todo el fondo. Ideal para actividades con fotografía potente.', array( '#1a1a1a', '#000000' ), '#ffffff' );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private static function story_focused(): array {
 		return self::mini_template( 'Story Focused', 'story-focused', 'Optimizada para Instagram Stories. Vertical, tipografía grande.', array( '#2d2d3a', '#1a1a2e' ), '#ffffff' );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<int, string> $bg
+	 * @return array<string, mixed>
+	 */
 	private static function mini_template( string $name, string $slug, string $desc, array $bg, string $accent_text, string $title_color = '#ffffff' ): array {
 		return array(
 			'name'        => $name,

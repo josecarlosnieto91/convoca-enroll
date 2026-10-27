@@ -39,7 +39,7 @@ class Social_Publisher {
 	 * @param string $message     Text content.
 	 * @param string $image_url   Optional image URL.
 	 * @param string $link_url    Optional link URL.
-	 * @return array{success: bool, message: string}
+	 * @return array<string, mixed>
 	 */
 	public static function publish( int $account_id, string $message, string $image_url = '', string $link_url = '' ): array {
 		$account = Social_OAuth::get_token( $account_id );
@@ -67,6 +67,8 @@ class Social_Publisher {
 
 	/**
 	 * Publish to Facebook Page via Graph API.
+	 * @param array<string, mixed> $account
+	 * @return array<string, mixed>
 	 */
 	private static function publish_facebook( array $account, string $message, string $image_url, string $link_url ): array {
 		$token   = $account['access_token'];
@@ -113,6 +115,8 @@ class Social_Publisher {
 
 	/**
 	 * Publish to Instagram Business via Graph API.
+	 * @param array<string, mixed> $account
+	 * @return array<string, mixed>
 	 */
 	private static function publish_instagram( array $account, string $message, string $image_url ): array {
 		$token     = $account['access_token'];
@@ -174,6 +178,8 @@ class Social_Publisher {
 
 	/**
 	 * Publish to Google Business Profile.
+	 * @param array<string, mixed> $account
+	 * @return array<string, mixed>
 	 */
 	private static function publish_google( array $account, string $message, string $image_url, string $link_url ): array {
 		$token     = $account['access_token'];
@@ -204,7 +210,7 @@ class Social_Publisher {
 					'Authorization' => "Bearer $token",
 					'Content-Type'  => 'application/json',
 				),
-				'body'    => wp_json_encode( $post_body ),
+				'body'    => (string) wp_json_encode( $post_body ),
 				'timeout' => 30,
 			)
 		);

@@ -32,6 +32,11 @@ class Meta_Provider implements Social_Provider_Interface {
 	const API_VERSION = 'v19.0';
 	const BASE_URL    = 'https://graph.facebook.com/';
 
+	/**
+	 * Cuenta configurada.
+	 *
+	 * @var array<string, mixed>
+	 */
 	private array $account;
 	private string $access_token;
 	private string $page_id;
@@ -124,6 +129,7 @@ class Meta_Provider implements Social_Provider_Interface {
 
 	/**
 	 * Publish to Facebook Page feed/photo.
+	 * @return array<string, mixed>
 	 */
 	private function publish_facebook( string $message, string $image_url, string $link_url ): array {
 		$endpoint = self::BASE_URL . self::API_VERSION . "/{$this->page_id}/" . ( $image_url ? 'photos' : 'feed' );
@@ -170,6 +176,7 @@ class Meta_Provider implements Social_Provider_Interface {
 
 	/**
 	 * Publish to Instagram Business (2-step).
+	 * @return array<string, mixed>
 	 */
 	private function publish_instagram( string $message, string $image_url ): array {
 		if ( ! $this->ig_user_id ) {

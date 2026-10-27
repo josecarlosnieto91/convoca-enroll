@@ -61,6 +61,8 @@ class Poster_Engine {
 	 * @param string $template_slug Template slug.
 	 * @param array  $overrides Supports format, formats, image_id, force, export.
 	 * @return array|\WP_Error
+	 * @param array<string, mixed> $overrides
+	 * @return array<string, mixed>
 	 */
 	public static function render( int $actividad_id, string $template_slug = 'nature-classic', array $overrides = array() ): array|\WP_Error {
 		if ( ! extension_loaded( 'imagick' ) || ! class_exists( '\Imagick' ) ) {
@@ -164,6 +166,12 @@ class Poster_Engine {
 	 *  FORMAT HELPERS
 	 * ───────────────────────────────────────────── */
 
+	/**
+	 * Normaliza los formatos pedidos.
+	 *
+	 * @param array<string, mixed> $overrides
+	 * @return array<int, string> mixed>
+	 */
 	private static function normalize_formats( array $overrides ): array {
 		$formats = ! empty( $overrides['formats'] ) && is_array( $overrides['formats'] )
 			? $overrides['formats']
@@ -188,11 +196,21 @@ class Poster_Engine {
 		return in_array( $export, array( 'png', 'jpg', 'webp' ), true ) ? $export : 'png';
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public static function format_dimensions( string $format ): array {
 		$map = self::all_format_dimensions();
 		return $map[ $format ] ?? $map['square'];
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public static function all_format_dimensions(): array {
 		return array(
 			'square'   => array( 'width' => 1080, 'height' => 1080, 'label' => 'Instagram cuadrado 1:1' ),
@@ -208,6 +226,12 @@ class Poster_Engine {
 	 *  ACTIVITY DATA EXTRACTION
 	 * ───────────────────────────────────────────── */
 
+	/**
+	 * Datos de la actividad para el cartel.
+	 *
+	 * @param array<string, mixed> $overrides
+	 * @return array<string, mixed>
+	 */
 	private static function activity_data( int $id, string $template_slug, string $format, array $overrides ): array|\WP_Error {
 		$post = get_post( $id );
 		if ( ! $post || 'actividad' !== $post->post_type ) {
@@ -272,6 +296,7 @@ class Poster_Engine {
 	 *
 	 * @param array $d Datos de la actividad.
 	 * @return array<int, array{0:string,1:string}>
+	 * @param array<string, mixed> $d
 	 */
 	public static function filas_de_datos( array $d ): array {
 		$filas = array(
@@ -296,6 +321,11 @@ class Poster_Engine {
 		return $filas;
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, mixed> mixed> mixed>
+	 */
 	private static function split_datetime( string $raw ): array {
 		$raw = trim( $raw );
 		if ( preg_match( '/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}(?::\d{2})?)/', $raw, $m ) ) {
@@ -350,6 +380,12 @@ class Poster_Engine {
 	 *  META & STYLE
 	 * ───────────────────────────────────────────── */
 
+	/**
+	 * Primer metadato no vacío de la lista.
+	 *
+	 * @param array<int, string> $keys
+	 * @return string
+	 */
 	private static function meta_first( int $id, array $keys ): string {
 		foreach ( $keys as $key ) {
 			$value = get_post_meta( $id, $key, true );
@@ -382,6 +418,11 @@ class Poster_Engine {
 			: $text;
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private static function event_style( string $type ): array {
 		if ( $type && class_exists( '\Convoca\Core\Event_Style_Registry' ) ) {
 			$style = \Convoca\Core\Event_Style_Registry::get( $type );
@@ -411,6 +452,7 @@ class Poster_Engine {
 	 * @param string $path   Ruta de salida.
 	 * @param string $export png|jpg|webp.
 	 * @return array{omitidas:int}|\WP_Error
+	 * @param array<string, mixed> $d
 	 */
 	private static function draw( array $d, string $path, string $export ): array|\WP_Error {
 		$omitidas = 0;
@@ -446,13 +488,13 @@ class Poster_Engine {
 			$wrap = static function( \Imagick $canvas, string $text, string $font, int $size, int $max_width ) use ( $text_draw ): array {
 				$draw = $text_draw( $font, $size, '#000000' );
 				$out  = array();
-				foreach ( preg_split( '/\R/u', trim( $text ) ) as $paragraph ) {
-					$paragraph = trim( $paragraph );
+				foreach ( (array) preg_split( '/\R/u', trim( (string) $text ) ) as $paragraph ) {
+					$paragraph = trim( (string) $paragraph );
 					if ( '' === $paragraph ) { continue; }
 					$line = '';
-					foreach ( preg_split( '/\s+/u', $paragraph ) as $word ) {
+					foreach ( (array) preg_split( '/\s+/u', $paragraph ) as $word ) {
 						$test    = '' === $line ? $word : $line . ' ' . $word;
-						$metrics = $canvas->queryFontMetrics( $draw, $test );
+						$metrics = $canvas->queryFontMetrics( $draw, (string) $test );
 						if ( (float) ( $metrics['textWidth'] ?? 0 ) > $max_width && '' !== $line ) { $out[] = $line; $line = $word; }
 						else { $line = $test; }
 					}
@@ -471,20 +513,20 @@ class Poster_Engine {
 				$text = trim( (string) preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $text ) );
 				if ( '' === $text || $box['w'] <= 0 || $box['h'] <= 0 ) { return; }
 				$draw  = $text_draw( $font, $size, $color, $engrosar );
-				$lines = $wrap( $canvas, $text, $font, $size, $box['w'] );
-				if ( $max_lines > 0 && count( $lines ) > $max_lines ) { $lines = array_slice( $lines, 0, $max_lines ); $lines[ $max_lines - 1 ] = $ellipsize( $canvas, $lines[ $max_lines - 1 ], $font, $size, $box['w'] ); }
+				$lines = $wrap( $canvas, (string) $text, $font, $size, $box['w'] );
+				if ( $max_lines > 0 && count( $lines ) > $max_lines ) { $lines = array_slice( $lines, 0, $max_lines ); $lines[ $max_lines - 1 ] = $ellipsize( $canvas, (string) $lines[ $max_lines - 1 ], $font, $size, $box['w'] ); }
 				$step    = (int) round( $size * $line_height );
 				$total_h = count( $lines ) * $step;
 				$y       = $box['y'] + max( $size, (int) round( ( $box['h'] - $total_h ) / 2 ) + $size );
 				foreach ( $lines as $line ) {
 					if ( $y > $box['y'] + $box['h'] ) { break; }
-					$metrics = $canvas->queryFontMetrics( $draw, $line );
+					$metrics = $canvas->queryFontMetrics( $draw, (string) $line );
 					$tw      = (float) ( $metrics['textWidth'] ?? 0 );
 					$x       = $box['x'];
 					if ( 'center' === $align ) { $x = $box['x'] + (int) round( ( $box['w'] - $tw ) / 2 ); }
 					if ( 'right' === $align ) { $x = $box['x'] + $box['w'] - (int) round( $tw ); }
-					if ( $shadow ) { $canvas->annotateImage( $text_draw( $font, $size, 'rgba(0,0,0,0.32)' ), $x + 3, $y + 3, 0, $line ); }
-					$canvas->annotateImage( $draw, $x, $y, 0, $line );
+					if ( $shadow ) { $canvas->annotateImage( $text_draw( $font, $size, 'rgba(0,0,0,0.32)' ), $x + 3, $y + 3, 0, (string) $line ); }
+					$canvas->annotateImage( $draw, $x, $y, 0, (string) $line );
 					$y += $step;
 				}
 			};
@@ -541,9 +583,9 @@ class Poster_Engine {
 			$text_box( $img, mb_strtoupper( $d['type_label'] ?: __( 'Actividad', 'convoca-enroll' ) ), array( 'x' => $l['badge']['x'] + 18, 'y' => $l['badge']['y'], 'w' => $l['badge']['w'] - 36, 'h' => $l['badge']['h'] ), self::font( self::FONT_MONTSERRAT ), $p['accent_text'], max( 18, (int) round( $l['badge']['h'] * 0.36 ) ), 1.0, 'center', false, 1 );
 
 			$title_size = $l['title_size'];
-			while ( $title_size > max( 28, (int) round( $l['title_size'] * 0.46 ) ) ) { $lines = $wrap( $img, $d['title'], self::font( self::FONT_PLAYFAIR ), $title_size, $l['title']['w'] ); if ( count( $lines ) * (int) round( $title_size * 1.04 ) <= $l['title']['h'] ) { break; } $title_size = (int) round( $title_size * 0.90 ); }
-			$text_box( $img, $d['title'], $l['title'], self::font( self::FONT_PLAYFAIR ), $panel_text, $title_size, 1.04, 'left', true );
-			if ( $d['subtitle'] ) { $text_box( $img, $d['subtitle'], $l['subtitle'], self::font( self::FONT_MONTSERRAT ), $panel_muted, $l['subtitle_size'], 1.18, 'left', false, 2 ); }
+			while ( $title_size > max( 28, (int) round( $l['title_size'] * 0.46 ) ) ) { $lines = $wrap( $img, (string) $d['title'], self::font( self::FONT_PLAYFAIR ), $title_size, $l['title']['w'] ); if ( count( $lines ) * (int) round( $title_size * 1.04 ) <= $l['title']['h'] ) { break; } $title_size = (int) round( $title_size * 0.90 ); }
+			$text_box( $img, (string) $d['title'], $l['title'], self::font( self::FONT_PLAYFAIR ), $panel_text, $title_size, 1.04, 'left', true );
+			if ( $d['subtitle'] ) { $text_box( $img, (string) $d['subtitle'], $l['subtitle'], self::font( self::FONT_MONTSERRAT ), $panel_muted, $l['subtitle_size'], 1.18, 'left', false, 2 ); }
 
 			if ( $filas ) {
 				$filas_caben  = Poster_Layout::filas_que_caben( (int) $l['meta']['h'], $gap );

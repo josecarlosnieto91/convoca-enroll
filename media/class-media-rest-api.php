@@ -197,6 +197,11 @@ class Media_Rest_API {
 		return current_user_can( 'convoca_manage_media' ) || current_user_can( 'manage_options' );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private function poster_args(): array {
 		return array(
 			'actividad_id' => array( 'required' => true, 'validate_callback' => 'absint' ),

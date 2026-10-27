@@ -144,7 +144,7 @@ class Admin_Monitor_CRM {
 		);
 
 		$act      = get_post( $actividad_id );
-		$filename = sanitize_title( $act->post_title ) . '-' . $type . '-' . wp_date( 'Y-m-d' ) . '.csv';
+		$filename = sanitize_title( ( $act->post_title ?? '' ) ) . '-' . $type . '-' . wp_date( 'Y-m-d' ) . '.csv';
 
 		$args = array(
 			'post_type'      => 'inscripcion',
@@ -198,7 +198,7 @@ class Admin_Monitor_CRM {
 			( static function () use ( $inscripciones, $act, $fecha_act ) {
 				foreach ( $inscripciones as $ins ) {
 					yield array(
-						$act->post_title,
+						( $act->post_title ?? '' ),
 						$fecha_act,
 						CPT_Inscripcion::get_meta( $ins->ID, 'nombre' ),
 						CPT_Inscripcion::get_meta( $ins->ID, 'email' ),
@@ -510,6 +510,8 @@ class Admin_Monitor_CRM {
 
 	/**
 	 * Render a table of inscriptions.
+	 *
+	 * @param array<int, \WP_Post> $items
 	 */
 	private function render_table( array $items, int $actividad_id, bool $is_waitlist ): void {
 		if ( empty( $items ) ) {
@@ -597,6 +599,8 @@ class Admin_Monitor_CRM {
 
 	/**
 	 * Render summary counts bar.
+	 *
+	 * @param array<int, \WP_Post> $items
 	 */
 	private function render_summary( array $items ): void {
 		$total       = count( $items );

@@ -74,6 +74,8 @@ class Webhook_Dispatcher {
 	/**
 	 * Enqueue a webhook payload to be sent.
 	 * Prefers Webhook_Manager (Common) if available, falls back to legacy queue.
+	 *
+	 * @param array<string, mixed> $payload
 	 */
 	public static function enqueue( string $event_type, array $payload, ?int $inscripcion_id = null ): int|bool {
 		// Try to use Webhook_Manager from Common if available.
@@ -123,6 +125,8 @@ class Webhook_Dispatcher {
 
 	/**
 	 * Legacy queue implementation (fallback when Webhook_Manager unavailable).
+	 *
+	 * @param array<string, mixed> $payload
 	 */
 	private static function enqueue_legacy( string $event_type, array $payload, ?int $inscripcion_id = null ): bool {
 		$settings    = get_option( 'convoca_enroll_settings', array() );
@@ -155,11 +159,11 @@ class Webhook_Dispatcher {
 		return false;
 	}
 
-	public function on_inscripcion_state_change( $inscripcion_id, $actividad_id, $estado = null ): void {
+	public function on_inscripcion_state_change( mixed $inscripcion_id, mixed $actividad_id, mixed $estado = null ): void {
 		$this->queue_webhook_for_inscripcion( 'state_change', $inscripcion_id, $actividad_id );
 	}
 
-	public function on_asistencia_cambiada( $inscripcion_id, $asistencia ): void {
+	public function on_asistencia_cambiada( mixed $inscripcion_id, mixed $asistencia ): void {
 		$actividad_id = (int) CPT_Inscripcion::get_meta( $inscripcion_id, 'actividad_id' );
 		$this->queue_webhook_for_inscripcion( 'attendance_change', $inscripcion_id, $actividad_id );
 	}

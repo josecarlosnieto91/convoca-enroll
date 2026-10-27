@@ -40,6 +40,8 @@ class Maintenance {
 
 	/**
 	 * Validate data integrity.
+	 *
+	 * @return array<string, mixed>
 	 */
 	public static function validar_integridad(): array {
 		global $wpdb;
@@ -118,6 +120,8 @@ class Maintenance {
 
 	/**
 	 * Repair detected integrity issues.
+	 *
+	 * @return array<string, mixed>
 	 */
 	public static function reparar_integridad(): array {
 		global $wpdb;

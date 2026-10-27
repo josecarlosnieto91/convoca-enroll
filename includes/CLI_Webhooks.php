@@ -51,7 +51,7 @@ class CLI_Webhooks extends \WP_CLI_Command {
 	 *
 	 * @when after_wp_load
 	 */
-	public function retry_failed( $args, $assoc_args ) {
+	public function retry_failed( mixed $args, mixed $assoc_args ): void {
 		global $wpdb;
 		$table_name = Webhook_Dispatcher::get_table_name();
 

@@ -47,6 +47,7 @@ class QR_Generator {
 	 * @param int   $actividad_id Activity post ID.
 	 * @param array $options      Overrides: { size, color }.
 	 * @return string|null File path to generated QR PNG, or null on failure.
+	 * @param array<string, mixed> $options
 	 */
 	public static function generate( int $actividad_id, array $options = array() ): ?string {
 		$url = self::resolve_url( $actividad_id );
@@ -82,6 +83,7 @@ class QR_Generator {
 
 	/**
 	 * Get QR URL for frontend display.
+	 * @param array<string, mixed> $options
 	 */
 	public static function get_url( int $actividad_id, array $options = array() ): ?string {
 		$path = self::generate( $actividad_id, $options );
@@ -104,6 +106,7 @@ class QR_Generator {
 	 * @param string $url     URL que debe codificar el QR.
 	 * @param array  $options Overrides: { size }.
 	 * @return string|null Ruta del PNG, o null si no se pudo generar.
+	 * @param array<string, mixed> $options
 	 */
 	public static function generate_for_url( string $clave, string $url, array $options = array() ): ?string {
 		if ( '' === $url ) {
@@ -148,6 +151,7 @@ class QR_Generator {
 	 * @param string $url     URL que debe codificar el QR.
 	 * @param array  $options Overrides: { size }.
 	 * @return string|null URL pública, o null si no se pudo generar.
+	 * @param array<string, mixed> $options
 	 */
 	public static function url_for( string $clave, string $url, array $options = array() ): ?string {
 		$path = self::generate_for_url( $clave, $url, $options );
