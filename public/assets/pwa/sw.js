@@ -1,18 +1,26 @@
-const CACHE_NAME = 'conv-checkin-v1';
-const ASSETS = [
-  '/wp-content/plugins/convoca-enroll/public/assets/css/checkin.css',
-];
-const API_CACHE = 'conv-api-v1';
+const CACHE_NAME = 'conv-checkin-v2';
+const API_CACHE = 'conv-api-v2';
 
-// Install: cache static assets
+// Documento de la PWA. Sin esto, el móvil sin cobertura no puede abrir la aplicacion: el
+// `fetch` fallaba y `caches.match()` no encontraba nada (issue #54).
+const SHELL = ['/checkin/'];
+
+// Assets estaticos que la pagina necesita. Cada ruta de aqui **tiene que existir**: un 404 en
+// una sola ruta fallida rechazaba la instalacion entera y el service worker no se registraba.
+const ASSETS = [];
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then((cache) =>
+      // allSettled: un recurso que falle no tumba el resto ni la instalacion.
+      Promise.allSettled(
+        SHELL.concat(ASSETS).map((url) => cache.add(new Request(url, { cache: 'reload' })))
+      )
+    )
   );
 });
 
-// Activate: clean old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -21,12 +29,18 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch: network-first with offline queue for POST checkins
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // POST to admin-ajax.php = check-in attempt
+  // GET de navegacion (abrir o recargar /checkin/): red primero, y si no hay, la copia cacheada.
+  if (request.mode === 'navigate') {
+    return event.respondWith(
+      fetch(request).catch(() => caches.match('/checkin/').then((c) => c || caches.match(request)))
+    );
+  }
+
+  // POST a admin-ajax.php = check-in attempt
   if (request.method === 'POST' && url.pathname.includes('admin-ajax.php')) {
     return event.respondWith(networkOrQueue(request));
   }
@@ -55,6 +69,17 @@ async function networkOrQueue(request) {
     // Offline: queue the request
     const body = await request.clone().text();
     const queued = await queueRequest(body);
+
+    // Sin esto la cola se llenaba y no se vaciaba nunca: el listener `sync` existia pero
+    // nadie registraba el tag (issue #54).
+    if (self.registration.sync) {
+      try {
+        await self.registration.sync.register('conv-flush-checkins');
+      } catch (e) {
+        // Sin Background Sync (iOS): se reintenta al volver a abrir la PWA.
+      }
+    }
+
     return new Response(JSON.stringify({
       success: true,
       queued: true,
