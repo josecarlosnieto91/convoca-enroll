@@ -69,3 +69,15 @@ parameters:
             message: '#Parameter \#1 \$postarr of function wp_insert_post#'
             identifier: argument.type
             path: media/class-blog-post-manager.php
+        # WP_Query::$posts lo declara el stub oficial como WP_Post[]|int[]|null. En este
+        # código solo se recorre después de ejecutar la consulta, donde siempre es WP_Post[].
+        # No es deuda del plugin: el stub no puede demostrarlo.
+        -
+            message: '#Cannot access property \$\w+ on int\|WP_Post#'
+            identifier: property.nonObject
+        -
+            message: '#array<int\|WP_Post>\|null#'
+            identifier: foreach.nonIterable
+        -
+            message: '#array<int\|WP_Post>\|null#'
+            identifier: argument.type

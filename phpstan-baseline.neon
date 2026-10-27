@@ -235,30 +235,6 @@ parameters:
 			path: admin/class-admin-evaluaciones-meta-box.php
 
 		-
-			message: '#^Argument of an invalid type array\<int\|WP_Post\>\|null supplied for foreach, only iterables are supported\.$#'
-			identifier: foreach.nonIterable
-			count: 1
-			path: admin/class-admin-inscripcion-form.php
-
-		-
-			message: '#^Cannot access property \$ID on int\|WP_Post\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: admin/class-admin-inscripcion-form.php
-
-		-
-			message: '#^Cannot access property \$post_title on int\|WP_Post\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: admin/class-admin-inscripcion-form.php
-
-		-
-			message: '#^Parameter \#1 \$value of function count expects array\|Countable, array\<int\|WP_Post\>\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: admin/class-admin-inscripcion-form.php
-
-		-
 			message: '#^Method Convoca\\Enroll\\Inscriptions_List\:\:column_actividad\(\) has parameter \$item with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -349,12 +325,6 @@ parameters:
 			path: admin/class-admin-inscripciones.php
 
 		-
-			message: '#^Parameter \#1 \$items of method Convoca\\Enroll\\Inscriptions_List\:\:pre_fetch_members\(\) expects array, array\<int\|WP_Post\>\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: admin/class-admin-inscripciones.php
-
-		-
 			message: '#^Property Convoca\\Enroll\\Inscriptions_List\:\:\$member_cache type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -389,18 +359,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: admin/class-admin-monitor-crm.php
-
-		-
-			message: '#^Argument of an invalid type array\<int\|WP_Post\>\|null supplied for foreach, only iterables are supported\.$#'
-			identifier: foreach.nonIterable
-			count: 1
-			path: admin/class-admin-page.php
-
-		-
-			message: '#^Cannot access property \$ID on int\|WP_Post\.$#'
-			identifier: property.nonObject
-			count: 4
-			path: admin/class-admin-page.php
 
 		-
 			message: '#^Cannot access property \$id on WP_Screen\|null\.$#'
@@ -1172,12 +1130,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$p of method Convoca\\Enroll\\Rest_API\:\:fmt_inscription\(\) expects WP_Post, int\|WP_Post given\.$#'
-			identifier: argument.type
-			count: 1
-			path: includes/Rest_API.php
-
-		-
-			message: '#^Parameter \#2 \$array of function array_map expects array, array\<int\|WP_Post\>\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: includes/Rest_API.php
