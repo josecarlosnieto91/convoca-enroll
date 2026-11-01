@@ -5,7 +5,6 @@
     "type": "wordpress-plugin",
     "require": {
         "php": ">=8.4",
-        "chillerlan/php-qrcode": "^6.0",
         "eluceo/ical": "^2.9"
     },
     "autoload": {
@@ -26,12 +25,13 @@
         }
     },
     "require-dev": {
-        "phpstan/phpstan": "^2.2",
+        "chillerlan/php-qrcode": "^6.0",
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-        "wp-coding-standards/wpcs": "^3.4",
         "php-stubs/wordpress-stubs": "^7.0",
-        "phpunit/phpunit": "^10.5",
         "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.2",
+        "phpunit/phpunit": "^10.5",
+        "wp-coding-standards/wpcs": "^3.4",
         "yoast/phpunit-polyfills": "^2.0"
     },
     "scripts": {
