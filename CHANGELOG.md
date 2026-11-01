@@ -1,3 +1,11 @@
+## [2.7.71] — 2026-11-01
+
+### Corregido
+
+- **requisito real de PHP**: la ficha declaraba 8.1 pero `eluceo/ical 2.17.0` exige `~8.4.0 || ~8.5.0` y `chillerlan/php-qrcode 6.0.1` exige `^8.2`.
+  Se declara el suelo real (8.4) en cabecera, readme y composer. Comprobado
+  con `composer why-not php 8.1`.
+
 ## [2.7.70] — 2026-11-01
 
 ### Cambiado
