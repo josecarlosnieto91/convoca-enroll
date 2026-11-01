@@ -1,3 +1,9 @@
+## [2.7.70] — 2026-11-01
+
+### Cambiado
+
+- **los arreglos de la PWA y el textdomain, publicados**
+
 ## [2.7.69] — 2026-10-26
 
 ### Cambiado
