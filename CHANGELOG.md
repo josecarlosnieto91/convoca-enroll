@@ -1,3 +1,17 @@
+## [2.8.0] — 2026-11-04
+
+### Añadido
+
+- **Los ganchos heredados se declaran en una opción, no en un mu-plugin del sitio.** El migrador lee
+  `convoca_enroll_ganchos_heredados` (opción) **y** el filtro de siempre, y deduplica; los nombres que no
+  pueden existir en WordPress se descartan. El filtro se mantiene para no romper a quien ya lo usaba.
+- **`wp bde ganchos list|add|remove|clear`**: el sitio carga sus nombres sin tocar código.
+
+### Corregido (pruebas)
+
+- Dos pruebas dependían de la hora y fallaban al pasar la medianoche: una comparaba con `gmdate` lo que
+  el producto resuelve con `wp_date`, y la otra mezclaba `current_time` y `gmdate` para «hoy» y «mañana».
+
 ## [2.7.72] — 2026-11-02
 
 ### Cambiado

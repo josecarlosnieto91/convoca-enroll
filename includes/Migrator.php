@@ -39,11 +39,20 @@ class Migrator {
 	public const VERSION_OPTION = 'convoca_enroll_ganchos_migrados';
 
 	/**
+	 * Opción con los ganchos heredados de ESTE sitio.
+	 *
+	 * Nace para que el sitio no necesite un mu-plugin: los nombres de sus ganchos son datos suyos, y se
+	 * cargan con `wp bde ganchos add <nombre>` (o se editan en la opción). El filtro se mantiene para no
+	 * romper a quien ya lo usaba.
+	 */
+	public const OPTION_HEREDADOS = 'convoca_enroll_ganchos_heredados';
+
+	/**
 	 * Ganchos de cron que dejaron versiones anteriores del plugin, aportados por el sitio.
 	 *
-	 * NO se hardcodean aquí: el nombre anterior del plugin llevaba dentro el nombre de una
-	 * instalación real, y este fichero viaja en el paquete y en un repositorio público. La
-	 * lista la pone el sitio que la necesita desde su mu-plugin:
+	 * No se hardcodean: el nombre anterior del plugin llevaba dentro el de una instalación real, y este
+	 * fichero viaja en el paquete y en un repositorio público. El sitio los declara en la opción
+	 * `convoca_enroll_ganchos_heredados` (comando `wp bde ganchos`) o, si ya lo tenía, con el filtro:
 	 *
 	 *     add_filter( 'convoca_enroll_ganchos_heredados', function () {
 	 *         return array( 'prefijo_viejo_proceso_cola', … );
@@ -51,24 +60,27 @@ class Migrator {
 	 *
 	 * NO los programa ningún fichero del código actual (hay una prueba que lo vigila).
 	 *
-	 * @return array<int, mixed>
+	 * @return array<int, string>
 	 */
 	public static function ganchos_heredados(): array {
-		$ganchos = apply_filters( 'convoca_enroll_ganchos_heredados', array() );
+		$opcion = get_option( self::OPTION_HEREDADOS, array() );
+		$filtro = apply_filters( 'convoca_enroll_ganchos_heredados', array() );
+		$mezcla = array_merge( is_array( $opcion ) ? $opcion : array(), is_array( $filtro ) ? $filtro : array() );
 
-		if ( ! is_array( $ganchos ) ) {
-			return array();
-		}
-
-		// Solo cadenas no vacías: un gancho vacío en `wp_clear_scheduled_hook()` limpia de más.
+		// Solo nombres de gancho válidos: un gancho vacío en `wp_clear_scheduled_hook()` limpia de más,
+		// y un nombre con caracteres raros no puede existir en WordPress.
 		$limpios = array();
-		foreach ( $ganchos as $gancho ) {
-			if ( is_scalar( $gancho ) && '' !== (string) $gancho ) {
-				$limpios[] = (string) $gancho;
+		foreach ( $mezcla as $gancho ) {
+			if ( ! is_string( $gancho ) ) {
+				continue;
+			}
+
+			if ( preg_match( '/^[a-z0-9_]+$/', $gancho ) ) {
+				$limpios[] = $gancho;
 			}
 		}
 
-		return $limpios;
+		return array_values( array_unique( $limpios ) );
 	}
 
 	/**

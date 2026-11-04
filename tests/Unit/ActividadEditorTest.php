@@ -348,7 +348,7 @@ final class ActividadEditorTest extends TestCase {
 
 		$this->assertSame( '_convoca_fecha_inicio', $consulta->valores['meta_key'] );
 		$this->assertSame( '>=', $consulta->valores['meta_compare'] );
-		$this->assertSame( gmdate( 'Y-m-d' ), $consulta->valores['meta_value'] );
+		$this->assertSame( wp_date( 'Y-m-d' ), $consulta->valores['meta_value'], 'la consulta compara con la fecha del sitio, no con UTC' );
 		$this->assertSame( 'ASC', $consulta->valores['order'] );
 	}
 

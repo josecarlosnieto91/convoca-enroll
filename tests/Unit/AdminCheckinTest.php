@@ -126,8 +126,8 @@ final class AdminCheckinTest extends TestCase {
 	 */
 	public function test_elige_la_de_hoy(): void {
 		$hoy     = current_time( 'Y-m-d' );
-		$manana  = gmdate( 'Y-m-d', strtotime( '+1 day' ) );
-		$pasada  = gmdate( 'Y-m-d', strtotime( '-3 days' ) );
+		$manana  = date( 'Y-m-d', strtotime( '+1 day' ) );
+		$pasada  = date( 'Y-m-d', strtotime( '-3 days' ) );
 
 		$deHoy   = $this->actividad( 1, $hoy, 'La de hoy' );
 		$futura  = $this->actividad( 2, $manana, 'La de mañana' );
@@ -145,8 +145,8 @@ final class AdminCheckinTest extends TestCase {
 	 * Si hoy no hay ninguna, la siguiente más cercana.
 	 */
 	public function test_sin_actividad_hoy_elige_la_siguiente(): void {
-		$manana    = gmdate( 'Y-m-d', strtotime( '+1 day' ) );
-		$masTarde  = gmdate( 'Y-m-d', strtotime( '+10 days' ) );
+		$manana    = date( 'Y-m-d', strtotime( '+1 day' ) );
+		$masTarde  = date( 'Y-m-d', strtotime( '+10 days' ) );
 
 		$cercana  = $this->actividad( 5, $manana, 'Mañana' );
 		$lejana   = $this->actividad( 6, $masTarde, 'En diez días' );

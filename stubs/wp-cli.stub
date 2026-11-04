@@ -12,6 +12,7 @@ class WP_CLI
 {
     public static function log( mixed ...$args ): void {}
     public static function success( mixed ...$args ): void {}
+    public static function warning( mixed ...$args ): void {}
     public static function error( mixed ...$args ): void {}
     public static function add_command( mixed ...$args ): void {}
 }

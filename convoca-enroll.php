@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Enroll
  * Plugin URI:        https://getconvoca.app
  * Description:       Centralized activity enrollment system.
- * Version: 2.7.72
+ * Version: 2.8.0
  * Requires at least: 6.4
  * Requires PHP:      8.4
  * Tested up to:      7.1.3
@@ -243,6 +243,7 @@ add_action(
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			\WP_CLI::add_command( 'bde webhooks', \Convoca\Enroll\CLI_Webhooks::class );
 			\WP_CLI::add_command( 'bde migrate', \Convoca\Enroll\WP_CLI_Migration::class );
+			\WP_CLI::add_command( 'bde ganchos', \Convoca\Enroll\CLI_Ganchos::class );
 		}
 
 		// Admin.
