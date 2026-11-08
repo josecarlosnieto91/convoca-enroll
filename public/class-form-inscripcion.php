@@ -195,8 +195,11 @@ class Form_Inscripcion {
 		$email_traza = sanitize_email( (string) ( $post_data['email'] ?? '' ) );
 		$act_traza   = (int) ( $post_data['actividad_id'] ?? 0 );
 
-		// Anti-bot antes de nada (#73): honeypot y sello de tiempo del core.
-		$senal_bot = \Convoca\Core\Anti_Bot::motivo( $post_data );
+		// Anti-bot antes de nada (#73): honeypot y sello de tiempo del core. Si el sitio lleva un core
+		// anterior (sin `Anti_Bot`), el formulario sigue funcionando: no se puede dejar de admitir
+		// inscripciones por una actualización a medias.
+		$hay_anti_bot = class_exists( '\Convoca\Core\Anti_Bot' );
+		$senal_bot    = $hay_anti_bot ? \Convoca\Core\Anti_Bot::motivo( $post_data ) : null;
 		if ( null !== $senal_bot ) {
 			\Convoca\Core\Intentos::registrar(
 				'inscripcion',
@@ -209,7 +212,7 @@ class Form_Inscripcion {
 			);
 			wp_send_json_error( array( 'errors' => array( 'No se ha podido procesar la solicitud. Vuelve a intentarlo desde el formulario.' ) ), 400 );
 		}
-		if ( \Convoca\Core\Anti_Bot::sin_sello( $post_data ) ) {
+		if ( $hay_anti_bot && \Convoca\Core\Anti_Bot::sin_sello( $post_data ) ) {
 			\Convoca\Core\Intentos::registrar(
 				'inscripcion',
 				'sin_sello',

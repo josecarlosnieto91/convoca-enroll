@@ -49,7 +49,9 @@ final class Estados {
 	 * @return string[]
 	 */
 	public static function ocupan_plaza(): array {
-		return array( 'pendiente', 'pendiente_pago', 'confirmada' );
+		// Una `pendiente` no reserva nada: si nadie la confirma, la plaza queda libre y la caducidad la
+		// cierra del todo (#74). `pendiente_pago` sí mientras el cobro está en curso.
+		return array( 'pendiente_pago', 'confirmada' );
 	}
 
 	/**

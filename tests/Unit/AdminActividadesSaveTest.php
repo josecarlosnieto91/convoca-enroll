@@ -162,14 +162,14 @@ final class AdminActividadesSaveTest extends TestCase {
 	/**
 	 * Ampliar las plazas de una actividad llena deja libres solo las nuevas.
 	 *
-	 * Las pendientes **también** ocupan plaza: si solo se contaran las confirmadas, al ampliar volverían al cupo
-	 * plazas ya comprometidas y se venderían dos veces.
+	 * Las pendientes **no** ocupan plaza desde enroll#74: una inscripción sin confirmar no reserva nada, y
+	 * la caducidad la cierra si nadie la confirma. Solo cuentan las confirmadas y las pendientes de pago.
 	 */
 	public function test_ampliar_plazas_no_sobrevende(): void {
 		$GLOBALS['convoca_test_tipos'][61]             = 'actividad';
 		$GLOBALS['_wp_stores']['post_meta'][61]        = array( '_convoca_plazas_totales' => '5' );
 
-		// 3 confirmadas + 2 pendientes = 5 plazas ya comprometidas.
+		// 3 confirmadas; las 2 pendientes ya no comprometen plaza (#74).
 		$fila1         = new \stdClass();
 		$fila1->estado = 'confirmada';
 		$fila1->total  = '3';
@@ -182,9 +182,9 @@ final class AdminActividadesSaveTest extends TestCase {
 		$this->guardar();
 
 		$this->assertSame(
-			5,
+			7,
 			(int) $GLOBALS['_wp_stores']['post_meta'][61]['_convoca_plazas_disponibles'],
-			'10 plazas nuevas menos 5 ya comprometidas (no 7: las pendientes cuentan)'
+			'10 plazas nuevas menos 3 confirmadas: las pendientes no reservan'
 		);
 	}
 

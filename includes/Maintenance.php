@@ -92,7 +92,7 @@ class Maintenance {
                       SELECT 1 FROM {$wpdb->postmeta} pm2
                       WHERE pm2.post_id = p.ID
                       AND pm2.meta_key = %s
-                      AND pm2.meta_value IN ('confirmada', 'pendiente', 'pendiente_pago')
+                      AND pm2.meta_value IN ('confirmada', 'pendiente_pago')
                   )
             ",
 					CPT_Inscripcion::META_PREFIX . 'actividad_id',
@@ -169,7 +169,7 @@ class Maintenance {
                       SELECT 1 FROM {$wpdb->postmeta} pm2
                       WHERE pm2.post_id = p.ID
                       AND pm2.meta_key = %s
-                      AND pm2.meta_value IN ('confirmada', 'pendiente', 'pendiente_pago')
+                      AND pm2.meta_value IN ('confirmada', 'pendiente_pago')
                   )
             ",
 					CPT_Inscripcion::META_PREFIX . 'actividad_id',

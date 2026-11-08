@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Enroll 2.15.0\n"
+"Project-Id-Version: Convoca Enroll 2.16.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-enroll\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-08T20:25:32+00:00\n"
+"POT-Creation-Date: 2026-11-08T20:37:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-enroll\n"
@@ -383,7 +383,7 @@ msgstr ""
 #: admin/class-admin-checkin.php:256
 #: admin/class-admin-inscripciones.php:134
 #: admin/class-admin-page.php:806
-#: includes/CPT_Inscripcion.php:77
+#: includes/CPT_Inscripcion.php:79
 msgid "Pendiente"
 msgstr ""
 
@@ -625,7 +625,7 @@ msgid "❌ N/A"
 msgstr ""
 
 #: admin/class-admin-inscripciones.php:452
-#: templates/form-inscripcion.php:235
+#: templates/form-inscripcion.php:236
 msgid "No"
 msgstr ""
 
@@ -670,7 +670,7 @@ msgid "Email"
 msgstr ""
 
 #: admin/class-admin-monitor-crm.php:193
-#: templates/form-inscripcion.php:224
+#: templates/form-inscripcion.php:225
 msgid "Teléfono"
 msgstr ""
 
@@ -836,7 +836,7 @@ msgstr ""
 #: admin/class-admin-page.php:133
 #: admin/class-admin-page.php:134
 #: admin/class-admin-page.php:345
-#: includes/CPT_Inscripcion.php:146
+#: includes/CPT_Inscripcion.php:150
 msgid "Inscripciones"
 msgstr ""
 
@@ -1014,7 +1014,7 @@ msgid "Gráficos"
 msgstr ""
 
 #: admin/class-admin-reports.php:50
-#: includes/CPT_Inscripcion.php:80
+#: includes/CPT_Inscripcion.php:82
 msgid "Lista de espera"
 msgstr ""
 
@@ -1478,19 +1478,19 @@ msgstr ""
 msgid "Descuadres de plazas: %s"
 msgstr ""
 
-#: convoca-enroll.php:103
+#: convoca-enroll.php:105
 msgid "Convoca Enroll requires Convoca Core to be active. Please activate Convoca Core first."
 msgstr ""
 
-#: convoca-enroll.php:134
+#: convoca-enroll.php:136
 msgid "<!-- wp:shortcode -->[convoca_panel_reservas]<!-- /wp:shortcode -->"
 msgstr ""
 
-#: convoca-enroll.php:298
+#: convoca-enroll.php:300
 msgid "Cada minuto"
 msgstr ""
 
-#: convoca-enroll.php:304
+#: convoca-enroll.php:306
 msgid "Cada 7 días"
 msgstr ""
 
@@ -1783,20 +1783,24 @@ msgstr ""
 msgid "No se encontraron evaluaciones en la papelera."
 msgstr ""
 
-#: includes/CPT_Inscripcion.php:78
-#: public/class-form-inscripcion.php:445
+#: includes/CPT_Inscripcion.php:80
+#: public/class-form-inscripcion.php:448
 msgid "Pendiente de aportación"
 msgstr ""
 
-#: includes/CPT_Inscripcion.php:79
+#: includes/CPT_Inscripcion.php:81
 msgid "Confirmada"
 msgstr ""
 
-#: includes/CPT_Inscripcion.php:81
+#: includes/CPT_Inscripcion.php:83
 msgid "Cancelada"
 msgstr ""
 
-#: includes/CPT_Inscripcion.php:147
+#: includes/CPT_Inscripcion.php:84
+msgid "Caducada sin confirmar"
+msgstr ""
+
+#: includes/CPT_Inscripcion.php:151
 msgid "Inscripción"
 msgstr ""
 
@@ -2373,7 +2377,7 @@ msgid "Organiza"
 msgstr ""
 
 #: media/class-poster-engine.php:319
-#: templates/form-inscripcion.php:260
+#: templates/form-inscripcion.php:261
 msgid "Edad"
 msgstr ""
 
@@ -2477,17 +2481,17 @@ msgid "<strong>Autenticado como socio/a:</strong> %1$s. Tus datos están puestos
 msgstr ""
 
 #. translators: %s: PDF generation error message
-#: public/class-form-inscripcion.php:454
+#: public/class-form-inscripcion.php:457
 #, php-format
 msgid "La inscripción se ha iniciado, pero hubo un problema al generar el documento de compromiso: %s. Podrás completarlo más tarde."
 msgstr ""
 
-#: public/class-form-inscripcion.php:470
+#: public/class-form-inscripcion.php:473
 msgid "La inscripción está registrada pero el pago no se pudo procesar automáticamente. Por favor, contacta con nosotros para completar la aportación."
 msgstr ""
 
 #. translators: %s: PDF generation error message
-#: public/class-form-inscripcion.php:493
+#: public/class-form-inscripcion.php:496
 #, php-format
 msgid "Inscripción realizada, pero hubo un problema al generar el documento de compromiso: %s. Por favor, contacta con nosotros si lo necesitas."
 msgstr ""
@@ -2619,7 +2623,7 @@ msgid "Demasiados intentos. Inténtalo de nuevo en 10 minutos."
 msgstr ""
 
 #: public/class-panel-reservas.php:75
-#: templates/form-inscripcion.php:205
+#: templates/form-inscripcion.php:206
 #: templates/panel-reservas.php:86
 msgid "Introduce un email válido."
 msgstr ""
@@ -2836,129 +2840,129 @@ msgstr ""
 msgid "Este formulario de inscripción necesita JavaScript en el navegador. Actívalo y vuelve a intentarlo."
 msgstr ""
 
-#: templates/form-inscripcion.php:172
+#: templates/form-inscripcion.php:173
 msgid "⚠️ Las plazas están agotadas. Si te inscribes, entrarás en la"
 msgstr ""
 
-#: templates/form-inscripcion.php:173
+#: templates/form-inscripcion.php:174
 msgid "lista de espera"
 msgstr ""
 
-#: templates/form-inscripcion.php:174
+#: templates/form-inscripcion.php:175
 msgid "Te avisaremos si se libera una plaza."
 msgstr ""
 
 #. translators: %s: nombre del socio que tiene la sesión abierta.
-#: templates/form-inscripcion.php:184
+#: templates/form-inscripcion.php:185
 #, php-format
 msgid "Estás identificado como %s: tus datos ya están puestos y se te aplica el precio de socio."
 msgstr ""
 
-#: templates/form-inscripcion.php:197
+#: templates/form-inscripcion.php:198
 msgid "Nombre y apellidos"
 msgstr ""
 
-#: templates/form-inscripcion.php:198
+#: templates/form-inscripcion.php:199
 msgid "Este campo es obligatorio."
 msgstr ""
 
-#: templates/form-inscripcion.php:201
+#: templates/form-inscripcion.php:202
 msgid "Correo electrónico *"
 msgstr ""
 
-#: templates/form-inscripcion.php:204
+#: templates/form-inscripcion.php:205
 msgid "tu@correo.com"
 msgstr ""
 
-#: templates/form-inscripcion.php:213
+#: templates/form-inscripcion.php:214
 msgid "DNI / NIE / Identificación"
 msgstr ""
 
-#: templates/form-inscripcion.php:214
+#: templates/form-inscripcion.php:215
 msgid "opcional"
 msgstr ""
 
-#: templates/form-inscripcion.php:218
+#: templates/form-inscripcion.php:219
 msgid "Introduce un documento de identificación válido."
 msgstr ""
 
-#: templates/form-inscripcion.php:220
+#: templates/form-inscripcion.php:221
 msgid "Si lo rellenas, se usa para evitar inscripciones duplicadas."
 msgstr ""
 
-#: templates/form-inscripcion.php:225
+#: templates/form-inscripcion.php:226
 msgid "600 000 000"
 msgstr ""
 
-#: templates/form-inscripcion.php:232
+#: templates/form-inscripcion.php:233
 msgid "¿El teléfono tiene WhatsApp?"
 msgstr ""
 
-#: templates/form-inscripcion.php:234
+#: templates/form-inscripcion.php:235
 msgid "Sí"
 msgstr ""
 
-#: templates/form-inscripcion.php:248
+#: templates/form-inscripcion.php:249
 msgid "Estoy inscribiendo a un menor o persona a mi cargo"
 msgstr ""
 
-#: templates/form-inscripcion.php:253
+#: templates/form-inscripcion.php:254
 msgid "Nombre del participante (menor/persona a cargo) *"
 msgstr ""
 
-#: templates/form-inscripcion.php:255
+#: templates/form-inscripcion.php:256
 msgid "Nombre y apellidos del participante"
 msgstr ""
 
-#: templates/form-inscripcion.php:258
+#: templates/form-inscripcion.php:259
 msgid "Edad del participante *"
 msgstr ""
 
-#: templates/form-inscripcion.php:281
+#: templates/form-inscripcion.php:282
 msgid "Compromiso de Acción Voluntaria"
 msgstr ""
 
-#: templates/form-inscripcion.php:282
+#: templates/form-inscripcion.php:283
 msgid "Como voluntario/a, para participar en esta actividad debes firmar el compromiso (es obligatorio)."
 msgstr ""
 
-#: templates/form-inscripcion.php:285
+#: templates/form-inscripcion.php:286
 msgid "Acepto y firmo el Compromiso de acción voluntaria"
 msgstr ""
 
-#: templates/form-inscripcion.php:285
+#: templates/form-inscripcion.php:286
 msgid "para esta actividad, incluyendo las funciones y obligaciones especificadas."
 msgstr ""
 
-#: templates/form-inscripcion.php:292
+#: templates/form-inscripcion.php:293
 msgid "He leído y acepto la"
 msgstr ""
 
-#: templates/form-inscripcion.php:293
+#: templates/form-inscripcion.php:294
 msgid "Política de Privacidad"
 msgstr ""
 
-#: templates/form-inscripcion.php:293
+#: templates/form-inscripcion.php:294
 msgid "y el tratamiento de mis datos personales."
 msgstr ""
 
-#: templates/form-inscripcion.php:305
+#: templates/form-inscripcion.php:306
 msgid "¡Inscripción registrada!"
 msgstr ""
 
-#: templates/form-inscripcion.php:306
+#: templates/form-inscripcion.php:307
 msgid "Hemos enviado un email de confirmación a tu correo con tu código de reserva."
 msgstr ""
 
-#: templates/form-inscripcion.php:309
+#: templates/form-inscripcion.php:310
 msgid "Guarda tu código de reserva para consultar o cancelar tu inscripción."
 msgstr ""
 
-#: templates/form-inscripcion.php:310
+#: templates/form-inscripcion.php:311
 msgid "¿Tienes dudas? Escríbenos a"
 msgstr ""
 
-#: templates/form-inscripcion.php:312
+#: templates/form-inscripcion.php:313
 msgid "← Volver al inicio"
 msgstr ""
 

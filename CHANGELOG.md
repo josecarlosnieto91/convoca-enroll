@@ -1,3 +1,22 @@
+## [2.16.0] — 2026-11-08
+
+### Añadido
+
+- **#74 — las inscripciones pendientes caducan y devuelven la plaza.** `Caducidad` cierra cada hora las
+  que llevan más de su plazo sin confirmar: pasan a `expirada`, se anota en `convoca_logs` y en el registro
+  de intentos, y el contador de la actividad baja uno. Plazo por defecto **48 h**, configurable por
+  actividad (`_convoca_caducidad_horas`) o global (`convoca_enroll_settings['caducidad_pendiente_horas']`);
+  `0` lo desactiva. Nuevo estado `expirada`.
+
+### Cambiado
+
+- **`Estados::ocupan_plaza()` ya no incluye `pendiente`**: solo `confirmada` y `pendiente_pago`. Una
+  inscripción sin confirmar no reserva plaza, y si nadie la confirma la caducidad la cierra.
+
+Requiere `convoca-core` 2.5.0 (registro de intentos) — si falta, la caducidad funciona igual.
+
+4 pruebas nuevas en `CaducidadTest`; actualizada la de ampliación de plazas al criterio nuevo.
+
 ## [2.15.1] — 2026-11-08
 
 ### Corregido

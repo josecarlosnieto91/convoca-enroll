@@ -65,6 +65,8 @@ class CPT_Inscripcion {
 		'confirmada',
 		'lista_espera',
 		'cancelada',
+		// Caducada sin confirmar: libera la plaza y deja rastro (#74).
+		'expirada',
 	);
 
 	/**
@@ -79,6 +81,7 @@ class CPT_Inscripcion {
 			'confirmada'     => __( 'Confirmada', 'convoca-enroll' ),
 			'lista_espera'   => __( 'Lista de espera', 'convoca-enroll' ),
 			'cancelada'      => __( 'Cancelada', 'convoca-enroll' ),
+			'expirada'       => __( 'Caducada sin confirmar', 'convoca-enroll' ),
 		);
 	}
 
@@ -88,6 +91,7 @@ class CPT_Inscripcion {
 		'confirmada'     => 'convoca-badge convoca-badge--confirmed',
 		'lista_espera'   => 'convoca-badge convoca-badge--waitlist',
 		'cancelada'      => 'convoca-badge convoca-badge--cancelled',
+		'expirada'       => 'convoca-badge convoca-badge--cancelled',
 	);
 
 	public function __construct() {

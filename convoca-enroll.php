@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Enroll
  * Plugin URI:        https://getconvoca.app
  * Description:       Centralized activity enrollment system.
- * Version: 2.15.1
+ * Version: 2.16.0
  * Requires at least: 6.4
  * Requires PHP:      8.4
  * Tested up to:      7.1.3
@@ -85,6 +85,8 @@ if ( ! defined( 'CONVOCA_ENROLL_URL' ) ) {
 // Los eventos de cron se aseguran en cada carga, no solo en la activación: en un sitio que ya tenía
 // el plugin activo, la activación no se vuelve a ejecutar y los eventos nuevos no existían (issue #62).
 add_action( 'init', array( \Convoca\Enroll\Cronograma::class, 'asegurar' ) );
+// Caducidad de las pendientes: cron horario asegurado en cada carga (issue #74).
+add_action( 'init', array( \Convoca\Enroll\Caducidad::class, 'init' ) );
 
 /* ── Activation ───────────────────────────────────────────── */
 /**
