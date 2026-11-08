@@ -1,3 +1,12 @@
+## [2.16.1] — 2026-11-08
+
+### Corregido
+
+- **catálogo inglés completo**: 45 entradas estaban marcadas `fuzzy` con traducciones de **otra cadena**
+  («Actividad guardada» → «Activity evaluated», «Ficha de socio» → «Start Date & Time», «Edad del
+  participante» → «Participant group»…) y 28 sin traducir. Las 73 revisadas y traducidas: **697/697**,
+  sin `fuzzy`. `msgfmt -c` sin avisos y `.mo` recompilado.
+
 ## [2.16.0] — 2026-11-08
 
 ### Añadido

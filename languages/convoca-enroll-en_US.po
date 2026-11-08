@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Enroll 2.16.0"
+"Project-Id-Version: Convoca Enroll 2.16.1"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-enroll\n"
 "POT-Creation-Date: 2026-11-08T18:04:49+00:00\n"
 "PO-Revision-Date: 2026-09-11 12:00+0200\n"
@@ -56,9 +56,8 @@ msgid "Gestión de Actividades"
 msgstr "Activity Management"
 
 #: admin/class-admin-actividades.php:124
-#, fuzzy
 msgid "Actividad guardada."
-msgstr "Activity evaluated"
+msgstr "Activity saved."
 
 #: admin/class-admin-actividades.php:133 includes/CPT_Actividad.php:171
 msgid "Buscar actividades"
@@ -125,37 +124,32 @@ msgid "Monitores / Responsables"
 msgstr "Monitors / Organizers"
 
 #: admin/class-admin-actividades.php:288
-#, fuzzy
 msgid "Aportaciones y horas"
-msgstr "Contributions"
+msgstr "Contributions and hours"
 
 #: admin/class-admin-actividades.php:291
-#, fuzzy
 msgid "Precio Socio de Día (€)"
-msgstr "Member Price (€)"
+msgstr "Day Member Price (€)"
 
 #: admin/class-admin-actividades.php:295
-#, fuzzy
 msgid "Horas de la actividad"
-msgstr "Activity data"
+msgstr "Activity hours"
 
 #: admin/class-admin-actividades.php:301
-#, fuzzy
 msgid "Plazas disponibles (calculado)"
-msgstr "There are no seats available."
+msgstr "Places available (calculated)"
 
 #. translators: 1: free slots, 2: occupied slots.
 #: admin/class-admin-actividades.php:307
 #, php-format
 msgid ""
 "%1$d libres · %2$d ocupadas. Se calcula solo: cambia las plazas totales."
-msgstr ""
+msgstr "%1$d free · %2$d taken. Calculated automatically: change the total places."
 
 #: admin/class-admin-actividades.php:317
 #: admin/traits/trait-admin-settings-general.php:85
-#, fuzzy
 msgid "DNI en la inscripción"
-msgstr "+ New enrollment"
+msgstr "ID document on enrollment"
 
 #: admin/class-admin-actividades.php:322
 msgid "Usar el ajuste general"
@@ -177,9 +171,8 @@ msgid "No pedirlo"
 msgstr "Do not ask for it"
 
 #: admin/class-admin-actividades.php:333
-#, fuzzy
 msgid "Recordatorios"
-msgstr "Reminder: %s"
+msgstr "Reminders"
 
 #: admin/class-admin-actividades.php:335 includes/CPT_Actividad.php:69
 msgid "7 días antes"
@@ -198,41 +191,36 @@ msgid "Después del evento (encuesta)"
 msgstr "After the event (survey)"
 
 #: admin/class-admin-actividades.php:341
-#, fuzzy
 msgid "Recordatorio «X horas antes»"
-msgstr "Reminder (hours before)"
+msgstr "Reminder \"X hours before\""
 
 #: admin/class-admin-actividades.php:343
 msgid "0 = no enviar este recordatorio."
 msgstr "0 = do not send this reminder."
 
 #: admin/class-admin-actividades.php:346
-#, fuzzy
 msgid "Google"
-msgstr "Google Photos"
+msgstr "Google"
 
 #: admin/class-admin-actividades.php:348
 msgid "Crear álbum de fotos al terminar"
 msgstr "Create photo album when finished"
 
 #: admin/class-admin-actividades.php:349
-#, fuzzy
 msgid "Sincronizar con Google Calendar"
-msgstr "Error syncing with Google Calendar."
+msgstr "Sync with Google Calendar"
 
 #: admin/class-admin-actividades.php:352
 msgid "Funciones y obligaciones"
 msgstr "Roles and obligations"
 
 #: admin/class-admin-actividades.php:354
-#, fuzzy
 msgid "Funciones"
-msgstr "Actions"
+msgstr "Duties"
 
 #: admin/class-admin-actividades.php:358
-#, fuzzy
 msgid "Obligaciones"
-msgstr "Evaluations"
+msgstr "Obligations"
 
 #: admin/class-admin-actividades.php:366
 msgid "Guardar Actividad"
@@ -318,9 +306,8 @@ msgid "Filtrar"
 msgstr "Filter"
 
 #: admin/class-admin-checkin.php:193
-#, fuzzy
 msgid "Ver la actividad"
-msgstr "View activity"
+msgstr "View the activity"
 
 #: admin/class-admin-checkin.php:194
 msgid "Asistencia:"
@@ -353,14 +340,12 @@ msgid "No hay inscripciones para esta actividad."
 msgstr "There are no enrollments for this activity."
 
 #: admin/class-admin-checkin.php:228
-#, fuzzy
 msgid "Ver inscripción"
-msgstr "View my enrollment"
+msgstr "View enrollment"
 
 #: admin/class-admin-checkin.php:234
-#, fuzzy
 msgid "Ficha de socio"
-msgstr "Start Date & Time"
+msgstr "Member record"
 
 #: admin/class-admin-checkin.php:256 admin/class-admin-page.php:806
 msgid "Registrado"
@@ -528,7 +513,7 @@ msgstr "New Manual Enrollment"
 msgid ""
 "No se ha podido completar la operación. Recarga la página y vuelve a "
 "intentarlo."
-msgstr ""
+msgstr "The operation could not be completed. Reload the page and try again."
 
 #: admin/class-admin-inscripcion-form.php:254 admin/class-admin-page.php:794
 #: admin/class-admin-page.php:827
@@ -1107,15 +1092,13 @@ msgid "Instala y activa el plugin %s."
 msgstr "Install and activate the %s plugin."
 
 #: admin/class-admin-settings.php:432
-#, fuzzy
 msgid "Ruta: Control de Asistencia (Check-in)"
-msgstr "Page: Attendance Control (Check-in)"
+msgstr "Route: Attendance Control (Check-in)"
 
 #. translators: %s: URL
 #: admin/class-admin-settings.php:435
-#, fuzzy, php-format
 msgid "Activa en %s"
-msgstr "Activities"
+msgstr "Active on %s"
 
 #. translators: %s: URL
 #: admin/class-admin-settings.php:436
@@ -1126,40 +1109,33 @@ msgstr "The /checkin/ rewrite rule could not be found."
 msgid ""
 "Guarda Ajustes → Enlaces permanentes para regenerar las reglas (el check-in "
 "no funciona con enlaces simples)."
-msgstr ""
+msgstr "Save Settings → Permalinks to rebuild the rules (check-in does not work with plain links)."
 
 #: admin/class-admin-settings.php:461
-#, fuzzy
 msgid "Página: Actividades"
-msgstr "Page: Activity Payment"
+msgstr "Page: Activities"
 
 #: admin/class-admin-settings.php:463
-#, fuzzy
 msgid ""
 "Crea una página con el shortcode [convoca_inscripcion_page] para mostrar el "
 "listado de actividades."
-msgstr ""
-"Create a page with the [convoca_calendario] shortcode to display the list of "
-"activities."
+msgstr "Create a page with the [convoca_inscripcion_page] shortcode to show the list of activities."
 
 #: admin/class-admin-settings.php:466
 msgid ""
 "No hace falta página: el sitio muestra las actividades con el bloque de "
 "inscripción."
-msgstr ""
+msgstr "No page needed: the site shows the activities with the enrollment block."
 
 #: admin/class-admin-settings.php:469
 msgid "Página: Mis Inscripciones"
 msgstr "Page: My Enrollments"
 
 #: admin/class-admin-settings.php:471
-#, fuzzy
 msgid ""
 "Crea una página con el shortcode [convoca_panel_reservas] para que los "
 "usuarios vean sus reservas."
-msgstr ""
-"Create a page with the [convoca_calendario] shortcode to display the list of "
-"activities."
+msgstr "Create a page with the [convoca_panel_reservas] shortcode so users can see their bookings."
 
 #: admin/class-admin-settings.php:475
 msgid "Página: Formulario de Evaluación"
@@ -1168,7 +1144,7 @@ msgstr "Page: Evaluation Form"
 #: admin/class-admin-settings.php:477
 msgid ""
 "Si usas evaluaciones, crea una página con el shortcode [convoca_evaluacion]."
-msgstr ""
+msgstr "If you use evaluations, create a page with the [convoca_evaluacion] shortcode."
 
 #. translators: %s: page title
 #: admin/class-admin-settings.php:490
@@ -1318,15 +1294,14 @@ msgid "Email del administrador"
 msgstr "Administrator email"
 
 #: admin/traits/trait-admin-settings-general.php:51
-#, fuzzy
 msgid "Dominios de correo del equipo"
-msgstr "Communication with the team"
+msgstr "Team email domains"
 
 #: admin/traits/trait-admin-settings-general.php:54
 msgid ""
 "Separados por «|». Las plantillas que nombran un correo de estos dominios lo "
 "sustituyen por el email configurado arriba. Vacío = el dominio de ese email."
-msgstr ""
+msgstr "Separated by \"|\". Templates that name an address from these domains replace it with the email configured above. Empty = that email's domain."
 
 #: admin/traits/trait-admin-settings-general.php:58
 msgid "Versión RGPD"
@@ -1349,7 +1324,7 @@ msgstr "Prevent the same ID from enrolling more than once in the same activity"
 msgid ""
 "Cada actividad puede cambiarlo. Si se pide, al rellenarlo se sigue "
 "comprobando que no esté repetido."
-msgstr ""
+msgstr "Each activity can change it. If requested, duplicates are still checked when it is filled in."
 
 #: admin/traits/trait-admin-settings-general.php:99
 msgid "Plazas por defecto"
@@ -1558,12 +1533,11 @@ msgstr "You do not have permission to perform check-in."
 msgid ""
 "Este enlace de check-in no corresponde a ninguna inscripción. Comprueba que "
 "has escaneado el código correcto."
-msgstr ""
+msgstr "This check-in link does not match any enrollment. Check that you scanned the right code."
 
 #: includes/Checkin_Handler.php:197
-#, fuzzy
 msgid "Enlace no válido"
-msgstr "Invalid status."
+msgstr "Invalid link"
 
 #: includes/Checkin_Handler.php:212 includes/Checkin_Handler.php:354
 #: includes/Checkin_PWA.php:85
@@ -1604,9 +1578,8 @@ msgid "Error de Check-in"
 msgstr "Check-in Error"
 
 #: includes/Checkin_Handler.php:708
-#, fuzzy
 msgid "No se ha encontrado la inscripción de este código."
-msgstr "No page with this shortcode was found."
+msgstr "No enrollment was found for this code."
 
 #. translators: %1$s: participant name, %2$s: activity title
 #: includes/Checkin_Handler.php:722
@@ -1675,7 +1648,7 @@ msgid ""
 "Horas de voluntariado que suma la actividad a quien participa y a quien la "
 "imparte. Si lo dejas vacío se estiman los días de la actividad × 4 h "
 "(ajustable en los ajustes de Enroll)."
-msgstr ""
+msgstr "Volunteering hours the activity adds for attendees and for the instructor. If left empty, they are estimated as the activity days × 4 h (adjustable in the Enroll settings)."
 
 #: includes/CPT_Actividad.php:269
 msgid "Recordatorio (horas antes)"
@@ -1932,15 +1905,14 @@ msgid "<p>Adjuntamos tu código QR y un enlace al calendario.</p>"
 msgstr "<p>We have attached your QR code and a calendar link.</p>"
 
 #: includes/Email_Automation.php:251
-#, fuzzy
 msgid "Código QR de check-in"
-msgstr "Check-in Error"
+msgstr "Check-in QR code"
 
 #: includes/Email_Automation.php:252
 msgid ""
 "<p>Si el QR no se ve, abre tu <a href=\"{url_checkin}\">enlace de check-in</"
 "a> desde el móvil.</p>"
-msgstr ""
+msgstr "<p>If the QR does not show, open your <a href=\\\"{url_checkin}\\\">check-in link</a> on your phone.</p>"
 
 #: includes/Email_Automation.php:256
 msgid "Reserva cancelada — {actividad}"
@@ -2226,7 +2198,7 @@ msgstr "Only pending or waitlisted enrollments can be confirmed."
 #: includes/Motor_Inscripcion.php:694
 msgid ""
 "Esta inscripción está pendiente de pago: no se puede confirmar sin cobro."
-msgstr ""
+msgstr "This enrollment is pending payment: it cannot be confirmed without payment."
 
 #: includes/Motor_Inscripcion.php:720
 msgid "No hay plazas disponibles para confirmar esta inscripción."
@@ -2353,9 +2325,8 @@ msgid "Nombre completo *"
 msgstr "Full name *"
 
 #: includes/Volunteer_Hour_Tracker.php:117
-#, fuzzy
 msgid "Asistencia retirada"
-msgstr "Attendance confirmed"
+msgstr "Attendance withdrawn"
 
 #: media/class-blog-post-manager.php:108
 msgid "No se pudo crear la entrada del blog."
@@ -2517,7 +2488,7 @@ msgstr ""
 msgid ""
 "Faltan las dimensiones: ni width/height en la raiz ni un formato con width/"
 "height."
-msgstr ""
+msgstr "Dimensions missing: neither width/height at the root nor a size with width/height."
 
 #: media/class-template-manager.php:161
 msgid "Debe definir al menos una capa."
@@ -2546,14 +2517,13 @@ msgid "Aquí no hay ninguna actividad abierta a inscripción."
 msgstr "There are no activities open for registration here."
 
 #: public/class-form-inscripcion.php:139
-#, fuzzy
 msgid "Ver las actividades disponibles"
-msgstr "Available Activities"
+msgstr "See available activities"
 
 #: public/class-form-inscripcion.php:142
 msgid ""
 "Si has llegado por un enlace de la asociación, avísanos: ese enlace está mal."
-msgstr ""
+msgstr "If you arrived from an association link, let us know: that link is wrong."
 
 #: public/class-form-inscripcion.php:146
 msgid ""
@@ -2561,7 +2531,7 @@ msgid ""
 "ficha de la actividad que quieras y pega en ella el bloque o el shortcode "
 "con su id, por ejemplo [convoca_form_inscripcion id=\"123\"]. Para listar "
 "todas las inscripciones abiertas, usa [convoca_inscripcion_page]."
-msgstr ""
+msgstr "For administrators: this page has no activity assigned. Open the activity you want and paste the block or the shortcode with its id, for example [convoca_form_inscripcion id=\\\"123\\\"]. To list all open enrollments, use [convoca_inscripcion_page]."
 
 #. translators: 1: login URL, 2: daily-rate label.
 #: public/class-form-inscripcion.php:171
@@ -2570,7 +2540,7 @@ msgid ""
 "Identifícate <strong><a href=\"%1$s\">como socio/a</a></strong> para "
 "autocompletar tus datos y aplicar tu aportación reducida. (De lo contrario, "
 "se aplica la aportación %2$s)."
-msgstr ""
+msgstr "Sign in <strong><a href=\\\"%1$s\\\">as a member</a></strong> to autofill your details and apply your reduced contribution. (Otherwise the %2$s contribution applies.)"
 
 #. translators: %s: login URL.
 #: public/class-form-inscripcion.php:177
@@ -2578,7 +2548,7 @@ msgstr ""
 msgid ""
 "Identifícate <strong><a href=\"%s\">como socio/a</a></strong> para "
 "autocompletar tus datos."
-msgstr ""
+msgstr "Sign in <strong><a href=\\\"%s\\\">as a member</a></strong> to autofill your details."
 
 #. translators: 1: member name placeholder, 2: logout URL.
 #: public/class-form-inscripcion.php:183
@@ -2586,7 +2556,7 @@ msgstr ""
 msgid ""
 "<strong>Autenticado como socio/a:</strong> %1$s. Tus datos están puestos en "
 "el formulario. Opcionalmente puedes <a href=\"%2$s\">cerrar sesión</a>."
-msgstr ""
+msgstr "<strong>Signed in as a member:</strong> %1$s. Your details are filled in. You can <a href=\\\"%2$s\\\">sign out</a> if you want."
 
 #. translators: %s: PDF generation error message
 #: public/class-form-inscripcion.php:390
@@ -2890,7 +2860,7 @@ msgstr "Account not found or token expired."
 msgid ""
 "Facebook no ha explicado el fallo. Reintenta la publicacion; si se repite, "
 "revisa la conexion de la cuenta."
-msgstr ""
+msgstr "Facebook did not explain the failure. Try publishing again; if it repeats, check the account connection."
 
 #: social/class-social-publisher.php:113
 msgid "Publicado en Facebook"
@@ -2916,7 +2886,7 @@ msgstr "Published to Google"
 msgid ""
 "No se ha registrado tu inscripción: este formulario necesita JavaScript en "
 "el navegador."
-msgstr ""
+msgstr "Your enrollment was not registered: this form needs JavaScript in the browser."
 
 #: templates/form-inscripcion.php:37 templates/panel-reservas.php:45
 msgid "Actívalo y vuelve a intentarlo."
@@ -2928,9 +2898,8 @@ msgstr "If you can't, write to us and we'll register you manually:"
 
 #. translators: %s: título de la actividad.
 #: templates/form-inscripcion.php:76
-#, fuzzy, php-format
 msgid "Inscripción: %s"
-msgstr "Enrollment"
+msgstr "Enrollment: %s"
 
 #: templates/form-inscripcion.php:89
 msgid "📋 Normas de inscripción"
@@ -2941,23 +2910,20 @@ msgid "Puedes consultar la información completa sobre"
 msgstr "You can read the full information about"
 
 #: templates/form-inscripcion.php:97
-#, fuzzy
 msgid "protección de datos"
-msgstr "Data protection"
+msgstr "data protection"
 
 #: templates/form-inscripcion.php:100
 msgid "y"
 msgstr "and"
 
 #: templates/form-inscripcion.php:103
-#, fuzzy
 msgid "uso de imágenes"
-msgstr "Image Usage URL"
+msgstr "image use"
 
 #: templates/form-inscripcion.php:123
-#, fuzzy
 msgid "Sin fecha confirmada"
-msgstr "Attendance confirmed"
+msgstr "No confirmed date"
 
 #. translators: 1: plazas disponibles, 2: total plazas
 #: templates/form-inscripcion.php:131 templates/form-inscripcion.php:132
@@ -2980,21 +2946,19 @@ msgstr "%1$d/%2$d seats"
 msgid ""
 "Este formulario de inscripción necesita JavaScript en el navegador. Actívalo "
 "y vuelve a intentarlo."
-msgstr ""
+msgstr "This enrollment form needs JavaScript in the browser. Enable it and try again."
 
 #: templates/form-inscripcion.php:171
 msgid "⚠️ Las plazas están agotadas. Si te inscribes, entrarás en la"
 msgstr "⚠️ Places are sold out. If you register, you'll join the"
 
 #: templates/form-inscripcion.php:172
-#, fuzzy
 msgid "lista de espera"
-msgstr "Waitlist"
+msgstr "waitlist"
 
 #: templates/form-inscripcion.php:173
-#, fuzzy
 msgid "Te avisaremos si se libera una plaza."
-msgstr "<p>We will email you if a seat becomes available.</p>"
+msgstr "We will let you know if a place becomes available."
 
 #. translators: %s: nombre del socio que tiene la sesión abierta.
 #: templates/form-inscripcion.php:183
@@ -3002,21 +2966,19 @@ msgstr "<p>We will email you if a seat becomes available.</p>"
 msgid ""
 "Estás identificado como %s: tus datos ya están puestos y se te aplica el "
 "precio de socio."
-msgstr ""
+msgstr "You are signed in as %s: your details are filled in and the member price applies."
 
 #: templates/form-inscripcion.php:196
 msgid "Nombre y apellidos"
 msgstr "First and last name"
 
 #: templates/form-inscripcion.php:197
-#, fuzzy
 msgid "Este campo es obligatorio."
-msgstr "Name is required."
+msgstr "This field is required."
 
 #: templates/form-inscripcion.php:200
-#, fuzzy
 msgid "Correo electrónico *"
-msgstr "Email address"
+msgstr "Email address *"
 
 #: templates/form-inscripcion.php:203
 msgid "tu@correo.com"
@@ -3031,14 +2993,12 @@ msgid "opcional"
 msgstr "optional"
 
 #: templates/form-inscripcion.php:217
-#, fuzzy
 msgid "Introduce un documento de identificación válido."
-msgstr "Enter a valid email."
+msgstr "Enter a valid ID document."
 
 #: templates/form-inscripcion.php:219
-#, fuzzy
 msgid "Si lo rellenas, se usa para evitar inscripciones duplicadas."
-msgstr "You do not have permission to view enrollments for this activity."
+msgstr "If you fill it in, it is used to avoid duplicate enrollments."
 
 #: templates/form-inscripcion.php:224
 msgid "600 000 000"
@@ -3053,87 +3013,78 @@ msgid "Sí"
 msgstr "Yes"
 
 #: templates/form-inscripcion.php:247
-#, fuzzy
 msgid "Estoy inscribiendo a un menor o persona a mi cargo"
-msgstr "Allow an adult to enroll minors or dependents"
+msgstr "I am enrolling a minor or a dependent"
 
 #: templates/form-inscripcion.php:252
 msgid "Nombre del participante (menor/persona a cargo) *"
 msgstr "Participant's name (minor/dependant) *"
 
 #: templates/form-inscripcion.php:254
-#, fuzzy
 msgid "Nombre y apellidos del participante"
-msgstr "Participant group"
+msgstr "Participant's full name"
 
 #: templates/form-inscripcion.php:257
-#, fuzzy
 msgid "Edad del participante *"
-msgstr "Participant group"
+msgstr "Participant's age *"
 
 #: templates/form-inscripcion.php:280
-#, fuzzy
 msgid "Compromiso de Acción Voluntaria"
-msgstr "Error generating the Voluntary Action Commitment:"
+msgstr "Voluntary Action Commitment"
 
 #: templates/form-inscripcion.php:281
 msgid ""
 "Como voluntario/a, para participar en esta actividad debes firmar el "
 "compromiso (es obligatorio)."
-msgstr ""
+msgstr "As a volunteer, you must sign the commitment to take part in this activity (it is required)."
 
 #: templates/form-inscripcion.php:284
-#, fuzzy
 msgid "Acepto y firmo el Compromiso de acción voluntaria"
-msgstr "Error generating the Voluntary Action Commitment:"
+msgstr "I accept and sign the Voluntary Action Commitment"
 
 #: templates/form-inscripcion.php:284
 msgid ""
 "para esta actividad, incluyendo las funciones y obligaciones especificadas."
-msgstr ""
+msgstr "for this activity, including the duties and obligations set out."
 
 #: templates/form-inscripcion.php:291
 msgid "He leído y acepto la"
 msgstr "I have read and accept the"
 
 #: templates/form-inscripcion.php:292
-#, fuzzy
 msgid "Política de Privacidad"
-msgstr "Privacy Policy URL"
+msgstr "Privacy Policy"
 
 #: templates/form-inscripcion.php:292
 msgid "y el tratamiento de mis datos personales."
 msgstr "and the processing of my personal data."
 
 #: templates/form-inscripcion.php:304
-#, fuzzy
 msgid "¡Inscripción registrada!"
-msgstr "Enrollment received"
+msgstr "Enrollment registered!"
 
 #: templates/form-inscripcion.php:305
 msgid ""
 "Hemos enviado un email de confirmación a tu correo con tu código de reserva."
-msgstr ""
+msgstr "We have sent a confirmation email with your booking code."
 
 #: templates/form-inscripcion.php:308
-#, fuzzy
 msgid "Guarda tu código de reserva para consultar o cancelar tu inscripción."
-msgstr "<p>Keep your booking code to view or cancel your enrollment.</p>"
+msgstr "Keep your booking code to check or cancel your enrollment."
 
 #: templates/form-inscripcion.php:309
 msgid "¿Tienes dudas? Escríbenos a"
 msgstr "Questions? Write to us at"
 
 #: templates/form-inscripcion.php:311
-#, fuzzy
 msgid "← Volver al inicio"
-msgstr "Back to list"
+msgstr "← Back to home"
 
 #: templates/panel-reservas.php:44
 msgid ""
 "No se ha podido consultar tus reservas: este formulario necesita JavaScript "
 "en el navegador."
-msgstr ""
+msgstr "Your bookings could not be loaded: this form needs JavaScript in the browser."
 
 #: templates/panel-reservas.php:47
 msgid "Si no puedes, escríbenos:"
@@ -3160,7 +3111,7 @@ msgstr "You received the code in your enrollment confirmation email."
 msgid ""
 "Este acceso necesita JavaScript en el navegador. Actívalo y vuelve a "
 "intentarlo."
-msgstr ""
+msgstr "This access needs JavaScript in the browser. Enable it and try again."
 
 #: templates/panel-reservas.php:83
 msgid "Correo electrónico"
