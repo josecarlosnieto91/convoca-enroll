@@ -86,6 +86,21 @@ class Utils {
 		return $adjuntos;
 	}
 	/**
+	 * Etiqueta del campo del nombre.
+	 *
+	 * «Adulto responsable» solo tiene sentido cuando la actividad admite menores o personas a cargo: en
+	 * un taller de adultos sugiere que hay que apuntar a alguien más (issue #70).
+	 *
+	 * @param bool $permitir_menores Si la actividad admite menores.
+	 * @return string
+	 */
+	public static function etiqueta_nombre( bool $permitir_menores ): string {
+		return $permitir_menores
+			? __( 'Nombre completo del adulto responsable *', 'convoca-enroll' )
+			: __( 'Nombre completo *', 'convoca-enroll' );
+	}
+
+	/**
 	 * ¿Se pide el DNI en esta actividad? `heredar` usa el ajuste global.
 	 *
 	 * Decisión de producto (issue #64): un taller gratuito de bienestar no necesita el DNI para nada;

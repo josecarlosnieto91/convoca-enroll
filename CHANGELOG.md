@@ -1,3 +1,23 @@
+## [2.13.5] — 2026-11-08
+
+### Corregido
+
+- **la etiqueta del nombre no habla de «adulto responsable» si la actividad no tiene menores** (#70):
+  `Utils::etiqueta_nombre()` decide entre «Nombre completo del adulto responsable *» y «Nombre completo *»
+  según `permitir_menores`. Dos pruebas, una por caso.
+- **los textos del formulario pasan por el catálogo** (#71): los treinta literales que estaban escritos a mano
+  (etiquetas, marcadores, avisos, bloque de éxito, `aria-label`) usan `esc_html__()`/`esc_attr__()` con el
+  dominio `convoca-enroll`. El `.pot` sube de 633 a 698 cadenas.
+
+### Añadido
+
+- **catálogo en inglés al día**: 37 cadenas nuevas traducidas y `.mo` recompilado (615/615).
+
+### Pruebas
+
+- Guardián `PlantillaI18nTest`: lee todas las plantillas, quita PHP y etiquetas, y falla si queda texto visible
+  que no venga de una llamada de traducción. 992 pruebas en verde.
+
 ## [2.13.4] — 2026-11-08
 
 ### Corregido

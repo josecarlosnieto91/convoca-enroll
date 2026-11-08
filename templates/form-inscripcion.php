@@ -73,7 +73,7 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 ?>
 
 <div id="convoca-form-inscripcion" class="conv-enroll-wrapper convoca-form" data-actividad-id="<?php echo (int) $actividad->ID; ?>" role="region"
-	aria-label="<?php echo esc_attr( sprintf( 'Inscripción: %s', $actividad->post_title ) ); ?>">
+	aria-label="<?php echo esc_attr( sprintf( /* translators: %s: título de la actividad. */ __( 'Inscripción: %s', 'convoca-enroll' ), $actividad->post_title ) ); ?>">
 
 	<!-- Intro text -->
 	<?php if ( ! empty( $texto_intro ) ) : ?>
@@ -123,7 +123,7 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 				<span class="conv-sin-fecha" aria-label="Fecha">📅 <?php esc_html_e( 'Sin fecha confirmada', 'convoca-enroll' ); ?></span>
 			<?php endif; ?>
 			<?php if ( $ubicacion ) : ?>
-				<span aria-label="Ubicación">📍 <?php echo esc_html( $ubicacion ); ?></span>
+				<span aria-label="<?php esc_attr_e( 'Ubicación', 'convoca-enroll' ); ?>">📍 <?php echo esc_html( $ubicacion ); ?></span>
 			<?php endif; ?>
 			<?php if ( $show_plazas ) : ?>
 				<span id="conv-plazas-badge"
@@ -168,8 +168,9 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 
 		<?php if ( $agotada ) : ?>
 			<div class="convoca-alert convoca-alert--info" role="status">
-				⚠️ Las plazas están agotadas. Si te inscribes, entrarás en la <strong>lista de espera</strong>.
-				Te avisaremos si se libera una plaza.
+				<?php esc_html_e( '⚠️ Las plazas están agotadas. Si te inscribes, entrarás en la', 'convoca-enroll' ); ?>
+				<strong><?php esc_html_e( 'lista de espera', 'convoca-enroll' ); ?></strong>.
+				<?php esc_html_e( 'Te avisaremos si se libera una plaza.', 'convoca-enroll' ); ?>
 			</div>
 		<?php endif; ?>
 
@@ -189,18 +190,18 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 
 		<div class="convoca-grid-2">
 			<div class="convoca-field">
-				<label for="conv-nombre">Nombre completo del adulto responsable *</label>
+				<label for="conv-nombre"><?php echo esc_html( \Convoca\Enroll\Utils::etiqueta_nombre( (bool) $permitir_menores ) ); ?></label>
 				<input type="text" id="conv-nombre" name="nombre" required autocomplete="name"
 					value="<?php echo esc_attr( (string) ( $miembro['nombre'] ?? '' ) ); ?>"
-					placeholder="Nombre y apellidos">
-				<span class="convoca-error-msg">Este campo es obligatorio.</span>
+					placeholder="<?php esc_attr_e( 'Nombre y apellidos', 'convoca-enroll' ); ?>">
+				<span class="convoca-error-msg"><?php esc_html_e( 'Este campo es obligatorio.', 'convoca-enroll' ); ?></span>
 			</div>
 			<div class="convoca-field">
-				<label for="conv-email">Correo electrónico *</label>
+				<label for="conv-email"><?php esc_html_e( 'Correo electrónico *', 'convoca-enroll' ); ?></label>
 				<input type="email" id="conv-email" name="email" required autocomplete="email"
 					value="<?php echo esc_attr( (string) ( $miembro['email'] ?? '' ) ); ?>"
-					placeholder="tu@correo.com">
-				<span class="convoca-error-msg">Introduce un email válido.</span>
+					placeholder="<?php esc_attr_e( 'tu@correo.com', 'convoca-enroll' ); ?>">
+				<span class="convoca-error-msg"><?php esc_html_e( 'Introduce un email válido.', 'convoca-enroll' ); ?></span>
 			</div>
 		</div>
 
@@ -219,18 +220,18 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 				<?php endif; ?>
 			</div>
 			<div class="convoca-field">
-				<label for="conv-telefono">Teléfono</label>
-				<input type="tel" id="conv-telefono" name="telefono" autocomplete="tel" placeholder="600 000 000"
+				<label for="conv-telefono"><?php esc_html_e( 'Teléfono', 'convoca-enroll' ); ?></label>
+				<input type="tel" id="conv-telefono" name="telefono" autocomplete="tel" placeholder="<?php esc_attr_e( '600 000 000', 'convoca-enroll' ); ?>"
 					value="<?php echo esc_attr( (string) ( $miembro['telefono'] ?? '' ) ); ?>">
 			</div>
 		</div>
 
 		<div class="convoca-grid-2">
 			<div class="convoca-field">
-				<label for="conv-whatsapp">¿El teléfono tiene WhatsApp?</label>
+				<label for="conv-whatsapp"><?php esc_html_e( '¿El teléfono tiene WhatsApp?', 'convoca-enroll' ); ?></label>
 				<select id="conv-whatsapp" name="whatsapp">
-					<option value="si">Sí</option>
-					<option value="no">No</option>
+					<option value="si"><?php esc_html_e( 'Sí', 'convoca-enroll' ); ?></option>
+					<option value="no"><?php esc_html_e( 'No', 'convoca-enroll' ); ?></option>
 				</select>
 			</div>
 			<div class="convoca-field">
@@ -243,19 +244,19 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 			<div class="convoca-box-warning conv-minor-section">
 				<div class="convoca-check-group">
 					<input type="checkbox" id="conv-es-menor" name="es_menor" value="1">
-					<label for="conv-es-menor"><strong>Estoy inscribiendo a un menor o persona a mi cargo</strong></label>
+					<label for="conv-es-menor"><strong><?php esc_html_e( 'Estoy inscribiendo a un menor o persona a mi cargo', 'convoca-enroll' ); ?></strong></label>
 				</div>
 				<div id="conv-minor-fields" style="display:none;" class="convoca-mt-medium">
 					<div class="convoca-grid-2">
 						<div class="convoca-field">
-							<label for="conv-nombre-participante">Nombre del participante (menor/persona a cargo) *</label>
+							<label for="conv-nombre-participante"><?php esc_html_e( 'Nombre del participante (menor/persona a cargo) *', 'convoca-enroll' ); ?></label>
 							<input type="text" id="conv-nombre-participante" name="nombre_participante"
-								placeholder="Nombre y apellidos del participante">
+								placeholder="<?php esc_attr_e( 'Nombre y apellidos del participante', 'convoca-enroll' ); ?>">
 						</div>
 						<div class="convoca-field">
-							<label for="conv-edad-participante">Edad del participante *</label>
+							<label for="conv-edad-participante"><?php esc_html_e( 'Edad del participante *', 'convoca-enroll' ); ?></label>
 							<input type="number" id="conv-edad-participante" name="edad_participante" min="0" max="120"
-								placeholder="Edad">
+								placeholder="<?php esc_attr_e( 'Edad', 'convoca-enroll' ); ?>">
 						</div>
 					</div>
 				</div>
@@ -276,19 +277,19 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 
 		<?php if ( $requiere_compromiso ) : ?>
 			<div class="convoca-box-warning conv-compromiso-section convoca-mt-small convoca-mb-small">
-				<h4 style="margin-top:0;">Compromiso de Acción Voluntaria</h4>
-				<p class="convoca-small">Como voluntario/a, para participar en esta actividad debes firmar el compromiso (es obligatorio).</p>
+				<h4 style="margin-top:0;"><?php esc_html_e( 'Compromiso de Acción Voluntaria', 'convoca-enroll' ); ?></h4>
+				<p class="convoca-small"><?php esc_html_e( 'Como voluntario/a, para participar en esta actividad debes firmar el compromiso (es obligatorio).', 'convoca-enroll' ); ?></p>
 				<div class="convoca-check-group">
 					<input type="checkbox" id="conv-compromiso-voluntario" name="compromiso_voluntario" value="1" required>
-					<label for="conv-compromiso-voluntario"><strong>Acepto y firmo el Compromiso de acción voluntaria</strong> para esta actividad, incluyendo las funciones y obligaciones especificadas.</label>
+					<label for="conv-compromiso-voluntario"><strong><?php esc_html_e( 'Acepto y firmo el Compromiso de acción voluntaria', 'convoca-enroll' ); ?></strong> <?php esc_html_e( 'para esta actividad, incluyendo las funciones y obligaciones especificadas.', 'convoca-enroll' ); ?></label>
 				</div>
 			</div>
 		<?php endif; ?>
 
 		<div class="convoca-check-group">
 			<input type="checkbox" id="conv-consentimiento" name="consentimiento">
-			<label for="conv-consentimiento">He leído y acepto la <a href="<?php echo esc_url( $url_privacidad ); ?>"
-					target="_blank" rel="noopener">Política de Privacidad</a> y el tratamiento de mis datos personales.
+			<label for="conv-consentimiento"><?php esc_html_e( 'He leído y acepto la', 'convoca-enroll' ); ?> <a href="<?php echo esc_url( $url_privacidad ); ?>"
+					target="_blank" rel="noopener"><?php esc_html_e( 'Política de Privacidad', 'convoca-enroll' ); ?></a> <?php esc_html_e( 'y el tratamiento de mis datos personales.', 'convoca-enroll' ); ?>
 				*</label>
 		</div>
 
@@ -300,14 +301,14 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 	<!-- Success -->
 	<div id="conv-success" class="convoca-success-screen" style="display:none" role="status" aria-live="polite">
 		<div class="convoca-success-icon" id="conv-success-icon">🎉</div>
-		<h3 id="conv-success-title">¡Inscripción registrada!</h3>
-		<p id="conv-success-msg">Hemos enviado un email de confirmación a tu correo con tu código de reserva.</p>
+		<h3 id="conv-success-title"><?php esc_html_e( '¡Inscripción registrada!', 'convoca-enroll' ); ?></h3>
+		<p id="conv-success-msg"><?php esc_html_e( 'Hemos enviado un email de confirmación a tu correo con tu código de reserva.', 'convoca-enroll' ); ?></p>
 		<p id="conv-success-code" class="conv-reservation-code"
 			style="display:none;font-size:1.3rem;font-weight:700;letter-spacing:2px;"></p>
-		<p class="convoca-small">Guarda tu código de reserva para consultar o cancelar tu inscripción.</p>
-		<p class="convoca-small">¿Tienes dudas? Escríbenos a <a
+		<p class="convoca-small"><?php esc_html_e( 'Guarda tu código de reserva para consultar o cancelar tu inscripción.', 'convoca-enroll' ); ?></p>
+		<p class="convoca-small"><?php esc_html_e( '¿Tienes dudas? Escríbenos a', 'convoca-enroll' ); ?> <a
 				href="mailto:{admin_email}">{admin_email}</a></p>
-		<p class="convoca-mt-medium"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="convoca-btn convoca-btn-outline">← Volver al inicio</a></p>
+		<p class="convoca-mt-medium"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="convoca-btn convoca-btn-outline"><?php esc_html_e( '← Volver al inicio', 'convoca-enroll' ); ?></a></p>
 	</div>
 
 </div>

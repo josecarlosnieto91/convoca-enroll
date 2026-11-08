@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Enroll 2.13.4\n"
+"Project-Id-Version: Convoca Enroll 2.13.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-enroll\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-04T23:16:16+00:00\n"
+"POT-Creation-Date: 2026-11-08T18:04:49+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-enroll\n"
@@ -38,12 +38,12 @@ msgstr ""
 #: admin/class-admin-actividades.php:90
 #: admin/class-admin-actividades.php:91
 #: admin/class-admin-page.php:119
-#: includes/CPT_Actividad.php:163
+#: includes/CPT_Actividad.php:165
 msgid "Actividades"
 msgstr ""
 
 #: admin/class-admin-actividades.php:99
-#: includes/CPT_Actividad.php:166
+#: includes/CPT_Actividad.php:168
 msgid "Añadir nueva actividad"
 msgstr ""
 
@@ -63,118 +63,219 @@ msgid "Actividad guardada."
 msgstr ""
 
 #: admin/class-admin-actividades.php:133
-#: includes/CPT_Actividad.php:169
+#: includes/CPT_Actividad.php:171
 msgid "Buscar actividades"
 msgstr ""
 
-#: admin/class-admin-actividades.php:179
+#: admin/class-admin-actividades.php:182
 msgid "Editar Actividad"
 msgstr ""
 
-#: admin/class-admin-actividades.php:179
+#: admin/class-admin-actividades.php:182
 msgid "Nueva Actividad"
 msgstr ""
 
-#: admin/class-admin-actividades.php:194
+#: admin/class-admin-actividades.php:197
 msgid "Información Principal"
 msgstr ""
 
-#: admin/class-admin-actividades.php:198
+#: admin/class-admin-actividades.php:201
 msgid "Título de la Actividad"
 msgstr ""
 
-#: admin/class-admin-actividades.php:203
+#: admin/class-admin-actividades.php:206
 msgid "Descripción Completa"
 msgstr ""
 
-#: admin/class-admin-actividades.php:208
+#: admin/class-admin-actividades.php:211
 msgid "Resumen Corto (para listados)"
 msgstr ""
 
-#: admin/class-admin-actividades.php:216
+#: admin/class-admin-actividades.php:219
 msgid "Configuración y Logística"
 msgstr ""
 
-#: admin/class-admin-actividades.php:221
+#: admin/class-admin-actividades.php:224
 msgid "Fecha y Hora Inicio"
 msgstr ""
 
-#: admin/class-admin-actividades.php:225
-#: includes/CPT_Actividad.php:237
+#: admin/class-admin-actividades.php:228
+#: includes/CPT_Actividad.php:239
 msgid "Fecha y Hora Fin"
 msgstr ""
 
-#: admin/class-admin-actividades.php:231
-#: includes/CPT_Actividad.php:254
+#: admin/class-admin-actividades.php:234
+#: includes/CPT_Actividad.php:256
 msgid "Ubicación / Punto de encuentro"
 msgstr ""
 
-#: admin/class-admin-actividades.php:237
-#: includes/CPT_Actividad.php:260
+#: admin/class-admin-actividades.php:240
+#: includes/CPT_Actividad.php:262
 msgid "Plazas Totales"
 msgstr ""
 
-#: admin/class-admin-actividades.php:241
+#: admin/class-admin-actividades.php:244
 msgid "Precio Socio (€)"
 msgstr ""
 
-#: admin/class-admin-actividades.php:249
-#: includes/CPT_Actividad.php:283
+#: admin/class-admin-actividades.php:252
+#: includes/CPT_Actividad.php:285
 msgid "Requiere pago previo"
 msgstr ""
 
-#: admin/class-admin-actividades.php:256
-#: includes/CPT_Actividad.php:289
+#: admin/class-admin-actividades.php:259
+#: includes/CPT_Actividad.php:291
 msgid "Es una actividad externa"
 msgstr ""
 
-#: admin/class-admin-actividades.php:261
-#: includes/CPT_Actividad.php:294
+#: admin/class-admin-actividades.php:264
+#: includes/CPT_Actividad.php:296
 msgid "Monitores / Responsables"
 msgstr ""
 
-#: admin/class-admin-actividades.php:279
+#: admin/class-admin-actividades.php:288
+msgid "Aportaciones y horas"
+msgstr ""
+
+#: admin/class-admin-actividades.php:291
+msgid "Precio Socio de Día (€)"
+msgstr ""
+
+#: admin/class-admin-actividades.php:295
+msgid "Horas de la actividad"
+msgstr ""
+
+#: admin/class-admin-actividades.php:301
+msgid "Plazas disponibles (calculado)"
+msgstr ""
+
+#. translators: 1: free slots, 2: occupied slots.
+#: admin/class-admin-actividades.php:307
+#, php-format
+msgid "%1$d libres · %2$d ocupadas. Se calcula solo: cambia las plazas totales."
+msgstr ""
+
+#: admin/class-admin-actividades.php:317
+#: admin/traits/trait-admin-settings-general.php:85
+msgid "DNI en la inscripción"
+msgstr ""
+
+#: admin/class-admin-actividades.php:322
+msgid "Usar el ajuste general"
+msgstr ""
+
+#: admin/class-admin-actividades.php:323
+#: admin/traits/trait-admin-settings-general.php:89
+msgid "Obligatorio"
+msgstr ""
+
+#: admin/class-admin-actividades.php:324
+#: admin/traits/trait-admin-settings-general.php:89
+msgid "Opcional"
+msgstr ""
+
+#: admin/class-admin-actividades.php:325
+#: admin/traits/trait-admin-settings-general.php:89
+msgid "No pedirlo"
+msgstr ""
+
+#: admin/class-admin-actividades.php:333
+msgid "Recordatorios"
+msgstr ""
+
+#: admin/class-admin-actividades.php:335
+#: includes/CPT_Actividad.php:69
+msgid "7 días antes"
+msgstr ""
+
+#: admin/class-admin-actividades.php:336
+#: includes/CPT_Actividad.php:70
+msgid "1 día antes"
+msgstr ""
+
+#: admin/class-admin-actividades.php:337
+#: includes/CPT_Actividad.php:71
+msgid "1 hora antes"
+msgstr ""
+
+#: admin/class-admin-actividades.php:338
+msgid "Después del evento (encuesta)"
+msgstr ""
+
+#: admin/class-admin-actividades.php:341
+msgid "Recordatorio «X horas antes»"
+msgstr ""
+
+#: admin/class-admin-actividades.php:343
+msgid "0 = no enviar este recordatorio."
+msgstr ""
+
+#: admin/class-admin-actividades.php:346
+msgid "Google"
+msgstr ""
+
+#: admin/class-admin-actividades.php:348
+msgid "Crear álbum de fotos al terminar"
+msgstr ""
+
+#: admin/class-admin-actividades.php:349
+msgid "Sincronizar con Google Calendar"
+msgstr ""
+
+#: admin/class-admin-actividades.php:352
+msgid "Funciones y obligaciones"
+msgstr ""
+
+#: admin/class-admin-actividades.php:354
+msgid "Funciones"
+msgstr ""
+
+#: admin/class-admin-actividades.php:358
+msgid "Obligaciones"
+msgstr ""
+
+#: admin/class-admin-actividades.php:366
 msgid "Guardar Actividad"
 msgstr ""
 
-#: admin/class-admin-actividades.php:281
+#: admin/class-admin-actividades.php:368
 msgid "Duplicar"
 msgstr ""
 
-#: admin/class-admin-actividades.php:283
+#: admin/class-admin-actividades.php:370
 #: admin/class-admin-evaluaciones-editor.php:183
 msgid "Cancelar"
 msgstr ""
 
-#: admin/class-admin-actividades.php:297
+#: admin/class-admin-actividades.php:405
 #: admin/class-admin-evaluaciones-editor.php:203
 msgid "No tienes permisos para realizar esta acción."
 msgstr ""
 
-#: admin/class-admin-actividades.php:322
+#: admin/class-admin-actividades.php:430
 msgid "Error al guardar la actividad."
 msgstr ""
 
-#: admin/class-admin-actividades.php:375
-#: admin/class-admin-actividades.php:400
+#: admin/class-admin-actividades.php:485
+#: admin/class-admin-actividades.php:510
 #: admin/class-admin-monitor-crm.php:71
 #: admin/class-admin-page.php:843
 #: admin/class-admin-page.php:892
 msgid "Nonce inválido."
 msgstr ""
 
-#: admin/class-admin-actividades.php:378
-#: admin/class-admin-actividades.php:403
+#: admin/class-admin-actividades.php:488
+#: admin/class-admin-actividades.php:513
 #: admin/class-admin-monitor-crm.php:126
 #: admin/class-admin-page.php:846
 #: admin/class-admin-page.php:895
 #: admin/class-admin-page.php:918
-#: admin/class-admin-settings.php:261
+#: admin/class-admin-settings.php:263
 msgid "No tienes permisos."
 msgstr ""
 
-#: admin/class-admin-actividades.php:383
-#: admin/class-admin-actividades.php:408
+#: admin/class-admin-actividades.php:493
+#: admin/class-admin-actividades.php:518
 #: admin/class-admin-monitor-crm.php:360
 #: includes/Motor_Inscripcion.php:154
 #: includes/PDF_Compromiso.php:96
@@ -183,11 +284,11 @@ msgstr ""
 msgid "Actividad no encontrada."
 msgstr ""
 
-#: admin/class-admin-actividades.php:423
+#: admin/class-admin-actividades.php:533
 msgid "Error al duplicar la actividad."
 msgstr ""
 
-#: admin/class-admin-actividades.php:597
+#: admin/class-admin-actividades.php:707
 msgid "Crear anuncio"
 msgstr ""
 
@@ -282,7 +383,7 @@ msgstr ""
 #: admin/class-admin-checkin.php:256
 #: admin/class-admin-inscripciones.php:134
 #: admin/class-admin-page.php:806
-#: includes/CPT_Inscripcion.php:78
+#: includes/CPT_Inscripcion.php:77
 msgid "Pendiente"
 msgstr ""
 
@@ -375,15 +476,15 @@ msgstr ""
 #: admin/class-admin-monitor-crm.php:189
 #: admin/class-admin-page.php:857
 #: admin/class-admin-reports.php:1051
-#: includes/CPT_Actividad.php:164
+#: includes/CPT_Actividad.php:166
 #: includes/Email_Automation.php:140
 #: includes/Email_Automation.php:180
 #: includes/Email_Automation.php:199
 #: includes/Email_Automation.php:225
-#: includes/Email_Automation.php:260
-#: includes/Email_Automation.php:283
-#: includes/Email_Automation.php:313
-#: includes/Email_Automation.php:340
+#: includes/Email_Automation.php:262
+#: includes/Email_Automation.php:285
+#: includes/Email_Automation.php:315
+#: includes/Email_Automation.php:342
 #: media/class-poster-engine.php:439
 #: media/class-poster-engine.php:583
 msgid "Actividad"
@@ -403,9 +504,9 @@ msgstr ""
 #: includes/Email_Automation.php:144
 #: includes/Email_Automation.php:203
 #: includes/Email_Automation.php:229
-#: includes/Email_Automation.php:264
-#: includes/Email_Automation.php:287
-#: includes/Email_Automation.php:317
+#: includes/Email_Automation.php:266
+#: includes/Email_Automation.php:289
+#: includes/Email_Automation.php:319
 #: media/class-blog-post-manager.php:223
 #: media/class-poster-engine.php:303
 msgid "Fecha"
@@ -524,6 +625,7 @@ msgid "❌ N/A"
 msgstr ""
 
 #: admin/class-admin-inscripciones.php:452
+#: templates/form-inscripcion.php:234
 msgid "No"
 msgstr ""
 
@@ -568,6 +670,7 @@ msgid "Email"
 msgstr ""
 
 #: admin/class-admin-monitor-crm.php:193
+#: templates/form-inscripcion.php:223
 msgid "Teléfono"
 msgstr ""
 
@@ -733,7 +836,7 @@ msgstr ""
 #: admin/class-admin-page.php:133
 #: admin/class-admin-page.php:134
 #: admin/class-admin-page.php:345
-#: includes/CPT_Inscripcion.php:149
+#: includes/CPT_Inscripcion.php:146
 msgid "Inscripciones"
 msgstr ""
 
@@ -809,14 +912,15 @@ msgid "Aforo"
 msgstr ""
 
 #: admin/class-admin-page.php:376
-#: includes/CPT_Actividad.php:714
+#: includes/CPT_Actividad.php:721
 #: includes/Email_Automation.php:152
 #: includes/Email_Automation.php:211
 #: includes/Email_Automation.php:237
-#: includes/Email_Automation.php:295
-#: includes/Email_Automation.php:325
-#: includes/Email_Automation.php:348
+#: includes/Email_Automation.php:297
+#: includes/Email_Automation.php:327
+#: includes/Email_Automation.php:350
 #: media/class-blog-post-manager.php:229
+#: templates/form-inscripcion.php:126
 msgid "Ubicación"
 msgstr ""
 
@@ -845,9 +949,9 @@ msgid "(%1$d saltadas por falta de aforo, %2$d por estado no confirmable)."
 msgstr ""
 
 #: admin/class-admin-page.php:568
-#: includes/Motor_Inscripcion.php:452
-#: includes/Motor_Inscripcion.php:979
-#: includes/Rest_API.php:321
+#: includes/Motor_Inscripcion.php:482
+#: includes/Motor_Inscripcion.php:1025
+#: includes/Rest_API.php:323
 msgid "Inscripción no encontrada."
 msgstr ""
 
@@ -901,7 +1005,7 @@ msgid "Nota guardada."
 msgstr ""
 
 #: admin/class-admin-reports.php:48
-#: includes/CPT_Actividad.php:715
+#: includes/CPT_Actividad.php:722
 msgid "Ocupación"
 msgstr ""
 
@@ -910,7 +1014,7 @@ msgid "Gráficos"
 msgstr ""
 
 #: admin/class-admin-reports.php:50
-#: includes/CPT_Inscripcion.php:82
+#: includes/CPT_Inscripcion.php:80
 msgid "Lista de espera"
 msgstr ""
 
@@ -987,7 +1091,7 @@ msgid "Recordatorios de evaluación"
 msgstr ""
 
 #: admin/class-admin-settings.php:68
-#: includes/CPT_Actividad.php:792
+#: includes/CPT_Actividad.php:799
 msgid "Google Photos"
 msgstr ""
 
@@ -1007,86 +1111,89 @@ msgstr ""
 msgid "Guardar ajustes"
 msgstr ""
 
-#: admin/class-admin-settings.php:266
+#: admin/class-admin-settings.php:268
 msgid "Plantilla no válida."
 msgstr ""
 
-#: admin/class-admin-settings.php:306
+#: admin/class-admin-settings.php:308
 msgid "Estado del Sistema"
 msgstr ""
 
 #. translators: %s: plugin name
-#: admin/class-admin-settings.php:363
+#: admin/class-admin-settings.php:398
 #, php-format
 msgid "Plugin: %s"
 msgstr ""
 
-#: admin/class-admin-settings.php:365
+#: admin/class-admin-settings.php:400
 msgid "Activo y funcionando."
 msgstr ""
 
-#: admin/class-admin-settings.php:365
+#: admin/class-admin-settings.php:400
 msgid "Plugin no detectado o inactivo."
 msgstr ""
 
 #. translators: %s: plugin name
-#: admin/class-admin-settings.php:367
+#: admin/class-admin-settings.php:402
 #, php-format
 msgid "Instala y activa el plugin %s."
 msgstr ""
 
-#: admin/class-admin-settings.php:377
-msgid "Página: Actividades"
-msgstr ""
-
-#: admin/class-admin-settings.php:379
-msgid "Crea una página con el shortcode [convoca_inscripcion_page] para mostrar el listado de actividades."
-msgstr ""
-
-#: admin/class-admin-settings.php:382
-msgid "Página: Mis Inscripciones"
-msgstr ""
-
-#: admin/class-admin-settings.php:384
-msgid "Crea una página con el shortcode [convoca_panel_reservas] para que los usuarios vean sus reservas."
-msgstr ""
-
-#: admin/class-admin-settings.php:387
-msgid "Página: Formulario de Evaluación"
-msgstr ""
-
-#: admin/class-admin-settings.php:389
-msgid "Crea una página con el shortcode [convoca_evaluacion] para que los monitores evalúen las actividades."
-msgstr ""
-
-#. translators: %s: page title
-#: admin/class-admin-settings.php:399
-#, php-format
-msgid "Detectada: %s"
-msgstr ""
-
-#. translators: %s: page title
-#: admin/class-admin-settings.php:399
-msgid "No se ha encontrado ninguna página con este shortcode."
-msgstr ""
-
-#: admin/class-admin-settings.php:414
+#: admin/class-admin-settings.php:432
 msgid "Ruta: Control de Asistencia (Check-in)"
 msgstr ""
 
 #. translators: %s: URL
-#: admin/class-admin-settings.php:417
+#: admin/class-admin-settings.php:435
 #, php-format
 msgid "Activa en %s"
 msgstr ""
 
 #. translators: %s: URL
-#: admin/class-admin-settings.php:418
+#: admin/class-admin-settings.php:436
 msgid "No se encuentra la regla de reescritura /checkin/."
 msgstr ""
 
-#: admin/class-admin-settings.php:419
+#: admin/class-admin-settings.php:437
 msgid "Guarda Ajustes → Enlaces permanentes para regenerar las reglas (el check-in no funciona con enlaces simples)."
+msgstr ""
+
+#: admin/class-admin-settings.php:461
+msgid "Página: Actividades"
+msgstr ""
+
+#: admin/class-admin-settings.php:463
+msgid "Crea una página con el shortcode [convoca_inscripcion_page] para mostrar el listado de actividades."
+msgstr ""
+
+#: admin/class-admin-settings.php:466
+msgid "No hace falta página: el sitio muestra las actividades con el bloque de inscripción."
+msgstr ""
+
+#: admin/class-admin-settings.php:469
+msgid "Página: Mis Inscripciones"
+msgstr ""
+
+#: admin/class-admin-settings.php:471
+msgid "Crea una página con el shortcode [convoca_panel_reservas] para que los usuarios vean sus reservas."
+msgstr ""
+
+#: admin/class-admin-settings.php:475
+msgid "Página: Formulario de Evaluación"
+msgstr ""
+
+#: admin/class-admin-settings.php:477
+msgid "Si usas evaluaciones, crea una página con el shortcode [convoca_evaluacion]."
+msgstr ""
+
+#. translators: %s: page title
+#: admin/class-admin-settings.php:490
+#, php-format
+msgid "Detectada: %s"
+msgstr ""
+
+#: admin/class-admin-settings.php:493
+msgid "No se ha encontrado ninguna página con este shortcode."
 msgstr ""
 
 #: admin/class-csv-exporter.php:42
@@ -1247,156 +1354,160 @@ msgstr ""
 msgid "Evitar que se inscriba el mismo DNI más de una vez en la misma actividad"
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:85
-msgid "Plazas por defecto"
-msgstr ""
-
-#: admin/traits/trait-admin-settings-general.php:88
-msgid "Plazas que se asignarán por defecto al crear una nueva actividad."
-msgstr ""
-
-#: admin/traits/trait-admin-settings-general.php:92
-msgid "Ventana de cancelación (horas)"
-msgstr ""
-
 #: admin/traits/trait-admin-settings-general.php:95
-msgid "Horas mínimas antes del inicio para que un participante pueda cancelar por autoservicio. A menos horas solo podrá cancelar la organización."
+msgid "Cada actividad puede cambiarlo. Si se pide, al rellenarlo se sigue comprobando que no esté repetido."
 msgstr ""
 
 #: admin/traits/trait-admin-settings-general.php:99
-msgid "URL Panel de Reservas"
+msgid "Plazas por defecto"
 msgstr ""
 
 #: admin/traits/trait-admin-settings-general.php:102
-msgid "Enlace a la página donde está incrustado el shortcode [convoca_panel_reservas]."
+msgid "Plazas que se asignarán por defecto al crear una nueva actividad."
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:105
-msgid "Webhooks"
+#: admin/traits/trait-admin-settings-general.php:106
+msgid "Ventana de cancelación (horas)"
 msgstr ""
 
 #: admin/traits/trait-admin-settings-general.php:109
-msgid "URL del Webhook"
+msgid "Horas mínimas antes del inicio para que un participante pueda cancelar por autoservicio. A menos horas solo podrá cancelar la organización."
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:112
-msgid "URL a la que se enviarán peticiones POST (make.com, zapier, etc.) al cambiar el estado de las inscripciones."
+#: admin/traits/trait-admin-settings-general.php:113
+msgid "URL Panel de Reservas"
 msgstr ""
 
 #: admin/traits/trait-admin-settings-general.php:116
-msgid "Secreto del Webhook"
+msgid "Enlace a la página donde está incrustado el shortcode [convoca_panel_reservas]."
 msgstr ""
 
 #: admin/traits/trait-admin-settings-general.php:119
-msgid "Firma opcional que se enviará en la cabecera X-Convoca-Signature con el hash SHA-256 del payload crudo."
+msgid "Webhooks"
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:128
-msgid "Google Sheets"
+#: admin/traits/trait-admin-settings-general.php:123
+msgid "URL del Webhook"
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:131
-msgid "Activar sincronización"
+#: admin/traits/trait-admin-settings-general.php:126
+msgid "URL a la que se enviarán peticiones POST (make.com, zapier, etc.) al cambiar el estado de las inscripciones."
+msgstr ""
+
+#: admin/traits/trait-admin-settings-general.php:130
+msgid "Secreto del Webhook"
 msgstr ""
 
 #: admin/traits/trait-admin-settings-general.php:133
-msgid "Desactivado"
+msgid "Firma opcional que se enviará en la cabecera X-Convoca-Signature con el hash SHA-256 del payload crudo."
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:134
-msgid "Activado"
+#: admin/traits/trait-admin-settings-general.php:142
+msgid "Google Sheets"
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:139
-msgid "API Key de Google Sheets"
+#: admin/traits/trait-admin-settings-general.php:145
+msgid "Activar sincronización"
 msgstr ""
 
 #: admin/traits/trait-admin-settings-general.php:147
+msgid "Desactivado"
+msgstr ""
+
+#: admin/traits/trait-admin-settings-general.php:148
+msgid "Activado"
+msgstr ""
+
+#: admin/traits/trait-admin-settings-general.php:153
+msgid "API Key de Google Sheets"
+msgstr ""
+
+#: admin/traits/trait-admin-settings-general.php:161
 msgid "Definida vía constante en wp-config.php."
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:149
+#: admin/traits/trait-admin-settings-general.php:163
 msgid "Los datos personales se enviarán a Google. Asegúrate de cumplir la RGPD."
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:150
+#: admin/traits/trait-admin-settings-general.php:164
 msgid "Recomendación: define CONV_ENROLL_GOOGLE_SHEETS_API_KEY en tu wp-config.php."
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:154
+#: admin/traits/trait-admin-settings-general.php:168
 msgid "Mantenimiento y Logs"
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:157
+#: admin/traits/trait-admin-settings-general.php:171
 msgid "Retención de logs (días)"
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:160
+#: admin/traits/trait-admin-settings-general.php:174
 msgid "Días que se conservarán los logs antes de ser eliminados automáticamente."
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:164
+#: admin/traits/trait-admin-settings-general.php:178
 msgid "Integridad de datos"
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:166
+#: admin/traits/trait-admin-settings-general.php:180
 msgid "Validar integridad"
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:168
+#: admin/traits/trait-admin-settings-general.php:182
 msgid "Esto borrará inscripciones huérfanas y recontará plazas. ¿Continuar?"
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:169
+#: admin/traits/trait-admin-settings-general.php:183
 msgid "Reparar integridad"
 msgstr ""
 
-#: admin/traits/trait-admin-settings-general.php:178
+#: admin/traits/trait-admin-settings-general.php:192
 msgid "Resultados de validación:"
 msgstr ""
 
 #. translators: %s: number of orphan records
-#: admin/traits/trait-admin-settings-general.php:180
+#: admin/traits/trait-admin-settings-general.php:194
 #, php-format
 msgid "Huérfanos: %s"
 msgstr ""
 
 #. translators: %s: number of capacity mismatches
-#: admin/traits/trait-admin-settings-general.php:181
+#: admin/traits/trait-admin-settings-general.php:195
 #, php-format
 msgid "Descuadres de plazas: %s"
 msgstr ""
 
-#: convoca-enroll.php:99
+#: convoca-enroll.php:103
 msgid "Convoca Enroll requires Convoca Core to be active. Please activate Convoca Core first."
 msgstr ""
 
-#: convoca-enroll.php:130
+#: convoca-enroll.php:134
 msgid "<!-- wp:shortcode -->[convoca_panel_reservas]<!-- /wp:shortcode -->"
 msgstr ""
 
-#: convoca-enroll.php:323
+#: convoca-enroll.php:298
 msgid "Cada minuto"
 msgstr ""
 
-#: convoca-enroll.php:329
+#: convoca-enroll.php:304
 msgid "Cada 7 días"
 msgstr ""
 
 #. translators: %s: nombre de la actividad
-#: includes/Activity_Reminder_Cron.php:130
+#: includes/Activity_Reminder_Cron.php:131
 #, php-format
 msgid "Recordatorio: %s"
 msgstr ""
 
 #. translators: %s: nombre de la persona
-#: includes/Activity_Reminder_Cron.php:133
+#: includes/Activity_Reminder_Cron.php:134
 #, php-format
 msgid "Hola %s,"
 msgstr ""
 
 #. translators: %1$s: actividad, %2$s: fecha, %3$s: hora, %4$s: lugar
-#: includes/Activity_Reminder_Cron.php:137
+#: includes/Activity_Reminder_Cron.php:138
 #, php-format
 msgid "Te recordamos que la actividad «%1$s» se celebrará el %2$s a las %3$s en %4$s."
 msgstr ""
@@ -1507,142 +1618,130 @@ msgstr ""
 msgid "Escanear"
 msgstr ""
 
-#: includes/CPT_Actividad.php:67
-msgid "7 días antes"
-msgstr ""
-
-#: includes/CPT_Actividad.php:68
-msgid "1 día antes"
-msgstr ""
-
-#: includes/CPT_Actividad.php:69
-msgid "1 hora antes"
-msgstr ""
-
-#: includes/CPT_Actividad.php:70
+#: includes/CPT_Actividad.php:72
 msgid "Seguimiento post-evento"
 msgstr ""
 
-#: includes/CPT_Actividad.php:165
+#: includes/CPT_Actividad.php:167
 msgid "Añadir actividad"
 msgstr ""
 
-#: includes/CPT_Actividad.php:167
+#: includes/CPT_Actividad.php:169
 msgid "Editar actividad"
 msgstr ""
 
-#: includes/CPT_Actividad.php:168
+#: includes/CPT_Actividad.php:170
 msgid "Ver actividad"
 msgstr ""
 
-#: includes/CPT_Actividad.php:170
+#: includes/CPT_Actividad.php:172
 msgid "No se encontraron actividades"
 msgstr ""
 
-#: includes/CPT_Actividad.php:215
+#: includes/CPT_Actividad.php:217
 msgid "Datos de la actividad"
 msgstr ""
 
-#: includes/CPT_Actividad.php:230
+#: includes/CPT_Actividad.php:232
 msgid "Fecha y Hora Inicio *"
 msgstr ""
 
-#: includes/CPT_Actividad.php:244
+#: includes/CPT_Actividad.php:246
 msgid "Horas que acredita"
 msgstr ""
 
-#: includes/CPT_Actividad.php:249
+#: includes/CPT_Actividad.php:251
 msgid "Horas de voluntariado que suma la actividad a quien participa y a quien la imparte. Si lo dejas vacío se estiman los días de la actividad × 4 h (ajustable en los ajustes de Enroll)."
 msgstr ""
 
-#: includes/CPT_Actividad.php:267
+#: includes/CPT_Actividad.php:269
 msgid "Recordatorio (horas antes)"
 msgstr ""
 
-#: includes/CPT_Actividad.php:271
+#: includes/CPT_Actividad.php:273
 msgid "Horas de antelación para el recordatorio automático de actividad (0 = 24h por defecto)."
 msgstr ""
 
-#: includes/CPT_Actividad.php:712
+#: includes/CPT_Actividad.php:719
 msgid "Fecha Actividad"
 msgstr ""
 
-#: includes/CPT_Actividad.php:713
+#: includes/CPT_Actividad.php:720
 msgid "Responsables"
 msgstr ""
 
-#: includes/CPT_Actividad.php:803
+#: includes/CPT_Actividad.php:810
 msgid "La integración con Google Photos está desactivada."
 msgstr ""
 
-#: includes/CPT_Actividad.php:809
+#: includes/CPT_Actividad.php:816
 msgid "Google Photos no está configurado."
 msgstr ""
 
-#: includes/CPT_Actividad.php:809
+#: includes/CPT_Actividad.php:816
 msgid "Configurar"
 msgstr ""
 
-#: includes/CPT_Actividad.php:819
+#: includes/CPT_Actividad.php:826
 msgid "Crear álbum"
 msgstr ""
 
-#: includes/CPT_Actividad.php:821
+#: includes/CPT_Actividad.php:828
 msgid "Álbum:"
 msgstr ""
 
-#: includes/CPT_Actividad.php:823
+#: includes/CPT_Actividad.php:830
 msgid "Ver álbum"
 msgstr ""
 
-#: includes/CPT_Actividad.php:826
+#: includes/CPT_Actividad.php:833
 msgid "✓ Compartido con participantes"
 msgstr ""
 
-#: includes/CPT_Actividad.php:852
+#: includes/CPT_Actividad.php:859
 msgid "¿Compartir el álbum con todos los participantes confirmados?"
 msgstr ""
 
-#: includes/CPT_Actividad.php:917
-#: includes/CPT_Actividad.php:942
+#: includes/CPT_Actividad.php:924
+#: includes/CPT_Actividad.php:949
 msgid "Sin permisos"
 msgstr ""
 
-#: includes/CPT_Actividad.php:925
+#: includes/CPT_Actividad.php:932
 msgid "No se pudo compartir el álbum"
 msgstr ""
 
-#: includes/CPT_Actividad.php:950
+#: includes/CPT_Actividad.php:957
 msgid "No se pudo crear el álbum"
 msgstr ""
 
-#: includes/CPT_Actividad.php:971
-#: includes/CPT_Actividad.php:996
+#: includes/CPT_Actividad.php:978
+#: includes/CPT_Actividad.php:1003
 msgid "Permisos insuficientes."
 msgstr ""
 
-#: includes/CPT_Actividad.php:976
-#: includes/CPT_Actividad.php:1001
+#: includes/CPT_Actividad.php:983
+#: includes/CPT_Actividad.php:1008
 msgid "La integración con Google Calendar no está configurada."
 msgstr ""
 
-#: includes/CPT_Actividad.php:984
+#: includes/CPT_Actividad.php:991
 msgid "Error al sincronizar con Google Calendar."
 msgstr ""
 
-#: includes/CPT_Actividad.php:1006
+#: includes/CPT_Actividad.php:1013
 msgid "No hay un evento asociado a esta actividad."
 msgstr ""
 
-#: includes/CPT_Actividad.php:1021
+#: includes/CPT_Actividad.php:1028
 msgid "Error al eliminar el evento: "
 msgstr ""
 
-#: includes/CPT_Actividad.php:1076
+#: includes/CPT_Actividad.php:1083
 msgid "💡 Este shortcode debe usarse en la página de una actividad."
 msgstr ""
 
-#: includes/CPT_Actividad.php:1088
+#: includes/CPT_Actividad.php:1095
 #: includes/Motor_Inscripcion.php:159
 msgid "Esta actividad ya ha finalizado."
 msgstr ""
@@ -1684,24 +1783,20 @@ msgstr ""
 msgid "No se encontraron evaluaciones en la papelera."
 msgstr ""
 
-#: includes/CPT_Inscripcion.php:79
-#: public/class-form-inscripcion.php:311
+#: includes/CPT_Inscripcion.php:78
+#: public/class-form-inscripcion.php:381
 msgid "Pendiente de aportación"
 msgstr ""
 
-#: includes/CPT_Inscripcion.php:80
+#: includes/CPT_Inscripcion.php:79
 msgid "Confirmada"
 msgstr ""
 
 #: includes/CPT_Inscripcion.php:81
-msgid "Pagada (especial)"
-msgstr ""
-
-#: includes/CPT_Inscripcion.php:83
 msgid "Cancelada"
 msgstr ""
 
-#: includes/CPT_Inscripcion.php:150
+#: includes/CPT_Inscripcion.php:147
 msgid "Inscripción"
 msgstr ""
 
@@ -1711,9 +1806,9 @@ msgstr ""
 
 #: includes/Email_Automation.php:134
 #: includes/Email_Automation.php:174
-#: includes/Email_Automation.php:255
-#: includes/Email_Automation.php:308
-#: includes/Email_Automation.php:361
+#: includes/Email_Automation.php:257
+#: includes/Email_Automation.php:310
+#: includes/Email_Automation.php:363
 msgid "<h1>Hola {nombre},</h1>"
 msgstr ""
 
@@ -1728,10 +1823,10 @@ msgstr ""
 #: includes/Email_Automation.php:148
 #: includes/Email_Automation.php:207
 #: includes/Email_Automation.php:233
-#: includes/Email_Automation.php:268
-#: includes/Email_Automation.php:291
-#: includes/Email_Automation.php:321
-#: includes/Email_Automation.php:344
+#: includes/Email_Automation.php:270
+#: includes/Email_Automation.php:293
+#: includes/Email_Automation.php:323
+#: includes/Email_Automation.php:346
 #: media/class-poster-engine.php:304
 msgid "Hora"
 msgstr ""
@@ -1745,8 +1840,8 @@ msgstr ""
 #: includes/Email_Automation.php:164
 #: includes/Email_Automation.php:184
 #: includes/Email_Automation.php:245
-#: includes/Email_Automation.php:299
-#: includes/Email_Automation.php:352
+#: includes/Email_Automation.php:301
+#: includes/Email_Automation.php:354
 msgid "Reserva"
 msgstr ""
 
@@ -1756,8 +1851,8 @@ msgstr ""
 
 #: includes/Email_Automation.php:170
 #: includes/Email_Automation.php:189
-#: includes/Email_Automation.php:251
-#: includes/Email_Automation.php:849
+#: includes/Email_Automation.php:253
+#: includes/Email_Automation.php:884
 msgid "Ver mis reservas"
 msgstr ""
 
@@ -1809,115 +1904,123 @@ msgstr ""
 msgid "<p>Adjuntamos tu código QR y un enlace al calendario.</p>"
 msgstr ""
 
-#: includes/Email_Automation.php:254
-msgid "Reserva cancelada — {actividad}"
+#: includes/Email_Automation.php:251
+msgid "Código QR de check-in"
+msgstr ""
+
+#: includes/Email_Automation.php:252
+msgid "<p>Si el QR no se ve, abre tu <a href=\"{url_checkin}\">enlace de check-in</a> desde el móvil.</p>"
 msgstr ""
 
 #: includes/Email_Automation.php:256
+msgid "Reserva cancelada — {actividad}"
+msgstr ""
+
+#: includes/Email_Automation.php:258
 msgid "<p>Tu reserva para <strong>{actividad}</strong> ha sido cancelada.</p>"
 msgstr ""
 
-#: includes/Email_Automation.php:276
+#: includes/Email_Automation.php:278
 msgid "¡Esta semana! {actividad}"
 msgstr ""
 
-#: includes/Email_Automation.php:277
+#: includes/Email_Automation.php:279
 msgid "<h1>¡Hola {nombre}!</h1>"
 msgstr ""
 
-#: includes/Email_Automation.php:278
+#: includes/Email_Automation.php:280
 msgid "<p>¡Esta semana tenemos <strong>{actividad}</strong>! 🎉</p>"
 msgstr ""
 
-#: includes/Email_Automation.php:279
+#: includes/Email_Automation.php:281
 msgid "<p>Te esperamos. Aquí tienes los detalles:</p>"
 msgstr ""
 
-#: includes/Email_Automation.php:307
+#: includes/Email_Automation.php:309
 msgid "Recordatorio: {actividad} es mañana"
 msgstr ""
 
-#: includes/Email_Automation.php:309
+#: includes/Email_Automation.php:311
 msgid "<p>Te recordamos que <strong>mañana</strong> tienes la actividad <strong>{actividad}</strong>.</p>"
 msgstr ""
 
-#: includes/Email_Automation.php:330
+#: includes/Email_Automation.php:332
 msgid "<p>Si no puedes asistir, cancela tu inscripción para liberar la plaza.</p>"
 msgstr ""
 
-#: includes/Email_Automation.php:331
+#: includes/Email_Automation.php:333
 msgid "Gestionar reserva"
 msgstr ""
 
-#: includes/Email_Automation.php:334
+#: includes/Email_Automation.php:336
 msgid "{actividad} comienza en 1 hora"
 msgstr ""
 
-#: includes/Email_Automation.php:335
+#: includes/Email_Automation.php:337
 msgid "<h1>¡Ya casi, {nombre}!</h1>"
 msgstr ""
 
-#: includes/Email_Automation.php:336
+#: includes/Email_Automation.php:338
 msgid "<p>La actividad <strong>{actividad}</strong> comienza en <strong>1 hora</strong>.</p>"
 msgstr ""
 
-#: includes/Email_Automation.php:360
+#: includes/Email_Automation.php:362
 msgid "¿Qué te pareció \"{actividad}\"?"
 msgstr ""
 
-#: includes/Email_Automation.php:362
+#: includes/Email_Automation.php:364
 msgid "<p>¿Qué tal la experiencia en <strong>{actividad}</strong>? Nos encantaría conocer tu opinión.</p>"
 msgstr ""
 
-#: includes/Email_Automation.php:363
+#: includes/Email_Automation.php:365
 msgid "<p>Puedes respondernos directamente a este email con tus comentarios.</p>"
 msgstr ""
 
-#: includes/Email_Automation.php:368
+#: includes/Email_Automation.php:370
 msgid "<h1>Nuevo álbum disponible</h1>"
 msgstr ""
 
-#: includes/Email_Automation.php:369
+#: includes/Email_Automation.php:371
 msgid "<p>Se ha creado un álbum de Google Photos para la actividad <strong>{actividad}</strong>.</p>"
 msgstr ""
 
-#: includes/Email_Automation.php:370
-#: includes/Email_Automation.php:854
+#: includes/Email_Automation.php:372
+#: includes/Email_Automation.php:889
 msgid "Subir fotos"
 msgstr ""
 
-#: includes/Email_Automation.php:375
+#: includes/Email_Automation.php:377
 msgid "<h1>¡Ya puedes ver las fotos! 🎉</h1>"
 msgstr ""
 
-#: includes/Email_Automation.php:376
+#: includes/Email_Automation.php:378
 msgid "<p>Ya están disponibles las fotos de la actividad <strong>{actividad}</strong>.</p>"
 msgstr ""
 
-#: includes/Email_Automation.php:377
+#: includes/Email_Automation.php:379
 msgid "<p>Hemos subido un álbum con los mejores momentos.</p>"
 msgstr ""
 
-#: includes/Email_Automation.php:378
-#: includes/Email_Automation.php:855
+#: includes/Email_Automation.php:380
+#: includes/Email_Automation.php:890
 msgid "Ver fotos"
 msgstr ""
 
-#: includes/Email_Automation.php:597
-#: includes/Email_Automation.php:686
-#: includes/Email_Automation.php:979
+#: includes/Email_Automation.php:614
+#: includes/Email_Automation.php:703
+#: includes/Email_Automation.php:988
 msgid "Has recibido este email porque estás inscrito en una de nuestras actividades."
 msgstr ""
 
-#: includes/Email_Automation.php:851
+#: includes/Email_Automation.php:886
 msgid "Ver mi inscripción"
 msgstr ""
 
-#: includes/Email_Automation.php:852
+#: includes/Email_Automation.php:887
 msgid "Confirmar mi plaza"
 msgstr ""
 
-#: includes/Email_Automation.php:853
+#: includes/Email_Automation.php:888
 msgid "Ver mi reserva"
 msgstr ""
 
@@ -1966,91 +2069,95 @@ msgstr ""
 msgid "Demasiados intentos. Inténtalo de nuevo más tarde."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:193
+#: includes/Motor_Inscripcion.php:214
 msgid "El nombre es obligatorio."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:196
+#: includes/Motor_Inscripcion.php:217
 msgid "El email no es válido."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:203
+#: includes/Motor_Inscripcion.php:224
 msgid "El dominio del email no es válido."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:207
+#: includes/Motor_Inscripcion.php:228
 msgid "El DNI/NIE no es válido."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:218
+#: includes/Motor_Inscripcion.php:242
 msgid "Debes aceptar la política de privacidad."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:228
+#: includes/Motor_Inscripcion.php:252
 msgid "La edad del menor debe estar entre 0 y 17 años."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:276
-#: includes/Motor_Inscripcion.php:334
+#: includes/Motor_Inscripcion.php:300
+#: includes/Motor_Inscripcion.php:358
 msgid "Ya estás inscrito/a en esta actividad."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:306
-#: includes/Motor_Inscripcion.php:340
+#: includes/Motor_Inscripcion.php:330
+#: includes/Motor_Inscripcion.php:364
 msgid "Ya existe una inscripción activa para este DNI en esta actividad."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:357
+#: includes/Motor_Inscripcion.php:381
 msgid "No se pudo crear la inscripción."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:386
+#: includes/Motor_Inscripcion.php:413
 msgid "No hay plazas disponibles."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:435
+#: includes/Motor_Inscripcion.php:465
 msgid "Error al procesar la inscripción."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:528
+#: includes/Motor_Inscripcion.php:563
 msgid "Error al cancelar la inscripción."
 msgstr ""
 
 #. translators: %d: horas mínimas de antelación
-#: includes/Motor_Inscripcion.php:571
+#: includes/Motor_Inscripcion.php:606
 #, php-format
 msgid "No se puede cancelar a menos de %d horas del inicio. Contacta con la organización."
 msgstr ""
 
 #. translators: %1$s: nombre, %2$d: número de cancelaciones tardías
-#: includes/Motor_Inscripcion.php:620
+#: includes/Motor_Inscripcion.php:655
 #, php-format
 msgid "Aviso: %1$s acumula %2$d cancelaciones tardías este año"
 msgstr ""
 
 #. translators: %1$s: nombre, %2$s: email, %3$d: número de cancelaciones tardías
-#: includes/Motor_Inscripcion.php:624
+#: includes/Motor_Inscripcion.php:659
 #, php-format
 msgid "La persona %1$s (%2$s) ha acumulado %3$d cancelaciones tardías en el año natural. Revisa su historial de inscripciones."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:653
+#: includes/Motor_Inscripcion.php:688
 msgid "Solo se pueden confirmar inscripciones pendientes o en lista de espera."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:679
+#: includes/Motor_Inscripcion.php:694
+msgid "Esta inscripción está pendiente de pago: no se puede confirmar sin cobro."
+msgstr ""
+
+#: includes/Motor_Inscripcion.php:720
 msgid "No hay plazas disponibles para confirmar esta inscripción."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:700
+#: includes/Motor_Inscripcion.php:741
 msgid "Error al confirmar la inscripción."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:843
+#: includes/Motor_Inscripcion.php:889
 msgid "Ya tienes una reserva activa. Cada persona solo puede realizar una única reserva de taller. Si quieres inscribir a un menor o persona a tu cargo, marca la opción correspondiente."
 msgstr ""
 
-#: includes/Motor_Inscripcion.php:984
+#: includes/Motor_Inscripcion.php:1030
 msgid "Estado de asistencia no válido. Valores permitidos: si, no, no_registrada."
 msgstr ""
 
@@ -2080,51 +2187,51 @@ msgstr ""
 msgid "Too many requests"
 msgstr ""
 
-#: includes/Rest_API.php:330
+#: includes/Rest_API.php:332
 msgid "No tienes permiso para ver estadísticas de esta actividad."
 msgstr ""
 
-#: includes/Rest_API.php:354
+#: includes/Rest_API.php:356
 msgid "Token required"
 msgstr ""
 
-#: includes/Rest_API.php:373
+#: includes/Rest_API.php:375
 msgid "Invalid token"
 msgstr ""
 
-#: includes/Rest_API.php:383
+#: includes/Rest_API.php:385
 msgid "No tienes permiso para realizar check-in en esta actividad."
 msgstr ""
 
-#: includes/Rest_API.php:392
+#: includes/Rest_API.php:394
 msgid "Inscription not confirmed"
 msgstr ""
 
-#: includes/Rest_API.php:394
+#: includes/Rest_API.php:396
 msgid "Solo se pueden confirmar asistentes con reserva confirmada."
 msgstr ""
 
-#: includes/Rest_API.php:424
+#: includes/Rest_API.php:426
 msgid "Esta reserva ya había sido escaneada."
 msgstr ""
 
-#: includes/Rest_API.php:424
+#: includes/Rest_API.php:426
 msgid "Check-in realizado correctamente."
 msgstr ""
 
-#: includes/Rest_API.php:439
+#: includes/Rest_API.php:441
 msgid "No encontrado."
 msgstr ""
 
-#: includes/Rest_API.php:448
+#: includes/Rest_API.php:450
 msgid "Acceso denegado."
 msgstr ""
 
-#: includes/Rest_API.php:456
+#: includes/Rest_API.php:458
 msgid "Token de seguridad inválido."
 msgstr ""
 
-#: includes/Rest_API.php:461
+#: includes/Rest_API.php:463
 msgid "Tipo de post no válido."
 msgstr ""
 
@@ -2146,6 +2253,14 @@ msgstr ""
 
 #: includes/Utils.php:55
 msgid "Aportación sugerida para no socios"
+msgstr ""
+
+#: includes/Utils.php:99
+msgid "Nombre completo del adulto responsable *"
+msgstr ""
+
+#: includes/Utils.php:100
+msgid "Nombre completo *"
 msgstr ""
 
 #: includes/Volunteer_Hour_Tracker.php:117
@@ -2258,6 +2373,7 @@ msgid "Organiza"
 msgstr ""
 
 #: media/class-poster-engine.php:319
+#: templates/form-inscripcion.php:259
 msgid "Edad"
 msgstr ""
 
@@ -2326,34 +2442,52 @@ msgstr ""
 msgid "config debe contener un array de layers."
 msgstr ""
 
-#: public/class-form-inscripcion.php:129
+#: public/class-form-inscripcion.php:136
 msgid "Aquí no hay ninguna actividad abierta a inscripción."
 msgstr ""
 
-#: public/class-form-inscripcion.php:132
+#: public/class-form-inscripcion.php:139
 msgid "Ver las actividades disponibles"
 msgstr ""
 
-#: public/class-form-inscripcion.php:135
+#: public/class-form-inscripcion.php:142
 msgid "Si has llegado por un enlace de la asociación, avísanos: ese enlace está mal."
 msgstr ""
 
-#: public/class-form-inscripcion.php:139
+#: public/class-form-inscripcion.php:146
 msgid "Para quien administra: esta página no tiene actividad asignada. Abre la ficha de la actividad que quieras y pega en ella el bloque o el shortcode con su id, por ejemplo [convoca_form_inscripcion id=\"123\"]. Para listar todas las inscripciones abiertas, usa [convoca_inscripcion_page]."
 msgstr ""
 
+#. translators: 1: login URL, 2: daily-rate label.
+#: public/class-form-inscripcion.php:171
+#, php-format
+msgid "Identifícate <strong><a href=\"%1$s\">como socio/a</a></strong> para autocompletar tus datos y aplicar tu aportación reducida. (De lo contrario, se aplica la aportación %2$s)."
+msgstr ""
+
+#. translators: %s: login URL.
+#: public/class-form-inscripcion.php:177
+#, php-format
+msgid "Identifícate <strong><a href=\"%s\">como socio/a</a></strong> para autocompletar tus datos."
+msgstr ""
+
+#. translators: 1: member name placeholder, 2: logout URL.
+#: public/class-form-inscripcion.php:183
+#, php-format
+msgid "<strong>Autenticado como socio/a:</strong> %1$s. Tus datos están puestos en el formulario. Opcionalmente puedes <a href=\"%2$s\">cerrar sesión</a>."
+msgstr ""
+
 #. translators: %s: PDF generation error message
-#: public/class-form-inscripcion.php:320
+#: public/class-form-inscripcion.php:390
 #, php-format
 msgid "La inscripción se ha iniciado, pero hubo un problema al generar el documento de compromiso: %s. Podrás completarlo más tarde."
 msgstr ""
 
-#: public/class-form-inscripcion.php:336
+#: public/class-form-inscripcion.php:406
 msgid "La inscripción está registrada pero el pago no se pudo procesar automáticamente. Por favor, contacta con nosotros para completar la aportación."
 msgstr ""
 
 #. translators: %s: PDF generation error message
-#: public/class-form-inscripcion.php:359
+#: public/class-form-inscripcion.php:429
 #, php-format
 msgid "Inscripción realizada, pero hubo un problema al generar el documento de compromiso: %s. Por favor, contacta con nosotros si lo necesitas."
 msgstr ""
@@ -2485,6 +2619,7 @@ msgid "Demasiados intentos. Inténtalo de nuevo en 10 minutos."
 msgstr ""
 
 #: public/class-panel-reservas.php:75
+#: templates/form-inscripcion.php:204
 #: templates/panel-reservas.php:86
 msgid "Introduce un email válido."
 msgstr ""
@@ -2534,20 +2669,20 @@ msgstr ""
 msgid "Lock activo para este contenido en GBP."
 msgstr ""
 
-#: social/class-gbp-provider.php:74
+#: social/class-gbp-provider.php:76
 msgid "[DRY-RUN] Simulated GBP"
 msgstr ""
 
-#: social/class-gbp-provider.php:78
-#: social/class-meta-provider.php:87
+#: social/class-gbp-provider.php:80
+#: social/class-meta-provider.php:88
 msgid "Token no disponible. Reconecta la cuenta."
 msgstr ""
 
-#: social/class-gbp-provider.php:89
+#: social/class-gbp-provider.php:91
 msgid "GBP: No hay location_id. Reconecta la cuenta."
 msgstr ""
 
-#: social/class-gbp-provider.php:144
+#: social/class-gbp-provider.php:146
 msgid "Publicado en Google Business Profile"
 msgstr ""
 
@@ -2559,32 +2694,32 @@ msgstr ""
 msgid "Ya hay una publicación en curso para este contenido (lock activo)."
 msgstr ""
 
-#: social/class-meta-provider.php:83
+#: social/class-meta-provider.php:84
 msgid "[DRY-RUN] Simulated"
 msgstr ""
 
-#: social/class-meta-provider.php:152
+#: social/class-meta-provider.php:153
 msgid "Facebook: "
 msgstr ""
 
-#: social/class-meta-provider.php:174
+#: social/class-meta-provider.php:175
 msgid "Facebook OK"
 msgstr ""
 
-#: social/class-meta-provider.php:186
+#: social/class-meta-provider.php:187
 msgid "Instagram: no hay cuenta de Instagram Business vinculada a esta página."
 msgstr ""
 
-#: social/class-meta-provider.php:200
-#: social/class-meta-provider.php:225
+#: social/class-meta-provider.php:201
+#: social/class-meta-provider.php:226
 msgid "Instagram: "
 msgstr ""
 
-#: social/class-meta-provider.php:210
+#: social/class-meta-provider.php:211
 msgid "Instagram: no se obtuvo ID del media container."
 msgstr ""
 
-#: social/class-meta-provider.php:233
+#: social/class-meta-provider.php:234
 msgid "Instagram OK"
 msgstr ""
 
@@ -2649,36 +2784,182 @@ msgstr ""
 msgid "Si no puedes, escríbenos y te inscribimos a mano:"
 msgstr ""
 
-#: templates/form-inscripcion.php:88
+#. translators: %s: título de la actividad.
+#: templates/form-inscripcion.php:76
+#, php-format
+msgid "Inscripción: %s"
+msgstr ""
+
+#: templates/form-inscripcion.php:89
 msgid "📋 Normas de inscripción"
 msgstr ""
 
+#: templates/form-inscripcion.php:95
+msgid "Puedes consultar la información completa sobre"
+msgstr ""
+
+#: templates/form-inscripcion.php:97
+msgid "protección de datos"
+msgstr ""
+
+#: templates/form-inscripcion.php:100
+msgid "y"
+msgstr ""
+
+#: templates/form-inscripcion.php:103
+msgid "uso de imágenes"
+msgstr ""
+
+#: templates/form-inscripcion.php:123
+msgid "Sin fecha confirmada"
+msgstr ""
+
 #. translators: 1: plazas disponibles, 2: total plazas
-#: templates/form-inscripcion.php:119
-#: templates/form-inscripcion.php:120
+#: templates/form-inscripcion.php:131
+#: templates/form-inscripcion.php:132
 msgid "Plazas agotadas"
 msgstr ""
 
 #. translators: 1: plazas disponibles, 2: total plazas
-#: templates/form-inscripcion.php:119
+#: templates/form-inscripcion.php:131
 #, php-format
 msgid "%1$d de %2$d plazas disponibles"
 msgstr ""
 
 #. translators: 1: plazas ocupadas, 2: total plazas
-#: templates/form-inscripcion.php:120
+#: templates/form-inscripcion.php:132
 #, php-format
 msgid "%1$d/%2$d plazas"
 msgstr ""
 
-#: templates/form-inscripcion.php:147
+#: templates/form-inscripcion.php:159
 msgid "Este formulario de inscripción necesita JavaScript en el navegador. Actívalo y vuelve a intentarlo."
 msgstr ""
 
+#: templates/form-inscripcion.php:171
+msgid "⚠️ Las plazas están agotadas. Si te inscribes, entrarás en la"
+msgstr ""
+
+#: templates/form-inscripcion.php:172
+msgid "lista de espera"
+msgstr ""
+
+#: templates/form-inscripcion.php:173
+msgid "Te avisaremos si se libera una plaza."
+msgstr ""
+
 #. translators: %s: nombre del socio que tiene la sesión abierta.
-#: templates/form-inscripcion.php:170
+#: templates/form-inscripcion.php:183
 #, php-format
 msgid "Estás identificado como %s: tus datos ya están puestos y se te aplica el precio de socio."
+msgstr ""
+
+#: templates/form-inscripcion.php:196
+msgid "Nombre y apellidos"
+msgstr ""
+
+#: templates/form-inscripcion.php:197
+msgid "Este campo es obligatorio."
+msgstr ""
+
+#: templates/form-inscripcion.php:200
+msgid "Correo electrónico *"
+msgstr ""
+
+#: templates/form-inscripcion.php:203
+msgid "tu@correo.com"
+msgstr ""
+
+#: templates/form-inscripcion.php:212
+msgid "DNI / NIE / Identificación"
+msgstr ""
+
+#: templates/form-inscripcion.php:213
+msgid "opcional"
+msgstr ""
+
+#: templates/form-inscripcion.php:217
+msgid "Introduce un documento de identificación válido."
+msgstr ""
+
+#: templates/form-inscripcion.php:219
+msgid "Si lo rellenas, se usa para evitar inscripciones duplicadas."
+msgstr ""
+
+#: templates/form-inscripcion.php:224
+msgid "600 000 000"
+msgstr ""
+
+#: templates/form-inscripcion.php:231
+msgid "¿El teléfono tiene WhatsApp?"
+msgstr ""
+
+#: templates/form-inscripcion.php:233
+msgid "Sí"
+msgstr ""
+
+#: templates/form-inscripcion.php:247
+msgid "Estoy inscribiendo a un menor o persona a mi cargo"
+msgstr ""
+
+#: templates/form-inscripcion.php:252
+msgid "Nombre del participante (menor/persona a cargo) *"
+msgstr ""
+
+#: templates/form-inscripcion.php:254
+msgid "Nombre y apellidos del participante"
+msgstr ""
+
+#: templates/form-inscripcion.php:257
+msgid "Edad del participante *"
+msgstr ""
+
+#: templates/form-inscripcion.php:280
+msgid "Compromiso de Acción Voluntaria"
+msgstr ""
+
+#: templates/form-inscripcion.php:281
+msgid "Como voluntario/a, para participar en esta actividad debes firmar el compromiso (es obligatorio)."
+msgstr ""
+
+#: templates/form-inscripcion.php:284
+msgid "Acepto y firmo el Compromiso de acción voluntaria"
+msgstr ""
+
+#: templates/form-inscripcion.php:284
+msgid "para esta actividad, incluyendo las funciones y obligaciones especificadas."
+msgstr ""
+
+#: templates/form-inscripcion.php:291
+msgid "He leído y acepto la"
+msgstr ""
+
+#: templates/form-inscripcion.php:292
+msgid "Política de Privacidad"
+msgstr ""
+
+#: templates/form-inscripcion.php:292
+msgid "y el tratamiento de mis datos personales."
+msgstr ""
+
+#: templates/form-inscripcion.php:304
+msgid "¡Inscripción registrada!"
+msgstr ""
+
+#: templates/form-inscripcion.php:305
+msgid "Hemos enviado un email de confirmación a tu correo con tu código de reserva."
+msgstr ""
+
+#: templates/form-inscripcion.php:308
+msgid "Guarda tu código de reserva para consultar o cancelar tu inscripción."
+msgstr ""
+
+#: templates/form-inscripcion.php:309
+msgid "¿Tienes dudas? Escríbenos a"
+msgstr ""
+
+#: templates/form-inscripcion.php:311
+msgid "← Volver al inicio"
 msgstr ""
 
 #: templates/panel-reservas.php:44
