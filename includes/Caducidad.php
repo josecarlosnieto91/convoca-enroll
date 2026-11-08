@@ -67,9 +67,25 @@ final class Caducidad {
 	 * @return int Cuántas se han cerrado.
 	 */
 	public static function expirar( ?int $ahora = null ): int {
-		$ahora = $ahora ?? time();
+		$ahora    = $ahora ?? time();
+		$cerradas = 0;
 
-		$pendientes = get_posts(
+		foreach ( self::candidatas() as $id ) {
+			if ( self::expirar_una( (int) $id, $ahora ) ) {
+				++$cerradas;
+			}
+		}
+
+		return $cerradas;
+	}
+
+	/**
+	 * Inscripciones pendientes que la consulta trae como candidatas.
+	 *
+	 * @return array<int, int>
+	 */
+	private static function candidatas(): array {
+		return (array) get_posts(
 			array(
 				'post_type'     => 'inscripcion',
 				'post_status'   => 'any',
@@ -82,65 +98,79 @@ final class Caducidad {
 				'date_query'    => array(
 					array(
 						'column'    => 'post_date',
-						'before'    => gmdate( 'Y-m-d H:i:s', $ahora - HOUR_IN_SECONDS ),
+						'before'    => gmdate( 'Y-m-d H:i:s', time() - HOUR_IN_SECONDS ),
 						'inclusive' => true,
 					),
 				),
 			)
 		);
+	}
 
-		$cerradas = 0;
-		foreach ( $pendientes as $id ) {
-			$id = (int) $id;
-
-			// Se comprueba el estado leído, no solo el de la consulta: la plaza se libera por el valor
-			// real de la ficha.
-			if ( 'pendiente' !== (string) get_post_meta( $id, '_convoca_estado', true ) ) {
-				continue;
-			}
-
-			$actividad_id = (int) get_post_meta( $id, '_convoca_actividad_id', true );
-			$horas        = self::horas( $actividad_id );
-
-			if ( $horas <= 0 ) {
-				continue;
-			}
-
-			$inscripcion = get_post( $id );
-			$creada      = $inscripcion ? (int) strtotime( (string) $inscripcion->post_date ) : 0;
-			if ( 0 === $creada || ( $ahora - $creada ) < ( $horas * HOUR_IN_SECONDS ) ) {
-				continue;
-			}
-
-			update_post_meta( $id, '_convoca_estado', 'expirada' );
-			update_post_meta( $id, '_convoca_expirada_en', current_time( 'mysql' ) );
-
-			// La plaza se devuelve en el acto: el contador de la actividad es lo que lee el formulario.
-			$ocupadas = (int) get_post_meta( $actividad_id, '_convoca_plazas_ocupadas', true );
-			if ( $ocupadas > 0 ) {
-				update_post_meta( $actividad_id, '_convoca_plazas_ocupadas', max( 0, $ocupadas - 1 ) );
-			}
-
-			\Convoca\Core\Logger::info(
-				sprintf( 'Inscripción #%d caducada sin confirmar tras %d h; la plaza queda libre.', $id, $horas ),
-				'Enroll/Caducidad',
-				$id
-			);
-			if ( class_exists( '\Convoca\Core\Intentos' ) ) {
-				\Convoca\Core\Intentos::registrar(
-					'inscripcion',
-					'expirada',
-					array(
-						'email'      => (string) get_post_meta( $id, '_convoca_email', true ),
-						'referencia' => $id,
-						'motivo'     => 'pendiente ' . $horas . ' h',
-					)
-				);
-			}
-
-			++$cerradas;
+	/**
+	 * Cierra una inscripción si toca. Devuelve si la ha cerrado.
+	 *
+	 * @param int $id    Inscripción.
+	 * @param int $ahora Momento actual.
+	 * @return bool
+	 */
+	private static function expirar_una( int $id, int $ahora ): bool {
+		if ( 'pendiente' !== (string) get_post_meta( $id, '_convoca_estado', true ) ) {
+			return false;
 		}
 
-		return $cerradas;
+		$actividad_id = (int) get_post_meta( $id, '_convoca_actividad_id', true );
+		$horas        = self::horas( $actividad_id );
+
+		if ( $horas <= 0 ) {
+			return false;
+		}
+
+		$inscripcion = get_post( $id );
+		$creada      = $inscripcion ? (int) strtotime( (string) $inscripcion->post_date ) : 0;
+
+		if ( 0 === $creada || ( $ahora - $creada ) < ( $horas * HOUR_IN_SECONDS ) ) {
+			return false;
+		}
+
+		self::cerrar( $id, $actividad_id, $horas );
+
+		return true;
+	}
+
+	/**
+	 * Marca la inscripción como caducada, devuelve la plaza y deja rastro.
+	 *
+	 * @param int $id           Inscripción.
+	 * @param int $actividad_id Actividad.
+	 * @param int $horas        Plazo aplicado.
+	 * @return void
+	 */
+	private static function cerrar( int $id, int $actividad_id, int $horas ): void {
+		update_post_meta( $id, '_convoca_estado', 'expirada' );
+		update_post_meta( $id, '_convoca_expirada_en', current_time( 'mysql' ) );
+
+		// La plaza se devuelve en el acto: el contador de la actividad es lo que lee el formulario.
+		$ocupadas = (int) get_post_meta( $actividad_id, '_convoca_plazas_ocupadas', true );
+		if ( $ocupadas > 0 ) {
+			update_post_meta( $actividad_id, '_convoca_plazas_ocupadas', max( 0, $ocupadas - 1 ) );
+		}
+
+		\Convoca\Core\Logger::info(
+			sprintf( 'Inscripción #%d caducada sin confirmar tras %d h; la plaza queda libre.', $id, $horas ),
+			'Enroll/Caducidad',
+			$id
+		);
+
+		if ( class_exists( '\Convoca\Core\Intentos' ) ) {
+			\Convoca\Core\Intentos::registrar(
+				'inscripcion',
+				'expirada',
+				array(
+					'email'      => (string) get_post_meta( $id, '_convoca_email', true ),
+					'referencia' => $id,
+					'motivo'     => 'pendiente ' . $horas . ' h',
+				)
+			);
+		}
 	}
 }
