@@ -939,6 +939,8 @@ if (!function_exists('current_time')) {
 }
 if (!function_exists('wp_date')) { function wp_date($f, $ts = null) { return date($f, $ts ?? time()); } }
 if (!function_exists('wp_timezone_string')) { function wp_timezone_string() { return 'Europe/Madrid'; } }
+// WordPress envuelve parse_url() para que el resultado sea igual en todas las versiones de PHP.
+if (!function_exists('wp_parse_url')) { function wp_parse_url($url, $component = -1) { return parse_url($url, $component); } }
 
 // Posts
 if (!function_exists('get_edit_user_link')) {

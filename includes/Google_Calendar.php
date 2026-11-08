@@ -336,6 +336,146 @@ class Google_Calendar {
 		}
 	}
 
+
+	/**
+	 * Invitación de calendario de verdad (iTIP), para que Gmail ofrezca «añadir al calendario».
+	 *
+	 * El .ics de `generate_ics()` es un evento para descargar: no lleva `METHOD:REQUEST` ni asistente, así
+	 * que los clientes lo tratan como un fichero adjunto cualquiera. Un mensaje iTIP necesita además
+	 * `ORGANIZER`, `ATTENDEE` con `PARTSTAT`, `UID` estable y `SEQUENCE`, y viajar como
+	 * `text/calendar; method=REQUEST` (issue #57).
+	 *
+	 * @param int    $actividad_id Actividad.
+	 * @param string $nombre       Nombre de quien se inscribe.
+	 * @param string $email        Correo de quien se inscribe.
+	 * @param string $uid          UID estable (si se repite, el cliente actualiza el evento).
+	 * @return string|null Ruta del fichero temporal.
+	 */
+	public function generate_invite_ics( int $actividad_id, string $nombre, string $email, string $uid = '' ): ?string {
+		$actividad = get_post( $actividad_id );
+		if ( ! $actividad || 'actividad' !== $actividad->post_type || '' === $email ) {
+			return null;
+		}
+
+		$inicio   = (string) get_post_meta( $actividad_id, '_convoca_fecha_inicio', true );
+		$fin      = (string) get_post_meta( $actividad_id, '_convoca_fecha_fin', true );
+		$lugar    = (string) get_post_meta( $actividad_id, '_convoca_ubicacion', true );
+		$lugar    = '' !== $lugar ? $lugar : (string) get_post_meta( $actividad_id, '_convoca_lugar', true );
+		$desc     = wp_strip_all_tags( (string) $actividad->post_content );
+		$tzid     = wp_timezone_string();
+		$zona     = new \DateTimeZone( $tzid );
+		$ajustes  = (array) get_option( 'convoca_enroll_settings', array() );
+		$org_mail = (string) ( $ajustes['admin_email'] ?? get_option( 'admin_email' ) );
+		$org_name = html_entity_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES, 'UTF-8' );
+
+		$dt_inicio = $this->fecha_ics( $inicio, $zona );
+		if ( '' === $dt_inicio ) {
+			return null;
+		}
+		$dt_fin = $this->fecha_ics( $fin, $zona );
+		if ( '' === $dt_fin ) {
+			$dt_fin = $this->fecha_ics( $inicio . ' +1 hour', $zona );
+		}
+
+		if ( '' === $uid ) {
+			$host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
+			$uid  = 'actividad-' . $actividad_id . '-' . substr( md5( strtolower( $email ) ), 0, 12 ) . '@' . $host;
+		}
+
+		$lineas = array(
+			'BEGIN:VCALENDAR',
+			'VERSION:2.0',
+			'PRODID:-//Convoca//Enroll//ES',
+			'CALSCALE:GREGORIAN',
+			'METHOD:REQUEST',
+			'BEGIN:VEVENT',
+			'UID:' . $this->escapar_ics( $uid ),
+			'DTSTAMP:' . gmdate( 'Ymd\THis\Z' ),
+			'DTSTART;TZID=' . $tzid . ':' . $dt_inicio,
+			'DTEND;TZID=' . $tzid . ':' . $dt_fin,
+			'SUMMARY:' . $this->escapar_ics( (string) $actividad->post_title ),
+			'DESCRIPTION:' . $this->escapar_ics( $desc ),
+			'LOCATION:' . $this->escapar_ics( $lugar ),
+			'URL:' . esc_url_raw( (string) get_permalink( $actividad_id ) ),
+			'ORGANIZER;CN=' . $this->escapar_ics( $org_name ) . ':mailto:' . $org_mail,
+			'ATTENDEE;CN=' . $this->escapar_ics( $nombre ) . ';ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE:mailto:' . $email,
+			'SEQUENCE:0',
+			'STATUS:CONFIRMED',
+			'TRANSP:OPAQUE',
+			'END:VEVENT',
+			'END:VCALENDAR',
+		);
+
+		$contenido = implode( "\r\n", array_map( array( $this, 'plegar_ics' ), $lineas ) ) . "\r\n";
+
+		$temp_dir = get_temp_dir();
+		$filename = 'invitacion-' . $actividad_id . '-' . substr( md5( strtolower( $email ) ), 0, 12 ) . '.ics';
+		$path     = $temp_dir . $filename;
+
+		return file_put_contents( $path, $contenido ) ? $path : null;
+	}
+
+	/**
+	 * Fecha local del sitio en formato iCalendar; cadena vacía si no se puede leer.
+	 *
+	 * @param string           $fecha Fecha en hora del sitio.
+	 * @param \DateTimeZone    $zona  Zona.
+	 * @return string
+	 */
+	private function fecha_ics( string $fecha, \DateTimeZone $zona ): string {
+		if ( '' === trim( $fecha ) ) {
+			return '';
+		}
+		try {
+			$dt = new \DateTimeImmutable( $fecha, $zona );
+		} catch ( \Exception $e ) {
+			return '';
+		}
+
+		return $dt->format( 'Ymd\THis' );
+	}
+
+	/**
+	 * Escapa el texto según RFC 5545.
+	 *
+	 * @param string $texto Texto.
+	 * @return string
+	 */
+	private function escapar_ics( string $texto ): string {
+		$texto = str_replace( array( "\r\n", "\n", "\r" ), '\\n', $texto );
+
+		return str_replace( array( '\\', ';', ',' ), array( '\\\\', '\\;', '\\,' ), $texto );
+	}
+
+	/**
+	 * Pliega la línea a 75 octetos, como pide el estándar.
+	 *
+	 * @param string $linea Línea.
+	 * @return string
+	 */
+	private function plegar_ics( string $linea ): string {
+		if ( strlen( $linea ) <= 75 ) {
+			return $linea;
+		}
+
+		$salida  = '';
+		$resto   = $linea;
+		$primera = true;
+
+		while ( '' !== $resto ) {
+			$tope = $primera ? 75 : 74;
+			// `mb_strcut` corta por bytes sin partir un carácter multibyte (acentos, «ó»): con `substr`
+			// una línea larga con acentos se rompía y el cliente no leía el evento.
+			$trozo   = mb_strcut( $resto, 0, $tope, 'UTF-8' );
+			$salida .= ( $primera ? '' : "\r\n " ) . $trozo;
+			// Se avanza lo que de verdad se ha cortado: `mb_strcut` puede devolver menos de `$tope`
+			// bytes para no partir un acento, y avanzar `$tope` se comía el byte suelto (#57).
+			$resto   = substr( $resto, strlen( $trozo ) );
+			$primera = false;
+		}
+
+		return $salida;
+	}
 	/**
 	 * Helper to download ICS for a given inscription or activity.
 	 */

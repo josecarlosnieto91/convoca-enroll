@@ -641,9 +641,15 @@ class Email_Automation {
 		}
 
 		// Un solo .ics por correo: si el mailer o un filtro del sitio ya puso uno, no se añade el segundo.
+		// En la confirmación de plaza va una invitación iTIP de verdad (METHOD:REQUEST, ORGANIZER y
+		// ATTENDEE), que es lo que hace que Gmail ofrezca «añadir al calendario» (issue #57).
 		if ( 'confirmacion_plaza' === $slug ) {
 			$calendar = new Google_Calendar();
-			$ics_path = $calendar->generate_ics_file( $actividad_id );
+			$ics_path = $calendar->generate_invite_ics(
+				$actividad_id,
+				(string) ( $vars['{nombre}'] ?? '' ),
+				$email
+			);
 			if ( $ics_path ) {
 				$attachments = Utils::adjuntar_ics( $attachments, $ics_path );
 			}

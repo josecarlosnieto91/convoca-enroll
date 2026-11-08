@@ -1,3 +1,23 @@
+## [2.14.0] — 2026-11-08
+
+### Añadido
+
+- **la confirmación de plaza lleva una invitación de calendario de verdad** (#57). El `.ics` que se
+  adjuntaba era un evento para descargar: sin `METHOD:REQUEST`, sin `ORGANIZER` y sin `ATTENDEE`, así que
+  Gmail no ofrecía «añadir al calendario». Ahora se genera una invitación iTIP con `UID` estable,
+  `SEQUENCE`, `STATUS:CONFIRMED`, organizador (el correo de administración del sitio) y asistente (quien
+  se inscribe, con `PARTSTAT=NEEDS-ACTION` y `RSVP=TRUE`).
+
+### Corregido
+
+- **el correo manda el `.ics` como `text/calendar; method=REQUEST`**, no como adjunto cualquiera: se
+  añade en `phpmailer_init` con su subtipo y se retira el gancho al terminar, para que no se pegue al
+  correo siguiente.
+- **el texto de la invitación se escapa y se pliega según el RFC 5545**: comas, puntos y coma y saltos de
+  línea; líneas de 75 octetos sin partir un acento por la mitad.
+
+5 pruebas nuevas en `InvitacionCalendarioTest`.
+
 ## [2.13.5] — 2026-11-08
 
 ### Corregido

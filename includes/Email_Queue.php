@@ -214,7 +214,46 @@ class Email_Queue {
 				$headers     = array( 'Content-Type: text/html; charset=UTF-8' );
 				$attachments = json_decode( $email->attachments, true ) ?? array();
 
+				// Un .ics de invitación tiene que viajar como `text/calendar; method=REQUEST`, no como
+				// adjunto cualquiera: es lo que hace que el cliente de correo pinte «añadir al
+				// calendario». `wp_mail()` no deja fijar el subtipo del adjunto, así que el fichero se
+				// saca de la lista y se añade a mano en `phpmailer_init` (issue #57).
+				$ics_paths   = array();
+				$attachments = array_values(
+					array_filter(
+						(array) $attachments,
+						static function ( $ruta ) use ( &$ics_paths ): bool {
+							if ( 'ics' === strtolower( (string) pathinfo( (string) $ruta, PATHINFO_EXTENSION ) ) ) {
+								$ics_paths[] = (string) $ruta;
+								return false;
+							}
+							return true;
+						}
+					)
+				);
+
+				$adjuntar_invitacion = static function ( $phpmailer ) use ( $ics_paths ): void {
+					foreach ( $ics_paths as $ruta ) {
+						if ( is_file( $ruta ) ) {
+							$phpmailer->addStringAttachment(
+								(string) file_get_contents( $ruta ),
+								basename( $ruta ),
+								'base64',
+								'text/calendar; charset=UTF-8; method=REQUEST'
+							);
+						}
+					}
+				};
+
+				if ( array() !== $ics_paths ) {
+					add_action( 'phpmailer_init', $adjuntar_invitacion );
+				}
+
 				$sent = wp_mail( $email->recipient, $email->subject, $email->body_html, $headers, $attachments );
+
+				if ( array() !== $ics_paths ) {
+					remove_action( 'phpmailer_init', $adjuntar_invitacion );
+				}
 
 				if ( $sent ) {
 					$wpdb->update(
