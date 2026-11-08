@@ -161,7 +161,8 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 	</noscript>
 
 	<!-- Form -->
-	<form id="conv-inscripcion-form" class="<?php echo $agotada ? 'conv-form--waitlist' : ''; ?>" method="post" action="" novalidate>
+	<form id="conv-inscripcion-form" class="<?php echo $agotada ? 'conv-form--waitlist' : ''; ?>
+	<?php echo \Convoca\Core\Anti_Bot::campos(); // phpcs:ignore WordPress.Security.EscapeOutput -- marcado propio, ya escapado. ?>" method="post" action="" novalidate>
 		<?php // Marcador del envío sin JavaScript: lo lee el aviso del principio del template. ?>
 		<input type="hidden" name="convoca_sin_js_inscripcion" value="1" />
 		<input type="hidden" name="actividad_id" value="<?php echo (int) $actividad->ID; ?>">

@@ -1,3 +1,15 @@
+## [2.15.0] — 2026-11-08
+
+### Añadido
+
+- **#72 — cada intento de inscripción queda registrado**, también los rechazados: aceptado (con el id de
+  la inscripción), validación (con el motivo), duplicado, bloqueado y bot. Tabla `convoca_intentos` del
+  core, con correo e IP **hasheados**.
+- **#73 — barrera anti-bot en el formulario**: honeypot y sello de tiempo del core (`Anti_Bot`), antes de
+  validar; un bot recibe un error genérico. Si llega sin sello no se bloquea, pero se anota `sin_sello`.
+
+Requiere `convoca-core` 2.5.0 o superior.
+
 ## [2.14.2] — 2026-11-08
 
 ### Cambiado

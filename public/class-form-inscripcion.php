@@ -191,11 +191,46 @@ class Form_Inscripcion {
 	public function handle_ajax(): void {
 		check_ajax_referer( 'convoca_enroll_inscribir_nonce', 'nonce' );
 
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'inscribir', 5, 3600 ) ) {
-			wp_send_json_error( array( 'errors' => array( 'Demasiados intentos de inscripción. Inténtalo de nuevo en una hora.' ) ), 429 );
+		$post_data   = wp_unslash( $_POST );
+		$email_traza = sanitize_email( (string) ( $post_data['email'] ?? '' ) );
+		$act_traza   = (int) ( $post_data['actividad_id'] ?? 0 );
+
+		// Anti-bot antes de nada (#73): honeypot y sello de tiempo del core.
+		$senal_bot = \Convoca\Core\Anti_Bot::motivo( $post_data );
+		if ( null !== $senal_bot ) {
+			\Convoca\Core\Intentos::registrar(
+				'inscripcion',
+				'bot',
+				array(
+					'email'      => $email_traza,
+					'motivo'     => $senal_bot,
+					'referencia' => $act_traza,
+				)
+			);
+			wp_send_json_error( array( 'errors' => array( 'No se ha podido procesar la solicitud. Vuelve a intentarlo desde el formulario.' ) ), 400 );
+		}
+		if ( \Convoca\Core\Anti_Bot::sin_sello( $post_data ) ) {
+			\Convoca\Core\Intentos::registrar(
+				'inscripcion',
+				'sin_sello',
+				array(
+					'email'      => $email_traza,
+					'referencia' => $act_traza,
+				)
+			);
 		}
 
-		$post_data = wp_unslash( $_POST );
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'inscribir', 5, 3600 ) ) {
+			\Convoca\Core\Intentos::registrar(
+				'inscripcion',
+				'bloqueo',
+				array(
+					'email'      => $email_traza,
+					'referencia' => $act_traza,
+				)
+			);
+			wp_send_json_error( array( 'errors' => array( 'Demasiados intentos de inscripción. Inténtalo de nuevo en una hora.' ) ), 429 );
+		}
 
 		$actividad_id        = (int) ( $post_data['actividad_id'] ?? 0 );
 		$nombre              = sanitize_text_field( $post_data['nombre'] ?? '' );
@@ -242,6 +277,15 @@ class Form_Inscripcion {
 		}
 
 		if ( ! empty( $errors ) ) {
+			\Convoca\Core\Intentos::registrar(
+				'inscripcion',
+				'validacion',
+				array(
+					'email'      => $email_traza,
+					'referencia' => $act_traza,
+					'motivo'     => mb_substr( implode( ' ', $errors ), 0, 191 ),
+				)
+			);
 			wp_send_json_error( array( 'errors' => $errors ) );
 		}
 
@@ -317,8 +361,28 @@ class Form_Inscripcion {
 		);
 
 		if ( is_wp_error( $result ) ) {
+			// Un duplicado no es un error de la persona: se anota aparte para poder distinguirlo.
+			$codigo = $result->get_error_code();
+			\Convoca\Core\Intentos::registrar(
+				'inscripcion',
+				in_array( $codigo, array( 'duplicate', 'already_enrolled', 'duplicada' ), true ) ? 'duplicado' : 'validacion',
+				array(
+					'email'      => $email_traza,
+					'referencia' => $act_traza,
+					'motivo'     => mb_substr( $result->get_error_message(), 0, 191 ),
+				)
+			);
 			wp_send_json_error( array( 'errors' => array( $result->get_error_message() ) ) );
 		}
+
+		\Convoca\Core\Intentos::registrar(
+			'inscripcion',
+			'ok',
+			array(
+				'email'      => $email_traza,
+				'referencia' => (int) $result,
+			)
+		);
 
 		// El cupo se descuenta con SQL directo sobre postmeta, así que la meta cacheada sigue con el
 		// valor de antes: el visitante veía «12/12» justo después de inscribirse. Se tira esa caché y

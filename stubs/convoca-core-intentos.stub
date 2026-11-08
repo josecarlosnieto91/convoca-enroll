@@ -1,0 +1,26 @@
+<?php
+/**
+ * Registro de intentos y anti-bot de Convoca Core (2.5.0), para el CI aislado.
+ */
+
+namespace Convoca\Core;
+
+/**
+ * Registro de intentos de los formularios públicos.
+ */
+final class Intentos
+{
+    public static function registrar( string $tipo, string $resultado, array $args = array() ): int { return 0; }
+    public static function identidad( string $email ): string { return ''; }
+    public static function contar( string $tipo, string $resultado = '', int $horas = 24 ): int { return 0; }
+}
+
+/**
+ * Honeypot y trampa de tiempo.
+ */
+final class Anti_Bot
+{
+    public static function campos(): string { return ''; }
+    public static function motivo( array $datos, ?int $ahora = null ): ?string { return null; }
+    public static function sin_sello( array $datos ): bool { return false; }
+}

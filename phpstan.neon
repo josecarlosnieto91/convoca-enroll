@@ -20,6 +20,7 @@ parameters:
     scanFiles:
         - stubs/wp-cli.stub
         - stubs/convoca-core.stub
+        - stubs/convoca-core-intentos.stub
         - stubs/google-api.stub
         - stubs/external-plugins.stub
         - stubs/phpmailer.stub
