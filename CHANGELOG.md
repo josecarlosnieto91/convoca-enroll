@@ -1,3 +1,11 @@
+## [2.14.2] — 2026-11-08
+
+### Cambiado
+
+- **el adjunto de la invitación se añade con un método propio** (`Email_Queue::adjuntar_invitacion()`), para
+  poder probarlo sin mandar correo: se comprueba el subtipo `text/calendar; method=REQUEST`, la
+  codificación y que el que no existe se ignora. Sin cambios de comportamiento.
+
 ## [2.14.1] — 2026-11-08
 
 ### Corregido

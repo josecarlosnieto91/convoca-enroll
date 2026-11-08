@@ -22,6 +22,7 @@ parameters:
         - stubs/convoca-core.stub
         - stubs/google-api.stub
         - stubs/external-plugins.stub
+        - stubs/phpmailer.stub
     ignoreErrors:
         -
             # Falso positivo: require_once de includes de wp-admin (class-wp-list-table.php,

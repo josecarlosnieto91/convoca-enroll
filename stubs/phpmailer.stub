@@ -1,0 +1,23 @@
+<?php
+/**
+ * PHPMailer que trae WordPress: solo lo que usa Convoca.
+ *
+ * `wp_mail()` entrega una instancia de esta clase en `phpmailer_init`; el stub existe para poder
+ * comprobar el tipo sin depender de que el core esté en el checkout de CI.
+ */
+
+namespace PHPMailer\PHPMailer;
+
+class PHPMailer {
+	/**
+	 * Añade un adjunto desde una cadena.
+	 *
+	 * @param string $string      Contenido.
+	 * @param string $filename    Nombre.
+	 * @param string $encoding    Codificación.
+	 * @param string $type        Tipo MIME.
+	 * @param string $disposition Disposición.
+	 * @return void
+	 */
+	public function addStringAttachment( $string, $filename, $encoding = 'base64', $type = 'application/octet-stream', $disposition = 'attachment' ) {}
+}

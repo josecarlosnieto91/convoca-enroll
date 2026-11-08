@@ -105,6 +105,40 @@ final class InvitacionCalendarioTest extends TestCase {
 	}
 
 	/**
+	 * El adjunto se añade con su subtipo de invitación y el contenido del fichero.
+	 */
+	public function test_el_adjunto_va_con_su_subtipo(): void {
+		require_once dirname( __DIR__, 2 ) . '/includes/Email_Queue.php';
+
+		$ruta = ( new Google_Calendar() )->generate_invite_ics( 70, 'Ada', 'ada@example.test' );
+		$falso = new class() {
+			/** @var array<int, array<string, string>> */
+			public array $adjuntos = array();
+
+			/**
+			 * Guarda lo que se le pide añadir.
+			 *
+			 * @param string $contenido Contenido.
+			 * @param string $nombre    Nombre.
+			 * @param string $codifica  Codificación.
+			 * @param string $tipo      Tipo MIME.
+			 * @return void
+			 */
+			public function addStringAttachment( $contenido, $nombre, $codifica, $tipo ): void {
+				$this->adjuntos[] = compact( 'nombre', 'codifica', 'tipo', 'contenido' );
+			}
+		};
+
+		\Convoca\Enroll\Email_Queue::adjuntar_invitacion( $falso, array( $ruta, '/no/existe.ics' ) );
+		wp_delete_file( $ruta );
+
+		$this->assertCount( 1, $falso->adjuntos, 'el que no existe se ignora' );
+		$this->assertSame( 'text/calendar; charset=UTF-8; method=REQUEST', $falso->adjuntos[0]['tipo'] );
+		$this->assertSame( 'base64', $falso->adjuntos[0]['codifica'] );
+		$this->assertStringContainsString( 'METHOD:REQUEST', $falso->adjuntos[0]['contenido'] );
+	}
+
+	/**
 	 * El correo manda el .ics como `text/calendar; method=REQUEST`, no como adjunto cualquiera.
 	 *
 	 * Es la otra mitad del issue: con el texto correcto dentro pero un `Content-Type: text/calendar` a

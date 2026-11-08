@@ -105,6 +105,31 @@ class Email_Queue {
 		return false;
 	}
 
+	/**
+	 * Añade los `.ics` como invitación (`text/calendar; method=REQUEST`), no como adjunto cualquiera.
+	 *
+	 * `wp_mail()` no deja fijar el subtipo del adjunto, así que el fichero se saca de la lista y se añade
+	 * aquí, en `phpmailer_init`. Es lo que hace que Gmail pinte «añadir al calendario» (issue #57).
+	 *
+	 * @param \PHPMailer\PHPMailer\PHPMailer $phpmailer Instancia de PHPMailer.
+	 * @param array<int, string> $rutas Ficheros `.ics`.
+	 * @return void
+	 */
+	public static function adjuntar_invitacion( $phpmailer, array $rutas ): void {
+		foreach ( $rutas as $ruta ) {
+			if ( ! is_file( $ruta ) ) {
+				continue;
+			}
+			/** @var \PHPMailer\PHPMailer\PHPMailer $phpmailer */
+			$phpmailer->addStringAttachment(
+				(string) file_get_contents( $ruta ),
+				basename( $ruta ),
+				'base64',
+				'text/calendar; charset=UTF-8; method=REQUEST'
+			);
+		}
+	}
+
 	public function process_queue(): void {
 		$start_time = microtime( true );
 		$max_exec   = (int) ini_get( 'max_execution_time' );
@@ -233,16 +258,7 @@ class Email_Queue {
 				);
 
 				$adjuntar_invitacion = static function ( $phpmailer ) use ( $ics_paths ): void {
-					foreach ( $ics_paths as $ruta ) {
-						if ( is_file( $ruta ) ) {
-							$phpmailer->addStringAttachment(
-								(string) file_get_contents( $ruta ),
-								basename( $ruta ),
-								'base64',
-								'text/calendar; charset=UTF-8; method=REQUEST'
-							);
-						}
-					}
+					self::adjuntar_invitacion( $phpmailer, $ics_paths );
 				};
 
 				if ( array() !== $ics_paths ) {
