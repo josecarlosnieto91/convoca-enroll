@@ -120,7 +120,11 @@ class Email_Queue {
 			if ( ! is_file( $ruta ) ) {
 				continue;
 			}
-			/** @var \PHPMailer\PHPMailer\PHPMailer $phpmailer */
+			/**
+			 * Instancia de PHPMailer que WordPress está montando para este envío.
+			 *
+			 * @var \PHPMailer\PHPMailer\PHPMailer $phpmailer
+			 */
 			$phpmailer->addStringAttachment(
 				(string) file_get_contents( $ruta ),
 				basename( $ruta ),
