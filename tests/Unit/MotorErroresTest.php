@@ -141,10 +141,21 @@ final class MotorErroresTest extends TestCase {
 			),
 		);
 
-		$id = Motor_Inscripcion::inscribir( 61, $this->datos( array( 'nombre' => 'Otro Nombre' ) ) );
+		// Los datos del formulario son los del socio: la ficha manda y la inscripción es de socio. Si
+		// trajera los de otra persona sería un acompañante y mandaría el formulario (issue #17).
+		$id = Motor_Inscripcion::inscribir(
+			61,
+			$this->datos(
+				array(
+					'nombre' => 'Socia Ejemplo',
+					'email'  => 'socia@example.com',
+				)
+			)
+		);
 
 		$meta = $GLOBALS['_wp_stores']['post_meta'][ $id ];
 		$this->assertSame( 'Socia Ejemplo', $meta['_convoca_nombre'], 'manda la ficha' );
+		$this->assertSame( 'socia@example.com', $meta['_convoca_email'] );
 		$this->assertSame( '1', $meta['_convoca_es_socio'] );
 		$this->assertSame( 'socio', $meta['_convoca_tipo_inscripcion'] );
 	}

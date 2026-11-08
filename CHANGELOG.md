@@ -1,3 +1,21 @@
+## [2.12.0] — 2026-11-08
+
+### Corregido
+
+- **La sesión del socio ya no pisa los datos de un acompañante.** Antes, con la sesión abierta, toda
+  inscripción se atribuía al socio —nombre, correo, teléfono y DNI de su ficha— y el tipo se forzaba a
+  «socio»: quien apuntaba a un acompañante adulto lo registraba a su nombre y le cobraba/atribuía la
+  plaza a quien no iba. Ahora, si el correo o el nombre del formulario no son los de la ficha, mandan
+  los del formulario y la tarifa es la de socio de día (o invitado, si la actividad es gratuita). La
+  misma regla en el motor y en el formulario, para que el importe y el tipo guardado no se separen.
+- **Se cierra la prueba pendiente de #17**: la suite queda sin `incomplete`. El caso se cubre con dos
+  pruebas de comportamiento (acompañante adulto y socio inscribiéndose a sí mismo), no con una guarda
+  de fuente.
+
+### Pruebas
+
+- 2 nuevas de comportamiento; la suite pasa de 963 a 964 pruebas y de 1 incomplete a 0.
+
 ## [2.11.0] — 2026-11-08
 
 ### Corregido

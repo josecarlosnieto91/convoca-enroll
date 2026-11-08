@@ -108,19 +108,11 @@ final class RegresionesInscripcionTest extends TestCase {
 		$this->assertStringContainsString( 'manage_inscripciones', $src, 'El escáner debe exigir permiso para hacer check-in.' );
 	}
 
-	/**
-	 * R12 — Inscribir a un acompañante con sesión de socio abierta no debe pisar sus datos.
-	 *
-	 * Hoy la sesión del socio sobrescribe nombre, email, teléfono y DNI y fuerza `tipo_inscripcion` a
-	 * «socio», así que el acompañante queda registrado como el propio socio (issue #17).
+	/*
+	 * R12 — La sesión del socio no pisa los datos de un acompañante: cubierto con pruebas de
+	 * comportamiento en `MotorInscribirTest` («la sesion no pisa los datos de un acompanante» y
+	 * «el socio inscribiendose a si mismo sigue siendo socio»), no con una guarda de fuente.
 	 */
-	public function test_la_sesion_de_socio_no_pisa_los_datos_del_acompanante(): void {
-		$this->markTestIncomplete(
-			'Pendiente del arreglo de convoca-enroll#17: Motor_Inscripcion::inscribir() no debe tomar nombre, ' .
-			'email, teléfono ni DNI de la sesión cuando el formulario los trae, ni forzar tipo_inscripcion="socio". ' .
-			'Al arreglarlo, comprobar aquí que un POST con datos de acompañante crea la inscripción con esos datos.'
-		);
-	}
 
 	/**
 	 * R13 — El `action` del formulario del editor tiene manejador registrado.

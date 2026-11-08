@@ -211,7 +211,20 @@ class Form_Inscripcion {
 		$act_meta      = CPT_Actividad::get_meta( $actividad_id );
 		$requiere_pago = ! empty( $act_meta['requiere_pago'] );
 
-		if ( ! $es_socio_real || $es_menor ) {
+		// Un socio puede inscribir a un acompañante adulto: si el correo o el nombre del formulario no
+		// son los de su ficha, es otra persona y paga la tarifa de socio de día (o va como invitado en
+		// una actividad gratuita). La misma regla que el motor, para que el importe y el tipo guardado
+		// no se separen (issue #17).
+		$es_acompanante = false;
+		if ( $es_socio_real ) {
+			$miembro        = \Convoca\Core\Member_Identity::current_member_data();
+			$correo_socio   = (string) ( $miembro['email'] ?? '' );
+			$nombre_socio   = (string) ( $miembro['name'] ?? '' );
+			$es_acompanante = ( '' !== $email && '' !== $correo_socio && 0 !== strcasecmp( $email, $correo_socio ) )
+				|| ( '' !== $nombre && '' !== $nombre_socio && 0 !== strcasecmp( $nombre, $nombre_socio ) );
+		}
+
+		if ( ! $es_socio_real || $es_menor || $es_acompanante ) {
 			// Misma regla que el motor: «socio de día» si hay tarifa, «invitado» si la actividad es
 			// gratuita. Antes toda visita anónima quedaba como socio de día y ensuciaba las estadísticas.
 			$tipo_inscripcion = $requiere_pago ? 'socio_dia' : 'invitado';

@@ -173,6 +173,22 @@ class Motor_Inscripcion {
 		// inscrito/a en esta actividad». Issue #17.
 		$es_tercero = ! empty( $datos['es_menor'] );
 
+		// Y tampoco basta con «no es menor»: un socio puede inscribir a un acompañante adulto. Si el
+		// correo o el nombre que llegan del formulario no son los de su ficha, es otra persona y mandan
+		// los datos del formulario (issue #17). Sin esto, el acompañante quedaba registrado a nombre del
+		// socio, con su correo y su DNI, y la plaza se le cobraba/atribuía a quien no iba.
+		if ( $is_member && $member_data && ! $es_tercero ) {
+			$email_form  = sanitize_email( (string) ( $datos['email'] ?? '' ) );
+			$nombre_form = sanitize_text_field( (string) ( $datos['nombre'] ?? '' ) );
+
+			$mismo_correo = '' === $email_form || 0 === strcasecmp( $email_form, (string) ( $member_data['email'] ?? '' ) );
+			$mismo_nombre = '' === $nombre_form || 0 === strcasecmp( $nombre_form, (string) ( $member_data['name'] ?? '' ) );
+
+			if ( ! $mismo_correo || ! $mismo_nombre ) {
+				$es_tercero = true;
+			}
+		}
+
 		if ( $is_member && $member_data && ! $es_tercero ) {
 			$nombre                    = sanitize_text_field( $member_data['name'] );
 			$email                     = sanitize_email( $member_data['email'] );

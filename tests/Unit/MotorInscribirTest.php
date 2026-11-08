@@ -50,6 +50,7 @@ final class MotorInscribirTest extends TestCase {
 		$GLOBALS['convoca_test_get_posts_args'] = array();
 		$GLOBALS['convoca_test_dns']            = array( 'example.com' );
 		$GLOBALS['_wp_insert_args']             = array();
+		unset( $GLOBALS['__identidad'] );
 	}
 
 	/**
@@ -260,6 +261,58 @@ final class MotorInscribirTest extends TestCase {
 		$id = Motor_Inscripcion::inscribir( 61, $this->datos() );
 
 		$this->assertSame( 'socio_dia', $GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_tipo_inscripcion'] );
+	}
+
+	/**
+	 * Un socio inscribe a un acompañante adulto: mandan los datos del formulario, no los de su ficha.
+	 *
+	 * Antes la sesión los pisaba (nombre, correo, teléfono y DNI) y el tipo se forzaba a «socio», así
+	 * que el acompañante quedaba registrado como el socio (issue #17).
+	 */
+	public function test_la_sesion_no_pisa_los_datos_de_un_acompanante(): void {
+		$this->actividad( array( 'requiere_pago' => true ) );
+		$GLOBALS['__identidad'] = array(
+			'autenticado' => true,
+			'member_id'   => 9,
+			'datos'       => array(
+				'name'  => 'Socia Titular',
+				'email' => 'socia@example.test',
+				'phone' => '600111111',
+				'dni'   => '11111111H',
+			),
+		);
+
+		$id   = Motor_Inscripcion::inscribir( 61, $this->datos() );
+		$meta = $GLOBALS['_wp_stores']['post_meta'][ $id ];
+
+		$this->assertSame( 'Ana López', $meta['_convoca_nombre'], 'el nombre del formulario' );
+		$this->assertSame( 'ana@example.com', $meta['_convoca_email'], 'y su correo' );
+		$this->assertSame( 'socio_dia', $meta['_convoca_tipo_inscripcion'], 'no es el socio: tarifa de socio de día' );
+		$this->assertSame( '0', $meta['_convoca_es_socio'] );
+	}
+
+	/**
+	 * Si los datos del formulario son los del socio, se usan los de su ficha y la inscripción es de socio.
+	 */
+	public function test_el_socio_inscribiendose_a_si_mismo_sigue_siendo_socio(): void {
+		$this->actividad( array( 'requiere_pago' => true ) );
+		$GLOBALS['__identidad'] = array(
+			'autenticado' => true,
+			'member_id'   => 9,
+			'datos'       => array(
+				'name'  => 'Ana López',
+				'email' => 'ana@example.com',
+				'phone' => '600000000',
+				'dni'   => '11111111H',
+			),
+		);
+
+		$id   = Motor_Inscripcion::inscribir( 61, $this->datos() );
+		$meta = $GLOBALS['_wp_stores']['post_meta'][ $id ];
+
+		$this->assertSame( 'socio', $meta['_convoca_tipo_inscripcion'] );
+		$this->assertSame( '1', $meta['_convoca_es_socio'] );
+		$this->assertSame( '11111111H', $meta['_convoca_dni'], 'el DNI sale de la ficha' );
 	}
 
 	/**
