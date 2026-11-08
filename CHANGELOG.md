@@ -1,3 +1,11 @@
+## [2.13.3] — 2026-11-08
+
+### Cambiado
+
+- **el CSS deja de depender de la paleta del tema**: Panel, evaluación, administración y hoja pública usan tokens neutros en vez de **22 presets**; los colores de un cliente ya no están. La tarjeta conserva sus valores y su prueba de contraste. Los plugins usan tokens `--conv-*` con valor
+  neutro y el tema de Convoca los rellena con su paleta, así que su aspecto no cambia. Prueba nueva
+  (`CssTokensTest`) que falla si vuelven los presets o un color de cliente.
+
 ## [2.13.2] — 2026-11-08
 
 ### Corregido

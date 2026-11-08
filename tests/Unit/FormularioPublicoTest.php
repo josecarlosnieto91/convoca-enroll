@@ -108,11 +108,17 @@ final class FormularioPublicoTest extends TestCase {
 	 * #58: los textos de la tarjeta cumplen contraste AA contra su fondo, con los valores por defecto.
 	 */
 	public function test_los_textos_de_la_tarjeta_cumplen_contraste(): void {
-		$css    = (string) file_get_contents( $this->raiz() . '/assets/css/convoca-enroll-public.css' );
-		$inicio = $this->variable( $css, '--conv-card-bg-start' );
-		$fin    = $this->variable( $css, '--conv-card-bg-end' );
-		$texto  = $this->variable( $css, '--conv-card-fg' );
-		$titulo = $this->variable( $css, '--conv-accent' );
+		$css = (string) file_get_contents( $this->raiz() . '/assets/css/convoca-enroll-public.css' );
+
+		// Los valores se leen del bloque de la tarjeta, no del `:root`: el componente sobrescribe los
+		// tokens globales a propósito (el título va en claro sobre el fondo oscuro).
+		$desde = (int) strpos( $css, '.conv-enroll-block {' );
+		$bloque = substr( $css, $desde, (int) strpos( $css, '}', $desde ) - $desde );
+
+		$inicio = $this->variable( $bloque, '--conv-card-bg-start' );
+		$fin    = $this->variable( $bloque, '--conv-card-bg-end' );
+		$texto  = $this->variable( $bloque, '--conv-card-fg' );
+		$titulo = $this->variable( $bloque, '--conv-accent' );
 
 		foreach ( array( $inicio, $fin ) as $fondo ) {
 			$this->assertGreaterThanOrEqual( 4.5, $this->contraste( $texto, $fondo ), "texto sobre {$fondo}" );

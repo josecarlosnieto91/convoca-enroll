@@ -1,3 +1,19 @@
+:root {
+	/* Tokens neutros del producto: cualquier sitio puede sobrescribirlos desde su CSS. */
+	--conv-bg: #ffffff;
+	--conv-surface: #f6f7f7;
+	--conv-fg: #1d2327;
+	--conv-muted: #50575e;
+	--conv-border: #dcdcde;
+	--conv-accent: #2271b1;
+	--conv-accent-strong: #135e96;
+	--conv-highlight: #8a6500;
+	--conv-ok: #0a7c3f;
+	--conv-accent-alt: #3858e9;
+	--conv-font-display: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--conv-font-body: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
 /**
  * Convoca Enroll — Public CSS v2
  *
@@ -5,10 +21,10 @@
  * (o desde Ajustes → CSS adicional) sin tocar el plugin:
  *
  *   .convoca-activity-card {
- *     --conv-card-bg-start: #320028;
- *     --conv-card-bg-end:   #7d0032;
+ *     --conv-card-bg-start: var(--conv-accent-strong);
+ *     --conv-card-bg-end:   var(--conv-accent-strong);
  *     --conv-card-fg:       #ffffff;
- *     --conv-accent:        #ffab00;
+ *     --conv-accent:        var(--conv-highlight);
  *   }
  *
  * Antes se usaban presets de color del tema que muchos temas no definen: el

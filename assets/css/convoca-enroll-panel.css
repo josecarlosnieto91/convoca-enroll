@@ -1,3 +1,19 @@
+:root {
+	/* Tokens neutros del producto: cualquier sitio puede sobrescribirlos desde su CSS. */
+	--conv-bg: #ffffff;
+	--conv-surface: #f6f7f7;
+	--conv-fg: #1d2327;
+	--conv-muted: #50575e;
+	--conv-border: #dcdcde;
+	--conv-accent: #2271b1;
+	--conv-accent-strong: #135e96;
+	--conv-highlight: #8a6500;
+	--conv-ok: #0a7c3f;
+	--conv-accent-alt: #3858e9;
+	--conv-font-display: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--conv-font-body: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
 /**
  * Convoca Enroll — Panel de Reservas CSS
  * Follows Convoca Theme v2 design system.
@@ -14,7 +30,7 @@
 
 .conv-panel-header {
     text-align: center;
-    padding: var(--wp--preset--spacing--30, 1.5rem);
+    padding: 1.5rem;
     margin-bottom: 1.5rem;
 }
 
@@ -25,7 +41,7 @@
 
 .conv-panel-header p {
     margin: .25rem 0;
-    color: var(--wp--preset--color--contrast-2, #555);
+    color: var(--conv-fg);
 }
 
 /* ── Login form ───────────────────────────── */
@@ -73,7 +89,7 @@
     flex-wrap: wrap;
     gap: .5rem .75rem;
     font-size: .9rem;
-    color: var(--wp--preset--color--contrast-2, #666);
+    color: var(--conv-fg);
     margin-bottom: .75rem;
 }
 
@@ -107,7 +123,7 @@
 
 .conv-panel-card-footer .conv-small {
     font-size: .8rem;
-    color: var(--wp--preset--color--contrast-2, #888);
+    color: var(--conv-fg);
     flex: 1;
 }
 
@@ -116,7 +132,7 @@
 .conv-panel-empty {
     text-align: center;
     padding: 2rem;
-    color: var(--wp--preset--color--contrast-2, #888);
+    color: var(--conv-fg);
 }
 
 /* ── Modal ─────────────────────────────────── */
@@ -134,7 +150,7 @@
 }
 
 .conv-panel-modal-content {
-    background: var(--wp--preset--color--base, #fff);
+    background: var(--conv-bg);
     border-radius: var(--wp--custom--radius--medium, 12px);
     padding: 2rem;
     max-width: 480px;
@@ -150,7 +166,7 @@
 
 .conv-panel-modal-content p {
     margin: 0 0 1.5rem;
-    color: var(--wp--preset--color--contrast-2, #555);
+    color: var(--conv-fg);
     line-height: 1.5;
 }
 

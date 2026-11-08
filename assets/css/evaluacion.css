@@ -1,31 +1,47 @@
+:root {
+	/* Tokens neutros del producto: cualquier sitio puede sobrescribirlos desde su CSS. */
+	--conv-bg: #ffffff;
+	--conv-surface: #f6f7f7;
+	--conv-fg: #1d2327;
+	--conv-muted: #50575e;
+	--conv-border: #dcdcde;
+	--conv-accent: #2271b1;
+	--conv-accent-strong: #135e96;
+	--conv-highlight: #8a6500;
+	--conv-ok: #0a7c3f;
+	--conv-accent-alt: #3858e9;
+	--conv-font-display: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--conv-font-body: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
 .conv-evaluacion-container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    background: var(--wp--preset--color--base, #ffffff);
+    background: var(--conv-bg);
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
 .conv-evaluacion-container h3 {
     margin-top: 0;
-    color: var(--wp--preset--color--antracita, #222222);
+    color: var(--conv-fg);
 }
 
 .conv-eval-section {
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: 1px solid var(--wp--preset--color--gris-claro, #e5e7eb);
+    border-bottom: 1px solid var(--conv-surface);
 }
 
 .conv-eval-section h4 {
     margin-bottom: 5px;
-    color: var(--wp--preset--color--naranja, #d97736);
+    color: var(--conv-accent);
 }
 
 .conv-eval-section .description {
     font-size: 0.9em;
-    color: var(--wp--preset--color--gris-medio, #6b7280);
+    color: var(--conv-muted);
     margin-bottom: 15px;
 }
 
@@ -34,7 +50,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
-    border-bottom: 1px dashed var(--wp--preset--color--gris-claro, #e5e7eb);
+    border-bottom: 1px dashed var(--conv-surface);
 }
 
 .conv-star-rating-group:last-child {
@@ -50,7 +66,7 @@
 }
 
 .star-rating .star {
-    color: var(--wp--preset--color--gris-claro, #d1d5db);
+    color: var(--conv-surface);
     transition: color 0.2s;
     outline: none;
 }
@@ -72,26 +88,26 @@
     display: block;
     font-weight: 600;
     margin-bottom: 8px;
-    color: var(--wp--preset--color--antracita, #222222);
+    color: var(--conv-fg);
 }
 
 .conv-form-group textarea {
     width: 100%;
     padding: 12px;
-    border: 1px solid var(--wp--preset--color--gris-claro, #d1d5db);
+    border: 1px solid var(--conv-surface);
     border-radius: 4px;
     font-family: inherit;
     resize: vertical;
 }
 
 .conv-form-group textarea:focus {
-    border-color: var(--wp--preset--color--naranja, #d97736);
+    border-color: var(--conv-accent);
     outline: none;
-    box-shadow: 0 0 0 1px var(--wp--preset--color--naranja, #d97736);
+    box-shadow: 0 0 0 1px var(--conv-accent);
 }
 
 .conv-privacy-section {
-    background: var(--wp--preset--color--gris-piedra, #f3f4f6);
+    background: var(--conv-border);
     padding: 15px;
     border-radius: 4px;
     border-bottom: none;
@@ -117,7 +133,7 @@
     width: 100%;
     padding: 12px 20px;
     font-size: 16px;
-    background-color: var(--wp--preset--color--naranja, #d97736);
+    background-color: var(--conv-accent);
     color: white;
     border: none;
     border-radius: 4px;
@@ -127,11 +143,11 @@
 }
 
 .conv-form-submit button:hover {
-    background-color: var(--wp--preset--color--naranja-intenso, #b95d24);
+    background-color: var(--conv-accent);
 }
 
 .conv-form-submit button:disabled {
-    background-color: var(--wp--preset--color--gris-medio, #9ca3af);
+    background-color: var(--conv-muted);
     cursor: not-allowed;
 }
 
