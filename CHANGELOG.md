@@ -1,3 +1,14 @@
+## [2.14.1] — 2026-11-08
+
+### Corregido
+
+- **la invitación salía con `DTSTART;TZID=+00:00`**, que no es un identificador de zona válido: los
+  clientes no podían interpretar la hora. Cuando `wp_timezone_string()` devuelve un desplazamiento en vez
+  de un nombre de zona, la fecha va en UTC con la `Z`. Detectado en la demo al verificar el issue #57, no
+  en las pruebas: el banco devolvía `Europe/Madrid` y la demo devuelve `+00:00`.
+
+6 pruebas en `InvitacionCalendarioTest`.
+
 ## [2.14.0] — 2026-11-08
 
 ### Añadido

@@ -119,6 +119,23 @@ final class InvitacionCalendarioTest extends TestCase {
 	}
 
 	/**
+	 * Si el sitio no tiene un identificador de zona, la hora va en UTC y no con un `TZID=+00:00` que no
+	 * existe. Pasaba en la demo el 08/11/2026 y el evento habría salido sin hora interpretable.
+	 */
+	public function test_sin_identificador_de_zona_la_hora_va_en_utc(): void {
+		$GLOBALS['convoca_tz_string'] = '+00:00';
+
+		$ruta = ( new Google_Calendar() )->generate_invite_ics( 70, 'Ada', 'ada@example.test' );
+		$ics  = (string) file_get_contents( $ruta );
+		wp_delete_file( $ruta );
+		unset( $GLOBALS['convoca_tz_string'] );
+
+		$this->assertStringContainsString( 'DTSTART:20261115T110000Z', $ics );
+		$this->assertStringContainsString( 'DTEND:20261115T150000Z', $ics );
+		$this->assertStringNotContainsString( 'TZID=+00:00', $ics );
+	}
+
+	/**
 	 * Sin correo o sin actividad no hay invitación: mejor no adjuntar nada que adjuntar algo roto.
 	 */
 	public function test_sin_datos_no_hay_invitacion(): void {

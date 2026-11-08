@@ -368,13 +368,29 @@ class Google_Calendar {
 		$org_mail = (string) ( $ajustes['admin_email'] ?? get_option( 'admin_email' ) );
 		$org_name = html_entity_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES, 'UTF-8' );
 
-		$dt_inicio = $this->fecha_ics( $inicio, $zona );
-		if ( '' === $dt_inicio ) {
+		$inicio_dt = $this->fecha_ics( $inicio, $zona );
+		if ( null === $inicio_dt ) {
 			return null;
 		}
-		$dt_fin = $this->fecha_ics( $fin, $zona );
-		if ( '' === $dt_fin ) {
-			$dt_fin = $this->fecha_ics( $inicio . ' +1 hour', $zona );
+		$fin_dt = $this->fecha_ics( $fin, $zona );
+		if ( null === $fin_dt ) {
+			$fin_dt = $this->fecha_ics( $inicio . ' +1 hour', $zona );
+		}
+		if ( null === $fin_dt ) {
+			return null;
+		}
+
+		// `wp_timezone_string()` puede devolver un desplazamiento («+00:00», «+02:00») en vez de un
+		// identificador. `TZID=+00:00` no es válido y el cliente no sabe qué hora es: en ese caso la
+		// fecha va en UTC con la `Z`, que todo el mundo entiende.
+		$tzid_valido = (bool) preg_match( '/^[A-Za-z][A-Za-z0-9_+\-]*(\/[A-Za-z0-9_+\-]+)+$/', $tzid ) || 'UTC' === strtoupper( $tzid );
+		if ( $tzid_valido ) {
+			$linea_inicio = 'DTSTART;TZID=' . $tzid . ':' . $inicio_dt->format( 'Ymd\THis' );
+			$linea_fin    = 'DTEND;TZID=' . $tzid . ':' . $fin_dt->format( 'Ymd\THis' );
+		} else {
+			$utc          = new \DateTimeZone( 'UTC' );
+			$linea_inicio = 'DTSTART:' . $inicio_dt->setTimezone( $utc )->format( 'Ymd\THis' ) . 'Z';
+			$linea_fin    = 'DTEND:' . $fin_dt->setTimezone( $utc )->format( 'Ymd\THis' ) . 'Z';
 		}
 
 		if ( '' === $uid ) {
@@ -391,8 +407,8 @@ class Google_Calendar {
 			'BEGIN:VEVENT',
 			'UID:' . $this->escapar_ics( $uid ),
 			'DTSTAMP:' . gmdate( 'Ymd\THis\Z' ),
-			'DTSTART;TZID=' . $tzid . ':' . $dt_inicio,
-			'DTEND;TZID=' . $tzid . ':' . $dt_fin,
+			$linea_inicio,
+			$linea_fin,
 			'SUMMARY:' . $this->escapar_ics( (string) $actividad->post_title ),
 			'DESCRIPTION:' . $this->escapar_ics( $desc ),
 			'LOCATION:' . $this->escapar_ics( $lugar ),
@@ -418,21 +434,19 @@ class Google_Calendar {
 	/**
 	 * Fecha local del sitio en formato iCalendar; cadena vacía si no se puede leer.
 	 *
-	 * @param string           $fecha Fecha en hora del sitio.
-	 * @param \DateTimeZone    $zona  Zona.
-	 * @return string
+	 * @param string        $fecha Fecha en hora del sitio.
+	 * @param \DateTimeZone $zona  Zona.
+	 * @return \DateTimeImmutable|null
 	 */
-	private function fecha_ics( string $fecha, \DateTimeZone $zona ): string {
+	private function fecha_ics( string $fecha, \DateTimeZone $zona ): ?\DateTimeImmutable {
 		if ( '' === trim( $fecha ) ) {
-			return '';
+			return null;
 		}
 		try {
-			$dt = new \DateTimeImmutable( $fecha, $zona );
+			return new \DateTimeImmutable( $fecha, $zona );
 		} catch ( \Exception $e ) {
-			return '';
+			return null;
 		}
-
-		return $dt->format( 'Ymd\THis' );
 	}
 
 	/**
