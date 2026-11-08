@@ -119,8 +119,21 @@ final class MotorConfirmarTest extends TestCase {
 	public function test_pendiente_pago_no_descuenta(): void {
 		$this->inscripcion( 'pendiente_pago' );
 
-		$this->assertTrue( Motor_Inscripcion::confirmar( 70 ) );
+		$this->assertTrue( Motor_Inscripcion::confirmar( 70, true ) );
 		$this->assertStringNotContainsString( 'CAST(meta_value AS SIGNED) - 1', $this->consultas() );
+	}
+
+	/**
+	 * Una inscripción impagada NO se confirma por la cara: hace falta la prueba del cobro.
+	 */
+	public function test_pendiente_pago_sin_prueba_de_cobro_no_se_confirma(): void {
+		$this->inscripcion( 'pendiente_pago' );
+
+		$resultado = Motor_Inscripcion::confirmar( 70 );
+
+		$this->assertInstanceOf( \WP_Error::class, $resultado );
+		$this->assertSame( 'payment_required', $resultado->get_error_code() );
+		$this->assertSame( 'pendiente_pago', $GLOBALS['_wp_stores']['post_meta'][70]['_convoca_estado'] );
 	}
 
 	/**

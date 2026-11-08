@@ -89,7 +89,7 @@ class Payment_Listener {
 		update_post_meta( $origin_id, '_convoca_pago_aplicado_id', $pago_id );
 
 		// Confirm the inscription (this handles capacity decrement).
-		$result = Motor_Inscripcion::confirmar( $origin_id );
+		$result = Motor_Inscripcion::confirmar( $origin_id, true );
 
 		if ( is_wp_error( $result ) ) {
 			// This could happen if capacity was exhausted while the user was paying.

@@ -81,7 +81,7 @@ class Motor_Inscripcion {
 	 * @return string[]
 	 */
 	public static function estados_que_ocupan_plaza(): array {
-		return array( 'pendiente', 'pendiente_pago', 'confirmada', 'pagada' );
+		return Estados::ocupan_plaza();
 	}
 
 	/**
@@ -233,7 +233,7 @@ class Motor_Inscripcion {
 		$limite_activo = ! empty( $settings['limite_una_reserva'] );
 
 		if ( $limite_activo && ! $es_menor ) {
-			$limit_error = self::check_limite_reservas( $email );
+			$limit_error = self::check_limite_reservas( $email, $actividad_id );
 			if ( is_wp_error( $limit_error ) ) {
 				return $limit_error;
 			}
@@ -359,11 +359,14 @@ class Motor_Inscripcion {
 
 			$estado = $datos['estado_forzado'] ?? null;
 
+			// La actividad se lee SIEMPRE, fuera del if: el estado final también depende de ella
+			// (antes, con estado_forzado la variable quedaba sin definir y PHP 8 avisaba).
+			$meta_actividad = CPT_Actividad::get_meta( $actividad_id );
+
 			// Check capacity atomically - only for states that consume a spot.
 			$estados_que_consumen_plaza = self::estados_que_ocupan_plaza();
 
 			if ( empty( $datos['estado_forzado'] ) || in_array( $datos['estado_forzado'], $estados_que_consumen_plaza, true ) ) {
-				$meta_actividad     = CPT_Actividad::get_meta( $actividad_id );
 				$plazas_disponibles = (int) ( $meta_actividad['plazas_disponibles'] ?? 0 );
 
 				if ( $plazas_disponibles <= 0 ) {
@@ -377,7 +380,7 @@ class Motor_Inscripcion {
                          WHERE post_id = %d AND meta_key = %s
                          AND CAST(meta_value AS SIGNED) > 0",
 							$actividad_id,
-							CPT_Inscripcion::META_PREFIX . 'plazas_disponibles'
+							CPT_Actividad::META_PREFIX . 'plazas_disponibles'
 						)
 					);
 
@@ -388,11 +391,14 @@ class Motor_Inscripcion {
 				}
 			}
 
+			// Regla única: sin plaza, lista de espera; con pago, pendiente de pago; gratuita, confirmada
+			// desde ya. Antes toda inscripción nacía 'pendiente' y no había ningún camino que la
+			// confirmara: se quedaba sin recordatorios, sin QR y el check-in la rechazaba.
 			if ( ! $estado ) {
 				if ( ! empty( $meta_actividad['requiere_pago'] ?? false ) ) {
 					$estado = 'pendiente_pago';
 				} else {
-					$estado = 'pendiente';
+					$estado = 'confirmada';
 				}
 			}
 
@@ -486,17 +492,17 @@ class Motor_Inscripcion {
 			// plaza ocupada para siempre.
 			$estados_que_consumen_plaza = self::estados_que_ocupan_plaza();
 			if ( in_array( $estado_actual, $estados_que_consumen_plaza, true ) ) {
-				$promoted = self::promote_waitlist( $actividad_id );
+				$promovido_id = self::promote_waitlist( $actividad_id );
 
 				// If nobody was promoted from waitlist, we officially have +1 capacity.
-				if ( ! $promoted ) {
+				if ( ! $promovido_id ) {
 					$affected = $wpdb->query(
 						$wpdb->prepare(
 							"UPDATE {$wpdb->postmeta}
                         SET meta_value = CAST(meta_value AS SIGNED) + 1
                         WHERE post_id = %d AND meta_key = %s",
 							$actividad_id,
-							CPT_Inscripcion::META_PREFIX . 'plazas_disponibles'
+							CPT_Actividad::META_PREFIX . 'plazas_disponibles'
 						)
 					);
 				}
@@ -520,6 +526,11 @@ class Motor_Inscripcion {
 			$wpdb->query( 'COMMIT' );
 
 			\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_cancelada', 'convoca_inscripcion_cancelada', $inscripcion_id, $actividad_id );
+
+			// La promoción se avisa AHORA, con la transacción ya cerrada.
+			if ( ! empty( $promovido_id ) ) {
+				\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_promovida', 'convoca_inscripcion_promovida', (int) $promovido_id, $actividad_id );
+			}
 
 			return true;
 		} catch ( \Throwable $e ) {
@@ -643,7 +654,7 @@ class Motor_Inscripcion {
 	/**
 	 * Manually confirm a pending inscription.
 	 */
-	public static function confirmar( int $inscripcion_id ): bool|\WP_Error {
+	public static function confirmar( int $inscripcion_id, bool $pago_verificado = false ): bool|\WP_Error {
 		$estado_actual = CPT_Inscripcion::get_meta( $inscripcion_id, 'estado' );
 		if ( $estado_actual === 'confirmada' ) {
 			return true;
@@ -651,6 +662,12 @@ class Motor_Inscripcion {
 
 		if ( ! in_array( $estado_actual, array( 'pendiente', 'lista_espera', 'pendiente_pago' ), true ) ) {
 			return new \WP_Error( 'invalid_state', __( 'Solo se pueden confirmar inscripciones pendientes o en lista de espera.', 'convoca-enroll' ) );
+		}
+
+		// Una inscripción impagada no se confirma por la cara: solo el cobro, que ya lo ha comprobado,
+		// pasa `$pago_verificado`. Antes bastaba con llamar a este método para dar plaza gratis.
+		if ( 'pendiente_pago' === $estado_actual && ! $pago_verificado ) {
+			return new \WP_Error( 'payment_required', __( 'Esta inscripción está pendiente de pago: no se puede confirmar sin cobro.', 'convoca-enroll' ) );
 		}
 
 		$actividad_id = (int) CPT_Inscripcion::get_meta( $inscripcion_id, 'actividad_id' );
@@ -670,7 +687,7 @@ class Motor_Inscripcion {
 				SET meta_value = CAST(meta_value AS SIGNED) - 1
 				WHERE post_id = %d AND meta_key = %s AND CAST(meta_value AS SIGNED) > 0",
 						$actividad_id,
-						CPT_Inscripcion::META_PREFIX . 'plazas_disponibles'
+						CPT_Actividad::META_PREFIX . 'plazas_disponibles'
 					)
 				);
 
@@ -702,12 +719,18 @@ class Motor_Inscripcion {
 	}
 
 	/**
-	 * Promote the first waitlisted inscription to 'pendiente '
+	 * Promueve la primera inscripción de la lista de espera al estado que toque.
 	 *
-	 * @return bool True if someone was promoted.
+	 * NO avisa: el correo sale fuera de la transacción, cuando el COMMIT ya ha pasado. Antes se
+	 * enviaba dentro y, si el COMMIT fallaba, el socio recibía el aviso de una plaza que no existía.
+	 *
+	 * @param int $actividad_id Actividad.
+	 * @return int ID de la inscripción promovida, o 0.
 	 */
-	private static function promote_waitlist( int $actividad_id ): bool {
-		$waitlist = get_posts(
+	private static function promote_waitlist( int $actividad_id ): int {
+		$meta_actividad = CPT_Actividad::get_meta( $actividad_id );
+		$nuevo_estado   = ! empty( $meta_actividad['requiere_pago'] ) ? 'pendiente_pago' : 'confirmada';
+		$waitlist       = get_posts(
 			array(
 				'post_type'      => 'inscripcion',
 				'posts_per_page' => -1,
@@ -735,26 +758,16 @@ class Motor_Inscripcion {
 
 			global $wpdb;
 			foreach ( $waitlist as $promoted ) {
-				// Atomic update to ensure only one process promotes this specific record.
-				$affected = $wpdb->query(
-					$wpdb->prepare(
-						"UPDATE {$wpdb->postmeta} SET meta_value = 'pendiente'
-                     WHERE post_id = %d AND meta_key = %s AND meta_value = 'lista_espera'",
-						$promoted->ID,
-						CPT_Inscripcion::META_PREFIX . 'estado'
-					)
-				);
-
+				// Atómico: solo promueve si sigue en espera, así dos procesos no suben a la misma persona.
+				$affected = $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->postmeta} SET meta_value = %s WHERE post_id = %d AND meta_key = %s AND meta_value = 'lista_espera'", $nuevo_estado, $promoted->ID, CPT_Inscripcion::META_PREFIX . 'estado' ) );
 				if ( $affected > 0 ) {
-					// Success! This one is promoted.
 					CPT_Inscripcion::update_meta( $promoted->ID, 'pagado', 0 ); // Reset payment just in case.
-					\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_promovida', 'convoca_inscripcion_promovida', $promoted->ID, $actividad_id );
-					return true;
+					return (int) $promoted->ID;
 				}
 			}
 		}
 
-		return false;
+		return 0;
 	}
 
 	/**
@@ -802,38 +815,47 @@ class Motor_Inscripcion {
 	}
 
 	/**
-	 * Check if the email already has an active reservation (one-per-person rule).
+	 * ¿Esta persona ya tiene una reserva activa en ESTA actividad?
+	 *
+	 * Los menores no cuentan (van a cargo de quien los inscribe) y el límite es por actividad: antes
+	 * contaba en toda la instalación y bloqueaba apuntarse a un segundo taller.
+	 *
+	 * @param string $email        Correo.
+	 * @param int    $actividad_id Actividad (0 = cualquiera; solo para llamadas de sistema).
+	 * @return true|\WP_Error
 	 */
-	public static function check_limite_reservas( string $email ): true|\WP_Error {
+	public static function check_limite_reservas( string $email, int $actividad_id = 0 ): true|\WP_Error {
+		$meta_query = array(
+			'relation' => 'AND',
+			array(
+				'key' => CPT_Inscripcion::META_PREFIX . 'email', 'value' => $email
+			),
+			array(
+				'key' => CPT_Inscripcion::META_PREFIX . 'estado', 'value' => array( 'confirmada', 'pagada', 'pendiente', 'pendiente_pago', 'lista_espera' ), 'compare' => 'IN'
+			),
+			array(
+				'relation' => 'OR',
+				array(
+					'key' => CPT_Inscripcion::META_PREFIX . 'es_menor', 'value' => '1', 'compare' => '!='
+				),
+				array(
+					'key' => CPT_Inscripcion::META_PREFIX . 'es_menor', 'compare' => 'NOT EXISTS'
+				),
+			),
+		);
+
+		if ( $actividad_id > 0 ) {
+			$meta_query[] = array(
+				'key' => CPT_Inscripcion::META_PREFIX . 'actividad_id', 'value' => $actividad_id
+			);
+		}
+
 		$existing = get_posts(
 			array(
 				'post_type'      => 'inscripcion',
 				'posts_per_page' => 1,
 				'post_status'    => 'publish',
-				'meta_query'     => array(
-					'relation' => 'AND',
-					array(
-						'key'   => CPT_Inscripcion::META_PREFIX . 'email',
-						'value' => $email,
-					),
-					array(
-						'key'     => CPT_Inscripcion::META_PREFIX . 'estado',
-						'value'   => array( 'confirmada', 'pagada', 'pendiente', 'pendiente_pago', 'lista_espera' ),
-						'compare' => 'IN',
-					),
-					array(
-						'relation' => 'OR',
-						array(
-							'key'     => CPT_Inscripcion::META_PREFIX . 'es_menor',
-							'value'   => '1',
-							'compare' => '!=',
-						),
-						array(
-							'key'     => CPT_Inscripcion::META_PREFIX . 'es_menor',
-							'compare' => 'NOT EXISTS',
-						),
-					),
-				),
+				'meta_query'     => $meta_query,
 			)
 		);
 
@@ -995,8 +1017,6 @@ class Motor_Inscripcion {
 			'Enroll/Motor',
 			$inscripcion_id
 		);
-
-		\Convoca\Core\Utils::do_action( 'convoca_enroll_asistencia_cambiada', 'convoca_asistencia_cambiada', $inscripcion_id, $asistencia );
 
 		\Convoca\Core\Utils::do_action( 'convoca_enroll_asistencia_cambiada', 'convoca_asistencia_cambiada', $inscripcion_id, $asistencia );
 

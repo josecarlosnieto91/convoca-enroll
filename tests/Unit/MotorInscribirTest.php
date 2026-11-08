@@ -217,7 +217,7 @@ final class MotorInscribirTest extends TestCase {
 		$id = Motor_Inscripcion::inscribir( 61, $this->datos() );
 
 		$this->assertIsInt( $id, 'devuelve el id de la inscripción' );
-		$this->assertSame( 'pendiente', $GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_estado'] );
+		$this->assertSame( 'confirmada', $GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_estado'], 'gratuita con plaza: confirmada desde el primer momento' );
 		$this->assertSame( 'no_registrada', $GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_asistencia'] );
 		$this->assertNotEmpty( $GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_codigo_reserva'] );
 

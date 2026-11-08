@@ -159,13 +159,13 @@ final class RestEndpointsTest extends TestCase {
 	 * Una inscripción sin confirmar no se da por presente.
 	 */
 	public function test_checkin_sin_confirmar(): void {
-		$this->inscripcion( 'tok-1', 'pendiente' );
+		$this->inscripcion( 'tok-1', 'pendiente_pago' );
 		$GLOBALS['convoca_test_posts'] = array( $GLOBALS['_wp_stores']['posts'][70] );
 
 		$respuesta = $this->api->handle_checkin( $this->peticion( array( 'code' => 'tok-1' ) ) );
 
 		$this->assertSame( 400, $respuesta->get_status() );
-		$this->assertSame( 'pendiente', $respuesta->get_data()['estado'] );
+		$this->assertSame( 'pendiente_pago', $respuesta->get_data()['estado'] );
 	}
 
 	/**

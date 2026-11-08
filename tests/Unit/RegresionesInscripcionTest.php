@@ -90,16 +90,19 @@ final class RegresionesInscripcionTest extends TestCase {
 	}
 
 	/**
-	 * R11 — El check-in rechaza una inscripción que no está confirmada.
+	 * R11 — El check-in solo acredita a quien tiene plaza, con la regla única del motor.
+	 *
+	 * Antes miraba el literal 'confirmada', que dejaba fuera las inscripciones antiguas nacidas
+	 * 'pendiente'. La regla vive en Estados::es_vigente() para que check-in, QR y
+	 * recordatorios no puedan volver a divergir.
 	 */
-	public function test_el_checkin_exige_inscripcion_confirmada(): void {
+	public function test_el_checkin_exige_inscripcion_vigente(): void {
 		$src = $this->fuente( 'includes/Checkin_Handler.php' );
 
-		$this->assertStringContainsString( "'confirmada'", $src, 'La comprobación de estado ha desaparecido.' );
 		$this->assertMatchesRegularExpression(
-			"/\\\$estado\s*!==\s*'confirmada'/",
+			'/Estados::es_vigente\(/',
 			$src,
-			'El check-in debe cortar cuando la inscripción no está confirmada (HTTP 409 en la demo).'
+			'El check-in debe usar la regla única de estados vigentes, no un literal.'
 		);
 		$this->assertStringContainsString( 'not_confirmed', $src, 'Falta el error de contrato para la inscripción no confirmada.' );
 		$this->assertStringContainsString( 'manage_inscripciones', $src, 'El escáner debe exigir permiso para hacer check-in.' );

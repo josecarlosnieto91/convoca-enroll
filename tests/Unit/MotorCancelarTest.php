@@ -179,7 +179,31 @@ final class MotorCancelarTest extends TestCase {
 
 		$consultas = implode( "\n", (array) $GLOBALS['_wp_stores']['queries'] );
 		$this->assertStringNotContainsString( 'CAST(meta_value AS SIGNED) + 1', $consultas, 'la plaza la ocupa el promovido' );
-		$this->assertStringContainsString( "meta_value = 'pendiente'", $consultas, 'se promueve al de la espera' );
+		$this->assertStringContainsString( "meta_value = 'confirmada'", $consultas, 'actividad gratuita: se promueve ya confirmado' );
+	}
+
+	/**
+	 * En una actividad de pago, quien sale de la espera queda pendiente de pago, no confirmado.
+	 */
+	public function test_promocion_en_actividad_de_pago_queda_pendiente_pago(): void {
+		$this->escenario();
+		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_requiere_pago'] = 1;
+
+		$espera                        = new \WP_Post();
+		$espera->ID                    = 71;
+		$espera->post_type             = 'inscripcion';
+		$espera->post_date             = '2026-10-02 10:00:00';
+		$GLOBALS['convoca_test_posts'] = array( $espera );
+		$GLOBALS['_wp_stores']['post_meta'][71] = array(
+			'_convoca_actividad_id' => 61,
+			'_convoca_estado'       => 'lista_espera',
+			'_convoca_es_socio'     => '0',
+		);
+
+		$this->assertTrue( Motor_Inscripcion::cancelar( 70 ) );
+
+		$consultas = implode( "\n", (array) $GLOBALS['_wp_stores']['queries'] );
+		$this->assertStringContainsString( "meta_value = 'pendiente_pago'", $consultas, 'sin cobro no se confirma una plaza de pago' );
 	}
 
 	/**

@@ -644,7 +644,7 @@ class Checkin_Handler {
 			}
 
 			$estado = get_post_meta( $id, '_convoca_estado', true );
-			if ( $estado !== 'confirmada' ) {
+			if ( ! Estados::es_vigente( (string) $estado ) ) {
 				$wpdb->query( 'ROLLBACK' );
 				return new \WP_Error( 'not_confirmed', __( 'La inscripción no está confirmada.', 'convoca-enroll' ) );
 			}

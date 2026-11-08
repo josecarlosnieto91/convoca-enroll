@@ -481,8 +481,9 @@ class CPT_Actividad {
 							'value' => $user->user_email,
 						),
 						array(
-							'key'   => '_convoca_estado',
-							'value' => 'confirmada',
+							'key'     => '_convoca_estado',
+							'value'   => Estados::vigentes(),
+							'compare' => 'IN',
 						),
 					),
 					'fields'         => 'ids',
@@ -620,8 +621,9 @@ class CPT_Actividad {
 						'value' => $user->user_email,
 					),
 					array(
-						'key'   => '_convoca_estado',
-						'value' => 'confirmada',
+						'key'     => '_convoca_estado',
+						'value'   => Estados::vigentes(),
+						'compare' => 'IN',
 					),
 				),
 			);

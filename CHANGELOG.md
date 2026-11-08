@@ -1,3 +1,35 @@
+## [2.9.0] — 2026-11-08
+
+### Corregido
+
+- **Una actividad gratuita con plaza ya no nace «pendiente de validación».** La inscripción queda
+  `confirmada` desde el primer momento: el correo es el de plaza confirmada, con QR y enlace de
+  check-in, y salen los recordatorios. Antes nacía `pendiente`, nadie la confirmaba nunca y todo lo que
+  filtraba por `confirmada` la ignoraba.
+- **Una sola regla de estados** (`Estados::vigentes()`): recordatorios, QR, check-in, álbum y encuesta
+  usaban el literal `confirmada` cada uno por su cuenta. Ahora `pendiente` cuenta (son las
+  inscripciones antiguas, que sí tenían plaza) y `pendiente_pago` no (sin cobro no hay plaza).
+- **La promoción de la lista de espera va al estado que toca**: `confirmada` en actividad gratuita,
+  `pendiente_pago` si hay que pagar. Antes siempre caía a `pendiente`, otra vez al limbo.
+- **El aviso de promoción sale después del COMMIT**, no dentro de la transacción: si el COMMIT fallaba,
+  el socio ya había recibido el aviso de una plaza que no existía.
+- **`confirmar()` ya no confirma una inscripción impagada** sin prueba de cobro: el cobro pasa
+  `$pago_verificado`; el panel y la API reciben un error claro.
+- **El contador de plazas usa el prefijo del CPT de actividad**, no el de inscripción (hoy coinciden por
+  casualidad; mañana no).
+- **`$meta_actividad` siempre está definida** (con estado forzado, PHP 8 avisaba de variable sin
+  definir).
+- **El contador que ve el visitante se relee tras descontar la plaza**: la meta cacheada seguía con el
+  valor viejo y la página decía «12/12» justo después de inscribirse.
+- **El límite de reservas es por actividad**, no por toda la instalación.
+- **Hook de asistencia duplicado** eliminado: se disparaba dos veces en la misma llamada.
+
+### Pruebas
+
+- 7 nuevas: los cuatro caminos (gratuita con plaza, con pago, sin plaza, espera), la tabla de estados
+  vigentes, la plantilla de correo que toca a cada uno, la promoción en actividad de pago y una guarda
+  que impide volver a filtrar por el literal `confirmada`.
+
 ## [2.8.0] — 2026-11-04
 
 ### Añadido

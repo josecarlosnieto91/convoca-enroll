@@ -391,11 +391,25 @@ class Email_Automation {
 	/* ── Event handlers ────────────────────────── */
 
 	public function on_nueva( int $inscripcion_id, int $actividad_id, string $estado ): void {
-		if ( $estado === 'lista_espera' ) {
-			$this->send( 'lista_espera', $inscripcion_id, $actividad_id );
-		} else {
-			$this->send( 'recepcion', $inscripcion_id, $actividad_id );
+		$this->send( self::plantilla_de_nueva( $estado ), $inscripcion_id, $actividad_id );
+	}
+
+	/**
+	 * Qué correo corresponde a una inscripción recién creada.
+	 *
+	 * La decisión vive aparte para poder probarla sin montar la cola: espera, plaza confirmada (con QR)
+	 * o recepción. Antes solo había dos ramas y todo lo que no era espera recibía el «pendiente de
+	 * validación», también las gratuitas que ya tenían plaza.
+	 *
+	 * @param string $estado Estado con el que nace la inscripción.
+	 * @return string Slug de la plantilla.
+	 */
+	public static function plantilla_de_nueva( string $estado ): string {
+		if ( 'lista_espera' === $estado ) {
+			return 'lista_espera';
 		}
+
+		return Estados::es_vigente( $estado ) ? 'confirmacion_plaza' : 'recepcion';
 	}
 
 	/**
@@ -539,8 +553,9 @@ class Email_Automation {
 						'value' => $actividad_id,
 					),
 					array(
-						'key'   => '_convoca_estado',
-						'value' => 'confirmada',
+						'key'     => '_convoca_estado',
+						'value'   => Estados::vigentes(),
+						'compare' => 'IN',
 					),
 				),
 			)
@@ -758,8 +773,8 @@ class Email_Automation {
 			'{plazas_restantes}' => $am( 'plazas_disponibles' ) ?: '0',
 			'{codigo_reserva}'   => $m( 'codigo_reserva' ) ?: '—',
 			'{panel_reservas}'   => $panel_url,
-			'{qr_code}'          => ( $m( 'estado' ) === 'confirmada' ) ? $this->generate_qr_url( $inscripcion_id ) : '',
-			'{url_checkin}'      => ( $m( 'estado' ) === 'confirmada' ) ? $this->get_checkin_url( $inscripcion_id ) : '',
+			'{qr_code}'          => Estados::es_vigente( (string) $m( 'estado' ) ) ? $this->generate_qr_url( $inscripcion_id ) : '',
+			'{url_checkin}'      => Estados::es_vigente( (string) $m( 'estado' ) ) ? $this->get_checkin_url( $inscripcion_id ) : '',
 			'{album_url}'        => $am( 'google_album_url' ) ?: '—',
 			'{calendario_link}'  => $this->get_ics_link( $inscripcion_id ),
 		);

@@ -234,7 +234,7 @@ class Google_Photos {
 						'key' => '_convoca_actividad_id', 'value' => $actividad_id
 					),
 					array(
-						'key' => '_convoca_estado', 'value' => 'confirmada'
+						'key' => '_convoca_estado', 'value' => Estados::vigentes(), 'compare' => 'IN'
 					),
 				),
 			)

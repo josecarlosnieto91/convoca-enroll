@@ -256,6 +256,12 @@ class Form_Inscripcion {
 			wp_send_json_error( array( 'errors' => array( $result->get_error_message() ) ) );
 		}
 
+		// El cupo se descuenta con SQL directo sobre postmeta, así que la meta cacheada sigue con el
+		// valor de antes: el visitante veía «12/12» justo después de inscribirse. Se tira esa caché y
+		// se relee para devolver el contador real.
+		wp_cache_delete( (int) $actividad_id, 'post_meta' );
+		$act_meta = CPT_Actividad::get_meta( $actividad_id );
+
 		// If payment is needed and amount > 0, create payment and redirect.
 		if ( $requiere_pago && $amount_eur > 0 ) {
 			$actividad = get_post( $actividad_id );

@@ -385,7 +385,7 @@ class Rest_API {
 
 		// Verify status is confirmed.
 		$estado = CPT_Inscripcion::get_meta( $insc_id, 'estado' );
-		if ( $estado !== 'confirmada' ) {
+		if ( ! Estados::es_vigente( (string) $estado ) ) {
 			\Convoca\Core\Logger::info( "Intento de check-in fallido: Inscripción #$insc_id no confirmada (Estado: $estado)", 'Enroll/Checkin', $monitor_id );
 			return new \WP_REST_Response(
 				array(

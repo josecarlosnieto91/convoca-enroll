@@ -94,8 +94,9 @@ class Activity_Reminder_Cron {
 						'value' => $activity_id,
 					),
 					array(
-						'key'   => '_convoca_estado',
-						'value' => 'confirmada',
+						'key'     => '_convoca_estado',
+						'value'   => Estados::vigentes(),
+						'compare' => 'IN',
 					),
 				),
 			)
