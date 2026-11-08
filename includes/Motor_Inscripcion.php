@@ -205,6 +205,11 @@ class Motor_Inscripcion {
 			$tel    = sanitize_text_field( $datos['telefono'] ?? '' );
 			$dni    = strtoupper( str_replace( array( ' ', '-' ), '', sanitize_text_field( $datos['dni'] ?? '' ) ) );
 
+			// Modo «no pedirlo»: no se guarda el documento (minimización de datos, issue #64).
+			if ( 'no' === \Convoca\Enroll\Utils::dni_modo( $actividad_id ) ) {
+				$dni = '';
+			}
+
 			if ( empty( $nombre ) ) {
 				return new \WP_Error( 'missing_nombre', __( 'El nombre es obligatorio.', 'convoca-enroll' ) );
 			}

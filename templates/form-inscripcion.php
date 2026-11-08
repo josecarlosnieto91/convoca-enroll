@@ -65,6 +65,7 @@ $has_socio_dia    = (float) $precio_sd > 0;
 $permitir_menores = $settings['permitir_menores'] ?? true;
 $url_privacidad   = $settings['url_privacidad'] ?? home_url( '/politica-de-privacidad/' );
 $url_proteccion   = $settings['url_proteccion_datos'] ?? '';
+$url_imagenes     = $settings['url_imagenes'] ?? '';
 
 // Intro & normas from settings.
 $texto_intro = $settings['texto_introduccion'] ?? 'Antes de realizar tu inscripción te recomendamos explorar primero todos los talleres disponibles para descubrir las propuestas que más te interesan.';
@@ -89,9 +90,18 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 			</summary>
 			<div class="conv-normas-content convoca-mt-medium">
 				<?php echo wp_kses_post( $normas_html ); ?>
-				<?php if ( ! empty( $url_proteccion ) ) : ?>
-					<p class="convoca-mt-small">Puedes consultar la información completa sobre protección de datos y uso de imágenes
-						<a href="<?php echo esc_url( $url_proteccion ); ?>" target="_blank" rel="noopener">aquí</a>.
+				<?php if ( ! empty( $url_proteccion ) || ! empty( $url_imagenes ) ) : ?>
+					<p class="convoca-mt-small">
+						<?php esc_html_e( 'Puedes consultar la información completa sobre', 'convoca-enroll' ); ?>
+						<?php if ( ! empty( $url_proteccion ) ) : ?>
+							<a href="<?php echo esc_url( $url_proteccion ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'protección de datos', 'convoca-enroll' ); ?></a>
+						<?php endif; ?>
+						<?php if ( ! empty( $url_proteccion ) && ! empty( $url_imagenes ) ) : ?>
+							<?php esc_html_e( 'y', 'convoca-enroll' ); ?>
+						<?php endif; ?>
+						<?php if ( ! empty( $url_imagenes ) ) : ?>
+							<a href="<?php echo esc_url( $url_imagenes ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'uso de imágenes', 'convoca-enroll' ); ?></a>
+						<?php endif; ?>.
 					</p>
 				<?php endif; ?>
 			</div>
@@ -195,11 +205,18 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 		</div>
 
 		<div class="convoca-grid-2">
+			<?php $dni_modo = \Convoca\Enroll\Utils::dni_modo( (int) $actividad->ID ); ?>
 			<div class="convoca-field">
-				<label for="conv-dni">DNI / NIE / Identificación *</label>
-				<input type="text" id="conv-dni" name="dni" required autocomplete="off" placeholder="12345678A"
+				<label for="conv-dni">
+					<?php esc_html_e( 'DNI / NIE / Identificación', 'convoca-enroll' ); ?>
+					<?php echo 'obligatorio' === $dni_modo ? ' *' : ' (' . esc_html__( 'opcional', 'convoca-enroll' ) . ')'; ?>
+				</label>
+				<input type="text" id="conv-dni" name="dni" <?php echo 'obligatorio' === $dni_modo ? 'required' : ''; ?> autocomplete="off" placeholder="12345678A"
 					value="<?php echo esc_attr( (string) ( $miembro['dni'] ?? '' ) ); ?>">
-				<span class="convoca-error-msg">Introduce un documento de identificación válido.</span>
+				<span class="convoca-error-msg"><?php esc_html_e( 'Introduce un documento de identificación válido.', 'convoca-enroll' ); ?></span>
+				<?php if ( 'obligatorio' !== $dni_modo ) : ?>
+					<small class="convoca-help"><?php esc_html_e( 'Si lo rellenas, se usa para evitar inscripciones duplicadas.', 'convoca-enroll' ); ?></small>
+				<?php endif; ?>
 			</div>
 			<div class="convoca-field">
 				<label for="conv-telefono">Teléfono</label>

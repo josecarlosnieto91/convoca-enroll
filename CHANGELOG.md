@@ -1,3 +1,39 @@
+## [2.13.0] — 2026-11-08
+
+Tanda de siete issues (#58–#64).
+
+### Corregido
+
+- **#58 · La tarjeta del formulario es legible.** El título salía en la tinta del tema sobre el granate:
+  el tema ganaba por especificidad y el color dependía de presets que ese tema no define. Ahora el
+  componente usa variables propias (`--conv-card-bg-start`, `--conv-card-bg-end`, `--conv-card-fg`,
+  `--conv-accent`) con fallback neutro y selectores con especificidad de componente; el sitio puede
+  sobrescribirlas. Con prueba de contraste AA de los textos contra el fondo.
+- **#59 · El aviso de socio lo escribe el servidor.** Fuera la ruta fija `/acceder/` (404 en un sitio real), el
+  «Trasgu» a pelo y la «aportación reducida» en actividades gratuitas: textos al catálogo, URLs de
+  `wp_login_url()`/`wp_logout_url()`, etiqueta desde `get_aportacion_label()`, y el aviso cambia (o
+  desaparece la parte de tarifas) si la actividad es gratuita. El JS ya no fuerza `socio_dia` en
+  gratuitas.
+- **#60 · Las dos opciones muertas se leen.** «Plazas por defecto» rellena las plazas al crear una
+  actividad y «URL Uso de Imágenes» se enlaza en el bloque de normas.
+- **#61 · El editor propio expone el CPT entero.** Añadidos precio de socio de día, horas,
+  recordatorios (7 d, 1 d, 1 h, X horas, post-evento), Google (álbum y calendario), funciones y
+  obligaciones; las plazas disponibles se muestran calculadas. Todo se guarda.
+- **#62 · Los cron se aseguran en cada carga.** El recordatorio «X horas antes» no se enviaba en sitios
+  ya activos porque su evento solo se programaba en la activación. Ahora `Cronograma::asegurar()` los
+  programa en `init` si faltan (idempotente), y la encuesta solo si está activa.
+- **#63 · «Estado» distingue «roto» de «sin configurar».** Una página opcional ausente es un aviso, no
+  un error crítico; se detecta si el sitio ya resuelve el listado con el bloque de inscripción. El
+  resumen del panel dice cuántos errores y cuántos avisos hay (convoca-core 2.4.5).
+- **#64 · El DNI es configurable.** Ajuste global (obligatorio / opcional / no pedirlo) y por actividad
+  (con «heredar»); si no se pide, el motor no lo guarda; si se pide y se rellena, se sigue validando y
+  evitando duplicados.
+
+### Pruebas
+
+- 18 nuevas: cronograma (5), editor y ajustes (5), formulario/tarjeta/DNI (8). Suite: 982 pruebas,
+  3425 aserciones.
+
 ## [2.12.0] — 2026-11-08
 
 ### Corregido

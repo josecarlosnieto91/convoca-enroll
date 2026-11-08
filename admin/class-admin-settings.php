@@ -164,6 +164,8 @@ class Admin_Settings {
 			$settings['permitir_menores']       = ! empty( $conv['permitir_menores'] ) ? 1 : 0;
 			$settings['bloquear_dni_duplicado'] = ! empty( $conv['bloquear_dni_duplicado'] ) ? '1' : '0';
 			$settings['plazas_por_defecto']     = absint( $conv['plazas_por_defecto'] ?? 20 );
+			$conv_dni_modo                      = (string) ( $conv['dni_modo'] ?? 'obligatorio' );
+			$settings['dni_modo']               = in_array( $conv_dni_modo, array( 'obligatorio', 'opcional', 'no' ), true ) ? $conv_dni_modo : 'obligatorio';
 			$settings['cancel_window_hours']    = absint( $conv['cancel_window_hours'] ?? 24 );
 			$settings['url_panel_reservas']     = esc_url_raw( $conv['url_panel_reservas'] ?? '' );
 			$settings['sheets_enabled']         = absint( $conv['sheets_enabled'] ?? 0 );
@@ -327,6 +329,47 @@ class Admin_Settings {
 	 *
 	 * @return array<int, mixed>
 	 */
+	/**
+	 * ¿El sitio resuelve el listado de actividades con el bloque en entradas o páginas?
+	 *
+	 * El shortcode no es la única vía: la ficha y el listado pueden vivir en el bloque. Si el sitio ya
+	 * los usa, exigir además una página con shortcode es un falso «crítico» (issue #63).
+	 *
+	 * @return bool
+	 */
+	private static function sitio_usa_bloque_de_inscripcion(): bool {
+		global $wpdb;
+
+		$patrones = array(
+			'wp:convoca-enroll/formulario-inscripcion',
+			'wp:convoca-enroll/pagina-inscripcion',
+			'[convoca_inscripcion_page]',
+			'[convoca_inscripcion]',
+		);
+
+		foreach ( $patrones as $patron ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- una lectura acotada para el diagnóstico, cacheada después con el resto.
+			$id = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT ID FROM {$wpdb->posts} WHERE post_status = 'publish' AND post_type IN ('post','page') AND post_content LIKE %s LIMIT 1",
+					'%' . $wpdb->esc_like( $patron ) . '%'
+				)
+			);
+
+			if ( $id ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Comprobaciones del sistema.
+	 *
+	 * @param bool $force Ignorar la caché.
+	 * @return array<int, array<string, mixed>>
+	 */
 	private static function get_system_checks( bool $force = false ): array {
 		if ( ! $force ) {
 			$cached = get_option( self::CACHE_KEY );
@@ -372,32 +415,52 @@ class Admin_Settings {
 		// que nadie registra hace que el admin publique una página con el texto
 		// literal a la vista del visitante (pasaba con [convoca_mis_inscripciones],
 		// [convoca_checkin] y [convoca_pago_actividad]).
+		// Una página ausente NO siempre es un fallo: el listado de actividades se puede resolver con el
+		// bloque dentro de las entradas y la evaluación puede no usarse. Solo el panel de
+		// reservas es imprescindible. «No configurado» es un aviso; «roto», un error.
+		$usa_bloque     = self::sitio_usa_bloque_de_inscripcion();
 		$required_pages = array(
 			'convoca_inscripcion_page' => array(
-				'title'     => __( 'Página: Actividades', 'convoca-enroll' ),
-				'shortcode' => '[convoca_inscripcion_page]',
-				'fix'       => __( 'Crea una página con el shortcode [convoca_inscripcion_page] para mostrar el listado de actividades.', 'convoca-enroll' ),
+				'title'            => __( 'Página: Actividades', 'convoca-enroll' ),
+				'shortcode'        => '[convoca_inscripcion_page]',
+				'fix'              => __( 'Crea una página con el shortcode [convoca_inscripcion_page] para mostrar el listado de actividades.', 'convoca-enroll' ),
+				'opcional'         => true,
+				'cubierta'         => $usa_bloque,
+				'cubierta_mensaje' => __( 'No hace falta página: el sitio muestra las actividades con el bloque de inscripción.', 'convoca-enroll' ),
 			),
 			'convoca_panel_reservas'   => array(
 				'title'     => __( 'Página: Mis Inscripciones', 'convoca-enroll' ),
 				'shortcode' => '[convoca_panel_reservas]',
 				'fix'       => __( 'Crea una página con el shortcode [convoca_panel_reservas] para que los usuarios vean sus reservas.', 'convoca-enroll' ),
+				'opcional'  => false,
 			),
 			'convoca_evaluacion'       => array(
 				'title'     => __( 'Página: Formulario de Evaluación', 'convoca-enroll' ),
 				'shortcode' => '[convoca_evaluacion]',
-				'fix'       => __( 'Crea una página con el shortcode [convoca_evaluacion] para que los monitores evalúen las actividades.', 'convoca-enroll' ),
+				'fix'       => __( 'Si usas evaluaciones, crea una página con el shortcode [convoca_evaluacion].', 'convoca-enroll' ),
+				'opcional'  => true,
 			),
 		);
 
 		foreach ( $required_pages as $slug => $data ) {
 			$page     = self::find_page_by_shortcode( $data['shortcode'] );
+			$cubierta = ! empty( $data['cubierta'] );
+			$ok       = $page || $cubierta;
+
+			if ( $ok ) {
+				$message = $page
+					/* translators: %s: page title */
+					? sprintf( __( 'Detectada: %s', 'convoca-enroll' ), get_the_title( $page ) )
+					: (string) ( $data['cubierta_mensaje'] ?? '' );
+			} else {
+				$message = __( 'No se ha encontrado ninguna página con este shortcode.', 'convoca-enroll' );
+			}
+
 			$checks[] = array(
 				'title'   => $data['title'],
-				'status'  => $page ? 'ok' : 'error',
-				/* translators: %s: page title */
-				'message' => $page ? sprintf( __( 'Detectada: %s', 'convoca-enroll' ), get_the_title( $page ) ) : __( 'No se ha encontrado ninguna página con este shortcode.', 'convoca-enroll' ),
-				'fix'     => ! $page ? $data['fix'] : '',
+				'status'  => $ok ? 'ok' : ( $data['opcional'] ? 'warning' : 'error' ),
+				'message' => $message,
+				'fix'     => $ok ? '' : $data['fix'],
 			);
 		}
 

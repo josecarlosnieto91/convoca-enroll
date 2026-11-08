@@ -17,20 +17,27 @@
 
         /* RGPD-compliant Auth Load */
         const apiRoot = window.bdeEnroll?.apiRoot || '/wp-json/';
+        const i18n = Object.assign(
+            { requierePago: true, banner: '', autenticado: '' },
+            (window.bdeEnroll && window.bdeEnroll.i18n) || {}
+        );
         fetch(apiRoot + 'convoca-enroll/v1/me/session-status')
             .then(r => r.json())
             .then(data => {
                 if (!data.authenticated) {
                     if (socioSelect) socioSelect.value = '0';
-                    if (tipoInscripcion) tipoInscripcion.value = 'socio_dia';
+                    // En una actividad gratuita no hay tarifa que aplicar: no se toca el tipo.
+                    if (tipoInscripcion && i18n.requierePago) tipoInscripcion.value = 'socio_dia';
 
-                    const precioS = conv.$('#conv-precio-socio', wrapper);
-                    const precioSD = conv.$('#conv-precio-socio-dia', wrapper);
-                    if (precioS) precioS.classList.remove('conv-price--active');
-                    if (precioSD) precioSD.classList.add('conv-price--active');
+                    if (i18n.requierePago) {
+                        const precioS = conv.$('#conv-precio-socio', wrapper);
+                        const precioSD = conv.$('#conv-precio-socio-dia', wrapper);
+                        if (precioS) precioS.classList.remove('conv-price--active');
+                        if (precioSD) precioSD.classList.add('conv-price--active');
+                    }
 
-                    if (authBanner) {
-                        authBanner.innerHTML = `Identifícate <strong><a href="/acceder/" style="text-decoration:underline;">como socio/a</a></strong> para autocompletar tus datos y aplicar tu aportación reducida. (De lo contrario, se aplica aportación Trasgu).`;
+                    if (authBanner && i18n.banner) {
+                        authBanner.innerHTML = i18n.banner;
                         authBanner.style.display = 'block';
                     }
                     return;
@@ -50,8 +57,8 @@
                         if (precioS) precioS.classList.add('conv-price--active');
                         if (precioSD) precioSD.classList.remove('conv-price--active');
 
-                        if (authBanner) {
-                            authBanner.innerHTML = `<strong>Autenticado como socio/a:</strong> ${member.name}. Tienes aplicada la aportación de socio. Opcionalmente puedes <a href="/acceder/?action=logout" style="text-decoration:underline;">cerrar sesión</a>.`;
+                        if (authBanner && i18n.autenticado) {
+                            authBanner.innerHTML = i18n.autenticado.replace('%s', member.name);
                             authBanner.style.display = 'block';
                         }
 

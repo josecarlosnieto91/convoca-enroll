@@ -82,6 +82,20 @@ trait Admin_Settings_General {
 		</div>
 
 		<div class="convoca-field">
+			<label for="dni_modo"><?php esc_html_e( 'DNI en la inscripción', 'convoca-enroll' ); ?></label>
+			<select id="dni_modo" name="conv[dni_modo]">
+				<?php
+				foreach ( array(
+					'obligatorio' => __( 'Obligatorio', 'convoca-enroll' ), 'opcional' => __( 'Opcional', 'convoca-enroll' ), 'no' => __( 'No pedirlo', 'convoca-enroll' )
+				) as $valor => $etiqueta ) :
+					?>
+					<option value="<?php echo esc_attr( $valor ); ?>" <?php selected( ( $s['dni_modo'] ?? 'obligatorio' ), $valor ); ?>><?php echo esc_html( $etiqueta ); ?></option>
+				<?php endforeach; ?>
+			</select>
+			<small class="convoca-small"><?php esc_html_e( 'Cada actividad puede cambiarlo. Si se pide, al rellenarlo se sigue comprobando que no esté repetido.', 'convoca-enroll' ); ?></small>
+		</div>
+
+		<div class="convoca-field">
 			<label for="plazas_por_defecto"><?php esc_html_e( 'Plazas por defecto', 'convoca-enroll' ); ?></label>
 			<input type="number" id="plazas_por_defecto" name="conv[plazas_por_defecto]" min="0"
 				value="<?php echo esc_attr( $s['plazas_por_defecto'] ?? '20' ); ?>">

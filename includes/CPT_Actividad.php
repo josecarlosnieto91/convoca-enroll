@@ -42,6 +42,7 @@ class CPT_Actividad {
 		'ubicacion',
 		'requiere_pago',
 		'actividad_externa',
+		'dni_modo',
 		'responsables',
 		'reminder_7dias',
 		'reminder_1dia',
@@ -49,6 +50,7 @@ class CPT_Actividad {
 		'reminder_hours',       // Horas de antelación del recordatorio configurable (D27).
 		'reminder_post_evento',
 		'google_create_album',
+		'google_calendar_sync',
 		'google_album_id',
 		'google_album_url',
 		'google_album_shared',
@@ -350,6 +352,9 @@ class CPT_Actividad {
 			'precio_socio'         => fn( $v ) => floatval( str_replace( ',', '.', $v ) ),
 			'precio_socio_dia'     => fn( $v ) => floatval( str_replace( ',', '.', $v ) ),
 			'ubicacion'            => 'sanitize_text_field',
+			'dni_modo'             => function ( $v ) {
+				return in_array( $v, array( 'heredar', 'obligatorio', 'opcional', 'no' ), true ) ? $v : 'heredar';
+			},
 			'requiere_pago'        => 'absint',
 			'actividad_externa'    => 'absint',
 			'responsables'         => function ( $v ) {

@@ -72,6 +72,8 @@ class Form_Inscripcion {
 
 		wp_enqueue_style( 'conv-public', CONVOCA_ENROLL_URL . 'assets/css/convoca-enroll-public.css', array( 'convoca-core' ), CONVOCA_ENROLL_VERSION );
 		wp_enqueue_script( 'conv-public', CONVOCA_ENROLL_URL . 'assets/js/convoca-enroll-public.js', array( 'convoca-common-js' ), CONVOCA_ENROLL_VERSION, true );
+		list( $banner, $banner_auth ) = $this->banners_de_socio( $actividad_id, ! empty( $meta['requiere_pago'] ) );
+
 		wp_localize_script(
 			'conv-public',
 			'bdeEnroll',
@@ -79,6 +81,11 @@ class Form_Inscripcion {
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 				'apiRoot' => esc_url_raw( rest_url() ),
 				'nonce'   => wp_create_nonce( 'convoca_enroll_inscribir_nonce' ),
+				'i18n'    => array(
+					'requierePago' => ! empty( $meta['requiere_pago'] ),
+					'banner'       => $banner,
+					'autenticado'  => $banner_auth,
+				),
 			)
 		);
 
@@ -145,6 +152,42 @@ class Form_Inscripcion {
 	/**
 	 * AJAX handler.
 	 */
+	/**
+	 * Textos del aviso de socio, con las URLs de WordPress (no las de un sitio concreto).
+	 *
+	 * @param int  $actividad_id  Actividad.
+	 * @param bool $requiere_pago Si hay tarifa.
+	 * @return array{0: string, 1: string}
+	 */
+	private function banners_de_socio( int $actividad_id, bool $requiere_pago ): array {
+		$volver     = get_permalink( $actividad_id ) ?: home_url( '/' );
+		$login_url  = wp_login_url( $volver );
+		$logout_url = wp_logout_url( $volver );
+		$etiqueta   = \Convoca\Core\Utils::get_aportacion_label( 'trasgu' );
+
+		$banner = $requiere_pago
+			? sprintf(
+				/* translators: 1: login URL, 2: daily-rate label. */
+				__( 'Identifícate <strong><a href="%1$s">como socio/a</a></strong> para autocompletar tus datos y aplicar tu aportación reducida. (De lo contrario, se aplica la aportación %2$s).', 'convoca-enroll' ),
+				esc_url( $login_url ),
+				esc_html( $etiqueta )
+			)
+			: sprintf(
+				/* translators: %s: login URL. */
+				__( 'Identifícate <strong><a href="%s">como socio/a</a></strong> para autocompletar tus datos.', 'convoca-enroll' ),
+				esc_url( $login_url )
+			);
+
+		$auth = sprintf(
+			/* translators: 1: member name placeholder, 2: logout URL. */
+			__( '<strong>Autenticado como socio/a:</strong> %1$s. Tus datos están puestos en el formulario. Opcionalmente puedes <a href="%2$s">cerrar sesión</a>.', 'convoca-enroll' ),
+			'%s',
+			esc_url( $logout_url )
+		);
+
+		return array( $banner, $auth );
+	}
+
 	public function handle_ajax(): void {
 		check_ajax_referer( 'convoca_enroll_inscribir_nonce', 'nonce' );
 
@@ -177,7 +220,12 @@ class Form_Inscripcion {
 		if ( empty( $nombre ) ) {
 			$errors[] = 'El nombre es obligatorio.';
 		}
-		if ( empty( $dni ) ) {
+		// Solo se exige si la actividad (o el ajuste global) lo pide: en un taller gratuito el DNI no
+		// hace falta para nada y pedirlo disuade a quien no quiere darlo (issue #64).
+		$dni_modo = \Convoca\Enroll\Utils::dni_modo( (int) $actividad_id );
+		if ( 'no' === $dni_modo ) {
+			$dni = '';
+		} elseif ( 'obligatorio' === $dni_modo && empty( $dni ) ) {
 			$errors[] = 'El documento de identificación es obligatorio.';
 		}
 		if ( ! is_email( $email ) ) {

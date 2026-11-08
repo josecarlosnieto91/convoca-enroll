@@ -169,9 +169,12 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 
 		// Defaults for new activity.
 		if ( ! $post_id ) {
-			$meta['fecha_inicio']   = wp_date( 'Y-m-d\TH:i', strtotime( '+1 day 10:00' ) );
-			$meta['fecha_fin']      = wp_date( 'Y-m-d\TH:i', strtotime( '+1 day 14:00' ) );
-			$meta['plazas_totales'] = 20;
+			$meta['fecha_inicio'] = wp_date( 'Y-m-d\TH:i', strtotime( '+1 day 10:00' ) );
+			$meta['fecha_fin']    = wp_date( 'Y-m-d\TH:i', strtotime( '+1 day 14:00' ) );
+			// «Plazas por defecto» de Ajustes → General (issue #60): estaba guardada y no se leía.
+			$settings_plazas        = get_option( 'convoca_enroll_settings', array() );
+			$plazas_defecto         = absint( is_array( $settings_plazas ) ? ( $settings_plazas['plazas_por_defecto'] ?? 0 ) : 0 );
+			$meta['plazas_totales'] = $plazas_defecto > 0 ? $plazas_defecto : 20;
 			$meta['precio_socio']   = 0;
 			$meta['requiere_pago']  = 0;
 		}
@@ -271,6 +274,90 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 									<?php endforeach; ?>
 								</div>
 							</div>
+
+							<?php
+							// Opciones del CPT que antes solo existían en el editor nativo —inalcanzable, porque
+							// el plugin redirige edit.php y post.php a esta pantalla—: sin esto no había forma de
+							// configurar recordatorios, Google ni funciones desde el navegador (issue #61).
+							$stats_plazas = $post_id ? CPT_Inscripcion::count_by_activity( $post_id ) : array();
+							$ocupadas     = 0;
+							foreach ( Motor_Inscripcion::estados_que_ocupan_plaza() as $estado_ocupa ) {
+								$ocupadas += (int) ( $stats_plazas[ $estado_ocupa ] ?? 0 );
+							}
+							?>
+							<h3 class="conv-section-title"><?php esc_html_e( 'Aportaciones y horas', 'convoca-enroll' ); ?></h3>
+							<div class="conv-grid conv-grid--2">
+								<div class="conv-field">
+									<label for="precio_socio_dia"><?php esc_html_e( 'Precio Socio de Día (€)', 'convoca-enroll' ); ?></label>
+									<input type="number" name="precio_socio_dia" id="precio_socio_dia" value="<?php echo esc_attr( (string) ( $meta['precio_socio_dia'] ?? '' ) ); ?>" step="0.01">
+								</div>
+								<div class="conv-field">
+									<label for="horas_actividad"><?php esc_html_e( 'Horas de la actividad', 'convoca-enroll' ); ?></label>
+									<input type="number" name="horas_actividad" id="horas_actividad" value="<?php echo esc_attr( (string) ( $meta['horas_actividad'] ?? '' ) ); ?>" step="0.5" min="0">
+								</div>
+							</div>
+
+							<div class="conv-field">
+								<label><?php esc_html_e( 'Plazas disponibles (calculado)', 'convoca-enroll' ); ?></label>
+								<p class="description">
+									<?php
+									echo esc_html(
+										sprintf(
+											/* translators: 1: free slots, 2: occupied slots. */
+											__( '%1$d libres · %2$d ocupadas. Se calcula solo: cambia las plazas totales.', 'convoca-enroll' ),
+											(int) ( $meta['plazas_disponibles'] ?? 0 ),
+											$ocupadas
+										)
+									);
+									?>
+								</p>
+							</div>
+
+							<div class="conv-field">
+								<label for="dni_modo"><?php esc_html_e( 'DNI en la inscripción', 'convoca-enroll' ); ?></label>
+								<select name="dni_modo" id="dni_modo">
+									<?php
+									$dni_actual = (string) ( $meta['dni_modo'] ?? '' );
+									foreach ( array(
+										'heredar'     => __( 'Usar el ajuste general', 'convoca-enroll' ),
+										'obligatorio' => __( 'Obligatorio', 'convoca-enroll' ),
+										'opcional'    => __( 'Opcional', 'convoca-enroll' ),
+										'no'          => __( 'No pedirlo', 'convoca-enroll' ),
+									) as $valor => $etiqueta ) :
+										?>
+										<option value="<?php echo esc_attr( $valor ); ?>" <?php selected( $dni_actual, $valor ); ?>><?php echo esc_html( $etiqueta ); ?></option>
+									<?php endforeach; ?>
+								</select>
+							</div>
+
+							<h3 class="conv-section-title"><?php esc_html_e( 'Recordatorios', 'convoca-enroll' ); ?></h3>
+							<div class="conv-field">
+								<label><input type="checkbox" name="reminder_7dias" value="1" <?php checked( (string) ( $meta['reminder_7dias'] ?? '' ), '1' ); ?>> <?php esc_html_e( '7 días antes', 'convoca-enroll' ); ?></label>
+								<label><input type="checkbox" name="reminder_1dia" value="1" <?php checked( (string) ( $meta['reminder_1dia'] ?? '' ), '1' ); ?>> <?php esc_html_e( '1 día antes', 'convoca-enroll' ); ?></label>
+								<label><input type="checkbox" name="reminder_1hora" value="1" <?php checked( (string) ( $meta['reminder_1hora'] ?? '' ), '1' ); ?>> <?php esc_html_e( '1 hora antes', 'convoca-enroll' ); ?></label>
+								<label><input type="checkbox" name="reminder_post_evento" value="1" <?php checked( (string) ( $meta['reminder_post_evento'] ?? '' ), '1' ); ?>> <?php esc_html_e( 'Después del evento (encuesta)', 'convoca-enroll' ); ?></label>
+							</div>
+							<div class="conv-field">
+								<label for="reminder_hours"><?php esc_html_e( 'Recordatorio «X horas antes»', 'convoca-enroll' ); ?></label>
+								<input type="number" name="reminder_hours" id="reminder_hours" value="<?php echo esc_attr( (string) ( ( $meta['reminder_hours'] ?? '' ) ?: 24 ) ); ?>" min="0" step="1">
+								<p class="description"><?php esc_html_e( '0 = no enviar este recordatorio.', 'convoca-enroll' ); ?></p>
+							</div>
+
+							<h3 class="conv-section-title"><?php esc_html_e( 'Google', 'convoca-enroll' ); ?></h3>
+							<div class="conv-field">
+								<label><input type="checkbox" name="google_create_album" value="1" <?php checked( (string) ( $meta['google_create_album'] ?? '' ), '1' ); ?>> <?php esc_html_e( 'Crear álbum de fotos al terminar', 'convoca-enroll' ); ?></label>
+								<label><input type="checkbox" name="google_calendar_sync" value="1" <?php checked( (string) ( $meta['google_calendar_sync'] ?? '' ), '1' ); ?>> <?php esc_html_e( 'Sincronizar con Google Calendar', 'convoca-enroll' ); ?></label>
+							</div>
+
+							<h3 class="conv-section-title"><?php esc_html_e( 'Funciones y obligaciones', 'convoca-enroll' ); ?></h3>
+							<div class="conv-field">
+								<label for="funciones"><?php esc_html_e( 'Funciones', 'convoca-enroll' ); ?></label>
+								<textarea name="funciones" id="funciones" rows="4" class="widefat"><?php echo esc_textarea( (string) ( $meta['funciones'] ?? '' ) ); ?></textarea>
+							</div>
+							<div class="conv-field">
+								<label for="obligaciones"><?php esc_html_e( 'Obligaciones', 'convoca-enroll' ); ?></label>
+								<textarea name="obligaciones" id="obligaciones" rows="4" class="widefat"><?php echo esc_textarea( (string) ( $meta['obligaciones'] ?? '' ) ); ?></textarea>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -290,6 +377,27 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 	/**
 	 * Handle save from admin form.
 	 */
+	/**
+	 * Guarda las opciones que el editor propio no ofrecía antes (issue #61).
+	 *
+	 * @param int $post_id Actividad.
+	 * @return void
+	 */
+	private function guardar_campos_extra( int $post_id ): void {
+		update_post_meta( $post_id, '_convoca_precio_socio_dia', (float) str_replace( ',', '.', (string) wp_unslash( $_POST['precio_socio_dia'] ?? '0' ) ) );
+		update_post_meta( $post_id, '_convoca_horas_actividad', (float) str_replace( ',', '.', (string) wp_unslash( $_POST['horas_actividad'] ?? '0' ) ) );
+
+		foreach ( array( 'reminder_7dias', 'reminder_1dia', 'reminder_1hora', 'reminder_post_evento', 'google_create_album', 'google_calendar_sync' ) as $clave ) {
+			update_post_meta( $post_id, '_convoca_' . $clave, isset( $_POST[ $clave ] ) ? 1 : 0 );
+		}
+
+		$dni_modo = (string) wp_unslash( $_POST['dni_modo'] ?? 'heredar' );
+		update_post_meta( $post_id, '_convoca_dni_modo', in_array( $dni_modo, array( 'heredar', 'obligatorio', 'opcional', 'no' ), true ) ? $dni_modo : 'heredar' );
+		update_post_meta( $post_id, '_convoca_reminder_hours', absint( wp_unslash( $_POST['reminder_hours'] ?? 0 ) ) );
+		update_post_meta( $post_id, '_convoca_funciones', sanitize_textarea_field( wp_unslash( $_POST['funciones'] ?? '' ) ) );
+		update_post_meta( $post_id, '_convoca_obligaciones', sanitize_textarea_field( wp_unslash( $_POST['obligaciones'] ?? '' ) ) );
+	}
+
 	public function handle_save_admin(): void {
 		$this->exigir_guardado(
 			'convoca_enroll_save_actividad_nonce',
@@ -351,6 +459,8 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 
 		$responsables = isset( $_POST['responsables'] ) ? array_map( 'intval', $_POST['responsables'] ) : array();
 		update_post_meta( $post_id, '_convoca_responsables', implode( ',', $responsables ) );
+
+		$this->guardar_campos_extra( $post_id );
 
 		// La lista de actividades es la de la propia pantalla, no la de inscripciones: al guardar se vuelve
 		// a donde estaba la actividad, con su aviso (antes saltaba a Inscripciones y sin decir nada). Enroll#16.

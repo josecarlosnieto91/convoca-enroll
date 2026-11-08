@@ -85,4 +85,24 @@ class Utils {
 
 		return $adjuntos;
 	}
+	/**
+	 * ¿Se pide el DNI en esta actividad? `heredar` usa el ajuste global.
+	 *
+	 * Decisión de producto (issue #64): un taller gratuito de bienestar no necesita el DNI para nada;
+	 * el aforo lo controla el bloqueo de duplicados por correo. Por defecto sigue siendo obligatorio
+	 * para no cambiar el comportamiento de los sitios existentes.
+	 *
+	 * @param int $actividad_id Actividad.
+	 * @return string obligatorio | opcional | no
+	 */
+	public static function dni_modo( int $actividad_id ): string {
+		$modo = (string) get_post_meta( $actividad_id, CPT_Actividad::META_PREFIX . 'dni_modo', true );
+
+		if ( '' === $modo || 'heredar' === $modo ) {
+			$settings = get_option( 'convoca_enroll_settings', array() );
+			$modo     = is_array( $settings ) ? (string) ( $settings['dni_modo'] ?? 'obligatorio' ) : 'obligatorio';
+		}
+
+		return in_array( $modo, array( 'obligatorio', 'opcional', 'no' ), true ) ? $modo : 'obligatorio';
+	}
 }

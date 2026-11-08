@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Enroll
  * Plugin URI:        https://getconvoca.app
  * Description:       Centralized activity enrollment system.
- * Version: 2.12.0
+ * Version: 2.13.0
  * Requires at least: 6.4
  * Requires PHP:      8.4
  * Tested up to:      7.1.3
@@ -82,6 +82,10 @@ if ( ! defined( 'CONVOCA_ENROLL_URL' ) ) {
  */
 // PSR-4 autoloading handled by Composer (vendor/autoload.php)
 
+// Los eventos de cron se aseguran en cada carga, no solo en la activación: en un sitio que ya tenía
+// el plugin activo, la activación no se vuelve a ejecutar y los eventos nuevos no existían (issue #62).
+add_action( 'init', array( \Convoca\Enroll\Cronograma::class, 'asegurar' ) );
+
 /* ── Activation ───────────────────────────────────────────── */
 /**
  * Check convoca-core is active at activation.
@@ -142,37 +146,8 @@ register_activation_hook(
 		// Roles y capacidades: los crea y los mantiene Convoca Core (vocabulario del producto). Enroll no
 		// crea `monitor_actividad` ni toca los permisos del administrador.
 
-		// Schedule cron events with appropriate intervals.
-		if ( ! wp_next_scheduled( 'convoca_enroll_reminder_7dias' ) ) {
-			wp_schedule_event( time(), 'convoca_weekly', 'convoca_enroll_reminder_7dias' );
-		}
-		if ( ! wp_next_scheduled( 'convoca_enroll_reminder_24h' ) ) {
-			wp_schedule_event( time(), 'daily', 'convoca_enroll_reminder_24h' );
-		}
-		if ( ! wp_next_scheduled( 'convoca_enroll_reminder_1hora' ) ) {
-			wp_schedule_event( time(), 'hourly', 'convoca_enroll_reminder_1hora' );
-		}
-		if ( ! wp_next_scheduled( 'convoca_enroll_feedback' ) ) {
-			wp_schedule_event( time(), 'daily', 'convoca_enroll_feedback' );
-		}
-		if ( ! wp_next_scheduled( 'convoca_enroll_google_photos_share' ) ) {
-			if ( ! wp_next_scheduled( 'convoca_social_token_healthcheck' ) ) {
-				wp_schedule_event( time(), 'weekly', 'convoca_social_token_healthcheck' );
-			}
-			wp_schedule_event( time(), 'daily', 'convoca_enroll_google_photos_share' );
-		}
-		if ( ! wp_next_scheduled( 'convoca_enroll_process_email_queue' ) ) {
-			wp_schedule_event( time(), 'every_minute', 'convoca_enroll_process_email_queue' );
-		}
-		if ( ! wp_next_scheduled( 'convoca_enroll_process_webhook_queue' ) ) {
-			wp_schedule_event( time(), 'every_minute', 'convoca_enroll_process_webhook_queue' );
-		}
-		if ( ! wp_next_scheduled( 'convoca_enroll_cleanup_orphan_codes' ) ) {
-			wp_schedule_event( time(), 'daily', 'convoca_enroll_cleanup_orphan_codes' );
-		}
-		if ( ! wp_next_scheduled( 'convoca_enroll_activity_reminder' ) ) {
-			wp_schedule_event( time(), 'hourly', 'convoca_enroll_activity_reminder' );
-		}
+		// Los eventos de cron, en un solo sitio: también se aseguran en cada carga (init).
+		\Convoca\Enroll\Cronograma::asegurar();
 
 		// Save initial DB version.
 		add_option( 'convoca_enroll_db_version', CONVOCA_ENROLL_DB_VERSION, '', false );
