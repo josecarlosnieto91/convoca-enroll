@@ -1,3 +1,11 @@
+## [2.13.1] — 2026-11-08
+
+### Cambiado
+
+- El diagnóstico de páginas se divide en tres comprobaciones (plugins, páginas, check-in) para no
+  engordar `get_system_checks()`. Sin cambios de comportamiento; deja el ratchet de PHPMD por debajo de
+  la línea base (201 ≤ 204).
+
 ## [2.13.0] — 2026-11-08
 
 Tanda de siete issues (#58–#64).

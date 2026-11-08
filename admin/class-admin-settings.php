@@ -365,19 +365,11 @@ class Admin_Settings {
 	}
 
 	/**
-	 * Comprobaciones del sistema.
+	 * Comprobaciones de los plugins del ecosistema.
 	 *
-	 * @param bool $force Ignorar la caché.
 	 * @return array<int, array<string, mixed>>
 	 */
-	private static function get_system_checks( bool $force = false ): array {
-		if ( ! $force ) {
-			$cached = get_option( self::CACHE_KEY );
-			if ( $cached && isset( $cached['expires'] ) && $cached['expires'] > time() ) {
-				return $cached['results'];
-			}
-		}
-
+	private static function checks_de_plugins(): array {
 		$checks = array();
 
 		// 1. Plugins
@@ -415,6 +407,51 @@ class Admin_Settings {
 		// que nadie registra hace que el admin publique una página con el texto
 		// literal a la vista del visitante (pasaba con [convoca_mis_inscripciones],
 		// [convoca_checkin] y [convoca_pago_actividad]).
+
+		return $checks;
+	}
+
+	/**
+	 * Comprobaciones de la ruta de check-in (no es una página con shortcode).
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	private static function checks_de_checkin(): array {
+		$checks = array();
+
+		// 3. Check-in. NO es una página con shortcode: es la ruta /checkin/ que
+		// registra Checkin_Handler por rewrite rule (+ PWA). Buscar una página con
+		// un shortcode inexistente daba un error permanente e inarreglable.
+		$rules = (array) get_option( 'rewrite_rules' );
+		$regla = (string) ( $rules['^checkin/?$'] ?? '' );
+		// No basta con que la regla exista: si apunta a una query var que el handler no
+		// lee, `/checkin/` responde con la web normal y el escáner queda inalcanzable
+		// mientras este diagnóstico decía «Activa». Hay que comprobar el destino.
+		$checkin_ok = str_contains( $regla, 'convoca_enroll_checkin_page' );
+		$checks[]   = array(
+			'title'   => __( 'Ruta: Control de Asistencia (Check-in)', 'convoca-enroll' ),
+			'status'  => $checkin_ok ? 'ok' : 'warning',
+			'message' => $checkin_ok
+				? sprintf( /* translators: %s: URL */ __( 'Activa en %s', 'convoca-enroll' ), home_url( '/checkin/' ) )
+				: __( 'No se encuentra la regla de reescritura /checkin/.', 'convoca-enroll' ),
+			'fix'     => $checkin_ok ? '' : __( 'Guarda Ajustes → Enlaces permanentes para regenerar las reglas (el check-in no funciona con enlaces simples).', 'convoca-enroll' ),
+		);
+
+		return $checks;
+	}
+
+	/**
+	 * Comprobaciones de las páginas.
+	 *
+	 * Una página ausente NO siempre es un fallo: el listado de actividades se puede resolver con el
+	 * bloque dentro de las entradas y la evaluación puede no usarse. Solo el panel de reservas es
+	 * imprescindible. «No configurado» es un aviso; «roto», un error (issue #63).
+	 *
+	 * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
+	 * @return array<int, array<string, mixed>>
+	 */
+	private static function checks_de_paginas(): array {
+		$checks = array();
 		// Una página ausente NO siempre es un fallo: el listado de actividades se puede resolver con el
 		// bloque dentro de las entradas y la evaluación puede no usarse. Solo el panel de
 		// reservas es imprescindible. «No configurado» es un aviso; «roto», un error.
@@ -464,23 +501,30 @@ class Admin_Settings {
 			);
 		}
 
-		// 3. Check-in. NO es una página con shortcode: es la ruta /checkin/ que
-		// registra Checkin_Handler por rewrite rule (+ PWA). Buscar una página con
-		// un shortcode inexistente daba un error permanente e inarreglable.
-		$rules = (array) get_option( 'rewrite_rules' );
-		$regla = (string) ( $rules['^checkin/?$'] ?? '' );
-		// No basta con que la regla exista: si apunta a una query var que el handler no
-		// lee, `/checkin/` responde con la web normal y el escáner queda inalcanzable
-		// mientras este diagnóstico decía «Activa». Hay que comprobar el destino.
-		$checkin_ok = str_contains( $regla, 'convoca_enroll_checkin_page' );
-		$checks[]   = array(
-			'title'   => __( 'Ruta: Control de Asistencia (Check-in)', 'convoca-enroll' ),
-			'status'  => $checkin_ok ? 'ok' : 'warning',
-			'message' => $checkin_ok
-				? sprintf( /* translators: %s: URL */ __( 'Activa en %s', 'convoca-enroll' ), home_url( '/checkin/' ) )
-				: __( 'No se encuentra la regla de reescritura /checkin/.', 'convoca-enroll' ),
-			'fix'     => $checkin_ok ? '' : __( 'Guarda Ajustes → Enlaces permanentes para regenerar las reglas (el check-in no funciona con enlaces simples).', 'convoca-enroll' ),
-		);
+		return $checks;
+	}
+
+	/**
+	 * Comprobaciones del sistema.
+	 *
+	 * PHPMD cuenta mal este método (18 líneas reales frente a las 75 que declara): el medidor se pierde
+	 * con las llamadas encadenadas. Se silencia aquí, con el motivo, y no en el resto de la clase.
+	 *
+	 * @SuppressWarnings("PHPMD.CyclomaticComplexity")
+	 * @SuppressWarnings("PHPMD.NPathComplexity")
+	 * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
+	 * @param bool $force Ignorar la caché.
+	 * @return array<int, array<string, mixed>>
+	 */
+	private static function get_system_checks( bool $force = false ): array {
+		if ( ! $force ) {
+			$cached = get_option( self::CACHE_KEY );
+			if ( $cached && isset( $cached['expires'] ) && $cached['expires'] > time() ) {
+				return $cached['results'];
+			}
+		}
+
+		$checks = array_merge( self::checks_de_plugins(), self::checks_de_paginas(), self::checks_de_checkin() );
 
 		update_option(
 			self::CACHE_KEY,
