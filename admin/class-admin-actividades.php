@@ -642,7 +642,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 	protected function column_titulo( mixed $item ): string {
 		$edit    = admin_url( 'admin.php?page=convoca-enroll-actividad-editor&id=' . $item->ID );
 		$externa = get_post_meta( $item->ID, '_convoca_actividad_externa', true );
-		$badge   = $externa === '1' ? ' <span class="convoca-badge convoca-badge--externa" style="background:#2d5a27;color:#fff;">🌐</span>' : '';
+		$badge   = $externa === '1' ? ' <span class="convoca-badge convoca-badge--externa" style="background:#00a32a;color:#fff;">🌐</span>' : '';
 
 		$status_badge = '';
 		if ( $item->post_status === 'draft' ) {
@@ -679,7 +679,7 @@ class Admin_Actividades_List extends \WP_List_Table {
 		}
 		$pct = round( ( $stats['confirmada'] / $total ) * 100 );
 
-		$color = '#2d5a27';
+		$color = '#00a32a';
 		if ( $pct >= 90 ) {
 			$color = '#d63638';
 		} elseif ( $pct >= 70 ) {

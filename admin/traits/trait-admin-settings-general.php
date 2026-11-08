@@ -112,7 +112,7 @@ trait Admin_Settings_General {
 		<div class="convoca-field">
 			<label for="url_panel_reservas"><?php esc_html_e( 'URL Panel de Reservas', 'convoca-enroll' ); ?></label>
 			<input type="url" id="url_panel_reservas" name="conv[url_panel_reservas]"
-				value="<?php echo esc_attr( $s['url_panel_reservas'] ?? home_url( '/panel-de-reservas/' ) ); ?>">
+				value="<?php echo esc_attr( $s['url_panel_reservas'] ?? \Convoca\Enroll\Email_Automation::panel_url( 0 ) ); ?>">
 			<small class="convoca-small"><?php esc_html_e( 'Enlace a la página donde está incrustado el shortcode [convoca_panel_reservas].', 'convoca-enroll' ); ?></small>
 		</div>
 

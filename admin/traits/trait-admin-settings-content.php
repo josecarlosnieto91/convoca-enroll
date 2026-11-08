@@ -77,7 +77,7 @@ trait Admin_Settings_Content {
 		<div class="convoca-field">
 			<label for="url_privacidad"><?php esc_html_e( 'URL Política de Privacidad', 'convoca-enroll' ); ?></label>
 			<input type="url" id="url_privacidad" name="conv[url_privacidad]"
-				value="<?php echo esc_attr( $s['url_privacidad'] ?? home_url( '/politica-de-privacidad/' ) ); ?>">
+				value="<?php echo esc_attr( $s['url_privacidad'] ?? ( get_privacy_policy_url() ? get_privacy_policy_url() : home_url( '/' ) ) ); ?>">
 			<small class="convoca-small"><?php esc_html_e( 'Enlace a la página de política de privacidad.', 'convoca-enroll' ); ?></small>
 		</div>
 

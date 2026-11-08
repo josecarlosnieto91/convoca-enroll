@@ -1,3 +1,18 @@
+## [2.13.4] — 2026-11-08
+
+### Corregido
+
+- **el enlace de privacidad usa la página de WordPress** (#69): `get_privacy_policy_url()` en vez de
+  `/politica-de-privacidad/` escrito a mano.
+- **el panel de reservas por defecto es la página real**: `Email_Automation::panel_url()` en vez de
+  `home_url( '/panel-de-reservas/' )` en el ajuste.
+- **fuera la paleta de un cliente del PHP**: el semáforo de ocupación y los distintivos de actividad
+  externa pasan a los colores del sistema (`#b32d2e`, `#996800`, `#00a32a`).
+
+`/checkin/` no es una página: es una ruta del plugin (`add_rewrite_rule`), así que no se toca.
+
+Prueba nueva: el PHP de las pantallas no puede llevar un color de la paleta de un cliente.
+
 ## [2.13.3] — 2026-11-08
 
 ### Cambiado

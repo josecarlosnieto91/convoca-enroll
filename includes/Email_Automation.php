@@ -19,7 +19,7 @@
  * Email automation: 4 triggers + cron for reminders and feedback.
  *
  * All emails use the premium Convoca HTML layout
- * (orange #FF8700 + violet #320028) from Common\Email_Layout.
+ * (los colores del sitio, con el neutro como respaldo) desde Core\Email_Layout.
  *
  * @package Convoca\Enroll
  */

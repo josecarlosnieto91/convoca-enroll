@@ -196,14 +196,14 @@ final class ActividadPermisosTest extends TestCase {
 		$this->cpt->list_custom_column( 'plazas', 61 );
 		$vacia = (string) ob_get_clean();
 		$this->assertStringContainsString( '0/10', $vacia );
-		$this->assertStringContainsString( '#2d5a27', $vacia, 'verde cuando hay sitio' );
+		$this->assertStringContainsString( '#00a32a', $vacia, 'verde cuando hay sitio' );
 
 		$GLOBALS['_wp_stores']['post_meta'][61]['_convoca_plazas_disponibles'] = '1';
 		ob_start();
 		$this->cpt->list_custom_column( 'plazas', 61 );
 		$llena = (string) ob_get_clean();
 		$this->assertStringContainsString( '9/10', $llena );
-		$this->assertStringContainsString( '#ff500a', $llena, 'rojo cuando está a tope' );
+		$this->assertStringContainsString( '#b32d2e', $llena, 'rojo cuando está a tope' );
 
 		ob_start();
 		$this->cpt->list_custom_column( 'plazas', 99 );
