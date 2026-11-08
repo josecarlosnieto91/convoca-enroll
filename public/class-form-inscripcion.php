@@ -208,15 +208,18 @@ class Form_Inscripcion {
 		// el motor. Sin esto la página cobraba la tarifa de socio y la ficha quedaba como socio de día:
 		// dos precios para la misma inscripción. Issue #17.
 		$es_socio_real = \Convoca\Core\Member_Identity::is_authenticated();
+		$act_meta      = CPT_Actividad::get_meta( $actividad_id );
+		$requiere_pago = ! empty( $act_meta['requiere_pago'] );
+
 		if ( ! $es_socio_real || $es_menor ) {
-			$tipo_inscripcion = 'socio_dia';
+			// Misma regla que el motor: «socio de día» si hay tarifa, «invitado» si la actividad es
+			// gratuita. Antes toda visita anónima quedaba como socio de día y ensuciaba las estadísticas.
+			$tipo_inscripcion = $requiere_pago ? 'socio_dia' : 'invitado';
 			$es_socio         = false;
 		}
 
 		// Determine price based on tipo_inscripcion.
-		$act_meta      = CPT_Actividad::get_meta( $actividad_id );
-		$requiere_pago = ! empty( $act_meta['requiere_pago'] );
-		$amount_eur    = 0;
+		$amount_eur = 0;
 
 		if ( $requiere_pago ) {
 			$amount_eur = match ( $tipo_inscripcion ) {

@@ -76,12 +76,12 @@ class MigracionesTest extends TestCase {
 	}
 
 	/**
-	 * Las cuatro migraciones están declaradas, en orden, y con su opción de versión.
+	 * Las cinco migraciones están declaradas, en orden, y con su opción de versión.
 	 */
 	public function test_el_contrato_del_gestor(): void {
 		$callbacks = $this->valor( 'get_upgrade_callbacks' );
 
-		$this->assertSame( array( '1.2.0', '1.3.0', '1.4.0', '1.5.0' ), array_keys( $callbacks ), 'las migraciones van en orden de versión' );
+		$this->assertSame( array( '1.2.0', '1.3.0', '1.4.0', '1.5.0', '1.6.0' ), array_keys( $callbacks ), 'las migraciones van en orden de versión' );
 		$reflejo = new \ReflectionClass( Enroll_Upgrade_Manager::class );
 		foreach ( $callbacks as $version => $metodo ) {
 			// `is_callable` da false sobre un método protegido desde fuera; lo que importa es que EXISTA.
@@ -93,6 +93,23 @@ class MigracionesTest extends TestCase {
 
 		$this->assertSame( 'convoca_enroll_db_version', $this->valor( 'get_option_name' ), 'la versión se guarda en su opción' );
 		$this->assertNotEmpty( $this->valor( 'get_transient_prefix' ) );
+	}
+
+	/**
+	 * 1.6.0 retira el estado fantasma `pagada`: lo pasa a `confirmada`.
+	 */
+	public function test_la_migracion_1_6_0_pasa_pagada_a_confirmada(): void {
+		global $wpdb;
+		$GLOBALS['_wp_stores']['post_meta'][80] = array( '_convoca_estado' => 'pagada' );
+		$GLOBALS['_wp_stores']['post_meta'][81] = array( '_convoca_estado' => 'confirmada' );
+
+		$gestor = $this->gestor();
+		$metodo = new ReflectionMethod( Enroll_Upgrade_Manager::class, 'upgrade_to_1_6_0' );
+		$metodo->invoke( $gestor );
+
+		$consultas = implode( "\n", (array) $GLOBALS['_wp_stores']['queries'] );
+		$this->assertStringContainsString( "SET meta_value = 'confirmada'", $consultas );
+		$this->assertStringContainsString( "meta_value = 'pagada'", $consultas, 'solo toca las filas con ese valor' );
 	}
 
 	/**

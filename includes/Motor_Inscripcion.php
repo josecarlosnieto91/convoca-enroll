@@ -207,8 +207,11 @@ class Motor_Inscripcion {
 				return new \WP_Error( 'invalid_dni', __( 'El DNI/NIE no es válido.', 'convoca-enroll' ) );
 			}
 
-			// Always assign Trasgu (socio_dia) to non-logged users.
-			$datos['tipo_inscripcion'] = 'socio_dia';
+			// Sin sesión de socio: en una actividad de pago la tarifa es la de «socio de día»; en una
+			// gratuita no hay tarifa que aplicar y se guarda «invitado», para que las estadísticas de
+			// socios no mezclen una visita con quien viene como socio de día.
+			$meta_tarifa               = CPT_Actividad::get_meta( $actividad_id );
+			$datos['tipo_inscripcion'] = empty( $meta_tarifa['requiere_pago'] ) ? 'invitado' : 'socio_dia';
 			$datos['es_socio']         = false;
 		}
 
@@ -831,7 +834,7 @@ class Motor_Inscripcion {
 				'key' => CPT_Inscripcion::META_PREFIX . 'email', 'value' => $email
 			),
 			array(
-				'key' => CPT_Inscripcion::META_PREFIX . 'estado', 'value' => array( 'confirmada', 'pagada', 'pendiente', 'pendiente_pago', 'lista_espera' ), 'compare' => 'IN'
+				'key' => CPT_Inscripcion::META_PREFIX . 'estado', 'value' => array( 'confirmada', 'pendiente', 'pendiente_pago', 'lista_espera' ), 'compare' => 'IN'
 			),
 			array(
 				'relation' => 'OR',

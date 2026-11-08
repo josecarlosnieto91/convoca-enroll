@@ -19,6 +19,8 @@ use PHPUnit\Framework\TestCase;
 
 require_once dirname( __DIR__, 2 ) . '/includes/CPT_Actividad.php';
 require_once dirname( __DIR__, 2 ) . '/includes/CPT_Inscripcion.php';
+require_once dirname( __DIR__, 2 ) . '/includes/Estados.php';
+require_once dirname( __DIR__, 2 ) . '/includes/Activity_Reminder_Cron.php';
 require_once dirname( __DIR__, 2 ) . '/includes/Email_Automation.php';
 
 /**
@@ -30,9 +32,11 @@ final class InscripcionNuevaTest extends TestCase {
 	 * Estados vigentes: quién tiene plaza para recordatorios, QR y check-in.
 	 */
 	public function test_los_estados_vigentes_incluyen_lo_antiguo_y_no_lo_impagado(): void {
+		$this->assertSame( array( 'confirmada' ), Estados::vigentes(), 'Decisión de producto: solo «confirmada» acredita plaza.' );
 		$this->assertTrue( Estados::es_vigente( 'confirmada' ) );
-		$this->assertTrue( Estados::es_vigente( 'pendiente' ), 'Las inscripciones antiguas no se quedan fuera.' );
+		$this->assertFalse( Estados::es_vigente( 'pendiente' ), 'Una pendiente no recibe recordatorios ni check-in.' );
 		$this->assertFalse( Estados::es_vigente( 'pendiente_pago' ), 'Sin pagar no hay plaza que acreditar.' );
+		$this->assertFalse( Estados::es_vigente( 'pagada' ), 'El estado fantasma se retiró.' );
 		$this->assertFalse( Estados::es_vigente( 'lista_espera' ) );
 		$this->assertFalse( Estados::es_vigente( 'cancelada' ) );
 	}
@@ -42,7 +46,7 @@ final class InscripcionNuevaTest extends TestCase {
 	 */
 	public function test_una_gratuita_avisa_de_plaza_confirmada(): void {
 		$this->assertSame( 'confirmacion_plaza', Email_Automation::plantilla_de_nueva( 'confirmada' ) );
-		$this->assertSame( 'confirmacion_plaza', Email_Automation::plantilla_de_nueva( 'pendiente' ) );
+		$this->assertSame( 'recepcion', Email_Automation::plantilla_de_nueva( 'pendiente' ), 'Una pendiente no promete plaza.' );
 	}
 
 	/**
@@ -57,6 +61,14 @@ final class InscripcionNuevaTest extends TestCase {
 	 */
 	public function test_sin_plaza_avisa_de_lista_de_espera(): void {
 		$this->assertSame( 'lista_espera', Email_Automation::plantilla_de_nueva( 'lista_espera' ) );
+	}
+
+	/**
+	 * Una actividad sin fecha no manda recordatorios: no hay cuenta atrás que hacer.
+	 */
+	public function test_sin_fecha_no_hay_recordatorio(): void {
+		$this->assertFalse( \Convoca\Enroll\Activity_Reminder_Cron::reminder_due( '', 24, time() ) );
+		$this->assertFalse( \Convoca\Enroll\Activity_Reminder_Cron::reminder_due( '', 1, time() ) );
 	}
 
 	/**

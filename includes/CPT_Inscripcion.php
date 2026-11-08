@@ -42,7 +42,7 @@ class CPT_Inscripcion {
 		'dni',
 		'whatsapp',
 		'es_socio',
-		'tipo_inscripcion',    // socio | socio_dia | general.
+		'tipo_inscripcion',    // socio | socio_dia | invitado (gratuitas).
 		'estado',
 		'pago_id',             // Gateway pago post ID.
 		'metodo_pago',         // tarjeta | bizum.
@@ -63,7 +63,6 @@ class CPT_Inscripcion {
 		'pendiente',
 		'pendiente_pago',
 		'confirmada',
-		'pagada',
 		'lista_espera',
 		'cancelada',
 	);
@@ -78,7 +77,6 @@ class CPT_Inscripcion {
 			'pendiente'      => __( 'Pendiente', 'convoca-enroll' ),
 			'pendiente_pago' => __( 'Pendiente de aportación', 'convoca-enroll' ),
 			'confirmada'     => __( 'Confirmada', 'convoca-enroll' ),
-			'pagada'         => __( 'Pagada (especial)', 'convoca-enroll' ),
 			'lista_espera'   => __( 'Lista de espera', 'convoca-enroll' ),
 			'cancelada'      => __( 'Cancelada', 'convoca-enroll' ),
 		);
@@ -88,7 +86,6 @@ class CPT_Inscripcion {
 		'pendiente'      => 'convoca-badge convoca-badge--pending',
 		'pendiente_pago' => 'convoca-badge convoca-badge--warning',
 		'confirmada'     => 'convoca-badge convoca-badge--confirmed',
-		'pagada'         => 'convoca-badge convoca-badge--confirmed',
 		'lista_espera'   => 'convoca-badge convoca-badge--waitlist',
 		'cancelada'      => 'convoca-badge convoca-badge--cancelled',
 	);

@@ -238,6 +238,31 @@ final class MotorInscribirTest extends TestCase {
 	}
 
 	/**
+	 * Actividad gratuita, visita anónima: queda como «invitado», no como socio de día.
+	 *
+	 * El precio da igual (es gratis), pero las estadísticas de socios no deben contar como socio de día
+	 * a quien solo vino a un taller abierto.
+	 */
+	public function test_gratuita_anonima_queda_como_invitado(): void {
+		$this->actividad();
+
+		$id = Motor_Inscripcion::inscribir( 61, $this->datos() );
+
+		$this->assertSame( 'invitado', $GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_tipo_inscripcion'] );
+	}
+
+	/**
+	 * Actividad de pago, visita anónima: sigue siendo «socio de día», que es la tarifa que paga.
+	 */
+	public function test_de_pago_anonima_queda_como_socio_dia(): void {
+		$this->actividad( array( 'requiere_pago' => true ) );
+
+		$id = Motor_Inscripcion::inscribir( 61, $this->datos() );
+
+		$this->assertSame( 'socio_dia', $GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_tipo_inscripcion'] );
+	}
+
+	/**
 	 * Sin plazas: **lista de espera**. Ocupar una butaca que no hay es el fallo que se nota en el mostrador.
 	 */
 	public function test_sin_plazas_va_a_la_espera(): void {

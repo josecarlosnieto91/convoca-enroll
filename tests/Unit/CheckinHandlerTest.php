@@ -215,7 +215,7 @@ final class CheckinHandlerTest extends TestCase {
 	 * Una inscripción sin confirmar no se da por presente.
 	 */
 	public function test_marcar_sin_confirmar(): void {
-		// 'pendiente' sí acredita plaza (inscripciones antiguas); la que no la acredita es la impagada.
+		// Solo 'confirmada' acredita plaza; 'pendiente' y 'pendiente_pago' no.
 		$this->inscripcion( 'tok-bueno', 'pendiente_pago' );
 
 		$r = $this->checkin->mark_as_attended_by_token( 'tok-bueno' );

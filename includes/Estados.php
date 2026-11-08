@@ -30,24 +30,26 @@ final class Estados {
 	/**
 	 * Estados que dan derecho a plaza: recordatorios, QR, check-in, álbum y encuesta.
 	 *
-	 * `pendiente` entra a propósito: son las inscripciones creadas con la regla vieja, que tenían plaza
-	 * aunque nadie las confirmara. `pendiente_pago` NO entra: sin cobro no hay plaza que acreditar.
+	 * Solo `confirmada`. Decisión de producto: una `pendiente` no acredita nada —ni recordatorios ni
+	 * check-in—; quien la gestiona la confirma a mano si debe asistir. `pendiente_pago` tampoco: sin
+	 * cobro no hay plaza.
 	 *
 	 * @return string[]
 	 */
 	public static function vigentes(): array {
-		return array( 'confirmada', 'pendiente', 'pagada' );
+		return array( 'confirmada' );
 	}
 
 	/**
 	 * Estados que consumen una plaza del cupo.
 	 *
-	 * `lista_espera` y `cancelada` no consumen.
+	 * `lista_espera` y `cancelada` no consumen. `pagada` se retiró: nada lo escribía y ahora mismo
+	 * cualquier inscripción histórica con ese valor se migra a `confirmada`.
 	 *
 	 * @return string[]
 	 */
 	public static function ocupan_plaza(): array {
-		return array( 'pendiente', 'pendiente_pago', 'confirmada', 'pagada' );
+		return array( 'pendiente', 'pendiente_pago', 'confirmada' );
 	}
 
 	/**

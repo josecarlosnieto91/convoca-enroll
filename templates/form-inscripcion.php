@@ -109,6 +109,8 @@ $normas_html = $settings['normas_inscripcion'] ?? '';
 		<div class="conv-activity-meta">
 			<?php if ( $fecha ) : ?>
 				<span aria-label="Fecha">📅 <?php echo esc_html( $fecha ); ?></span>
+			<?php else : ?>
+				<span class="conv-sin-fecha" aria-label="Fecha">📅 <?php esc_html_e( 'Sin fecha confirmada', 'convoca-enroll' ); ?></span>
 			<?php endif; ?>
 			<?php if ( $ubicacion ) : ?>
 				<span aria-label="Ubicación">📍 <?php echo esc_html( $ubicacion ); ?></span>

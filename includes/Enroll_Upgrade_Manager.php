@@ -73,6 +73,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 			'1.3.0' => array( $this, 'upgrade_to_1_3_0' ),
 			'1.4.0' => array( $this, 'upgrade_to_1_4_0' ),
 			'1.5.0' => array( $this, 'upgrade_to_1_5_0' ),
+			'1.6.0' => array( $this, 'upgrade_to_1_6_0' ),
 		);
 	}
 
@@ -245,5 +246,25 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 		);
 
 		\Convoca\Core\Logger::info( 'Upgrade 1.2.0: Valores de asistencia unificados.', 'Enroll/Upgrade' );
+	}
+	/**
+	 * Migración 1.6.0: retira el estado fantasma `pagada`.
+	 *
+	 * Nada lo escribía nunca —el cobro acaba en `confirmada`—, pero estaba en las listas y las
+	 * etiquetas. Si alguna instalación lo tiene de una versión antigua, se pasa a `confirmada`, que
+	 * es lo que significa: pagada y con plaza. Idempotente: solo toca las filas con ese valor.
+	 */
+	protected function upgrade_to_1_6_0(): void {
+		global $wpdb;
+
+		$filas = (int) $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$wpdb->postmeta} SET meta_value = 'confirmada'
+				 WHERE meta_key = %s AND meta_value = 'pagada'",
+				'_convoca_estado'
+			)
+		);
+
+		\Convoca\Core\Logger::info( 'Upgrade 1.6.0: estado pagada migrado a confirmada (' . $filas . ' filas).', 'Enroll/Upgrade' );
 	}
 }

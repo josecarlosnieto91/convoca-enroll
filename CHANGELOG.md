@@ -1,3 +1,28 @@
+## [2.10.0] — 2026-11-08
+
+Decisiones de producto acordadas tras el cierre de #56.
+
+### Cambiado
+
+- **Solo `confirmada` acredita plaza.** `pendiente` deja de contar para recordatorios, QR, check-in,
+  álbum y encuesta: una inscripción pendiente no ha sido validada y no debe acreditar asistencia.
+- **Se retira el estado fantasma `pagada`** de las listas, etiquetas y comprobaciones. La migración
+  1.6.0 pasa a `confirmada` cualquier fila histórica con ese valor (idempotente).
+- **En actividades gratuitas, una visita anónima se guarda como `invitado`**, no como `socio_dia`, para
+  que las estadísticas de socios no la mezclen. En actividades de pago sigue siendo `socio_dia`, que es
+  la tarifa que paga.
+- **Actividad sin fecha**: la ficha muestra «Sin fecha confirmada» y el cron no manda recordatorios
+  (ya no podía: sin fecha no hay cuenta atrás; ahora hay prueba que lo fija).
+
+### Sin cambios
+
+- La lista de espera sigue **sin tope**, por decisión de producto.
+
+### Pruebas
+
+- 4 nuevas: tabla de estados (solo `confirmada`), migración de `pagada`, `reminder_due('')` falso e
+  `invitado` en gratuitas (con su pareja `socio_dia` en actividades de pago).
+
 ## [2.9.1] — 2026-11-08
 
 ### Corregido
