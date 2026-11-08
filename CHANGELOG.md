@@ -1,3 +1,12 @@
+## [2.9.1] — 2026-11-08
+
+### Corregido
+
+- **La confirmación manual desde el panel sigue funcionando.** Al exigir prueba de cobro en
+  `confirmar()`, el panel se quedaba sin poder confirmar una inscripción en `pendiente_pago`: quien
+  gestiona la actividad confirma a mano precisamente porque ha visto la transferencia. Ese permiso es
+  la prueba, así que la ruta del panel pasa `$pago_verificado = true`; la ruta pública no.
+
 ## [2.9.0] — 2026-11-08
 
 ### Corregido

@@ -299,7 +299,9 @@ class Rest_API {
 		if ( $estado === 'cancelada' ) {
 			$result = Motor_Inscripcion::cancelar( $id );
 		} elseif ( $estado === 'confirmada' ) {
-			$result = Motor_Inscripcion::confirmar( $id );
+			// Quien gestiona la actividad confirma a mano porque ha visto el cobro (transferencia,
+			// efectivo): su permiso ES la prueba. El cobro automático también pasa `true`.
+			$result = Motor_Inscripcion::confirmar( $id, true );
 		} else {
 			if ( $estado ) {
 				CPT_Inscripcion::update_meta( $id, 'estado', $estado );
