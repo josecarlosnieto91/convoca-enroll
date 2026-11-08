@@ -110,6 +110,9 @@ final class EmailTemplatesTest extends TestCase {
 
 	/**
 	 * Las plantillas guardadas mandan sobre las de fábrica: lo que el admin personalizó no se pierde.
+	 *
+	 * Y se completan con los marcadores críticos que la guardada no traiga: el texto del usuario se
+	 * respeta entero, pero un correo que promete el QR no puede salir sin el QR (issue #57).
 	 */
 	public function test_lo_guardado_manda(): void {
 		$GLOBALS['_wp_stores']['options']['convoca_enroll_email_templates'] = array(
@@ -120,9 +123,11 @@ final class EmailTemplatesTest extends TestCase {
 		);
 
 		$plantillas = Email_Automation::get_templates();
+		$cuerpo     = (string) $plantillas['confirmacion_plaza']['body'];
 
 		$this->assertSame( 'Tu plaza, {nombre}', $plantillas['confirmacion_plaza']['subject'] );
-		$this->assertSame( 'Nos vemos en {actividad}.', $plantillas['confirmacion_plaza']['body'] );
+		$this->assertStringStartsWith( 'Nos vemos en {actividad}.', $cuerpo, 'el texto guardado va primero y entero' );
+		$this->assertStringContainsString( '{qr_code}', $cuerpo, 'se completa el marcador que faltaba' );
 		// Y las demás siguen las de fábrica.
 		$this->assertNotEmpty( $plantillas['recepcion']['subject'] );
 	}

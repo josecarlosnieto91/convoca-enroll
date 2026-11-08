@@ -58,4 +58,31 @@ class Utils {
 
 		return apply_filters( 'convoca_enroll_aportacion_label', $label, $context );
 	}
+	/**
+	 * Añade el .ics solo si no hay ya uno entre los adjuntos.
+	 *
+	 * Un correo con dos invitaciones de calendario idénticas es un defecto visible: el mailer puede
+	 * haber añadido la suya (o un filtro del sitio) y el socio acaba con `invite.ics` y
+	 * `actividad-….ics` del mismo tamaño. Además se puede apagar con el filtro
+	 * `convoca_enroll_adjuntar_ics`.
+	 *
+	 * @param array<int, string> $adjuntos Adjuntos ya reunidos.
+	 * @param string             $ruta     Ruta del .ics del plugin.
+	 * @return array<int, string>
+	 */
+	public static function adjuntar_ics( array $adjuntos, string $ruta ): array {
+		if ( '' === $ruta || ! apply_filters( 'convoca_enroll_adjuntar_ics', true ) ) {
+			return $adjuntos;
+		}
+
+		foreach ( $adjuntos as $adjunto ) {
+			if ( 'ics' === strtolower( (string) pathinfo( (string) $adjunto, PATHINFO_EXTENSION ) ) ) {
+				return $adjuntos;
+			}
+		}
+
+		$adjuntos[] = $ruta;
+
+		return $adjuntos;
+	}
 }

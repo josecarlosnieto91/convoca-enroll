@@ -1,3 +1,24 @@
+## [2.11.0] — 2026-11-08
+
+### Corregido
+
+- **Una plantilla guardada ya no puede tapar un marcador imprescindible.** Si el cuerpo guardado no
+  tiene `{qr_code}` o `{url_checkin}` y el de serie sí, se le añade ese párrafo; el texto del usuario
+  se respeta entero y va primero. Antes, 11 plantillas guardadas desde septiembre prometían el QR y
+  ninguna lo pintaba: `maybe_migrate()` solo traducía marcadores viejos escritos como URL.
+- **La plantilla de serie de plaza confirmada pinta el QR de verdad**: imagen con `{qr_code}` y, por
+  si el cliente no la muestra, enlace con `{url_checkin}`. Antes solo decía «Adjuntamos tu código QR».
+- **Un solo `.ics` por correo**: si ya hay un `.ics` entre los adjuntos, no se añade el segundo. Se
+  puede apagar con el filtro `convoca_enroll_adjuntar_ics` y dejar solo el enlace del cuerpo.
+- **Migración de plantillas 2026-11-08**: al actualizar, completa los marcadores que falten en lo
+  guardado. Idempotente.
+
+### Pruebas
+
+- 8 nuevas: fusión del marcador que falta, no duplicar el que ya está, conservar lo que solo está en
+  la guardada, la plantilla de serie pinta el QR, la promesa obliga al marcador, y el `.ics` único
+  (con el caso de que ya venga uno y con el filtro que lo apaga).
+
 ## [2.10.0] — 2026-11-08
 
 Decisiones de producto acordadas tras el cierre de #56.

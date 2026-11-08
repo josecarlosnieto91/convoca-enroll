@@ -115,7 +115,7 @@ class Email_Automation {
 		}
 	}
 
-	/* ── Default templates ─────────────────────── */
+	/* Default templates */
 
 	/**
 	 * Plantillas por defecto.
@@ -248,6 +248,8 @@ class Email_Automation {
 						)
 					)
 					. __( '<p>Adjuntamos tu código QR y un enlace al calendario.</p>', 'convoca-enroll' )
+					. '<p style="text-align:center;margin:24px 0"><img src="{qr_code}" alt="' . esc_attr__( 'Código QR de check-in', 'convoca-enroll' ) . '" width="220" height="220" style="display:inline-block;max-width:220px;height:auto;border:0"></p>'
+					. __( '<p>Si el QR no se ve, abre tu <a href="{url_checkin}">enlace de check-in</a> desde el móvil.</p>', 'convoca-enroll' )
 					. Email_Layout::button_html( '{panel_reservas}', __( 'Ver mis reservas', 'convoca-enroll' ) ),
 			),
 			'cancelacion_reserva'            => array(
@@ -388,7 +390,7 @@ class Email_Automation {
 		update_option( self::OPTION, self::get_default_templates_array() );
 	}
 
-	/* ── Event handlers ────────────────────────── */
+	/* Event handlers */
 
 	public function on_nueva( int $inscripcion_id, int $actividad_id, string $estado ): void {
 		$this->send( self::plantilla_de_nueva( $estado ), $inscripcion_id, $actividad_id );
@@ -440,7 +442,7 @@ class Email_Automation {
 		return true;
 	}
 
-	/* ── Cron: 7 days before ─────────────────────── */
+	/* Cron: 7 days before */
 
 	public function cron_reminder_7dias(): void {
 		$target_start = (string) wp_date( 'Y-m-d\TH:i', (int) strtotime( '+7 days' ) );
@@ -456,7 +458,7 @@ class Email_Automation {
 		}
 	}
 
-	/* ── Cron: 24h before ────────────────────────── */
+	/* Cron: 24h before */
 
 	public function cron_reminder_24h(): void {
 		$target_start = (string) wp_date( 'Y-m-d\TH:i', (int) strtotime( '+23 hours' ) );
@@ -472,7 +474,7 @@ class Email_Automation {
 		}
 	}
 
-	/* ── Cron: 1 hour before ──────────────────────── */
+	/* Cron: 1 hour before */
 
 	public function cron_reminder_1hora(): void {
 		$target_start = (string) wp_date( 'Y-m-d\TH:i', (int) strtotime( '+1 hour' ) );
@@ -488,7 +490,7 @@ class Email_Automation {
 		}
 	}
 
-	/* ── Cron: post-event feedback (7 days after) ── */
+	/* Cron: post-event feedback (7 days after) */
 
 	public function cron_feedback(): void {
 		$target_start = (string) wp_date( 'Y-m-d\T00:00', (int) strtotime( '-7 days' ) );
@@ -504,7 +506,7 @@ class Email_Automation {
 		}
 	}
 
-	/* ── Helper methods for configurable reminders ── */
+	/* Helper methods for configurable reminders */
 
 	/**
 	 * Actividades para un recordatorio.
@@ -562,7 +564,7 @@ class Email_Automation {
 		);
 	}
 
-	/* ── Core send ─────────────────────────────── */
+	/* Core send */
 
 	private function send( string $slug, int $inscripcion_id, int $actividad_id ): void {
 		$templates = self::get_templates();
@@ -638,12 +640,12 @@ class Email_Automation {
 			$attachments = $this->get_attachments( $slug );
 		}
 
-		// Always attach ICS for confirmations.
-		if ( $slug === 'confirmacion_plaza' ) {
+		// Un solo .ics por correo: si el mailer o un filtro del sitio ya puso uno, no se añade el segundo.
+		if ( 'confirmacion_plaza' === $slug ) {
 			$calendar = new Google_Calendar();
 			$ics_path = $calendar->generate_ics_file( $actividad_id );
 			if ( $ics_path ) {
-				$attachments[] = $ics_path;
+				$attachments = Utils::adjuntar_ics( $attachments, $ics_path );
 			}
 		}
 
@@ -816,7 +818,7 @@ class Email_Automation {
 
 
 
-	/* ── CTA por defecto y migración ───────────────────── */
+	/* CTA por defecto y migración */
 
 	/**
 	 * Acción por defecto de cada plantilla: [url_placeholder, texto].
@@ -874,7 +876,7 @@ class Email_Automation {
 	}
 
 	const TEMPLATES_VERSION_OPTION = 'convoca_enroll_email_templates_version';
-	const TEMPLATES_VERSION        = '2026-09-10';
+	const TEMPLATES_VERSION        = '2026-11-08';
 
 	/**
 	 * Corrige las plantillas ya guardadas: enlaces con el placeholder sin llaves
@@ -888,47 +890,18 @@ class Email_Automation {
 		}
 
 		$templates = get_option( self::OPTION );
-
 		if ( is_array( $templates ) && ! empty( $templates ) ) {
-			$map = array(
-				'http://panel_reservas'  => '{panel_reservas}',
-				'http://album_url'       => '{album_url}',
-				'http://qr_code'         => '{qr_code}',
-				'http://url_checkin'     => '{url_checkin}',
-				'http://calendario_link' => '{calendario_link}',
-				'http://codigo_reserva'  => '{codigo_reserva}',
-			);
-
-			foreach ( $templates as $slug => $tpl ) {
-				foreach ( array( 'subject', 'body' ) as $field ) {
-					if ( ! isset( $tpl[ $field ] ) ) {
-						continue;
-					}
-
-					$text = str_replace( array_keys( $map ), array_values( $map ), (string) $tpl[ $field ] );
-					$text = preg_replace(
-						'/[a-z0-9._%+\-]+@(?:' . self::dominios_de_correo() . ')/i',
-						'{admin_email}',
-						$text
-					);
-
-					$templates[ $slug ][ $field ] = $text;
-				}
-			}
-
+			// Normaliza marcadores viejos y completa los críticos que falten (issue #57).
+			$templates = Plantillas::migrar( $templates, self::dominios_de_correo() );
+			$templates = Plantillas::fusionar_todas( self::get_default_templates_array(), $templates );
 			update_option( self::OPTION, $templates );
 		}
 
 		update_option( self::TEMPLATES_VERSION_OPTION, self::TEMPLATES_VERSION );
 	}
 
-	/* ── Admin getters ─────────────────────────── */
+	/* Admin getters */
 
-	/**
-	 * Plantillas guardadas.
-	 *
-	 * @return array<string, mixed>
-	 */
 	/**
 	 * Plantillas guardadas.
 	 *
@@ -937,7 +910,10 @@ class Email_Automation {
 	public static function get_templates(): array {
 		$saved    = get_option( self::OPTION, array() );
 		$defaults = self::get_default_templates_array();
-		return array_merge( $defaults, $saved );
+
+		// La guardada manda, pero si le falta un marcador crítico que la de serie sí trae, se le añade
+		// el párrafo: el texto del usuario no se toca, solo se completa lo que prometía y no enviaba.
+		return Plantillas::fusionar_todas( $defaults, is_array( $saved ) ? $saved : array() );
 	}
 
 	/**
