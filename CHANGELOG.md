@@ -1,3 +1,11 @@
+## [2.15.1] — 2026-11-08
+
+### Corregido
+
+- **los campos anti-bot se habían insertado dentro de la etiqueta `<form>`**, rompiendo el atributo
+  `class` y sin llegar a pintarse. Ahora van dentro del formulario, como primer contenido. Detectado al
+  verificar #73 en la demo: el formulario salía sin `convoca_web` ni `convoca_t`.
+
 ## [2.15.0] — 2026-11-08
 
 ### Añadido
