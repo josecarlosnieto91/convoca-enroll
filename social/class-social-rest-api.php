@@ -147,7 +147,7 @@ class Social_Rest_API {
 
 		// Step 1: Exchange code for short-lived token.
 		$token_url = "https://graph.facebook.com/v22.0/oauth/access_token?client_id={$app_id}&redirect_uri=" . rawurlencode( rest_url( 'convoca/v1/social/callback/meta' ) ) . "&client_secret={$app_secret}&code={$code}";
-		$resp      = wp_remote_get( $token_url );
+		$resp      = wp_remote_get( $token_url, array( 'timeout' => 15 ) );
 		if ( is_wp_error( $resp ) ) {
 			wp_redirect( admin_url( 'admin.php?page=convoca-media-accounts&convoca_error=token_failed' ) );
 			exit;
@@ -161,14 +161,14 @@ class Social_Rest_API {
 
 		// Step 2: Exchange for long-lived token.
 		$long_url   = "https://graph.facebook.com/v22.0/oauth/access_token?grant_type=fb_exchange_token&client_id={$app_id}&client_secret={$app_secret}&fb_exchange_token={$short_token}";
-		$long_resp  = wp_remote_get( $long_url );
+		$long_resp  = wp_remote_get( $long_url, array( 'timeout' => 15 ) );
 		$long_body  = json_decode( wp_remote_retrieve_body( $long_resp ), true );
 		$long_token = $long_body['access_token'] ?? $short_token;
 		$expires_in = $long_body['expires_in'] ?? 5184000; // ~60 days
 
 		// Step 3: Get user Pages.
 		$pages_url  = "https://graph.facebook.com/v22.0/me/accounts?access_token={$long_token}";
-		$pages_resp = wp_remote_get( $pages_url );
+		$pages_resp = wp_remote_get( $pages_url, array( 'timeout' => 15 ) );
 		$pages_body = json_decode( wp_remote_retrieve_body( $pages_resp ), true );
 		$pages      = $pages_body['data'] ?? array();
 
@@ -186,7 +186,7 @@ class Social_Rest_API {
 
 			// Check for linked Instagram account.
 			$ig_url  = "https://graph.facebook.com/v22.0/{$page_id}?fields=instagram_business_account&access_token={$page_token}";
-			$ig_resp = wp_remote_get( $ig_url );
+			$ig_resp = wp_remote_get( $ig_url, array( 'timeout' => 15 ) );
 			$ig_body = json_decode( wp_remote_retrieve_body( $ig_resp ), true );
 			if ( ! empty( $ig_body['instagram_business_account']['id'] ) ) {
 				$ig_id   = $ig_body['instagram_business_account']['id'];
@@ -246,7 +246,8 @@ class Social_Rest_API {
 		$resp = wp_remote_post(
 			'https://oauth2.googleapis.com/token',
 			array(
-				'body' => array(
+				'timeout' => 15,
+				'body'    => array(
 					'code'          => $code,
 					'client_id'     => $client_id,
 					'client_secret' => $client_secret,
@@ -273,6 +274,7 @@ class Social_Rest_API {
 		$info_resp    = wp_remote_get(
 			'https://www.googleapis.com/oauth2/v2/userinfo',
 			array(
+				'timeout' => 15,
 				'headers' => array( 'Authorization' => "Bearer {$access_token}" ),
 			)
 		);

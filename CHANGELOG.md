@@ -1,3 +1,21 @@
+## [2.13.2] — 2026-11-08
+
+### Corregido
+
+- **sin página de panel, el correo no inventa una ruta** (#66): el último recurso era
+  `home_url( '/panel-reservas/' )`, que en un sitio que llama a esa página de otra forma da 404 justo
+  cuando el usuario va a gestionar su inscripción. Ahora enlaza la ficha de la actividad. La lógica sale
+  a `Email_Automation::panel_url()`, que se puede probar.
+- **todas las llamadas de red llevan timeout** (#67): las 8 que no lo tenían (flujo OAuth de Meta y Google,
+  refresco de token de Google, descubrimiento de Instagram y el envío de webhooks) pasan a 15 s. Un extremo
+  lento ya no se queda con la petición que lo dispara.
+- **la simulación no escribe el payload en el log** (#68): los proveedores social y de Google volcaban el
+  texto, los enlaces y las imágenes en `debug.log`. Pasa al logger del core, con el identificador de la
+  operación y sin datos.
+
+Cuatro pruebas nuevas: el enlace sin panel, el enlace con panel, la guarda de `timeout` en las llamadas y
+la de que la simulación no registra el payload.
+
 ## [2.13.1] — 2026-11-08
 
 ### Cambiado

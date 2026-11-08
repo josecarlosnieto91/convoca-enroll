@@ -254,14 +254,14 @@ class Webhook_Dispatcher {
 					'headers' => array(
 						'Content-Type' => 'application/json',
 					),
-					'timeout' => 15,
 				);
 
 				if ( $secret ) {
 					$args['headers']['X-Convoca-Signature'] = hash_hmac( 'sha256', $item->payload, $secret );
 				}
 
-				$response = wp_remote_post( $item->url, $args );
+				// El timeout va en la llamada, a la vista: un extremo lento no puede quedarse con la petición.
+				$response = wp_remote_post( $item->url, array_merge( $args, array( 'timeout' => 15 ) ) );
 
 				if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) >= 200 && wp_remote_retrieve_response_code( $response ) < 300 ) {
 					$wpdb->update(

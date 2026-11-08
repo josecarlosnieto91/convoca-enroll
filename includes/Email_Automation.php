@@ -725,9 +725,42 @@ class Email_Automation {
 	}
 
 	/**
-	 * Documentación del método.
+	 * URL del panel de reservas.
 	 *
-	 * @return array<string, mixed>
+	 * Se resuelve una vez y se guarda. Si el sitio no tiene esa página, no se inventa una ruta —la
+	 * anterior, `/panel-reservas/`, daba 404 en los sitios que la llaman de otra forma—: se enlaza la
+	 * ficha de la actividad, que siempre existe (#66).
+	 *
+	 * @param int $actividad_id Actividad de la inscripción.
+	 * @return string
+	 */
+	public static function panel_url( int $actividad_id ): string {
+		$panel_page_id = (int) get_option( 'convoca_enroll_panel_reservas_page_id' );
+		if ( ! $panel_page_id ) {
+			$panel_page = get_pages(
+				array(
+					'meta_key'   => '_convoca_panel_page',
+					'meta_value' => '1',
+					'number'     => 1,
+				)
+			);
+			if ( ! empty( $panel_page ) ) {
+				$panel_page_id = (int) $panel_page[0]->ID;
+				update_option( 'convoca_enroll_panel_reservas_page_id', $panel_page_id );
+			}
+		}
+
+		$url = $panel_page_id ? get_permalink( $panel_page_id ) : get_permalink( $actividad_id );
+
+		return $url ? (string) $url : home_url( '/' );
+	}
+
+	/**
+	 * Marcadores del correo con los datos de la inscripción.
+	 *
+	 * @param int $inscripcion_id Inscripción.
+	 * @param int $actividad_id   Actividad.
+	 * @return array<string, string>
 	 */
 	private function build_vars( int $inscripcion_id, int $actividad_id ): array {
 		$m         = fn( $key ) => get_post_meta( $inscripcion_id, '_convoca_' . $key, true );
@@ -743,22 +776,7 @@ class Email_Automation {
 		$fecha     = $fecha_raw ? \Convoca\Core\Utils::format_date( $fecha_raw, 'd/m/Y' ) : '—';
 		$hora      = $fecha_raw ? \Convoca\Core\Utils::format_date( $fecha_raw, 'H:i' ) : '—';
 
-		// Build panel URL using cached page ID or fallback.
-		$panel_page_id = (int) get_option( 'convoca_enroll_panel_reservas_page_id' );
-		if ( ! $panel_page_id ) {
-			$panel_page = get_pages(
-				array(
-					'meta_key'   => '_convoca_panel_page',
-					'meta_value' => '1',
-					'number'     => 1,
-				)
-			);
-			if ( ! empty( $panel_page ) ) {
-				$panel_page_id = $panel_page[0]->ID;
-				update_option( 'convoca_enroll_panel_reservas_page_id', $panel_page_id );
-			}
-		}
-		$panel_url = $panel_page_id ? get_permalink( $panel_page_id ) : home_url( '/panel-reservas/' );
+		$panel_url = self::panel_url( $actividad_id );
 
 		$importe_cents = (int) $m( 'importe_pagado' );
 		$importe       = $importe_cents > 0 ? number_format( $importe_cents / 100, 2, ',', '.' ) . '€' : 'Gratuito / Voluntaria';

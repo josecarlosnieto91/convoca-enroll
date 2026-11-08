@@ -79,7 +79,8 @@ class Meta_Provider implements Social_Provider_Interface {
 				'message' => $message,
 				'link'    => $link_url,
 			);
-			error_log( '[CONVOCA DRY-RUN] Meta payload: ' . wp_json_encode( $payload ) );
+			// Igual que en Google: sin payload en el log (#68).
+			\Convoca\Core\Logger::debug( 'Simulación de publicación en Meta: ' . $this->page_id, 'Enroll/Social' );
 			return array( 'success' => true, 'message' => __( '[DRY-RUN] Simulated', 'convoca-enroll' ), 'id' => 'dry_' . time() );
 		}
 
@@ -238,7 +239,7 @@ class Meta_Provider implements Social_Provider_Interface {
 	 */
 	private function discover_instagram(): string {
 		$url = self::BASE_URL . self::API_VERSION . "/{$this->page_id}?fields=instagram_business_account&access_token={$this->access_token}";
-		$resp = wp_remote_get( $url );
+		$resp = wp_remote_get( $url, array( 'timeout' => 15 ) );
 		if ( is_wp_error( $resp ) ) {
 			return '';
 		}

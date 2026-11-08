@@ -70,7 +70,9 @@ class GBP_Provider implements Social_Provider_Interface {
 				'image'       => $image_url,
 				'link'        => $link_url,
 			);
-			error_log( '[CONVOCA DRY-RUN] GBP payload: ' . wp_json_encode( $payload ) );
+			// En simulación se deja rastro de la operación, pero no del payload: llevaba textos, enlaces e
+			// imágenes del sitio al debug.log (#68).
+			\Convoca\Core\Logger::debug( 'Simulación de publicación en Google: ' . $this->location_id, 'Enroll/Social' );
 			return array( 'success' => true, 'message' => __( '[DRY-RUN] Simulated GBP', 'convoca-enroll' ), 'id' => 'dry_gbp_' . time() );
 		}
 
@@ -165,7 +167,8 @@ class GBP_Provider implements Social_Provider_Interface {
 		}
 
 		$resp = wp_remote_post( 'https://oauth2.googleapis.com/token', array(
-			'body' => array(
+			'timeout' => 15,
+			'body'    => array(
 				'grant_type'    => 'refresh_token',
 				'refresh_token' => $this->refresh_token,
 				'client_id'     => $client_id,
