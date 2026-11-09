@@ -101,7 +101,9 @@ class Form_Inscripcion {
 					'id'       => $miembro_id,
 					'nombre'   => (string) $ficha->post_title,
 					'email'    => (string) get_post_meta( $miembro_id, '_convoca_email', true ),
-					'dni'      => (string) get_post_meta( $miembro_id, '_convoca_dni', true ),
+					'dni'      => class_exists( '\\Convoca\\Members\\Datos_Socio' )
+						? (string) \Convoca\Members\Datos_Socio::leer_meta( $miembro_id, 'dni' )
+						: (string) get_post_meta( $miembro_id, '_convoca_dni', true ),
 					'telefono' => (string) get_post_meta( $miembro_id, '_convoca_telefono', true ),
 				);
 			}

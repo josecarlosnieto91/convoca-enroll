@@ -150,7 +150,9 @@ class PDF_Compromiso {
 			$signature = new \Convoca\Core\Signature();
 
 			// Datos del Voluntario.
-			$dni = get_user_meta( $user_id, '_convoca_shifts_dni', true ) ?: ( get_user_meta( $user_id, '_convoca_dni', true ) ?: 'N/A' );
+			$dni = class_exists( '\\Convoca\\Members\\Datos_Socio' )
+				? \Convoca\Members\Datos_Socio::dni_de_usuario( $user_id, 'compromiso' )
+				: ( get_user_meta( $user_id, '_convoca_shifts_dni', true ) ?: ( get_user_meta( $user_id, '_convoca_dni', true ) ?: 'N/A' ) );
 
 			$meta_act         = CPT_Actividad::get_meta( $actividad_id );
 			$titulo_actividad = $actividad->post_title;

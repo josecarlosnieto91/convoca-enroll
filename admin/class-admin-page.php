@@ -697,7 +697,7 @@ class Admin_Page {
 			<!-- Internal notes -->
 			<div class="conv-detail-card" style="margin-top:1.5rem">
 				<h3>📝 <?php esc_html_e( 'Notas internas', 'convoca-enroll' ); ?></h3>
-				<textarea id="conv-internal-notes" rows="4" style="width:100%;"><?php echo esc_textarea( get_post_meta( $id, '_convoca_notas', true ) ); ?></textarea>
+				<textarea id="conv-internal-notes" rows="4" style="width:100%;"><?php echo esc_textarea( class_exists( '\\Convoca\\Members\\Datos_Socio' ) ? \Convoca\Members\Datos_Socio::leer_meta( $id, 'notas' ) : get_post_meta( $id, '_convoca_notas', true ) ); ?></textarea>
 				<div style="margin-top:8px;display:flex;gap:10px;align-items:center;">
 					<button type="button" id="conv-save-notes" class="convoca-btn convoca-btn-outline" data-id="<?php echo esc_attr( (string) $id ); ?>"><?php esc_html_e( 'Guardar nota', 'convoca-enroll' ); ?></button>
 					<span id="conv-notes-status" style="font-size:12px;color:#999;"></span>
