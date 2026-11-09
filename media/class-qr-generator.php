@@ -165,6 +165,44 @@ class QR_Generator {
 	}
 
 	/**
+	 * Identificador `Content-ID` del QR de check-in de una inscripción.
+	 *
+	 * @param int $inscripcion_id Inscripción.
+	 * @return string
+	 */
+	public static function inline_cid( int $inscripcion_id ): string {
+		return 'convoca-qr-' . $inscripcion_id . '@convoca';
+	}
+
+	/**
+	 * Datos del QR que viaja incrustado en el correo (enroll#75).
+	 *
+	 * El cuerpo lo referencia como `cid:` y el cliente lo pinta desde el propio mensaje: no depende
+	 * de `uploads` ni de que la persona pulse «Mostrar imágenes».
+	 *
+	 * @param int    $inscripcion_id Inscripción.
+	 * @param string $url            URL que codifica el QR.
+	 * @return array{cid: string, path: string, name: string, mime: string}|null
+	 */
+	public static function inline_for( int $inscripcion_id, string $url ): ?array {
+		if ( '' === $url ) {
+			return null;
+		}
+
+		$path = self::generate_for_url( 'inscripcion-' . $inscripcion_id, $url, array( 'size' => 300 ) );
+		if ( ! $path || ! is_file( $path ) ) {
+			return null;
+		}
+
+		return array(
+			'cid'  => self::inline_cid( $inscripcion_id ),
+			'path' => $path,
+			'name' => 'qr-checkin-' . $inscripcion_id . '.png',
+			'mime' => 'image/png',
+		);
+	}
+
+	/**
 	 * Pinta el PNG del QR. Un solo sitio dibuja códigos: lo comparten la ficha de la
 	 * actividad y el enlace de check-in.
 	 *

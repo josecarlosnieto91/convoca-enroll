@@ -140,6 +140,22 @@ final class Checkin {
 	 * @return array{inscripcion_id: int, cambiada: bool, anterior: string, hora: string, ya_marcada: bool}|WP_Error
 	 */
 	public static function registrar( int $inscripcion_id, int $user_id = 0 ): array|WP_Error {
+		$contexto = self::contexto( $inscripcion_id, $user_id );
+		if ( is_wp_error( $contexto ) ) {
+			return $contexto;
+		}
+
+		return self::marcar( $inscripcion_id, (int) $contexto['user_id'], (string) $contexto['anterior'], (string) $contexto['hora'] );
+	}
+
+	/**
+	 * Comprobaciones previas: inscripción, estado, usuario y ventana.
+	 *
+	 * @param int $inscripcion_id Inscripción.
+	 * @param int $user_id        Quién lo registra (0 = sesión actual).
+	 * @return array{user_id: int, anterior: string, hora: string}|WP_Error
+	 */
+	private static function contexto( int $inscripcion_id, int $user_id ): array|WP_Error {
 		$post = get_post( $inscripcion_id );
 		if ( ! $post || 'inscripcion' !== $post->post_type ) {
 			return new WP_Error( 'not_found', __( 'Inscripción no encontrada.', 'convoca-enroll' ) );
@@ -156,16 +172,29 @@ final class Checkin {
 		}
 
 		$actividad_id = (int) get_post_meta( $inscripcion_id, '_convoca_actividad_id', true );
-		$ahora        = time();
-
-		$ventana = self::validar_ventana( $actividad_id, $ahora );
+		$ventana      = self::validar_ventana( $actividad_id, time() );
 		if ( is_wp_error( $ventana ) ) {
 			return $ventana;
 		}
 
-		$anterior   = (string) get_post_meta( $inscripcion_id, '_convoca_asistencia', true );
+		return array(
+			'user_id'  => $user_id,
+			'anterior' => (string) get_post_meta( $inscripcion_id, '_convoca_asistencia', true ),
+			'hora'     => (string) get_post_meta( $inscripcion_id, '_convoca_checkin_hora', true ),
+		);
+	}
+
+	/**
+	 * Escribe la asistencia, la hora y quién la marcó.
+	 *
+	 * @param int    $inscripcion_id Inscripción.
+	 * @param int    $user_id        Quién lo registra.
+	 * @param string $anterior       Asistencia previa.
+	 * @param string $hora           Hora previa (vacía si no había).
+	 * @return array{inscripcion_id: int, cambiada: bool, anterior: string, hora: string, ya_marcada: bool}|WP_Error
+	 */
+	private static function marcar( int $inscripcion_id, int $user_id, string $anterior, string $hora ): array|WP_Error {
 		$ya_marcada = 'si' === $anterior;
-		$hora       = (string) get_post_meta( $inscripcion_id, '_convoca_checkin_hora', true );
 
 		if ( $ya_marcada ) {
 			if ( '' === $hora ) {
@@ -173,31 +202,23 @@ final class Checkin {
 				update_post_meta( $inscripcion_id, '_convoca_checkin_hora', $hora );
 			}
 			update_post_meta( $inscripcion_id, '_convoca_checkin_by', $user_id );
+		} else {
+			$resultado = Motor_Inscripcion::cambiar_asistencia( $inscripcion_id, 'si' );
+			if ( is_wp_error( $resultado ) ) {
+				return $resultado;
+			}
 
-			return array(
-				'inscripcion_id' => $inscripcion_id,
-				'cambiada'       => false,
-				'anterior'       => 'si',
-				'hora'           => $hora,
-				'ya_marcada'     => true,
-			);
+			$hora = (string) current_time( 'mysql' );
+			update_post_meta( $inscripcion_id, '_convoca_checkin_hora', $hora );
+			update_post_meta( $inscripcion_id, '_convoca_checkin_by', $user_id );
 		}
-
-		$resultado = Motor_Inscripcion::cambiar_asistencia( $inscripcion_id, 'si' );
-		if ( is_wp_error( $resultado ) ) {
-			return $resultado;
-		}
-
-		$hora = (string) current_time( 'mysql' );
-		update_post_meta( $inscripcion_id, '_convoca_checkin_hora', $hora );
-		update_post_meta( $inscripcion_id, '_convoca_checkin_by', $user_id );
 
 		return array(
 			'inscripcion_id' => $inscripcion_id,
-			'cambiada'       => true,
+			'cambiada'       => ! $ya_marcada,
 			'anterior'       => $anterior,
 			'hora'           => $hora,
-			'ya_marcada'     => false,
+			'ya_marcada'     => $ya_marcada,
 		);
 	}
 

@@ -815,6 +815,34 @@ class Checkin_Handler {
 	}
 
 	/**
+	 * Valida el token y el permiso sobre la actividad ANTES de marcar nada.
+	 *
+	 * Antes se marcaba y luego se respondía «sin permisos», así que el intento quedaba registrado
+	 * igual. Corta con `wp_send_json_error` (que en producción termina la petición).
+	 *
+	 * @param string $token   Token del QR.
+	 * @param int    $user_id Quién escanea.
+	 * @return int Inscripción autorizada.
+	 */
+	private function inscripcion_autorizada( string $token, int $user_id ): int {
+		$inscripcion_id = Checkin_Link::id_for_token( $token );
+
+		if ( $inscripcion_id <= 0 ) {
+			\Convoca\Core\Logger::info( 'Intento de check-in fallido (AJAX): token no válido', 'Enroll/Checkin', $user_id );
+			wp_send_json_error( __( 'Token de check-in no válido.', 'convoca-enroll' ), 404 );
+		}
+
+		$act_id = (int) get_post_meta( $inscripcion_id, '_convoca_actividad_id', true );
+
+		if ( ! CPT_Actividad::is_user_responsible( $user_id, $act_id ) ) {
+			\Convoca\Core\Logger::info( "Intento de check-in fallido (AJAX): Sin permisos para actividad #$act_id", 'Enroll/Checkin', $user_id, array( 'inscripcion_id' => $inscripcion_id ) );
+			wp_send_json_error( __( 'No tienes permiso para gestionar esta actividad.', 'convoca-enroll' ), 403 );
+		}
+
+		return $inscripcion_id;
+	}
+
+	/**
 	 * AJAX handler for scanner check-in.
 	 */
 	public function ajax_qr_checkin(): void {
@@ -825,22 +853,10 @@ class Checkin_Handler {
 			wp_send_json_error( __( 'No tienes permisos para realizar check-in.', 'convoca-enroll' ), 403 );
 		}
 
-		$token          = sanitize_text_field( wp_unslash( $_POST['id'] ?? '' ) );
-		$inscripcion_id = Checkin_Link::id_for_token( $token );
+		$token = sanitize_text_field( wp_unslash( $_POST['id'] ?? '' ) );
 
-		if ( $inscripcion_id <= 0 ) {
-			\Convoca\Core\Logger::info( 'Intento de check-in fallido (AJAX): token no válido', 'Enroll/Checkin', $user_id );
-			wp_send_json_error( __( 'Token de check-in no válido.', 'convoca-enroll' ), 404 );
-		}
-
-		$act_id = (int) get_post_meta( $inscripcion_id, '_convoca_actividad_id', true );
-
-		// El permiso sobre la actividad se comprueba ANTES de marcar: antes se marcaba y luego se
-		// respondía «sin permisos», así que el intento quedaba registrado igual.
-		if ( ! CPT_Actividad::is_user_responsible( $user_id, $act_id ) ) {
-			\Convoca\Core\Logger::info( "Intento de check-in fallido (AJAX): Sin permisos para actividad #$act_id", 'Enroll/Checkin', $user_id, array( 'inscripcion_id' => $inscripcion_id ) );
-			wp_send_json_error( __( 'No tienes permiso para gestionar esta actividad.', 'convoca-enroll' ), 403 );
-		}
+		$inscripcion_id = $this->inscripcion_autorizada( $token, $user_id );
+		$act_id         = (int) get_post_meta( $inscripcion_id, '_convoca_actividad_id', true );
 
 		$result = $this->mark_as_attended_by_token( $token, $user_id );
 
