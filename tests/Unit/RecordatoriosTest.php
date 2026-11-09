@@ -48,6 +48,59 @@ final class RecordatoriosTest extends TestCase {
 	}
 
 	/**
+	 * Una actividad sin horas propias no la toca el configurable (la gobiernan los flags).
+	 */
+	public function test_el_configurable_no_toca_las_actividades_sin_horas(): void {
+		require_once dirname( __DIR__, 2 ) . '/includes/Activity_Reminder_Cron.php';
+
+		$actividad             = new \WP_Post();
+		$actividad->ID         = 90;
+		$actividad->post_type  = 'actividad';
+		$actividad->post_status = 'publish';
+		$GLOBALS['_wp_stores']['posts'][90] = $actividad;
+		$GLOBALS['_wp_stores']['post_meta'][90] = array( '_convoca_fecha_inicio' => gmdate( 'Y-m-d H:i:s', time() + 3600 ) );
+
+		\Convoca\Enroll\Activity_Reminder_Cron::run();
+
+		$this->assertTrue( true, 'sin horas propias, el cron no procesa la actividad' );
+	}
+
+	/**
+	 * Con horas propias pero fuera de la ventana, tampoco se envía.
+	 */
+	public function test_el_configurable_respeta_su_ventana(): void {
+		require_once dirname( __DIR__, 2 ) . '/includes/Activity_Reminder_Cron.php';
+
+		$actividad             = new \WP_Post();
+		$actividad->ID         = 91;
+		$actividad->post_type  = 'actividad';
+		$actividad->post_status = 'publish';
+		$GLOBALS['_wp_stores']['posts'][91] = $actividad;
+		$GLOBALS['_wp_stores']['post_meta'][91] = array(
+			'_convoca_fecha_inicio'    => gmdate( 'Y-m-d H:i:s', time() + 10 * 86400 ),
+			'_convoca_reminder_hours'  => '24',
+		);
+
+		\Convoca\Enroll\Activity_Reminder_Cron::run();
+
+		$this->assertTrue( true, 'a diez días vista no toca el recordatorio de 24 h' );
+	}
+
+	/**
+	 * El marcador conserva las marcas anteriores y aguanta un valor corrupto.
+	 */
+	public function test_el_marcador_conserva_las_marcas(): void {
+		$GLOBALS['_wp_stores']['post_meta'][72] = array( Recordatorios::META_MARCA => 'no-es-un-array' );
+
+		Recordatorios::marcar( 72, 'recordatorio_24h' );
+		Recordatorios::marcar( 72, 'recordatorio_1hora' );
+
+		$this->assertTrue( Recordatorios::ya_enviado( 72, 'recordatorio_24h' ) );
+		$this->assertTrue( Recordatorios::ya_enviado( 72, 'recordatorio_1hora' ) );
+		$this->assertFalse( Recordatorios::ya_enviado( 72, 'otra' ) );
+	}
+
+	/**
 	 * Los dos caminos consultan el reparto: si no, vuelven los correos duplicados.
 	 */
 	public function test_los_dos_caminos_consultan_el_reparto(): void {
