@@ -1,3 +1,11 @@
+## [2.17.2] — 2026-11-09
+
+### Seguridad
+
+- El PDF de compromiso y el formulario de inscripción leen el DNI por `Datos_Socio`, que descifra y
+  audita. Si Members no está actualizado, mantienen la lectura antigua como reserva.
+- Las notas internas de la ficha se leen descifradas cuando Members está disponible.
+
 ## [2.17.1] — 2026-11-09
 
 ### Corregido
