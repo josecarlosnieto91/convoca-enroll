@@ -1,3 +1,16 @@
+## [2.17.1] — 2026-11-09
+
+### Corregido
+
+- **#87 — un solo sistema de recordatorios por actividad.** Una actividad con
+  `_convoca_reminder_hours` propio usa solo el recordatorio configurable; sin él, solo los tres crons
+  fijos y sus flags. Así una actividad con los avisos apagados no recibe nada por el otro camino, y
+  ya no salen dos «es mañana» con media hora de diferencia.
+- Marcador común `_convoca_ultimo_recordatorio_enviado` por inscripción y plantilla: si un camino ya
+  encoló ese aviso, el otro no lo repite.
+- El configurable ya no inventa 24 h cuando la actividad no configura horas: sin horas, no dispara.
+- Las fechas del recordatorio configurable se formatean con `Fechas::instante()` (zona del sitio).
+
 ## [2.17.0] — 2026-11-09
 
 ### Corregido

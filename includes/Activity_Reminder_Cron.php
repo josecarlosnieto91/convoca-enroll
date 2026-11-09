@@ -52,11 +52,14 @@ class Activity_Reminder_Cron {
 
 		$now = time();
 		foreach ( $activities as $activity ) {
-			$fecha_inicio = (string) get_post_meta( $activity->ID, '_convoca_fecha_inicio', true );
-			$hours        = absint( get_post_meta( $activity->ID, '_convoca_reminder_hours', true ) );
-			if ( $hours <= 0 ) {
-				$hours = 24;
+			// Sin horas propias, esta actividad la gobiernan los flags y los crons fijos: el
+			// configurable no la toca (enroll#87).
+			if ( 'configurable' !== Recordatorios::modo( (int) $activity->ID ) ) {
+				continue;
 			}
+
+			$fecha_inicio = (string) get_post_meta( $activity->ID, '_convoca_fecha_inicio', true );
+			$hours        = absint( get_post_meta( $activity->ID, Recordatorios::META_MODO, true ) );
 
 			if ( self::reminder_due( $fecha_inicio, $hours, $now ) ) {
 				self::process_activity( $activity->ID );
@@ -103,8 +106,8 @@ class Activity_Reminder_Cron {
 		);
 
 		foreach ( $inscriptions as $insc ) {
-			// Dedupe: no reenviar si ya se envió.
-			if ( get_post_meta( $insc->ID, '_convoca_reminder_activity_sent', true ) ) {
+			// Dedupe común: si otro camino ya encoló esta plantilla, no se repite.
+			if ( get_post_meta( $insc->ID, '_convoca_reminder_activity_sent', true ) || Recordatorios::ya_enviado( (int) $insc->ID, 'activity_reminder' ) ) {
 				continue;
 			}
 
@@ -122,8 +125,9 @@ class Activity_Reminder_Cron {
 
 		$nombre_actividad = get_the_title( $activity_id );
 		$fecha_raw        = (string) get_post_meta( $activity_id, '_convoca_fecha_inicio', true );
-		$fecha            = $fecha_raw ? (string) wp_date( 'd/m/Y', (int) strtotime( $fecha_raw ) ) : '';
-		$hora             = $fecha_raw ? (string) wp_date( 'H:i', (int) strtotime( $fecha_raw ) ) : '';
+		$inicio           = Fechas::instante( $fecha_raw );
+		$fecha            = null !== $inicio ? (string) wp_date( 'd/m/Y', $inicio ) : '';
+		$hora             = null !== $inicio ? (string) wp_date( 'H:i', $inicio ) : '';
 		$ubicacion        = (string) get_post_meta( $activity_id, '_convoca_ubicacion', true );
 		$link             = get_permalink( $activity_id );
 
@@ -164,6 +168,7 @@ class Activity_Reminder_Cron {
 		);
 
 		update_post_meta( $insc_id, '_convoca_reminder_activity_sent', current_time( 'mysql' ) );
+		Recordatorios::marcar( $insc_id, 'activity_reminder' );
 
 		Logger::info(
 			sprintf( 'Recordatorio de actividad encolado para inscripción #%d (actividad %d)', $insc_id, $activity_id ),

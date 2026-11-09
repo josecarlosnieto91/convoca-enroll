@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Enroll 2.17.0\n"
+"Project-Id-Version: Convoca Enroll 2.17.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-enroll\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-09T00:39:20+00:00\n"
+"POT-Creation-Date: 2026-11-09T01:01:23+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-enroll\n"
@@ -350,7 +350,7 @@ msgstr ""
 #: admin/class-admin-page.php:877
 #: admin/class-admin-settings.php:70
 #: admin/class-email-queue-list.php:46
-#: includes/Email_Automation.php:156
+#: includes/plantillas-defecto.php:49
 msgid "Estado"
 msgstr ""
 
@@ -481,14 +481,14 @@ msgstr ""
 #: admin/class-admin-page.php:877
 #: admin/class-admin-reports.php:1174
 #: includes/CPT_Actividad.php:166
-#: includes/Email_Automation.php:140
-#: includes/Email_Automation.php:180
-#: includes/Email_Automation.php:199
-#: includes/Email_Automation.php:225
-#: includes/Email_Automation.php:262
-#: includes/Email_Automation.php:285
-#: includes/Email_Automation.php:315
-#: includes/Email_Automation.php:342
+#: includes/plantillas-defecto.php:33
+#: includes/plantillas-defecto.php:73
+#: includes/plantillas-defecto.php:92
+#: includes/plantillas-defecto.php:118
+#: includes/plantillas-defecto.php:155
+#: includes/plantillas-defecto.php:178
+#: includes/plantillas-defecto.php:208
+#: includes/plantillas-defecto.php:235
 #: media/class-poster-engine.php:439
 #: media/class-poster-engine.php:583
 msgid "Actividad"
@@ -505,12 +505,12 @@ msgstr ""
 #: admin/class-admin-evaluaciones-list.php:46
 #: admin/class-admin-monitor-crm.php:190
 #: admin/class-admin-page.php:377
-#: includes/Email_Automation.php:144
-#: includes/Email_Automation.php:203
-#: includes/Email_Automation.php:229
-#: includes/Email_Automation.php:266
-#: includes/Email_Automation.php:289
-#: includes/Email_Automation.php:319
+#: includes/plantillas-defecto.php:37
+#: includes/plantillas-defecto.php:96
+#: includes/plantillas-defecto.php:122
+#: includes/plantillas-defecto.php:159
+#: includes/plantillas-defecto.php:182
+#: includes/plantillas-defecto.php:212
 #: media/class-blog-post-manager.php:223
 #: media/class-poster-engine.php:303
 msgid "Fecha"
@@ -917,12 +917,12 @@ msgstr ""
 
 #: admin/class-admin-page.php:377
 #: includes/CPT_Actividad.php:721
-#: includes/Email_Automation.php:152
-#: includes/Email_Automation.php:211
-#: includes/Email_Automation.php:237
-#: includes/Email_Automation.php:297
-#: includes/Email_Automation.php:327
-#: includes/Email_Automation.php:350
+#: includes/plantillas-defecto.php:45
+#: includes/plantillas-defecto.php:104
+#: includes/plantillas-defecto.php:130
+#: includes/plantillas-defecto.php:190
+#: includes/plantillas-defecto.php:220
+#: includes/plantillas-defecto.php:243
 #: media/class-blog-post-manager.php:229
 #: templates/form-inscripcion.php:126
 msgid "Ubicación"
@@ -953,7 +953,7 @@ msgid "(%1$d saltadas por falta de aforo, %2$d por estado no confirmable)."
 msgstr ""
 
 #: admin/class-admin-page.php:569
-#: includes/Checkin.php:145
+#: includes/Checkin.php:161
 #: includes/Motor_Inscripcion.php:484
 #: includes/Motor_Inscripcion.php:1041
 #: includes/Rest_API.php:330
@@ -1520,19 +1520,19 @@ msgid "Cada 7 días"
 msgstr ""
 
 #. translators: %s: nombre de la actividad
-#: includes/Activity_Reminder_Cron.php:131
+#: includes/Activity_Reminder_Cron.php:135
 #, php-format
 msgid "Recordatorio: %s"
 msgstr ""
 
 #. translators: %s: nombre de la persona
-#: includes/Activity_Reminder_Cron.php:134
+#: includes/Activity_Reminder_Cron.php:138
 #, php-format
 msgid "Hola %s,"
 msgstr ""
 
 #. translators: %1$s: actividad, %2$s: fecha, %3$s: hora, %4$s: lugar
-#: includes/Activity_Reminder_Cron.php:138
+#: includes/Activity_Reminder_Cron.php:142
 #, php-format
 msgid "Te recordamos que la actividad «%1$s» se celebrará el %2$s a las %3$s en %4$s."
 msgstr ""
@@ -1563,16 +1563,16 @@ msgstr ""
 msgid "Esta actividad ya terminó: el plazo de check-in está cerrado."
 msgstr ""
 
-#: includes/Checkin.php:150
+#: includes/Checkin.php:166
 msgid "La inscripción no está confirmada."
 msgstr ""
 
-#: includes/Checkin.php:155
+#: includes/Checkin.php:171
 msgid "El check-in lo tiene que registrar una persona del equipo."
 msgstr ""
 
 #: includes/Checkin_Handler.php:189
-#: includes/Checkin_Handler.php:825
+#: includes/Checkin_Handler.php:853
 msgid "No tienes permisos para realizar check-in."
 msgstr ""
 
@@ -1622,7 +1622,7 @@ msgstr ""
 
 #: includes/Checkin_Handler.php:720
 #: includes/Checkin_Handler.php:737
-#: includes/Checkin_Handler.php:833
+#: includes/Checkin_Handler.php:832
 msgid "Token de check-in no válido."
 msgstr ""
 
@@ -1654,18 +1654,18 @@ msgstr ""
 msgid "Check-in Exitoso"
 msgstr ""
 
-#: includes/Checkin_Handler.php:842
+#: includes/Checkin_Handler.php:839
 #: includes/Rest_API.php:294
 msgid "No tienes permiso para gestionar esta actividad."
 msgstr ""
 
 #. translators: %s: hora del primer check-in
-#: includes/Checkin_Handler.php:857
+#: includes/Checkin_Handler.php:873
 #, php-format
 msgid "Esta reserva ya se había escaneado a las %s"
 msgstr ""
 
-#: includes/Checkin_Handler.php:860
+#: includes/Checkin_Handler.php:876
 msgid "Asistencia confirmada"
 msgstr ""
 
@@ -1867,228 +1867,39 @@ msgstr ""
 msgid "Inscripción"
 msgstr ""
 
-#: includes/Email_Automation.php:133
-msgid "Inscripción recibida — {actividad}"
-msgstr ""
-
-#: includes/Email_Automation.php:134
-#: includes/Email_Automation.php:174
-#: includes/Email_Automation.php:257
-#: includes/Email_Automation.php:310
-#: includes/Email_Automation.php:363
-msgid "<h1>Hola {nombre},</h1>"
-msgstr ""
-
-#: includes/Email_Automation.php:135
-msgid "<p>Hemos recibido tu inscripción para <strong>{actividad}</strong>.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:136
-msgid "<p>Tu aportación se encuentra actualmente <strong>pendiente de validación</strong>. Te confirmaremos tu plaza lo antes posible.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:148
-#: includes/Email_Automation.php:207
-#: includes/Email_Automation.php:233
-#: includes/Email_Automation.php:270
-#: includes/Email_Automation.php:293
-#: includes/Email_Automation.php:323
-#: includes/Email_Automation.php:346
-#: media/class-poster-engine.php:304
-msgid "Hora"
-msgstr ""
-
-#: includes/Email_Automation.php:160
-#: includes/Email_Automation.php:241
-#: includes/Utils.php:39
-msgid "Aportación"
-msgstr ""
-
-#: includes/Email_Automation.php:164
-#: includes/Email_Automation.php:184
-#: includes/Email_Automation.php:245
-#: includes/Email_Automation.php:301
-#: includes/Email_Automation.php:354
-msgid "Reserva"
-msgstr ""
-
-#: includes/Email_Automation.php:169
-msgid "<p>Guarda tu código de reserva para consultar o cancelar tu inscripción.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:170
-#: includes/Email_Automation.php:189
-#: includes/Email_Automation.php:253
-#: includes/Email_Automation.php:930
-msgid "Ver mis reservas"
-msgstr ""
-
-#: includes/Email_Automation.php:173
-msgid "En lista de espera — {actividad}"
-msgstr ""
-
-#: includes/Email_Automation.php:175
-msgid "<p>Te has apuntado a <strong>{actividad}</strong> pero has quedado en <strong>lista de espera</strong>, ya que el aforo está completo.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:176
-msgid "<p>Te avisaremos por correo si se libera una plaza.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:192
-msgid "¡Tienes una plaza disponible! — {actividad}"
-msgstr ""
-
-#: includes/Email_Automation.php:193
-msgid "<h1>¡Buenas noticias, {nombre}! 🎉</h1>"
-msgstr ""
-
-#: includes/Email_Automation.php:194
-msgid "<p>Se ha liberado una plaza para <strong>{actividad}</strong> y se te ha asignado automáticamente.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:195
-msgid "<p>Tu inscripción se encuentra ahora <strong>pendiente de validación</strong>. Te confirmaremos tu plaza definitiva lo antes posible.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:218
-msgid "¡Plaza confirmada! — {actividad}"
-msgstr ""
-
-#: includes/Email_Automation.php:219
-msgid "<h1>¡Plaza confirmada, {nombre}! 🎉</h1>"
-msgstr ""
-
-#: includes/Email_Automation.php:220
-msgid "<p>Tu plaza para <strong>{actividad}</strong> está confirmada.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:221
-msgid "<p>Hemos recibido correctamente tu aportación.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:250
-msgid "<p>Adjuntamos tu código QR y un enlace al calendario.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:251
-msgid "Código QR de check-in"
-msgstr ""
-
-#: includes/Email_Automation.php:252
-msgid "<p>Si el QR no se ve, pide al equipo de la actividad que marque tu asistencia desde el listado.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:256
-msgid "Reserva cancelada — {actividad}"
-msgstr ""
-
-#: includes/Email_Automation.php:258
-msgid "<p>Tu reserva para <strong>{actividad}</strong> ha sido cancelada.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:278
-msgid "¡Esta semana! {actividad}"
-msgstr ""
-
-#: includes/Email_Automation.php:279
-msgid "<h1>¡Hola {nombre}!</h1>"
-msgstr ""
-
-#: includes/Email_Automation.php:280
-msgid "<p>¡Esta semana tenemos <strong>{actividad}</strong>! 🎉</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:281
-msgid "<p>Te esperamos. Aquí tienes los detalles:</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:309
-msgid "Recordatorio: {actividad} es mañana"
-msgstr ""
-
-#: includes/Email_Automation.php:311
-msgid "<p>Te recordamos que <strong>mañana</strong> tienes la actividad <strong>{actividad}</strong>.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:332
-msgid "<p>Si no puedes asistir, cancela tu inscripción para liberar la plaza.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:333
-msgid "Gestionar reserva"
-msgstr ""
-
-#: includes/Email_Automation.php:336
-msgid "{actividad} comienza en 1 hora"
-msgstr ""
-
-#: includes/Email_Automation.php:337
-msgid "<h1>¡Ya casi, {nombre}!</h1>"
-msgstr ""
-
-#: includes/Email_Automation.php:338
-msgid "<p>La actividad <strong>{actividad}</strong> comienza en <strong>1 hora</strong>.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:362
-msgid "¿Qué te pareció \"{actividad}\"?"
-msgstr ""
-
-#: includes/Email_Automation.php:364
-msgid "<p>¿Qué tal la experiencia en <strong>{actividad}</strong>? Nos encantaría conocer tu opinión.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:365
-msgid "<p>Puedes respondernos directamente a este email con tus comentarios.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:370
-msgid "<h1>Nuevo álbum disponible</h1>"
-msgstr ""
-
-#: includes/Email_Automation.php:371
-msgid "<p>Se ha creado un álbum de Google Photos para la actividad <strong>{actividad}</strong>.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:372
-#: includes/Email_Automation.php:935
-msgid "Subir fotos"
-msgstr ""
-
-#: includes/Email_Automation.php:377
-msgid "<h1>¡Ya puedes ver las fotos! 🎉</h1>"
-msgstr ""
-
-#: includes/Email_Automation.php:378
-msgid "<p>Ya están disponibles las fotos de la actividad <strong>{actividad}</strong>.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:379
-msgid "<p>Hemos subido un álbum con los mejores momentos.</p>"
-msgstr ""
-
-#: includes/Email_Automation.php:380
-#: includes/Email_Automation.php:936
-msgid "Ver fotos"
-msgstr ""
-
-#: includes/Email_Automation.php:624
-#: includes/Email_Automation.php:729
-#: includes/Email_Automation.php:1034
+#: includes/Email_Automation.php:397
+#: includes/Email_Automation.php:506
+#: includes/Email_Automation.php:792
 msgid "Has recibido este email porque estás inscrito en una de nuestras actividades."
 msgstr ""
 
-#: includes/Email_Automation.php:932
+#: includes/Email_Automation.php:688
+#: includes/plantillas-defecto.php:63
+#: includes/plantillas-defecto.php:82
+#: includes/plantillas-defecto.php:146
+msgid "Ver mis reservas"
+msgstr ""
+
+#: includes/Email_Automation.php:690
 msgid "Ver mi inscripción"
 msgstr ""
 
-#: includes/Email_Automation.php:933
+#: includes/Email_Automation.php:691
 msgid "Confirmar mi plaza"
 msgstr ""
 
-#: includes/Email_Automation.php:934
+#: includes/Email_Automation.php:692
 msgid "Ver mi reserva"
+msgstr ""
+
+#: includes/Email_Automation.php:693
+#: includes/plantillas-defecto.php:265
+msgid "Subir fotos"
+msgstr ""
+
+#: includes/Email_Automation.php:694
+#: includes/plantillas-defecto.php:273
+msgid "Ver fotos"
 msgstr ""
 
 #: includes/Google_Calendar.php:505
@@ -2242,6 +2053,195 @@ msgstr ""
 
 #: includes/PDF_Compromiso.php:141
 msgid "La clase de firma digital no se encuentra disponible."
+msgstr ""
+
+#: includes/plantillas-defecto.php:26
+msgid "Inscripción recibida — {actividad}"
+msgstr ""
+
+#: includes/plantillas-defecto.php:27
+#: includes/plantillas-defecto.php:67
+#: includes/plantillas-defecto.php:150
+#: includes/plantillas-defecto.php:203
+#: includes/plantillas-defecto.php:256
+msgid "<h1>Hola {nombre},</h1>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:28
+msgid "<p>Hemos recibido tu inscripción para <strong>{actividad}</strong>.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:29
+msgid "<p>Tu aportación se encuentra actualmente <strong>pendiente de validación</strong>. Te confirmaremos tu plaza lo antes posible.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:41
+#: includes/plantillas-defecto.php:100
+#: includes/plantillas-defecto.php:126
+#: includes/plantillas-defecto.php:163
+#: includes/plantillas-defecto.php:186
+#: includes/plantillas-defecto.php:216
+#: includes/plantillas-defecto.php:239
+#: media/class-poster-engine.php:304
+msgid "Hora"
+msgstr ""
+
+#: includes/plantillas-defecto.php:53
+#: includes/plantillas-defecto.php:134
+#: includes/Utils.php:39
+msgid "Aportación"
+msgstr ""
+
+#: includes/plantillas-defecto.php:57
+#: includes/plantillas-defecto.php:77
+#: includes/plantillas-defecto.php:138
+#: includes/plantillas-defecto.php:194
+#: includes/plantillas-defecto.php:247
+msgid "Reserva"
+msgstr ""
+
+#: includes/plantillas-defecto.php:62
+msgid "<p>Guarda tu código de reserva para consultar o cancelar tu inscripción.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:66
+msgid "En lista de espera — {actividad}"
+msgstr ""
+
+#: includes/plantillas-defecto.php:68
+msgid "<p>Te has apuntado a <strong>{actividad}</strong> pero has quedado en <strong>lista de espera</strong>, ya que el aforo está completo.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:69
+msgid "<p>Te avisaremos por correo si se libera una plaza.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:85
+msgid "¡Tienes una plaza disponible! — {actividad}"
+msgstr ""
+
+#: includes/plantillas-defecto.php:86
+msgid "<h1>¡Buenas noticias, {nombre}! 🎉</h1>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:87
+msgid "<p>Se ha liberado una plaza para <strong>{actividad}</strong> y se te ha asignado automáticamente.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:88
+msgid "<p>Tu inscripción se encuentra ahora <strong>pendiente de validación</strong>. Te confirmaremos tu plaza definitiva lo antes posible.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:111
+msgid "¡Plaza confirmada! — {actividad}"
+msgstr ""
+
+#: includes/plantillas-defecto.php:112
+msgid "<h1>¡Plaza confirmada, {nombre}! 🎉</h1>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:113
+msgid "<p>Tu plaza para <strong>{actividad}</strong> está confirmada.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:114
+msgid "<p>Hemos recibido correctamente tu aportación.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:143
+msgid "<p>Adjuntamos tu código QR y un enlace al calendario.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:144
+msgid "Código QR de check-in"
+msgstr ""
+
+#: includes/plantillas-defecto.php:145
+msgid "<p>Si el QR no se ve, pide al equipo de la actividad que marque tu asistencia desde el listado.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:149
+msgid "Reserva cancelada — {actividad}"
+msgstr ""
+
+#: includes/plantillas-defecto.php:151
+msgid "<p>Tu reserva para <strong>{actividad}</strong> ha sido cancelada.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:171
+msgid "¡Esta semana! {actividad}"
+msgstr ""
+
+#: includes/plantillas-defecto.php:172
+msgid "<h1>¡Hola {nombre}!</h1>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:173
+msgid "<p>¡Esta semana tenemos <strong>{actividad}</strong>! 🎉</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:174
+msgid "<p>Te esperamos. Aquí tienes los detalles:</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:202
+msgid "Recordatorio: {actividad} es mañana"
+msgstr ""
+
+#: includes/plantillas-defecto.php:204
+msgid "<p>Te recordamos que <strong>mañana</strong> tienes la actividad <strong>{actividad}</strong>.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:225
+msgid "<p>Si no puedes asistir, cancela tu inscripción para liberar la plaza.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:226
+msgid "Gestionar reserva"
+msgstr ""
+
+#: includes/plantillas-defecto.php:229
+msgid "{actividad} comienza en 1 hora"
+msgstr ""
+
+#: includes/plantillas-defecto.php:230
+msgid "<h1>¡Ya casi, {nombre}!</h1>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:231
+msgid "<p>La actividad <strong>{actividad}</strong> comienza en <strong>1 hora</strong>.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:255
+msgid "¿Qué te pareció \"{actividad}\"?"
+msgstr ""
+
+#: includes/plantillas-defecto.php:257
+msgid "<p>¿Qué tal la experiencia en <strong>{actividad}</strong>? Nos encantaría conocer tu opinión.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:258
+msgid "<p>Puedes respondernos directamente a este email con tus comentarios.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:263
+msgid "<h1>Nuevo álbum disponible</h1>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:264
+msgid "<p>Se ha creado un álbum de Google Photos para la actividad <strong>{actividad}</strong>.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:270
+msgid "<h1>¡Ya puedes ver las fotos! 🎉</h1>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:271
+msgid "<p>Ya están disponibles las fotos de la actividad <strong>{actividad}</strong>.</p>"
+msgstr ""
+
+#: includes/plantillas-defecto.php:272
+msgid "<p>Hemos subido un álbum con los mejores momentos.</p>"
 msgstr ""
 
 #: includes/Rest_API.php:183

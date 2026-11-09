@@ -204,6 +204,12 @@ class Email_Automation {
 		$activities = $this->get_activities_for_reminder( 'reminder_7dias', $target_start, $target_end, '_convoca_fecha_inicio' );
 
 		foreach ( $activities as $activity ) {
+			// Con horas propias, la actividad la gobierna el recordatorio configurable: los fijos
+			// no mandan nada (enroll#87).
+			if ( 'flags' !== Recordatorios::modo( (int) $activity->ID ) ) {
+				continue;
+			}
+
 			$inscriptions = $this->get_confirmed_inscriptions( $activity->ID );
 			foreach ( $inscriptions as $insc ) {
 				$this->send( 'recordatorio_7dias', $insc->ID, $activity->ID );
@@ -220,6 +226,10 @@ class Email_Automation {
 		$activities = $this->get_activities_for_reminder( 'reminder_1dia', $target_start, $target_end, '_convoca_fecha_inicio' );
 
 		foreach ( $activities as $activity ) {
+			if ( 'flags' !== Recordatorios::modo( (int) $activity->ID ) ) {
+				continue;
+			}
+
 			$inscriptions = $this->get_confirmed_inscriptions( $activity->ID );
 			foreach ( $inscriptions as $insc ) {
 				$this->send( 'recordatorio_24h', $insc->ID, $activity->ID );
@@ -236,6 +246,10 @@ class Email_Automation {
 		$activities = $this->get_activities_for_reminder( 'reminder_1hora', $target_start, $target_end, '_convoca_fecha_inicio' );
 
 		foreach ( $activities as $activity ) {
+			if ( 'flags' !== Recordatorios::modo( (int) $activity->ID ) ) {
+				continue;
+			}
+
 			$inscriptions = $this->get_confirmed_inscriptions( $activity->ID );
 			foreach ( $inscriptions as $insc ) {
 				$this->send( 'recordatorio_1hora', $insc->ID, $activity->ID );
@@ -323,6 +337,12 @@ class Email_Automation {
 		$templates = self::get_templates();
 		$tpl       = $templates[ $slug ] ?? null;
 		if ( ! $tpl ) {
+			return;
+		}
+
+		// Marcador común entre los dos sistemas de recordatorio (enroll#87).
+		if ( in_array( $slug, self::REMINDER_SLUGS, true ) && Recordatorios::ya_enviado( $inscripcion_id, $slug ) ) {
+			Logger::debug( "Recordatorio $slug ya marcado como enviado; no se repite.", 'Enroll/Emails' );
 			return;
 		}
 
@@ -461,6 +481,10 @@ class Email_Automation {
 		update_post_meta( $inscripcion_id, '_convoca_last_contact', wp_date( 'Y-m-d H:i:s' ) );
 		update_post_meta( $inscripcion_id, '_convoca_last_contact_type', 'email' );
 		update_post_meta( $inscripcion_id, '_convoca_last_email_sent', $slug );
+
+		if ( in_array( $slug, self::REMINDER_SLUGS, true ) ) {
+			Recordatorios::marcar( $inscripcion_id, $slug );
+		}
 
 		\Convoca\Core\Logger::info(
 			sprintf( 'Email automatizado encolado: %s', $slug ),
