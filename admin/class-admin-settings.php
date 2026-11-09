@@ -158,17 +158,19 @@ class Admin_Settings {
 		$conv = wp_unslash( $_POST['conv'] ?? array() );
 
 		if ( $tab === 'general' ) {
-			$settings['admin_email']            = sanitize_email( $conv['admin_email'] ?? '' );
-			$settings['rgpd_version']           = sanitize_text_field( $conv['rgpd_version'] ?? '1.0' );
-			$settings['limite_una_reserva']     = ! empty( $conv['limite_una_reserva'] ) ? 1 : 0;
-			$settings['permitir_menores']       = ! empty( $conv['permitir_menores'] ) ? 1 : 0;
-			$settings['bloquear_dni_duplicado'] = ! empty( $conv['bloquear_dni_duplicado'] ) ? '1' : '0';
-			$settings['plazas_por_defecto']     = absint( $conv['plazas_por_defecto'] ?? 20 );
-			$conv_dni_modo                      = (string) ( $conv['dni_modo'] ?? 'obligatorio' );
-			$settings['dni_modo']               = in_array( $conv_dni_modo, array( 'obligatorio', 'opcional', 'no' ), true ) ? $conv_dni_modo : 'obligatorio';
-			$settings['cancel_window_hours']    = absint( $conv['cancel_window_hours'] ?? 24 );
-			$settings['url_panel_reservas']     = esc_url_raw( $conv['url_panel_reservas'] ?? '' );
-			$settings['sheets_enabled']         = absint( $conv['sheets_enabled'] ?? 0 );
+			$settings['admin_email']                 = sanitize_email( $conv['admin_email'] ?? '' );
+			$settings['rgpd_version']                = sanitize_text_field( $conv['rgpd_version'] ?? '1.0' );
+			$settings['limite_una_reserva']          = ! empty( $conv['limite_una_reserva'] ) ? 1 : 0;
+			$settings['permitir_menores']            = ! empty( $conv['permitir_menores'] ) ? 1 : 0;
+			$settings['bloquear_dni_duplicado']      = ! empty( $conv['bloquear_dni_duplicado'] ) ? '1' : '0';
+			$settings['plazas_por_defecto']          = absint( $conv['plazas_por_defecto'] ?? 20 );
+			$conv_dni_modo                           = (string) ( $conv['dni_modo'] ?? 'obligatorio' );
+			$settings['dni_modo']                    = in_array( $conv_dni_modo, array( 'obligatorio', 'opcional', 'no' ), true ) ? $conv_dni_modo : 'obligatorio';
+			$settings['cancel_window_hours']         = absint( $conv['cancel_window_hours'] ?? 24 );
+			$settings['checkin_window_before_hours'] = absint( $conv['checkin_window_before_hours'] ?? 2 );
+			$settings['checkin_window_after_hours']  = absint( $conv['checkin_window_after_hours'] ?? 2 );
+			$settings['url_panel_reservas']          = esc_url_raw( $conv['url_panel_reservas'] ?? '' );
+			$settings['sheets_enabled']              = absint( $conv['sheets_enabled'] ?? 0 );
 			if ( ! defined( 'CONV_ENROLL_GOOGLE_SHEETS_API_KEY' ) ) {
 				$settings['sheets_api_key'] = sanitize_text_field( $conv['sheets_api_key'] ?? '' );
 			}

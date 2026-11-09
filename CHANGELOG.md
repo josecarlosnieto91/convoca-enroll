@@ -1,3 +1,43 @@
+## [2.17.0] — 2026-11-09
+
+### Corregido
+
+- **#76 — el enlace del correo ya no hace check-in.** La ruta `/checkin/<token>/` es solo del
+  personal: la firma `h` identificaba la inscripción, pero autorizaba a cualquiera a marcarse la
+  asistencia sin sesión. El correo deja de ofrecerlo y dice cómo resolverlo sin enlace.
+- **#78 — ventana de check-in configurable.** Por defecto desde 2 h antes del inicio hasta 2 h
+  después del fin; fuera de ahí responde 409 con el motivo. La ventana se aplica en las tres rutas.
+- **#79 — el segundo escaneo se distingue.** Responde «ya se había escaneado a las HH:MM» y deja
+  rastro en el log, en vez de «Asistencia confirmada» otra vez.
+- **#81 — el check-in manual de la lista pasa por la misma puerta.** Rechaza inscripciones no
+  vigentes, sella `checkin_hora` y `checkin_by`, y solo desmarcar es libre (es una corrección).
+- **#77 — cancelar retira la asistencia.** `asistencia` vuelve a `no_registrada`, se borran hora y
+  usuario, y el informe, las horas de voluntariado y las evaluaciones filtran por estado vigente.
+- **#80 — el escáner por cámara funciona.** La plantilla llama a `wp_footer()` y la librería va en
+  cabecera; se añade entrada manual de código o enlace, se vacían los datos de ejemplo y el token
+  se extrae de la URL del QR (antes se enviaba la URL entera y no encontraba la inscripción).
+- **#82 — cola offline del check-in.** Esquema IndexedDB v2 con creación del almacén en las dos
+  puntas, bases ya creadas se arreglan al abrir, `try/catch` en el sondeo y volcado alternativo
+  cuando no hay Background Sync.
+- **#75 — el QR del correo viaja incrustado.** Adjunto inline con `Content-ID` (`cid:`) en vez de
+  una URL a `uploads`: se ve sin pulsar «Mostrar imágenes» y no se rompe si se limpia uploads.
+- **#83 — el informe de ocupación abre en próximas actividades** (hoy a +6 meses), con atajos
+  Próximas / Este mes / Mes anterior / Todas y un vacío que dice el rango aplicado.
+- **#84 — capacidades coherentes.** Menú operativo con `manage_inscripciones`, check-in con
+  `convoca_manage_checkin`, logs con `manage_convoca_logs`; la migración 1.7.0 concede la capacidad
+  de check-in a `shop_manager` y `voluntario_aprobado`.
+- **#85 — antiduplicado de correo atómico.** `INSERT IGNORE` sobre la clave única de `wp_options`
+  en vez de un UPSERT sobre `wp_postmeta` que nunca se disparaba; el marcador de horas usa
+  `add_post_meta( …, true )`.
+- **#86 — fechas con la zona del sitio.** `Fechas::instante()` traduce la fecha local guardada con
+  `wp_timezone()`; apertura, recordatorios, cancelación, evaluaciones y check-in dejan de ir una
+  hora desplazados en invierno y dos en verano.
+
+### Añadido
+
+- Ajustes → General: horas de check-in antes del inicio y después del fin.
+- `Checkin` como puerta única del registro de asistencia (estado, ventana, hora, usuario y repetido).
+
 ## [2.16.1] — 2026-11-08
 
 ### Corregido

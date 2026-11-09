@@ -311,7 +311,14 @@ class Rest_API {
 
 		$asistencia = sanitize_text_field( $req->get_param( 'asistencia' ) );
 		if ( $asistencia ) {
-			Motor_Inscripcion::set_asistencia( $id, $asistencia );
+			if ( 'si' === $asistencia ) {
+				$marcado = Checkin::registrar( $id, get_current_user_id() );
+				if ( is_wp_error( $marcado ) ) {
+					return $marcado;
+				}
+			} else {
+				Motor_Inscripcion::cambiar_asistencia( $id, $asistencia );
+			}
 		}
 
 		if ( is_wp_error( $result ) ) {
@@ -385,27 +392,24 @@ class Rest_API {
 			return new \WP_REST_Response( array( 'error' => __( 'No tienes permiso para realizar check-in en esta actividad.', 'convoca-enroll' ) ), 403 );
 		}
 
-		// Verify status is confirmed.
-		$estado = CPT_Inscripcion::get_meta( $insc_id, 'estado' );
-		if ( ! Estados::es_vigente( (string) $estado ) ) {
-			\Convoca\Core\Logger::info( "Intento de check-in fallido: Inscripción #$insc_id no confirmada (Estado: $estado)", 'Enroll/Checkin', $monitor_id );
+		// Verify status is confirmed y registrar con las reglas compartidas (estado, ventana, hora
+		// y usuario). Antes esta ruta se saltaba la ventana y no sellaba la hora.
+		$resultado = Checkin::registrar( $insc_id, $monitor_id );
+
+		if ( is_wp_error( $resultado ) ) {
+			\Convoca\Core\Logger::info( 'Intento de check-in fallido: ' . $resultado->get_error_message(), 'Enroll/Checkin', $monitor_id, array( 'inscripcion_id' => $insc_id ) );
+
 			return new \WP_REST_Response(
 				array(
-					'error'   => __( 'Inscription not confirmed', 'convoca-enroll' ),
-					'estado'  => $estado,
-					'message' => __( 'Solo se pueden confirmar asistentes con reserva confirmada.', 'convoca-enroll' ),
+					'error'   => $resultado->get_error_code(),
+					'message' => $resultado->get_error_message(),
 				),
-				400
+				409
 			);
 		}
 
-		// Update for assistance.
-		// **`set_asistencia()` es idempotente**: devuelve `true` también cuando ya estaba en `si`, así que
-		// `$affected` era siempre 1 y `already_checked` nunca podía ser true (enroll#42). `cambiar_asistencia()`
-		// devuelve además si el valor cambió de verdad.
-		$result   = Motor_Inscripcion::cambiar_asistencia( $insc_id, 'si' );
-		$error    = is_wp_error( $result );
-		$affected = ( ! $error && $result['cambiada'] ) ? 1 : 0;
+		$affected = $resultado['ya_marcada'] ? 0 : 1;
+		$error    = false;
 
 		if ( $affected > 0 ) {
 			\Convoca\Core\Logger::info( "Check-in exitoso vía QR por usuario #$monitor_id", 'Enroll/Checkin', $monitor_id, array( 'inscripcion_id' => $insc_id ) );

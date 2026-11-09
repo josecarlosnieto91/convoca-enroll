@@ -56,7 +56,8 @@ final class AdminPageAjaxTest extends TestCase {
 		$GLOBALS['convoca_test_user_can'] = array();
 		$_POST                            = array();
 
-		// `set_asistencia()` comprueba el tipo de post y **que exista**: se siembra la inscripción.
+		// Inscripción 410, de la actividad 61. Para los botones de check-in se marca
+		// `confirmada` en la propia prueba: una pendiente no se puede marcar (enroll#81).
 		$inscripcion                        = new \WP_Post();
 		$inscripcion->ID                    = 410;
 		$inscripcion->post_type             = 'inscripcion';
@@ -165,19 +166,35 @@ final class AdminPageAjaxTest extends TestCase {
 	 * Check-in: alterna entre «si» y «no», y devuelve la etiqueta que ve el monitor.
 	 */
 	public function test_alternar_checkin(): void {
+		$GLOBALS['_wp_stores']['post_meta'][410]['_convoca_estado'] = 'confirmada';
 		$_POST = array( 'inscripcion_id' => '410' );
 
 		$this->llamar( 'ajax_toggle_checkin' );
 		$this->assertSame( 'si', $this->meta( 410, 'asistencia' ) );
+		$this->assertNotEmpty( $this->meta( 410, '_convoca_checkin_hora' ), 'el botón de la lista sella la hora' );
 
 		$this->llamar( 'ajax_toggle_checkin' );
 		$this->assertSame( 'no', $this->meta( 410, 'asistencia' ), 'vuelve a «no»' );
 	}
 
 	/**
+	 * Una inscripción cancelada no se puede marcar desde la lista (enroll#81).
+	 */
+	public function test_no_marca_una_cancelada(): void {
+		$GLOBALS['_wp_stores']['post_meta'][410]['_convoca_estado'] = 'cancelada';
+		$_POST = array( 'inscripcion_id' => '410' );
+
+		$respuesta = $this->llamar( 'ajax_toggle_checkin' );
+
+		$this->assertFalse( $respuesta['ok'] );
+		$this->assertSame( '', $this->meta( 410, 'asistencia' ), 'no se marca una cancelada' );
+	}
+
+	/**
 	 * Check-in: la etiqueta que se devuelve acompaña al estado nuevo.
 	 */
 	public function test_checkin_devuelve_la_etiqueta(): void {
+		$GLOBALS['_wp_stores']['post_meta'][410]['_convoca_estado'] = 'confirmada';
 		$_POST = array( 'inscripcion_id' => '410' );
 
 		$respuesta = $this->llamar( 'ajax_toggle_checkin' );

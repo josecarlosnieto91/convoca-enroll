@@ -84,7 +84,8 @@ class Formulario_Evaluacion {
 		}
 
 		$fecha_fin = get_post_meta( $actividad_id, '_convoca_fecha_fin', true );
-		if ( ! $fecha_fin || strtotime( $fecha_fin ) > current_datetime()->getTimestamp() ) {
+		$fin_ts    = Fechas::instante( (string) $fecha_fin );
+		if ( null === $fin_ts || $fin_ts > current_datetime()->getTimestamp() ) {
 			return '<p>' . esc_html__( 'Esta actividad aún no ha finalizado y no puede ser evaluada.', 'convoca-enroll' ) . '</p>';
 		}
 
@@ -286,7 +287,8 @@ class Formulario_Evaluacion {
 		}
 
 		$fecha_fin = get_post_meta( $actividad_id, '_convoca_fecha_fin', true );
-		if ( ! $fecha_fin || strtotime( $fecha_fin ) > current_datetime()->getTimestamp() ) {
+		$fin_ts    = Fechas::instante( (string) $fecha_fin );
+		if ( null === $fin_ts || $fin_ts > current_datetime()->getTimestamp() ) {
 			wp_send_json_error( __( 'Esta actividad aún no ha finalizado y no puede ser evaluada.', 'convoca-enroll' ) );
 		}
 

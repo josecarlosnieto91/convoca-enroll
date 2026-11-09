@@ -249,7 +249,7 @@ class Email_Automation {
 					)
 					. __( '<p>Adjuntamos tu código QR y un enlace al calendario.</p>', 'convoca-enroll' )
 					. '<p style="text-align:center;margin:24px 0"><img src="{qr_code}" alt="' . esc_attr__( 'Código QR de check-in', 'convoca-enroll' ) . '" width="220" height="220" style="display:inline-block;max-width:220px;height:auto;border:0"></p>'
-					. __( '<p>Si el QR no se ve, abre tu <a href="{url_checkin}">enlace de check-in</a> desde el móvil.</p>', 'convoca-enroll' )
+					. __( '<p>Si el QR no se ve, pide al equipo de la actividad que marque tu asistencia desde el listado.</p>', 'convoca-enroll' )
 					. Email_Layout::button_html( '{panel_reservas}', __( 'Ver mis reservas', 'convoca-enroll' ) ),
 			),
 			'cancelacion_reserva'            => array(
@@ -573,29 +573,39 @@ class Email_Automation {
 			return;
 		}
 
-		// Dedup: atomic check-and-set to prevent race conditions under high concurrency.
-		// Uses INSERT ON DUPLICATE KEY UPDATE with a WHERE condition on the timestamp,
-		// so only the first process to check (within the 5-min window) gets through.
+		// Antiduplicado atómico (enroll#85). El `INSERT … ON DUPLICATE KEY UPDATE` anterior iba
+		// sobre `wp_postmeta`, que NO tiene índice único en (post_id, meta_key): la cláusula no se
+		// disparaba nunca, cada pasada insertaba una fila más y el correo salía repetido.
+		// `wp_options.option_name` sí es único, así que el INSERT decide quién gana la carrera.
 		global $wpdb;
-		$dedup_key = '_convoca_last_email_sent_' . $slug;
-		$result    = $wpdb->query(
+		$dedup_key = 'convoca_enroll_mail_' . $inscripcion_id . '_' . sanitize_key( $slug );
+		$ahora     = time();
+		$ventana   = 300;
+		$ganado    = (int) $wpdb->query(
 			$wpdb->prepare(
-				"INSERT INTO {$wpdb->postmeta} (post_id, meta_key, meta_value)
-             VALUES (%d, %s, %d)
-             ON DUPLICATE KEY UPDATE meta_value = CASE
-                 WHEN CAST(meta_value AS UNSIGNED) < %d THEN %d
-                 ELSE meta_value
-             END",
-				$inscripcion_id,
+				"INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload)
+				 VALUES (%s, %d, 'no')",
 				$dedup_key,
-				time(),
-				time() - 300,
-				time()
+				$ahora
 			)
 		);
 
-		// Only the process that actually updated the timestamp proceeds.
-		if ( $wpdb->rows_affected === 0 ) {
+		if ( 0 === $ganado ) {
+			$ganado = (int) $wpdb->query(
+				$wpdb->prepare(
+					"UPDATE {$wpdb->options} SET option_value = %d
+					 WHERE option_name = %s AND CAST(option_value AS UNSIGNED) < %d",
+					$ahora,
+					$dedup_key,
+					$ahora - $ventana
+				)
+			);
+		}
+
+		wp_cache_delete( $dedup_key, 'options' );
+
+		// Solo el proceso que movió la marca envía.
+		if ( 0 === $ganado ) {
 			Logger::debug( "Email $slug ya enviado recientemente a inscripción #$inscripcion_id, omitiendo.", 'Enroll/Emails' );
 			return;
 		}
@@ -640,6 +650,15 @@ class Email_Automation {
 			$attachments = $this->get_attachments( $slug );
 		}
 
+		// QR incrustado (cid:) cuando la plantilla lo usa. Viaja en el mismo correo, no como URL
+		// remota que se puede borrar con un `rm -rf uploads` (enroll#75).
+		if ( str_contains( $html_body, 'cid:' ) ) {
+			$qr = $this->qr_inline( $inscripcion_id );
+			if ( null !== $qr ) {
+				$attachments[] = $qr;
+			}
+		}
+
 		// Un solo .ics por correo: si el mailer o un filtro del sitio ya puso uno, no se añade el segundo.
 		// En la confirmación de plaza va una invitación iTIP de verdad (METHOD:REQUEST, ORGANIZER y
 		// ATTENDEE), que es lo que hace que Gmail ofrezca «añadir al calendario» (issue #57).
@@ -679,6 +698,7 @@ class Email_Automation {
 					'subject'        => '[Admin] ' . $subject,
 					'body'           => $html_body,
 					'inscripcion_id' => $inscripcion_id,
+					'attachments'    => $attachments,
 					'headers'        => array( 'Content-Type: text/html; charset=UTF-8' ),
 				)
 			);
@@ -799,34 +819,54 @@ class Email_Automation {
 			'{plazas_restantes}' => $am( 'plazas_disponibles' ) ?: '0',
 			'{codigo_reserva}'   => $m( 'codigo_reserva' ) ?: '—',
 			'{panel_reservas}'   => $panel_url,
-			'{qr_code}'          => Estados::es_vigente( (string) $m( 'estado' ) ) ? $this->generate_qr_url( $inscripcion_id ) : '',
-			'{url_checkin}'      => Estados::es_vigente( (string) $m( 'estado' ) ) ? $this->get_checkin_url( $inscripcion_id ) : '',
+			'{qr_code}'          => Estados::es_vigente( (string) $m( 'estado' ) ) && null !== $this->qr_inline( $inscripcion_id ) ? 'cid:' . self::qr_cid( $inscripcion_id ) : '',
+			// El enlace de check-in ya no se ofrece a la persona: la ruta directa es solo del
+			// personal y el asistente no debe marcarse la asistencia a sí mismo (enroll#76).
+			'{url_checkin}'      => '',
 			'{album_url}'        => $am( 'google_album_url' ) ?: '—',
 			'{calendario_link}'  => $this->get_ics_link( $inscripcion_id ),
 		);
 	}
 
 	/**
-	 * Imagen del QR del check-in, pintada en LOCAL.
-	 *
-	 * Antes se le pedía a quickchart.io con la URL de check-in dentro: el token del socio
-	 * (que es su credencial de check-in) viajaba a un tercero para que le devolviera un
-	 * PNG que sabemos pintar aquí con chillerlan/php-qrcode. Si el generador local falla,
-	 * se devuelve cadena vacía y el correo sale sin imagen: nunca se delega fuera.
+	 * Identificador `Content-ID` del QR de una inscripción.
 	 *
 	 * @param int $inscripcion_id Inscripción.
-	 * @return string URL de la imagen, o cadena vacía.
+	 * @return string
 	 */
-	private function generate_qr_url( int $inscripcion_id ): string {
+	public static function qr_cid( int $inscripcion_id ): string {
+		return 'convoca-qr-' . $inscripcion_id . '@convoca';
+	}
+
+	/**
+	 * Datos del QR incrustado en el correo (enroll#75).
+	 *
+	 * Antes el cuerpo llevaba una URL a `uploads/convoca-qr/`: si se limpiaba uploads el correo se
+	 * quedaba sin QR, y Gmail oculta las imágenes remotas hasta pulsar «Mostrar imágenes». Ahora
+	 * viaja como adjunto inline con `Content-ID` y se ve sin depender del servidor ni de un clic.
+	 *
+	 * @param int $inscripcion_id Inscripción.
+	 * @return array{cid: string, path: string, name: string, mime: string}|null
+	 */
+	private function qr_inline( int $inscripcion_id ): ?array {
 		$url = $this->get_checkin_url( $inscripcion_id );
 		if ( '' === $url ) {
-			return '';
+			return null;
 		}
 
-		$imagen = QR_Generator::url_for( 'inscripcion-' . $inscripcion_id, $url, array( 'size' => 300 ) );
+		$path = QR_Generator::generate_for_url( 'inscripcion-' . $inscripcion_id, $url, array( 'size' => 300 ) );
+		if ( ! $path || ! is_file( $path ) ) {
+			return null;
+		}
 
-		return $imagen ? $imagen : '';
+		return array(
+			'cid'  => self::qr_cid( $inscripcion_id ),
+			'path' => $path,
+			'name' => 'qr-checkin-' . $inscripcion_id . '.png',
+			'mime' => 'image/png',
+		);
 	}
+
 
 	private function get_checkin_url( int $inscripcion_id ): string {
 		return Checkin_Link::url( $inscripcion_id );

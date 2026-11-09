@@ -110,6 +110,20 @@ trait Admin_Settings_General {
 		</div>
 
 		<div class="convoca-field">
+			<label for="checkin_window_before_hours"><?php esc_html_e( 'Check-in: horas antes del inicio', 'convoca-enroll' ); ?></label>
+			<input type="number" id="checkin_window_before_hours" name="conv[checkin_window_before_hours]" min="0"
+				value="<?php echo esc_attr( $s['checkin_window_before_hours'] ?? '2' ); ?>">
+			<small class="convoca-small"><?php esc_html_e( 'Cuánto antes del inicio se puede marcar la asistencia. Fuera de la ventana, el escáner y el enlace responden que todavía no es la hora.', 'convoca-enroll' ); ?></small>
+		</div>
+
+		<div class="convoca-field">
+			<label for="checkin_window_after_hours"><?php esc_html_e( 'Check-in: horas después del fin', 'convoca-enroll' ); ?></label>
+			<input type="number" id="checkin_window_after_hours" name="conv[checkin_window_after_hours]" min="0"
+				value="<?php echo esc_attr( $s['checkin_window_after_hours'] ?? '2' ); ?>">
+			<small class="convoca-small"><?php esc_html_e( 'Margen después de terminar para quien llega tarde o para cerrar el listado. Pasado ese margen, el check-in queda cerrado.', 'convoca-enroll' ); ?></small>
+		</div>
+
+		<div class="convoca-field">
 			<label for="url_panel_reservas"><?php esc_html_e( 'URL Panel de Reservas', 'convoca-enroll' ); ?></label>
 			<input type="url" id="url_panel_reservas" name="conv[url_panel_reservas]"
 				value="<?php echo esc_attr( $s['url_panel_reservas'] ?? \Convoca\Enroll\Email_Automation::panel_url( 0 ) ); ?>">

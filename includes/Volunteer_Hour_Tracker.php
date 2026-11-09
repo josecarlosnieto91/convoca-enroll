@@ -204,17 +204,11 @@ class Volunteer_Hour_Tracker {
 				);
 			}
 
-			$wpdb->query(
-				$wpdb->prepare(
-					"INSERT INTO {$wpdb->postmeta} (post_id, meta_key, meta_value)
-                 VALUES (%d, %s, %s)
-                 ON DUPLICATE KEY UPDATE meta_value = %s",
-					$inscripcion_id,
-					$meta_key_counted,
-					'1',
-					'1'
-				)
-			);
+			// Marcador «ya contada»: `add_post_meta( …, true )` no duplica (el UPSERT anterior
+			// sobre `wp_postmeta` no tenía índice único y dejaba una fila por pasada, enroll#85).
+			if ( '1' !== (string) $is_counted ) {
+				add_post_meta( $inscripcion_id, $meta_key_counted, '1', true );
+			}
 
 			$wpdb->query( 'COMMIT' );
 		} catch ( \Throwable $e ) {
@@ -290,19 +284,22 @@ class Volunteer_Hour_Tracker {
 	 * @return int Días (0 si no hay inicio).
 	 */
 	private static function dias_de_actividad( string $inicio, string $fin ): int {
-		$ini = strtotime( $inicio );
-		if ( ! $ini ) {
+		$ini = Fechas::instante( $inicio );
+		if ( null === $ini ) {
 			return 0;
 		}
 
-		$end = strtotime( $fin );
-		if ( ! $end || $end < $ini ) {
+		$end = Fechas::instante( $fin );
+		if ( null === $end || $end < $ini ) {
 			return 1;
 		}
 
-		// Se comparan DÍAS, no instantes: un taller de 09:00 a 20:00 del mismo día es un día, no 0,45.
-		$segundos_dia = defined( 'DAY_IN_SECONDS' ) ? DAY_IN_SECONDS : 86400;
-		$dias         = (int) floor( ( strtotime( gmdate( 'Y-m-d', $end ) ) - strtotime( gmdate( 'Y-m-d', $ini ) ) ) / $segundos_dia ) + 1;
+		// Se comparan DÍAS de calendario, no instantes: un taller de 09:00 a 20:00 del mismo día es
+		// un día, no 0,45. Con la zona del sitio, el cambio de hora no añade ni quita un día.
+		$zona  = Fechas::zona();
+		$d_ini = new \DateTimeImmutable( (string) wp_date( 'Y-m-d', $ini, $zona ), $zona );
+		$d_end = new \DateTimeImmutable( (string) wp_date( 'Y-m-d', $end, $zona ), $zona );
+		$dias  = (int) $d_ini->diff( $d_end )->days + 1;
 
 		return max( 1, $dias );
 	}
@@ -416,6 +413,11 @@ class Volunteer_Hour_Tracker {
 					array(
 						'key'   => '_convoca_asistencia',
 						'value' => 'si',
+					),
+					array(
+						'key'     => '_convoca_estado',
+						'value'   => Estados::vigentes(),
+						'compare' => 'IN',
 					),
 				),
 			)

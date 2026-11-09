@@ -134,6 +134,38 @@ class Email_Queue {
 		}
 	}
 
+	/**
+	 * Añade las imágenes inline del correo (el QR del check-in) con su `Content-ID`.
+	 *
+	 * `wp_mail()` no permite marcar una imagen como inline, así que se hace en `phpmailer_init`:
+	 * el cuerpo la referencia como `cid:…` y el cliente la pinta sin pedir nada al servidor.
+	 *
+	 * @param \PHPMailer\PHPMailer\PHPMailer $phpmailer Instancia de PHPMailer.
+	 * @param array<int, array<string, string>> $imagenes Imágenes con cid/path/name/mime.
+	 * @return void
+	 */
+	public static function adjuntar_inline( $phpmailer, array $imagenes ): void {
+		foreach ( $imagenes as $imagen ) {
+			$ruta = (string) ( $imagen['path'] ?? '' );
+			if ( '' === $ruta || ! is_file( $ruta ) ) {
+				continue;
+			}
+
+			/**
+			 * Instancia de PHPMailer que WordPress monta para este envío.
+			 *
+			 * @var \PHPMailer\PHPMailer\PHPMailer $phpmailer
+			 */
+			$phpmailer->addEmbeddedImage(
+				$ruta,
+				(string) $imagen['cid'],
+				(string) ( $imagen['name'] ?? basename( $ruta ) ),
+				'base64',
+				(string) ( $imagen['mime'] ?? 'image/png' )
+			);
+		}
+	}
+
 	public function process_queue(): void {
 		$start_time = microtime( true );
 		$max_exec   = (int) ini_get( 'max_execution_time' );
@@ -248,12 +280,20 @@ class Email_Queue {
 				// calendario». `wp_mail()` no deja fijar el subtipo del adjunto, así que el fichero se
 				// saca de la lista y se añade a mano en `phpmailer_init` (issue #57).
 				$ics_paths   = array();
+				$inline      = array();
 				$attachments = array_values(
 					array_filter(
 						(array) $attachments,
-						static function ( $ruta ) use ( &$ics_paths ): bool {
-							if ( 'ics' === strtolower( (string) pathinfo( (string) $ruta, PATHINFO_EXTENSION ) ) ) {
-								$ics_paths[] = (string) $ruta;
+						static function ( $item ) use ( &$ics_paths, &$inline ): bool {
+							// Imagen inline (QR): no es un adjunto normal.
+							if ( is_array( $item ) ) {
+								if ( ! empty( $item['cid'] ) ) {
+									$inline[] = $item;
+								}
+								return false;
+							}
+							if ( 'ics' === strtolower( (string) pathinfo( (string) $item, PATHINFO_EXTENSION ) ) ) {
+								$ics_paths[] = (string) $item;
 								return false;
 							}
 							return true;
@@ -261,17 +301,18 @@ class Email_Queue {
 					)
 				);
 
-				$adjuntar_invitacion = static function ( $phpmailer ) use ( $ics_paths ): void {
+				$adjuntar_invitacion = static function ( $phpmailer ) use ( $ics_paths, $inline ): void {
 					self::adjuntar_invitacion( $phpmailer, $ics_paths );
+					self::adjuntar_inline( $phpmailer, $inline );
 				};
 
-				if ( array() !== $ics_paths ) {
+				if ( array() !== $ics_paths || array() !== $inline ) {
 					add_action( 'phpmailer_init', $adjuntar_invitacion );
 				}
 
 				$sent = wp_mail( $email->recipient, $email->subject, $email->body_html, $headers, $attachments );
 
-				if ( array() !== $ics_paths ) {
+				if ( array() !== $ics_paths || array() !== $inline ) {
 					remove_action( 'phpmailer_init', $adjuntar_invitacion );
 				}
 
@@ -302,11 +343,14 @@ class Email_Queue {
 					// Copia informativa: si el correo es de una actividad, a sus monitores
 					// (responsables); si no hay monitor, al correo de administración.
 					$inscripcion_id = (int) $email->inscripcion_id;
+					// La copia informativa no lleva las imágenes inline: un `cid:` sin adjunto se
+					// pinta como imagen rota. Se quitan del cuerpo antes de reenviarla.
+					$cuerpo_copia = (string) preg_replace( '/<img[^>]+src=["\']cid:[^"\']*["\'][^>]*>/i', '', (string) $email->body_html );
 					\Convoca\Core\Email_Copy::maybe_copy(
 						array(
 							'to'              => array( (string) $email->recipient ),
 							'subject'         => (string) $email->subject,
-							'body'            => (string) $email->body_html,
+							'body'            => $cuerpo_copia,
 							'plugin'          => 'convoca-enroll',
 							'inscripcion_id'  => $inscripcion_id,
 							'actividad_id'    => $inscripcion_id ? (int) get_post_meta( $inscripcion_id, '_convoca_actividad_id', true ) : 0,

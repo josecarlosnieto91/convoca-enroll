@@ -1066,8 +1066,8 @@ class CPT_Actividad {
 			return (int) $value . ' / ' . (int) $total;
 		}
 		if ( 'fecha_inicio' === $atts['field'] || 'fecha_fin' === $atts['field'] ) {
-			$ts = strtotime( $value );
-			return $ts ? date_i18n( 'j M Y', $ts ) : '';
+			$ts = Fechas::instante( (string) $value );
+			return null !== $ts ? date_i18n( 'j M Y', $ts ) : '';
 		}
 
 		return esc_html( $value );
@@ -1183,11 +1183,11 @@ class CPT_Actividad {
 		$location   = get_post_meta( $post_id, '_convoca_ubicacion', true );
 		$plazas_dis = (int) get_post_meta( $post_id, '_convoca_plazas_disponibles', true );
 
-		if ( empty( $start_date ) || ! strtotime( $start_date ) ) {
+		if ( empty( $start_date ) || null === Fechas::instante( (string) $start_date ) ) {
 			return;
 		}
-		$start_ts = strtotime( $start_date );
-		$end_ts   = ( empty( $end_date ) || ! strtotime( $end_date ) ) ? $start_ts + 7200 : strtotime( $end_date );
+		$start_ts = Fechas::instante( (string) $start_date );
+		$end_ts   = null !== Fechas::instante( (string) $end_date ) ? Fechas::instante( (string) $end_date ) : $start_ts + 7200;
 
 		$start_iso = wp_date( 'c', $start_ts );
 		$end_iso   = wp_date( 'c', $end_ts );

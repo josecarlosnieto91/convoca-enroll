@@ -238,7 +238,7 @@ class Checkin_PWA {
 			}
 
 			$checkin = new Checkin_Handler();
-			$result  = $checkin->mark_as_attended_by_token( $token );
+			$result  = $checkin->mark_as_attended_by_token( $token, get_current_user_id() );
 
 			if ( is_wp_error( $result ) ) {
 				$results[] = array(
@@ -248,8 +248,9 @@ class Checkin_PWA {
 				);
 			} else {
 				$results[] = array(
-					'token'  => $token,
-					'status' => 'success',
+					'token'           => $token,
+					'status'          => 'success',
+					'already_checked' => (bool) $result['ya_marcada'],
 				);
 			}
 		}

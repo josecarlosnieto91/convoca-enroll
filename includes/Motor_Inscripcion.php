@@ -62,7 +62,9 @@ class Motor_Inscripcion {
 			return true;
 		}
 
-		return strtotime( (string) $fecha_inicio ) >= time();
+		$inicio = Fechas::instante( (string) $fecha_inicio );
+
+		return null === $inicio || $inicio >= time();
 	}
 
 	/**
@@ -504,6 +506,8 @@ class Motor_Inscripcion {
 		// ¿La cancelación ocurre dentro de la ventana (cancelación tardía)?
 		$es_tardia = self::es_cancelacion_tardia( $fecha_inicio, $window_hours, $now );
 
+		$asistencia_previa = (string) CPT_Inscripcion::get_meta( $inscripcion_id, 'asistencia' );
+
 		// Use transaction for atomicity.
 		global $wpdb;
 		$wpdb->query( 'START TRANSACTION' );
@@ -535,6 +539,12 @@ class Motor_Inscripcion {
 			// Update state.
 			CPT_Inscripcion::update_meta( $inscripcion_id, 'estado', 'cancelada' );
 
+			// Una cancelada no puede seguir contando como asistente en el informe ni en las horas
+			// de voluntariado (enroll#77). Se limpia también el rastro horario y quién lo marcó.
+			CPT_Inscripcion::update_meta( $inscripcion_id, 'asistencia', 'no_registrada' );
+			delete_post_meta( $inscripcion_id, '_convoca_checkin_hora' );
+			delete_post_meta( $inscripcion_id, '_convoca_checkin_by' );
+
 			// IMPORTANT: Invalidate QR token on cancellation for security.
 			CPT_Inscripcion::update_meta( $inscripcion_id, 'checkin_token', '' );
 
@@ -548,6 +558,12 @@ class Motor_Inscripcion {
 			}
 
 			$wpdb->query( 'COMMIT' );
+
+			// El aviso de asistencia va DESPUÉS del commit: el libro de horas abre su propia
+			// transacción y una anidada confirmaría la de fuera antes de tiempo.
+			if ( 'no_registrada' !== $asistencia_previa ) {
+				\Convoca\Core\Utils::do_action( 'convoca_enroll_asistencia_cambiada', 'convoca_asistencia_cambiada', $inscripcion_id, 'no_registrada' );
+			}
 
 			\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_cancelada', 'convoca_inscripcion_cancelada', $inscripcion_id, $actividad_id );
 
@@ -577,8 +593,8 @@ class Motor_Inscripcion {
 			return false;
 		}
 
-		$start_ts = strtotime( $fecha_inicio );
-		if ( ! $start_ts ) {
+		$start_ts = Fechas::instante( $fecha_inicio );
+		if ( null === $start_ts ) {
 			return false;
 		}
 

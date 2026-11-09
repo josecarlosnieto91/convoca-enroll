@@ -65,6 +65,10 @@ class Admin_Reports {
 	 * Render the reports page.
 	 */
 	public static function render(): void {
+		if ( ! current_user_can( 'manage_inscripciones' ) && ! current_user_can( 'convoca_view_reports' ) ) {
+			wp_die( esc_html__( 'No tienes permisos para ver los informes.', 'convoca-enroll' ) );
+		}
+
 		$instance              = new self();
 		$instance->current_tab = isset( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $instance->tabs ) ? sanitize_text_field( $_GET['tab'] ) : 'ocupacion';
 
@@ -166,14 +170,114 @@ class Admin_Reports {
 
 	/* ── Tab: Ocupacion ────────────────────────── */
 
+	/**
+	 * Rango de fechas del informe de ocupación.
+	 *
+	 * Por defecto, las próximas actividades: abrir en el mes en curso dejaba «no hay actividades» en
+	 * noviembre aunque el centro tuviera diciembre lleno (enroll#83). Los atajos rellenan las fechas
+	 * y el formulario manual manda cuando trae las dos.
+	 *
+	 * @param array<string, mixed> $query Parámetros de la petición ($_GET).
+	 * @return array{start_date: string, end_date: string, rango: string}
+	 */
+	public static function calcular_rango( array $query ): array {
+		$hoy   = (string) wp_date( 'Y-m-d' );
+		$rango = isset( $query['rango'] ) ? sanitize_text_field( (string) $query['rango'] ) : '';
+
+		switch ( $rango ) {
+			case 'todas':
+				$start_date = '2000-01-01';
+				$end_date   = '2100-12-31';
+				break;
+			case 'mes':
+				$start_date = (string) wp_date( 'Y-m-01' );
+				$end_date   = (string) wp_date( 'Y-m-t' );
+				break;
+			case 'anterior':
+				$start_date = (string) wp_date( 'Y-m-01', strtotime( '-1 month' ) );
+				$end_date   = (string) wp_date( 'Y-m-t', strtotime( '-1 month' ) );
+				break;
+			case 'proximas':
+			default:
+				$start_date = $hoy;
+				$end_date   = (string) wp_date( 'Y-m-d', strtotime( '+6 months' ) );
+				break;
+		}
+
+		if ( isset( $query['start_date'], $query['end_date'] ) ) {
+			$start_date = sanitize_text_field( (string) $query['start_date'] );
+			$end_date   = sanitize_text_field( (string) $query['end_date'] );
+			$rango      = '';
+		}
+
+		return array(
+			'start_date' => $start_date,
+			'end_date'   => $end_date,
+			'rango'      => $rango,
+		);
+	}
+
 	private function tab_ocupacion(): void {
-		$start_date = isset( $_GET['start_date'] ) ? sanitize_text_field( $_GET['start_date'] ) : (string) wp_date( 'Y-m-01' );
-		$end_date   = isset( $_GET['end_date'] ) ? sanitize_text_field( $_GET['end_date'] ) : (string) wp_date( 'Y-m-t' );
-		$status     = isset( $_GET['status'] ) ? sanitize_text_field( $_GET['status'] ) : 'todas';
+		$rango_datos = self::calcular_rango( $_GET );
+		$start_date  = $rango_datos['start_date'];
+		$end_date    = $rango_datos['end_date'];
+		$rango       = $rango_datos['rango'];
+
+		$status = isset( $_GET['status'] ) ? sanitize_text_field( $_GET['status'] ) : 'todas';
 
 		$activities = $this->get_occupancy_data( $start_date, $end_date, $status );
 		?>
 		<div class="conv-report-filters">
+			<div class="conv-filter-group" style="margin-bottom:8px">
+				<a class="button <?php echo 'proximas' === $rango || '' === $rango ? 'button-primary' : ''; ?>" href="
+				<?php
+				echo esc_url(
+					add_query_arg(
+						array(
+							'page' => 'conv-informes', 'tab' => 'ocupacion', 'rango' => 'proximas'
+						),
+						admin_url( 'admin.php' )
+					)
+				);
+				?>
+									">Próximas</a>
+				<a class="button <?php echo 'mes' === $rango ? 'button-primary' : ''; ?>" href="
+				<?php
+				echo esc_url(
+					add_query_arg(
+						array(
+							'page' => 'conv-informes', 'tab' => 'ocupacion', 'rango' => 'mes'
+						),
+						admin_url( 'admin.php' )
+					)
+				);
+				?>
+									">Este mes</a>
+				<a class="button <?php echo 'anterior' === $rango ? 'button-primary' : ''; ?>" href="
+				<?php
+				echo esc_url(
+					add_query_arg(
+						array(
+							'page' => 'conv-informes', 'tab' => 'ocupacion', 'rango' => 'anterior'
+						),
+						admin_url( 'admin.php' )
+					)
+				);
+				?>
+									">Mes anterior</a>
+				<a class="button <?php echo 'todas' === $rango ? 'button-primary' : ''; ?>" href="
+				<?php
+				echo esc_url(
+					add_query_arg(
+						array(
+							'page' => 'conv-informes', 'tab' => 'ocupacion', 'rango' => 'todas'
+						),
+						admin_url( 'admin.php' )
+					)
+				);
+				?>
+									">Todas</a>
+			</div>
 			<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>" class="conv-filter-form">
 				<input type="hidden" name="page" value="conv-informes">
 				<input type="hidden" name="tab" value="ocupacion">
@@ -215,7 +319,22 @@ class Admin_Reports {
 			</thead>
 			<tbody>
 				<?php if ( empty( $activities ) ) : ?>
-					<tr><td colspan="7">No se encontraron actividades en este rango.</td></tr>
+					<tr><td colspan="7">
+						No se encontraron actividades entre el <?php echo esc_html( date_i18n( 'd/m/Y', strtotime( $start_date ) ) ); ?>
+						y el <?php echo esc_html( date_i18n( 'd/m/Y', strtotime( $end_date ) ) ); ?>.
+						<a href="
+						<?php
+						echo esc_url(
+							add_query_arg(
+								array(
+									'page' => 'conv-informes', 'tab' => 'ocupacion', 'rango' => 'todas'
+								),
+								admin_url( 'admin.php' )
+							)
+						);
+						?>
+									">Ver todas</a>.
+					</td></tr>
 					<?php
 				else :
 					foreach ( $activities as $act ) :
@@ -296,15 +415,19 @@ endif;
 		foreach ( $posts as $post ) {
 			$counts = CPT_Inscripcion::count_by_activity( $post->ID );
 
-			// Get real attendance.
+			// Get real attendance. La asistencia sola no basta: una inscripción cancelada conserva
+			// el histórico, así que se cruza con los estados vigentes (enroll#77).
 			global $wpdb;
+			$vigentes   = Estados::vigentes();
+			$marcadores = implode( ', ', array_fill( 0, count( $vigentes ), '%s' ) );
 			$asistentes = $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm
                  JOIN {$wpdb->posts} p ON p.ID = pm.post_id
                  WHERE pm.meta_key = '_convoca_actividad_id' AND pm.meta_value = %d
-                 AND p.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_asistencia' AND meta_value = 'si')",
-					$post->ID
+                 AND p.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_asistencia' AND meta_value = 'si')
+                 AND p.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_estado' AND meta_value IN ($marcadores))", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					array_merge( array( $post->ID ), $vigentes )
 				)
 			);
 
@@ -1170,7 +1293,7 @@ endif;
 	public function handle_export(): void {
 		global $wpdb;
 
-		if ( empty( $_GET['export'] ) || ! current_user_can( 'convoca_view_reports' ) ) {
+		if ( empty( $_GET['export'] ) || ( ! current_user_can( 'convoca_view_reports' ) && ! current_user_can( 'manage_inscripciones' ) ) ) {
 			return;
 		}
 

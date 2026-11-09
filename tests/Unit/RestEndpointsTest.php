@@ -65,8 +65,9 @@ final class RestEndpointsTest extends TestCase {
 		$actividad->post_title              = 'Ruta de otoño';
 		$GLOBALS['_wp_stores']['posts'][61] = $actividad;
 		$GLOBALS['_wp_stores']['post_meta'][61] = array(
-			'_convoca_fecha_inicio'       => gmdate( 'Y-m-d H:i:s', time() + 604800 ),
-			'_convoca_fecha_fin'          => gmdate( 'Y-m-d H:i:s', time() + 604800 + 7200 ),
+			// Actividad en curso: la ventana de check-in (2 h antes / 2 h después) está abierta.
+			'_convoca_fecha_inicio'       => gmdate( 'Y-m-d H:i:s', time() - 600 ),
+			'_convoca_fecha_fin'          => gmdate( 'Y-m-d H:i:s', time() + 3000 ),
 			'_convoca_plazas_totales'     => 20,
 			'_convoca_plazas_disponibles' => 15,
 		);
@@ -164,8 +165,8 @@ final class RestEndpointsTest extends TestCase {
 
 		$respuesta = $this->api->handle_checkin( $this->peticion( array( 'code' => 'tok-1' ) ) );
 
-		$this->assertSame( 400, $respuesta->get_status() );
-		$this->assertSame( 'pendiente_pago', $respuesta->get_data()['estado'] );
+		$this->assertSame( 409, $respuesta->get_status() );
+		$this->assertSame( 'not_confirmed', $respuesta->get_data()['error'] );
 	}
 
 	/**
@@ -272,10 +273,13 @@ final class RestEndpointsTest extends TestCase {
 	public function test_estado_libre_y_asistencia(): void {
 		$this->inscripcion();
 
-		$this->api->update_inscription( $this->peticion( array( 'id' => 70, 'estado' => 'pagada', 'asistencia' => 'si' ) ) );
+		$r = $this->api->update_inscription( $this->peticion( array( 'id' => 70, 'estado' => 'pagada', 'asistencia' => 'si' ) ) );
 
+		// El estado libre se guarda tal cual, pero la asistencia pasa por la puerta del check-in:
+		// `pagada` no es vigente, así que no se marca (enroll#77/#81).
+		$this->assertInstanceOf( \WP_Error::class, $r );
 		$this->assertSame( 'pagada', $GLOBALS['_wp_stores']['post_meta'][70]['_convoca_estado'] );
-		$this->assertSame( 'si', $GLOBALS['_wp_stores']['post_meta'][70]['_convoca_asistencia'] );
+		$this->assertSame( 'no_registrada', $GLOBALS['_wp_stores']['post_meta'][70]['_convoca_asistencia'] );
 	}
 
 	/**

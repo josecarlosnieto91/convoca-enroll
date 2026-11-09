@@ -69,7 +69,8 @@ final class PlantillasMarcadoresTest extends TestCase {
 		$cuerpo   = (string) $defectos['confirmacion_plaza']['body'];
 
 		$this->assertStringContainsString( '<img src="{qr_code}"', $cuerpo, 'el QR va como imagen, no solo como promesa' );
-		$this->assertStringContainsString( '{url_checkin}', $cuerpo, 'y hay salida si el cliente no pinta la imagen' );
+		$this->assertStringNotContainsString( '{url_checkin}', $cuerpo, 'el correo de la persona ya no ofrece auto check-in' );
+		$this->assertStringContainsString( 'pide al equipo', $cuerpo, 'y dice cómo resolverlo sin enlace' );
 	}
 
 	/**

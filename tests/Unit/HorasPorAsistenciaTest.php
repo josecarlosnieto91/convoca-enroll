@@ -45,9 +45,10 @@ class HorasPorAsistenciaTest extends TestCase
 
 	public function test_el_checkin_cambia_la_asistencia_y_eso_dispara_el_hook(): void
 	{
-		// Eslabón 1: si el check-in dejara de pasar por set_asistencia(), no habría ni hook ni horas.
+		// Eslabón 1: si el check-in dejara de pasar por la puerta compartida, no habría ni hook ni horas.
 		$handler = $this->codigo( 'includes/Checkin_Handler.php' );
-		$this->assertStringContainsString( 'Motor_Inscripcion::set_asistencia(', $handler );
+		$this->assertStringContainsString( 'Checkin::registrar(', $handler );
+		$this->assertStringContainsString( 'Motor_Inscripcion::cambiar_asistencia(', $this->codigo( 'includes/Checkin.php' ) );
 
 		// Eslabón 2: set_asistencia() es quien avisa.
 		$this->assertStringContainsString( "do_action( 'convoca_enroll_asistencia_cambiada'", $this->codigo( 'includes/Motor_Inscripcion.php' ) );

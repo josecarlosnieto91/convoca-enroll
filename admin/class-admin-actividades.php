@@ -169,8 +169,9 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 
 		// Defaults for new activity.
 		if ( ! $post_id ) {
-			$meta['fecha_inicio'] = wp_date( 'Y-m-d\TH:i', strtotime( '+1 day 10:00' ) );
-			$meta['fecha_fin']    = wp_date( 'Y-m-d\TH:i', strtotime( '+1 day 14:00' ) );
+			$zona                 = Fechas::zona();
+			$meta['fecha_inicio'] = ( new \DateTimeImmutable( 'tomorrow 10:00', $zona ) )->format( 'Y-m-d\TH:i' );
+			$meta['fecha_fin']    = ( new \DateTimeImmutable( 'tomorrow 14:00', $zona ) )->format( 'Y-m-d\TH:i' );
 			// «Plazas por defecto» de Ajustes → General (issue #60): estaba guardada y no se leía.
 			$settings_plazas        = get_option( 'convoca_enroll_settings', array() );
 			$plazas_defecto         = absint( is_array( $settings_plazas ) ? ( $settings_plazas['plazas_por_defecto'] ?? 0 ) : 0 );
@@ -504,6 +505,27 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 		exit;
 	}
 
+	/**
+	 * Desplaza una fecha local del sitio N días de calendario, conservando la hora.
+	 *
+	 * Sumar 604800 segundos cambia la hora si en medio hay un cambio de horario; `modify('+N days')`
+	 * sobre la zona del sitio mantiene la hora de pared.
+	 *
+	 * @param string $fecha Fecha local.
+	 * @param int    $dias  Días.
+	 * @return int|null Instante, o null si la fecha no vale.
+	 */
+	private static function desplazar_dias( string $fecha, int $dias ): ?int {
+		$instante = Fechas::instante( $fecha );
+		if ( null === $instante ) {
+			return null;
+		}
+
+		$dt = ( new \DateTimeImmutable( '@' . $instante ) )->setTimezone( Fechas::zona() );
+
+		return $dt->modify( sprintf( '%+d days', $dias ) )->getTimestamp();
+	}
+
 	public function handle_duplicate(): void {
 		$orig_id = (int) ( wp_unslash( $_GET['id'] ?? 0 ) );
 		if ( ! $orig_id || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ?? '' ), 'convoca_enroll_duplicate_' . $orig_id ) ) {
@@ -549,14 +571,14 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 		$fecha_ini = get_post_meta( $orig_id, '_convoca_fecha_inicio', true );
 		$fecha_fin = get_post_meta( $orig_id, '_convoca_fecha_fin', true );
 		if ( $fecha_ini ) {
-			$ts_ini = strtotime( $fecha_ini . ' +7 days' );
-			if ( false !== $ts_ini ) {
+			$ts_ini = self::desplazar_dias( (string) $fecha_ini, 7 );
+			if ( null !== $ts_ini ) {
 				update_post_meta( $new_id, '_convoca_fecha_inicio', wp_date( 'Y-m-d\TH:i', $ts_ini ) );
 			}
 		}
 		if ( $fecha_fin ) {
-			$ts_fin = strtotime( $fecha_fin . ' +7 days' );
-			if ( false !== $ts_fin ) {
+			$ts_fin = self::desplazar_dias( (string) $fecha_fin, 7 );
+			if ( null !== $ts_fin ) {
 				update_post_meta( $new_id, '_convoca_fecha_fin', wp_date( 'Y-m-d\TH:i', $ts_fin ) );
 			}
 		}

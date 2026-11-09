@@ -2,9 +2,9 @@
 /**
  * Quién puede hacer un check-in directo y con qué código HTTP se responde.
  *
- * El check-in directo lo puede hacer el personal (siempre) y quien recibe el QR (con su
- * firma `h`). Lo que NO puede pasar es que la firma conceda permisos de administración:
- * sirve para esa inscripción y para ninguna otra cosa.
+ * La ruta directa `/checkin/<token>/` era del asistente: bastaba la firma `h` del enlace del
+ * correo para marcarse la asistencia sin sesión y semanas antes (enroll#76). Ahora es una
+ * herramienta del personal: la firma del enlace ya no autoriza nada.
  *
  * @package Convoca\Enroll\Tests
  */
@@ -39,24 +39,23 @@ class CheckinPermisosTest extends TestCase
 	 */
 	private function sinPermisos(): void
 	{
-		$GLOBALS['convoca_test_caps']  = array( 'manage_inscripciones' => false );
+		$GLOBALS['convoca_test_caps']  = array( 'manage_inscripciones' => false, 'convoca_manage_checkin' => false );
 		$GLOBALS['convoca_test_roles'] = array();
 	}
 
-	/**
-	 * El socio que recibe el QR: sin permisos, solo con su firma.
-	 */
-	private function socio(): void
-	{
-		$this->sinPermisos();
-	}
-
-	public function test_el_personal_entra_sin_necesitar_firma(): void
+	public function test_el_personal_entra_con_su_capacidad(): void
 	{
 		$GLOBALS['convoca_test_caps'] = array( 'manage_inscripciones' => true );
 
 		$this->assertTrue( $this->handler->es_personal() );
-		$this->assertTrue( $this->handler->puede_checkin_directo( 77, '' ) );
+		$this->assertTrue( $this->handler->puede_checkin_directo( 77 ) );
+	}
+
+	public function test_la_capacidad_del_modulo_tambien_vale(): void
+	{
+		$GLOBALS['convoca_test_caps'] = array( 'convoca_manage_checkin' => true );
+
+		$this->assertTrue( $this->handler->es_personal() );
 	}
 
 	public function test_el_voluntario_aprobado_cuenta_como_personal(): void
@@ -67,57 +66,47 @@ class CheckinPermisosTest extends TestCase
 		$this->assertTrue( $this->handler->es_personal() );
 	}
 
-	public function test_quien_recibe_el_qr_entra_con_su_firma_y_sin_permisos(): void
+	/**
+	 * Quien recibe el QR ya NO puede marcar su asistencia: el enlace no es una credencial.
+	 */
+	public function test_la_firma_del_enlace_ya_no_autoriza(): void
 	{
-		$this->socio();
+		$this->sinPermisos();
 
 		$this->assertFalse( $this->handler->es_personal(), 'Un socio no debe ser personal.' );
-		$this->assertTrue( $this->handler->puede_checkin_directo( 77, Checkin_Link::hmac( 77 ) ) );
-	}
-
-	public function test_sin_permisos_y_con_firma_que_no_corresponde_no_se_entra(): void
-	{
-		$this->socio();
-
-		$this->assertFalse( $this->handler->puede_checkin_directo( 77, 'firma-inventada' ) );
-		$this->assertFalse( $this->handler->puede_checkin_directo( 77, Checkin_Link::hmac( 78 ) ) );
-		$this->assertFalse( $this->handler->puede_checkin_directo( 0, '' ) );
-	}
-
-	public function test_la_firma_de_una_no_sirve_para_otra_inscripcion(): void
-	{
-		$this->socio();
-
-		// Es la comprobación que impide que un socio marque la asistencia de otro.
-		$this->assertTrue( $this->handler->puede_checkin_directo( 77, Checkin_Link::hmac( 77 ) ) );
-		$this->assertFalse( $this->handler->puede_checkin_directo( 88, Checkin_Link::hmac( 77 ) ) );
+		$this->assertFalse(
+			$this->handler->puede_checkin_directo( 77 ),
+			'la firma h del correo ya no sirve para marcar'
+		);
+		// El HMAC sigue existiendo para identificar la inscripción del QR, no para autorizar.
+		$this->assertNotSame( '', Checkin_Link::hmac( 77 ) );
 	}
 
 	public function test_los_codigos_http_dicen_lo_que_pasa(): void
 	{
-		// Antes cualquier error salía como 500: «el servidor se rompió» cuando lo que
-		// pasaba era que el enlace no valía.
 		$this->assertSame( 404, $this->handler->status_para_error( new WP_Error( 'invalid_token', 'Token de check-in no válido.' ) ) );
 		$this->assertSame( 409, $this->handler->status_para_error( new WP_Error( 'not_confirmed', 'La inscripción no está confirmada.' ) ) );
+		$this->assertSame( 409, $this->handler->status_para_error( new WP_Error( 'checkin_temprano', 'Todavía no es la hora.' ) ) );
+		$this->assertSame( 409, $this->handler->status_para_error( new WP_Error( 'checkin_cerrado', 'Ya terminó.' ) ) );
+		$this->assertSame( 403, $this->handler->status_para_error( new WP_Error( 'no_user', 'Sin usuario.' ) ) );
 		$this->assertSame( 400, $this->handler->status_para_error( new WP_Error( 'checkin_error', 'Error al procesar el check-in.' ) ) );
 	}
 
 	public function test_un_enlace_que_no_existe_responde_404_no_403(): void
 	{
-		$this->socio();
+		$this->sinPermisos();
 
 		// No es un problema de permisos: es que ese enlace no es de nadie.
-		$this->assertSame( 404, $this->handler->respuesta_checkin_directo( 0, 'lo-que-sea' ) );
-		$this->assertSame( 403, $this->handler->respuesta_checkin_directo( 77, 'firma-inventada' ) );
-		$this->assertSame( 200, $this->handler->respuesta_checkin_directo( 77, Checkin_Link::hmac( 77 ) ) );
+		$this->assertSame( 404, $this->handler->respuesta_checkin_directo( 0 ) );
+		$this->assertSame( 403, $this->handler->respuesta_checkin_directo( 77 ) );
 	}
 
 	public function test_el_personal_entra_aunque_el_token_no_le_pertenezca(): void
 	{
 		$GLOBALS['convoca_test_caps'] = array( 'manage_inscripciones' => true );
 
-		$this->assertSame( 200, $this->handler->respuesta_checkin_directo( 88, '' ) );
+		$this->assertSame( 200, $this->handler->respuesta_checkin_directo( 88 ) );
 		// Pero un enlace que no corresponde a ninguna inscripción sigue siendo 404.
-		$this->assertSame( 404, $this->handler->respuesta_checkin_directo( 0, '' ) );
+		$this->assertSame( 404, $this->handler->respuesta_checkin_directo( 0 ) );
 	}
 }

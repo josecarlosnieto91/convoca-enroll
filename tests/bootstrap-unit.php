@@ -890,6 +890,9 @@ if (!function_exists('wp_get_current_user')) {
     }
 }
 if (!function_exists('get_current_user_id')) { function get_current_user_id() { return 1; } }
+if (!function_exists('add_post_meta')) { function add_post_meta($id, $k, $v, $unique = false) { if ($unique && isset($GLOBALS['_wp_stores']['post_meta'][$id][$k])) { return false; } $GLOBALS['_wp_stores']['post_meta'][$id][$k] = $v; return true; } }
+if (!function_exists('get_role')) { function get_role($rol) { return $GLOBALS['convoca_test_roles_objetos'][ (string) $rol ] ?? null; } }
+if (!function_exists('wp_footer')) { function wp_footer() { echo '<!-- wp_footer -->'; } }
 if (!function_exists('wp_create_nonce')) { function wp_create_nonce($a = -1) { return 'nonce-' . $a; } }
 if (!function_exists('wp_verify_nonce')) {
     /** Con `$GLOBALS['nonce_invalido']` a true se simula el nonce caducado. */
@@ -937,8 +940,9 @@ if (!function_exists('current_time')) {
         return date($t);
     }
 }
-if (!function_exists('wp_date')) { function wp_date($f, $ts = null) { return date($f, $ts ?? time()); } }
+if (!function_exists('wp_date')) { function wp_date($f, $ts = null, $tz = null) { return date($f, $ts ?? time()); } }
 if (!function_exists('wp_timezone_string')) { function wp_timezone_string() { return (string) ($GLOBALS['convoca_tz_string'] ?? 'Europe/Madrid'); } }
+if (!function_exists('wp_timezone')) { function wp_timezone() { return new DateTimeZone(wp_timezone_string()); } }
 // WordPress envuelve parse_url() para que el resultado sea igual en todas las versiones de PHP.
 if (!function_exists('wp_parse_url')) { function wp_parse_url($url, $component = -1) { return parse_url($url, $component); } }
 

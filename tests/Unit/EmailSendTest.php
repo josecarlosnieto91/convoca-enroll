@@ -165,7 +165,11 @@ final class EmailSendTest extends TestCase {
 	 * Ya enviado hace menos de cinco minutos: no se repite.
 	 */
 	public function test_no_repite_el_mismo_correo(): void {
-		$GLOBALS['wpdb']->rows_affected = 0;
+		// El cerrojo ahora vive en `wp_options` (clave única): el INSERT decide quién gana.
+		$GLOBALS['convoca_test_query_retorno'] = array(
+			'INSERT IGNORE INTO wp_options' => 0,
+			'UPDATE wp_options'             => 0,
+		);
 
 		$this->assertSame( array(), $this->enviar( 'recepcion' ), 'el cerrojo de la base lo impide' );
 	}

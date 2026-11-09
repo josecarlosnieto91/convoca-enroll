@@ -97,7 +97,8 @@ final class RegresionesInscripcionTest extends TestCase {
 	 * recordatorios no puedan volver a divergir.
 	 */
 	public function test_el_checkin_exige_inscripcion_vigente(): void {
-		$src = $this->fuente( 'includes/Checkin_Handler.php' );
+		// La regla vive ahora en la puerta única (Checkin), no en el handler de la ruta.
+		$src = $this->fuente( 'includes/Checkin_Handler.php' ) . $this->fuente( 'includes/Checkin.php' );
 
 		$this->assertMatchesRegularExpression(
 			'/Estados::es_vigente\(/',

@@ -147,7 +147,7 @@ final class AdminPagePiezasTest extends TestCase {
 		$menu = $GLOBALS['_convoca_menu_prueba'];
 		$this->assertCount( 1, $menu, 'un menú principal' );
 		$this->assertSame( 'Actividades', $menu[0][1] );
-		$this->assertSame( 'gestionar_miembros', $menu[0][2] );
+		$this->assertSame( 'manage_inscripciones', $menu[0][2] );
 		$this->assertSame( 'convoca-enroll', $menu[0][3] );
 
 		$submenus = array();
@@ -159,9 +159,11 @@ final class AdminPagePiezasTest extends TestCase {
 			$this->assertArrayHasKey( $slug, $submenus, 'submenú: ' . $slug );
 		}
 
-		$this->assertSame( 'convoca_view_reports', $submenus['convoca-enroll-delegados'][3], 'los delegados ven informes' );
+		$this->assertSame( 'manage_inscripciones', $submenus['convoca-enroll-delegados'][3], 'los delegados gestionan inscripciones' );
 		$this->assertSame( 'manage_options', $submenus['conv-ajustes'][3], 'los ajustes son de administración' );
-		$this->assertSame( 'common_view_logs', $submenus['convoca_enroll-logs'][3] );
+		$this->assertSame( 'convoca_manage_checkin', $submenus['conv-checkin'][3], 'el check-in tiene su capacidad' );
+		$this->assertSame( 'manage_inscripciones', $submenus['conv-informes'][3], 'quien gestiona inscripciones ve informes' );
+		$this->assertSame( 'manage_convoca_logs', $submenus['convoca_enroll-logs'][3] );
 	}
 
 	/**

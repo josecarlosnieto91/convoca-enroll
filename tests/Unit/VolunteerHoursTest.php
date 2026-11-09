@@ -110,10 +110,8 @@ final class VolunteerHoursTest extends TestCase {
 		$this->assertSame( 7, $credit[3] );
 		$this->assertSame( 6.0, $credit[4], 'las horas que declara la actividad' );
 
-		// El marcador se escribe con SQL directo (`INSERT … ON DUPLICATE KEY`): se afirma la consulta, no el meta.
-		$sql = implode( "\n", (array) ( $GLOBALS['_wp_stores']['queries'] ?? array() ) );
-		$this->assertStringContainsString( '_convoca_horas_contadas', $sql, 'la inscripción queda marcada' );
-		$this->assertStringContainsString( 'ON DUPLICATE KEY UPDATE', $sql, 'y marcarla dos veces no duplica' );
+		// El marcador se escribe con `add_post_meta( …, true )`: se afirma el meta, no una consulta.
+		$this->assertSame( '1', (string) ( $GLOBALS['_wp_stores']['post_meta'][70]['_convoca_horas_contadas'] ?? '' ), 'la inscripción queda marcada' );
 	}
 
 	/**

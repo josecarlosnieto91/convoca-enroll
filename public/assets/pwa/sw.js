@@ -95,13 +95,17 @@ async function networkOrQueue(request) {
 // ── IndexedDB queue ──────────────────────────────────────
 const DB_NAME = 'conv-checkin-queue';
 const STORE_NAME = 'pending';
-const DB_VERSION = 1;
+// v2: las bases creadas por la página (v1, sin almacén) se arreglan al subir de versión. Con la
+// misma versión, `onupgradeneeded` no se disparaba y `pending` no existía nunca (enroll#82).
+const DB_VERSION = 2;
 
 function openDB() {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = () => {
-      req.result.createObjectStore(STORE_NAME, { autoIncrement: true });
+      if (!req.result.objectStoreNames.contains(STORE_NAME)) {
+        req.result.createObjectStore(STORE_NAME, { autoIncrement: true });
+      }
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
@@ -148,6 +152,14 @@ async function removeQueuedRequest(id) {
 // When back online, flush the queue
 self.addEventListener('sync', (event) => {
   if (event.tag === 'conv-flush-checkins') {
+    event.waitUntil(flushQueue());
+  }
+});
+
+// Sin Background Sync (Firefox, Safari o permiso denegado), la página pide el volcado al volver
+// la conexión. Antes no había ningún camino alternativo y la cola se quedaba llena.
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'conv-flush-checkins') {
     event.waitUntil(flushQueue());
   }
 });

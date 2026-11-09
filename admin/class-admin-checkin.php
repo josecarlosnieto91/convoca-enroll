@@ -34,6 +34,10 @@ class Admin_Checkin {
 	 * Render the check-in page.
 	 */
 	public static function render(): void {
+		if ( ! current_user_can( 'convoca_manage_checkin' ) && ! current_user_can( 'manage_inscripciones' ) ) {
+			wp_die( esc_html__( 'No tienes permisos para hacer check-in.', 'convoca-enroll' ) );
+		}
+
 		$actividad_id = (int) ( $_GET['actividad_id'] ?? 0 );
 		$search       = sanitize_text_field( $_GET['s'] ?? '' );
 

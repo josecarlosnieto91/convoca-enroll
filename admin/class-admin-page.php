@@ -109,9 +109,10 @@ class Admin_Page {
 	/* ── Menu ──────────────────────────────────── */
 
 	public function add_menu(): void {
-		// Use 'gestionar_miembros' as the base capability for visibility.
-		// It's confirmed to work for admins and monitors.
-		$cap = 'gestionar_miembros';
+		// Una sola familia para las pantallas operativas de Enroll. Antes convivían seis
+		// capacidades y el menú principal se abría con `gestionar_miembros`, que es de socios:
+		// un rol de inscripciones no veía el plugin y `shop_manager` no veía Informes (enroll#84).
+		$cap = 'manage_inscripciones';
 
 		// 1. Menú Principal (Top-level)
 		add_menu_page(
@@ -143,7 +144,7 @@ class Admin_Page {
 			'convoca-enroll',
 			__( 'Delegados', 'convoca-enroll' ),
 			__( 'Delegados', 'convoca-enroll' ),
-			'convoca_view_reports',
+			'manage_inscripciones',
 			'convoca-enroll-delegados',
 			array( $this, 'render_delegados' )
 		);
@@ -161,7 +162,7 @@ class Admin_Page {
 			'convoca-enroll',
 			__( 'Check-in', 'convoca-enroll' ),
 			__( 'Check-in', 'convoca-enroll' ),
-			$cap,
+			'convoca_manage_checkin',
 			'conv-checkin',
 			array( Admin_Checkin::class, 'render' )
 		);
@@ -186,7 +187,7 @@ class Admin_Page {
 			'convoca-enroll',
 			__( 'Informes', 'convoca-enroll' ),
 			__( 'Informes', 'convoca-enroll' ),
-			'convoca_view_reports',
+			'manage_inscripciones',
 			'conv-informes',
 			array( Admin_Reports::class, 'render' )
 		);
@@ -204,7 +205,7 @@ class Admin_Page {
 			'convoca-enroll',
 			__( 'Logs', 'convoca-enroll' ),
 			__( 'Logs', 'convoca-enroll' ),
-			'common_view_logs',
+			'manage_convoca_logs',
 			'convoca_enroll-logs',
 			array( Admin_Logs::class, 'render' )
 		);
@@ -395,7 +396,7 @@ class Admin_Page {
 	}
 
 	public function render_delegados(): void {
-		if ( ! current_user_can( 'convoca_view_reports' ) ) {
+		if ( ! current_user_can( 'manage_inscripciones' ) ) {
 			wp_die( esc_html__( 'No tienes permisos para acceder a esta página.', 'convoca-enroll' ) );
 		}
 
@@ -796,14 +797,33 @@ class Admin_Page {
 		}
 
 		$current = CPT_Inscripcion::get_meta( $id, 'asistencia' );
-		$new     = ( $current === 'si' ) ? 'no' : 'si';
 
-		Motor_Inscripcion::set_asistencia( $id, $new );
+		if ( 'si' === $current ) {
+			// Desmarcar es una corrección: se permite siempre y retira las horas acreditadas.
+			Motor_Inscripcion::cambiar_asistencia( $id, 'no' );
+
+			wp_send_json_success(
+				array(
+					'asistencia' => 'no',
+					'label'      => __( 'Pendiente', 'convoca-enroll' ),
+				)
+			);
+		}
+
+		// Marcar pasa por la misma puerta que el escáner: estado vigente, ventana de la actividad,
+		// hora y usuario. Antes el botón de la lista marcaba canceladas y no dejaba hora (enroll#81).
+		$resultado = Checkin::registrar( $id, get_current_user_id() );
+
+		if ( is_wp_error( $resultado ) ) {
+			wp_send_json_error( $resultado->get_error_message() );
+		}
 
 		wp_send_json_success(
 			array(
-				'asistencia' => $new,
-				'label'      => ( $new === 'si' ) ? __( 'Registrado', 'convoca-enroll' ) : __( 'Pendiente', 'convoca-enroll' ),
+				'asistencia'      => 'si',
+				'label'           => __( 'Registrado', 'convoca-enroll' ),
+				'already_checked' => (bool) $resultado['ya_marcada'],
+				'hora'            => (string) $resultado['hora'],
 			)
 		);
 	}

@@ -257,7 +257,7 @@ final class AdminPantallasTest extends TestCase {
 	 * Delegados exige permiso: sin él se corta.
 	 */
 	public function test_delegados_sin_permiso(): void {
-		$GLOBALS['convoca_test_caps']['convoca_view_reports'] = false;
+		$GLOBALS['convoca_test_caps']['manage_inscripciones'] = false;
 
 		$this->expectException( \Convoca_Json_Cortado::class );
 		$this->pantalla->render_delegados();

@@ -102,30 +102,29 @@ final class CheckinHandlerTest extends TestCase {
 	 * Qué se responde: 404 si el enlace no existe, 200 si es personal o la firma vale, 403 si no.
 	 */
 	public function test_la_respuesta_del_checkin_directo(): void {
-		$this->assertSame( 404, $this->checkin->respuesta_checkin_directo( 0, 'firma' ), 'enlace sin inscripción' );
+		$this->assertSame( 404, $this->checkin->respuesta_checkin_directo( 0 ), 'enlace sin inscripción' );
 
 		$GLOBALS['convoca_test_caps'] = array( 'manage_inscripciones' => true );
-		$this->assertSame( 200, $this->checkin->respuesta_checkin_directo( 410, 'lo-que-sea' ), 'el personal puede con cualquier enlace' );
+		$this->assertSame( 200, $this->checkin->respuesta_checkin_directo( 410 ), 'el personal puede con cualquier enlace' );
 
-		$GLOBALS['convoca_test_caps'] = array( 'manage_inscripciones' => false );
-		$this->assertSame( 403, $this->checkin->respuesta_checkin_directo( 410, 'firma-inventada' ), 'sin firma válida, no' );
-		$this->assertSame( 403, $this->checkin->respuesta_checkin_directo( 410, '' ), 'sin firma, tampoco' );
+		$GLOBALS['convoca_test_caps'] = array( 'manage_inscripciones' => false, 'convoca_manage_checkin' => false );
+		$this->assertSame( 403, $this->checkin->respuesta_checkin_directo( 410 ), 'sin ser personal, no' );
 	}
 
 	/**
-	 * La firma buena da paso a quien no es personal.
+	 * La firma del enlace no autoriza a quien no es personal: el check-in directo es del equipo.
 	 */
-	public function test_firma_valida_deja_pasar(): void {
-		$GLOBALS['convoca_test_caps'] = array( 'manage_inscripciones' => false );
+	public function test_la_firma_no_autoriza(): void {
+		$GLOBALS['convoca_test_caps'] = array( 'manage_inscripciones' => false, 'convoca_manage_checkin' => false );
 
-		$this->assertTrue(
-			$this->checkin->puede_checkin_directo( 410, \Convoca\Enroll\Checkin_Link::hmac( 410 ) ),
-			'la firma de su inscripción le deja entrar'
-		);
 		$this->assertFalse(
-			$this->checkin->puede_checkin_directo( 411, \Convoca\Enroll\Checkin_Link::hmac( 410 ) ),
-			'la firma de otra persona, no'
+			$this->checkin->puede_checkin_directo( 410 ),
+			'sin ser personal, el enlace del correo no marca nada'
 		);
+
+		$GLOBALS['convoca_test_caps'] = array( 'manage_inscripciones' => true );
+		$this->assertTrue( $this->checkin->puede_checkin_directo( 410 ), 'el personal sí' );
+		$this->assertFalse( $this->checkin->puede_checkin_directo( 0 ), 'un enlace sin inscripción, no' );
 	}
 
 	/**
@@ -134,6 +133,7 @@ final class CheckinHandlerTest extends TestCase {
 	public function test_los_codigos_de_error(): void {
 		$this->assertSame( 404, $this->checkin->status_para_error( new \WP_Error( 'invalid_token' ) ) );
 		$this->assertSame( 409, $this->checkin->status_para_error( new \WP_Error( 'not_confirmed' ) ), 'no confirmada: conflicto' );
+		$this->assertSame( 409, $this->checkin->status_para_error( new \WP_Error( 'checkin_temprano' ) ), 'fuera de ventana: conflicto' );
 		$this->assertSame( 400, $this->checkin->status_para_error( new \WP_Error( 'otro' ) ) );
 	}
 
@@ -231,7 +231,10 @@ final class CheckinHandlerTest extends TestCase {
 		// La hora del primer escaneo: si el segundo la reescribe, el rastro de la puerta miente.
 		$GLOBALS['_wp_stores']['post_meta'][70]['_convoca_checkin_hora'] = '2026-11-14 18:03:00';
 
-		$this->assertTrue( $this->checkin->mark_as_attended_by_token( 'tok-bueno' ) );
+		$r = $this->checkin->mark_as_attended_by_token( 'tok-bueno' );
+
+		$this->assertIsArray( $r );
+		$this->assertTrue( $r['ya_marcada'], 'el segundo escaneo se distingue del primero' );
 
 		$this->assertSame(
 			'2026-11-14 18:03:00',
@@ -246,7 +249,10 @@ final class CheckinHandlerTest extends TestCase {
 	public function test_marcar_deja_la_hora(): void {
 		$this->inscripcion();
 
-		$this->assertTrue( $this->checkin->mark_as_attended_by_token( 'tok-bueno' ) );
+		$r = $this->checkin->mark_as_attended_by_token( 'tok-bueno' );
+
+		$this->assertIsArray( $r );
+		$this->assertFalse( $r['ya_marcada'], 'el primer escaneo no es repetido' );
 
 		$meta = $GLOBALS['_wp_stores']['post_meta'][70];
 		$this->assertSame( 'si', $meta['_convoca_asistencia'] );

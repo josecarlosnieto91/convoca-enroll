@@ -81,7 +81,7 @@ class MigracionesTest extends TestCase {
 	public function test_el_contrato_del_gestor(): void {
 		$callbacks = $this->valor( 'get_upgrade_callbacks' );
 
-		$this->assertSame( array( '1.2.0', '1.3.0', '1.4.0', '1.5.0', '1.6.0' ), array_keys( $callbacks ), 'las migraciones van en orden de versión' );
+		$this->assertSame( array( '1.2.0', '1.3.0', '1.4.0', '1.5.0', '1.6.0', '1.7.0' ), array_keys( $callbacks ), 'las migraciones van en orden de versión' );
 		$reflejo = new \ReflectionClass( Enroll_Upgrade_Manager::class );
 		foreach ( $callbacks as $version => $metodo ) {
 			// `is_callable` da false sobre un método protegido desde fuera; lo que importa es que EXISTA.

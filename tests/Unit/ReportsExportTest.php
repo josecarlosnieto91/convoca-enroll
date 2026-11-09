@@ -134,7 +134,7 @@ final class ReportsExportTest extends TestCase {
 		$this->informes->handle_export();
 		$this->assertSame( array(), $GLOBALS['_csv'] );
 
-		$GLOBALS['convoca_test_caps'] = array( 'convoca_view_reports' => false );
+		$GLOBALS['convoca_test_caps'] = array( 'convoca_view_reports' => false, 'manage_inscripciones' => false );
 		$this->exportar( 'ocupacion' );
 		$this->assertSame( array(), $GLOBALS['_csv'], 'sin permiso no hay fichero' );
 	}

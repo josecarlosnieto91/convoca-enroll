@@ -74,6 +74,7 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 			'1.4.0' => array( $this, 'upgrade_to_1_4_0' ),
 			'1.5.0' => array( $this, 'upgrade_to_1_5_0' ),
 			'1.6.0' => array( $this, 'upgrade_to_1_6_0' ),
+			'1.7.0' => array( $this, 'upgrade_to_1_7_0' ),
 		);
 	}
 
@@ -266,5 +267,23 @@ class Enroll_Upgrade_Manager extends Upgrade_Manager {
 		);
 
 		\Convoca\Core\Logger::info( 'Upgrade 1.6.0: estado pagada migrado a confirmada (' . $filas . ' filas).', 'Enroll/Upgrade' );
+	}
+
+	/**
+	 * Migración 1.7.0: el check-in tiene su propia capacidad y los roles que escanean la tienen.
+	 *
+	 * `convoca_manage_checkin` ya existía en el vocabulario de Core para administrador y monitor.
+	 * Faltaban `shop_manager` (que lleva el papeleo) y `voluntario_aprobado` (que ya podía escanear
+	 * por rol, pero no veía la entrada del menú). Idempotente: `add_cap` no duplica.
+	 */
+	protected function upgrade_to_1_7_0(): void {
+		foreach ( array( 'shop_manager', 'voluntario_aprobado' ) as $rol ) {
+			$role = get_role( $rol );
+			if ( $role ) {
+				$role->add_cap( 'convoca_manage_checkin' );
+			}
+		}
+
+		\Convoca\Core\Logger::info( 'Upgrade 1.7.0: convoca_manage_checkin concedida a shop_manager y voluntario_aprobado.', 'Enroll/Upgrade' );
 	}
 }

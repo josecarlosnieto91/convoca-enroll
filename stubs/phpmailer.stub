@@ -20,4 +20,17 @@ class PHPMailer {
 	 * @return void
 	 */
 	public function addStringAttachment( $string, $filename, $encoding = 'base64', $type = 'application/octet-stream', $disposition = 'attachment' ) {}
+
+	/**
+	 * Incrusta una imagen en el cuerpo con su `Content-ID` (la referencia `cid:`).
+	 *
+	 * @param string $path        Ruta del fichero.
+	 * @param string $cid         Content-ID.
+	 * @param string $name        Nombre visible.
+	 * @param string $encoding    Codificación.
+	 * @param string $type        Tipo MIME.
+	 * @param string $disposition Disposición.
+	 * @return bool
+	 */
+	public function addEmbeddedImage( $path, $cid, $name = '', $encoding = 'base64', $type = 'application/octet-stream', $disposition = 'inline' ) {}
 }

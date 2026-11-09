@@ -73,7 +73,7 @@ class Activity_Reminder_Cron {
 	 * @return bool
 	 */
 	public static function reminder_due( string $fecha_inicio, int $hours, int $now ): bool {
-		$start_ts = strtotime( $fecha_inicio );
+		$start_ts = Fechas::instante( $fecha_inicio );
 		if ( ! $start_ts || $start_ts <= $now ) {
 			return false;
 		}
