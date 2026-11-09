@@ -50,7 +50,7 @@ final class CheckinHandlerTest extends TestCase {
 			'usuarios'   => array(),
 		);
 		// El arnés concede por omisión: para probar «no es personal» hay que negarlo explícitamente.
-		$GLOBALS['convoca_test_caps']  = array( 'manage_inscripciones' => false );
+		$GLOBALS['convoca_test_caps']  = array( 'manage_inscripciones' => false, 'convoca_manage_checkin' => false );
 		$GLOBALS['convoca_test_roles'] = array();
 		$GLOBALS['_wp_query_vars']     = array();
 		$_GET                          = array();
@@ -63,7 +63,7 @@ final class CheckinHandlerTest extends TestCase {
 	 */
 	protected function tearDown(): void {
 		$GLOBALS['_wp_stores']         = $this->previo;
-		$GLOBALS['convoca_test_caps']  = array( 'manage_inscripciones' => false );
+		$GLOBALS['convoca_test_caps']  = array( 'manage_inscripciones' => false, 'convoca_manage_checkin' => false );
 		$GLOBALS['convoca_test_roles'] = array();
 		$GLOBALS['_wp_query_vars']     = array();
 		$_GET                          = array();
@@ -93,7 +93,7 @@ final class CheckinHandlerTest extends TestCase {
 		$GLOBALS['convoca_test_caps'] = array( 'manage_inscripciones' => true );
 		$this->assertTrue( $this->checkin->es_personal(), 'con la capacidad, sí' );
 
-		$GLOBALS['convoca_test_caps']  = array( 'manage_inscripciones' => false );
+		$GLOBALS['convoca_test_caps']  = array( 'manage_inscripciones' => false, 'convoca_manage_checkin' => false );
 		$GLOBALS['convoca_test_roles'] = array( 'voluntario_aprobado' );
 		$this->assertTrue( $this->checkin->es_personal(), 'un voluntario aprobado también' );
 	}

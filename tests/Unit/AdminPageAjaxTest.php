@@ -171,7 +171,7 @@ final class AdminPageAjaxTest extends TestCase {
 
 		$this->llamar( 'ajax_toggle_checkin' );
 		$this->assertSame( 'si', $this->meta( 410, 'asistencia' ) );
-		$this->assertNotEmpty( $this->meta( 410, '_convoca_checkin_hora' ), 'el botón de la lista sella la hora' );
+		$this->assertNotEmpty( $this->meta( 410, 'checkin_hora' ), 'el botón de la lista sella la hora' );
 
 		$this->llamar( 'ajax_toggle_checkin' );
 		$this->assertSame( 'no', $this->meta( 410, 'asistencia' ), 'vuelve a «no»' );

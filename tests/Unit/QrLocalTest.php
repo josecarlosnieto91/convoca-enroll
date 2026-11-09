@@ -56,7 +56,8 @@ class QrLocalTest extends TestCase
 		$codigo = $this->codigo( 'includes/Email_Automation.php' );
 
 		$this->assertStringNotContainsString( 'quickchart', $codigo );
-		$this->assertStringContainsString( 'QR_Generator::url_for', $codigo );
+		$this->assertStringContainsString( 'QR_Generator::generate_for_url', $codigo );
+		$this->assertStringContainsString( "'cid:'", $codigo, 'la imagen viaja incrustada, no como URL remota' );
 	}
 
 	public function test_el_correo_usa_el_mismo_enlace_que_espera_el_handler(): void

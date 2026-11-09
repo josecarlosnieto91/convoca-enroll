@@ -198,8 +198,8 @@ final class TandaIssuesTest extends TestCase {
 			/** @var array<int, array<int, mixed>> */
 			public array $adjuntos = array();
 
-			public function addStringAttachment( $contenido, $nombre, $codificacion, $tipo, $disposicion, $cid ): void {
-				$this->adjuntos[] = array( $contenido, $nombre, $tipo, $disposicion, $cid );
+			public function addEmbeddedImage( $ruta, $cid, $nombre, $codificacion, $tipo ): void {
+				$this->adjuntos[] = array( $ruta, $nombre, $tipo, 'inline', $cid );
 			}
 		};
 

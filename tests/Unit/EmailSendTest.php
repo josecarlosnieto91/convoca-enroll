@@ -55,6 +55,7 @@ final class EmailSendTest extends TestCase {
 		$GLOBALS['_wp_mail']      = array();
 		$GLOBALS['_wp_logs']      = array();
 		$GLOBALS['mail_falla']    = false;
+		unset( $GLOBALS['convoca_test_query_retorno'] );
 
 		if ( isset( $GLOBALS['_wpdb_doble'] ) ) {
 			$this->wpdb_previo = $GLOBALS['wpdb'] ?? null;

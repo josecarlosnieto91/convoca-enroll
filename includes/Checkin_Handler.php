@@ -126,7 +126,7 @@ class Checkin_Handler {
 			return 404;
 		}
 
-		return $this->puede_checkin_directo() ? 200 : 403;
+		return $this->puede_checkin_directo( $inscripcion_id ) ? 200 : 403;
 	}
 
 	/**
