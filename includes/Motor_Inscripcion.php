@@ -219,10 +219,21 @@ class Motor_Inscripcion {
 				return new \WP_Error( 'invalid_email', __( 'El email no es válido.', 'convoca-enroll' ) );
 			}
 
-			// Validar que el dominio del email tenga registros MX.
-			$arroba = strrchr( $email, '@' );
-			$domain = false === $arroba ? '' : substr( $arroba, 1 );
-			if ( ! empty( $domain ) && ! checkdnsrr( $domain, 'MX' ) && ! checkdnsrr( $domain, 'A' ) ) {
+			// Validar que el dominio del email tenga registros MX/A, pero solo si el propio DNS
+			// responde. Un fallo global de resolución (contenedor sin DNS, caída del resolutor)
+			// no puede bloquear todas las inscripciones (enroll#88): se comprueba primero un
+			// dominio de control y, si no resuelve, se degrada a la validación sintáctica.
+			$arroba         = strrchr( $email, '@' );
+			$domain         = false === $arroba ? '' : substr( $arroba, 1 );
+			$dns_disponible = get_transient( 'convoca_enroll_dns_disponible' );
+			if ( false === $dns_disponible ) {
+				$control        = (string) apply_filters( 'convoca_enroll_dns_control', 'example.com' );
+				$dns_disponible = checkdnsrr( $control, 'A' ) || checkdnsrr( $control, 'MX' );
+				set_transient( 'convoca_enroll_dns_disponible', $dns_disponible ? 1 : 0, 300 );
+			}
+
+			$exigir_dominio = (bool) apply_filters( 'convoca_enroll_exigir_dominio_email', true, $domain, $email );
+			if ( $exigir_dominio && $dns_disponible && ! checkdnsrr( $domain, 'MX' ) && ! checkdnsrr( $domain, 'A' ) ) {
 				return new \WP_Error( 'invalid_email_domain', __( 'El dominio del email no es válido.', 'convoca-enroll' ) );
 			}
 

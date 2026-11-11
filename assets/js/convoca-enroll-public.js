@@ -189,9 +189,13 @@
                 },
                 /* On Error */
                 (res) => {
-                    const msgs = res.data?.errors ? res.data.errors.join('<br>') : (res.data?.message || conv.mensajes.reintentar);
-                    conv.showAlert(alert, msgs, 'danger');
-                    conv.setLoading(btn, false, '✔ Inscribirme');
+                    try {
+                        const msgs = res.data?.errors ? res.data.errors.join('<br>') : (res.data?.message || conv.mensajes.reintentar);
+                        conv.showAlert(alert, msgs, 'danger');
+                    } finally {
+                        // Pase lo que pase con el aviso, el botón no puede quedarse bloqueado.
+                        conv.setLoading(btn, false, '✔ Inscribirme');
+                    }
                 }
             );
         });
