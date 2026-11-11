@@ -153,6 +153,19 @@ final class MotorInscribirTest extends TestCase {
 	}
 
 	/**
+	 * Si el DNS no responde en absoluto, no se puede culpar al dominio del email (enroll#88):
+	 * se degrada a la validación sintáctica y el alta sigue.
+	 */
+	public function test_si_el_dns_no_responde_no_bloquea_el_alta(): void {
+		$this->actividad();
+		$GLOBALS['convoca_test_dns'] = array();
+
+		$resultado = Motor_Inscripcion::inscribir( 61, $this->datos( array( 'email' => 'ana@example.test' ) ) );
+
+		$this->assertNotInstanceOf( \WP_Error::class, $resultado );
+	}
+
+	/**
 	 * Sin consentimiento no hay inscripción.
 	 */
 	public function test_sin_consentimiento(): void {
