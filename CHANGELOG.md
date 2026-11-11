@@ -1,3 +1,10 @@
+## [2.17.3] — 2026-11-11
+
+### Corregido
+
+- **La inscripción no se bloquea si el DNS global no responde**
+- Se valida contra un dominio de control y se degrada a comprobación sintáctica; el botón se restaura con try/finally.
+
 ## [2.17.2] — 2026-11-09
 
 ### Seguridad
