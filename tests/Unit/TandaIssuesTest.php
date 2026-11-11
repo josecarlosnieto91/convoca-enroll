@@ -161,7 +161,6 @@ final class TandaIssuesTest extends TestCase {
 	 */
 	public function test_la_pantalla_del_escaner_sin_datos_de_ejemplo(): void {
 		$metodo = new \ReflectionMethod( Checkin_Handler::class, 'render_scanner_page' );
-		$metodo->setAccessible( true );
 
 		ob_start();
 		try {
