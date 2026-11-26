@@ -46,7 +46,9 @@ class GBP_Provider implements Social_Provider_Interface {
 		$this->account       = $data ?: array();
 		$this->access_token  = $this->account['access_token'] ?? '';
 		$this->refresh_token = $this->account['refresh_token'] ?? '';
-		$this->location_id   = $this->account['account_id'] ?? '';
+		// `location_id` es el `name` completo de la ficha (`accounts/…/locations/…`). El
+		// `account_id` de Google no sirve como ubicación (issue #92).
+		$this->location_id   = (string) ( $this->account['location_id'] ?? '' );
 	}
 
 	public function authenticate( string $auth_code ): array {
@@ -57,6 +59,13 @@ class GBP_Provider implements Social_Provider_Interface {
 	 * Publish a Local Post to Google Business Profile.
 	 */
 	public function publish( string $message, string $image_url = '', string $link_url = '' ): array {
+		if ( ! $this->ubicacion_valida() ) {
+			return array(
+				'success' => false,
+				'message' => __( 'GBP: la cuenta no tiene una ubicación válida. Vuelve a conectar Google para elegir la ficha.', 'convoca-enroll' ),
+			);
+		}
+
 		$lock_key = 'convoca_lock_' . md5( $message . $image_url . 'gbp' );
 		if ( get_transient( $lock_key ) ) {
 			return array( 'success' => false, 'message' => __( 'Lock activo para este contenido en GBP.', 'convoca-enroll' ) );
@@ -87,10 +96,6 @@ class GBP_Provider implements Social_Provider_Interface {
 		// Refresh token if expired.
 		$this->maybe_refresh_token();
 
-		if ( empty( $this->location_id ) ) {
-			return array( 'success' => false, 'message' => __( 'GBP: No hay location_id. Reconecta la cuenta.', 'convoca-enroll' ) );
-		}
-
 		$post_body = array(
 			'languageCode' => 'es',
 			'summary'      => mb_substr( $message, 0, 1500 ),
@@ -113,7 +118,7 @@ class GBP_Provider implements Social_Provider_Interface {
 		}
 
 		$response = wp_remote_post(
-			"https://businessprofileperformance.googleapis.com/v1/{$this->location_id}/localPosts",
+			"https://mybusiness.googleapis.com/v4/{$this->location_id}/localPosts",
 			array(
 				'headers' => array(
 					'Authorization' => "Bearer {$this->access_token}",
@@ -137,7 +142,7 @@ class GBP_Provider implements Social_Provider_Interface {
 				'response' => $body,
 				'code'     => $code,
 			) );
-			\Convoca\Enroll\Social\Social_Payload::log_api_error( 'gbp', $response, 'https://businessprofileperformance.googleapis.com/v1/{location_id}/localPosts' );
+			\Convoca\Enroll\Social\Social_Payload::log_api_error( 'gbp', $response, 'https://mybusiness.googleapis.com/v4/{location_id}/localPosts' );
 			delete_transient( $lock_key );
 			return array( 'success' => false, 'message' => "GBP: $err" );
 		}
@@ -186,12 +191,13 @@ class GBP_Provider implements Social_Provider_Interface {
 			// Update stored token.
 			global $wpdb;
 			$encrypted = \Convoca\Enroll\Social\Social_OAuth::store_token(
-				$this->account['network'],
-				$this->account['account_id'],
-				$this->account['account_name'],
+				(string) $this->account['network'],
+				(string) $this->account['account_id'],
+				(string) $this->account['account_name'],
 				$body['access_token'],
 				$this->refresh_token,
-				$body['expires_in'] ?? 3600
+				(int) ( $body['expires_in'] ?? 3600 ),
+				$this->location_id
 			);
 		}
 	}
@@ -210,7 +216,15 @@ class GBP_Provider implements Social_Provider_Interface {
 			return [ "success" => false, "message" => "Token no encontrado." ];
 		}
 
-		$url = "https://mybusinessbusinessinformation.googleapis.com/v1/accounts/" . urlencode( $this->account["account_id"] ?? "" ) . "/locations?pageSize=1";
+		if ( ! $this->ubicacion_valida() ) {
+			return [
+				"success" => false,
+				"message" => "GBP: falta la ubicación (accounts/{cuenta}/locations/{ficha}). Vuelve a conectar Google.",
+			];
+		}
+
+		// El mismo endpoint que usa la publicación: si esto responde, publicar puede funcionar.
+		$url = "https://mybusiness.googleapis.com/v4/{$this->location_id}/localPosts?pageSize=1";
 		$resp = wp_remote_get( $url, [
 			"timeout" => 10,
 			"headers" => [ "Authorization" => "Bearer " . $token["access_token"] ]
@@ -230,13 +244,21 @@ class GBP_Provider implements Social_Provider_Interface {
 		}
 
 		Social_OAuth::update_token_status( $this->account_id, "active" );
-		$name = $body["locations"][0]["locationName"] ?? $this->account["account_name"] ?? "GBP";
-		return [ "success" => true, "message" => "Conexion OK: $name" ];
+		$name = (string) ( $this->account["account_name"] ?? $this->location_id );
+		return [ "success" => true, "message" => "Conexion OK: {$name}" ];
+	}
+
+	/**
+	 * ¿Hay una ubicación con el formato que exige la API?
+	 */
+	private function ubicacion_valida(): bool {
+		return 1 === preg_match( '#^accounts/[^/]+/locations/[^/]+$#', $this->location_id );
 	}
 
 	public function get_status(): array {
 		return array(
 			'connected'    => $this->is_authenticated(),
+			'location_id'  => $this->location_id,
 			'account_name' => $this->account['account_name'] ?? '',
 			'expires_at'   => $this->account['token_expires_at'] ?? null,
 		);

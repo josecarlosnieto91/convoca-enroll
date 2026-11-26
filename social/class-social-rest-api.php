@@ -281,9 +281,26 @@ class Social_Rest_API {
 		$info_body    = json_decode( wp_remote_retrieve_body( $info_resp ), true );
 		$account_name = $info_body['email'] ?? 'Google Account';
 
-		Social_OAuth::store_token( 'google', $info_body['id'] ?? 'google_1', $account_name, $access_token, $refresh_token, $expires_in );
+		// Sin el `name` de la ubicación no se puede publicar: se resuelve ahora, con el token recién
+		// obtenido, y se guarda en la cuenta (issue #92).
+		$ubicacion    = Social_OAuth::resolver_ubicacion_google( $access_token );
+		$account_name = '' !== $ubicacion['title'] ? $ubicacion['title'] : $account_name;
 
-		wp_redirect( admin_url( 'admin.php?page=convoca-media-accounts&convoca_success=connected' ) );
+		Social_OAuth::store_token(
+			'google',
+			$info_body['id'] ?? 'google_1',
+			$account_name,
+			$access_token,
+			$refresh_token,
+			$expires_in,
+			$ubicacion['name']
+		);
+
+		$destino = '' === $ubicacion['name']
+			? 'admin.php?page=convoca-media-accounts&convoca_error=google_sin_ubicacion'
+			: 'admin.php?page=convoca-media-accounts&convoca_success=connected';
+
+		wp_redirect( admin_url( $destino ) );
 		exit;
 	}
 

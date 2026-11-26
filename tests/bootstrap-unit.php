@@ -903,7 +903,26 @@ if (!function_exists('wp_verify_nonce')) {
 }
 
 // HTTP
-if (!function_exists('wp_remote_get')) { function wp_remote_get($u, $a = []) { return ['response' => ['code' => 200], 'body' => '{}']; } }
+if (!function_exists('wp_remote_get')) {
+    /**
+     * GET remoto bajo control de la prueba. Sin cola devuelve 200 vacío, como siempre; con
+     * `$GLOBALS['convoca_test_http_get_queue']` se van sacando respuestas en orden y se apunta
+     * la llamada (URL y argumentos).
+     */
+    function wp_remote_get($u, $a = []) {
+        $GLOBALS['_wp_http_gets'][] = array('url' => $u, 'args' => $a);
+
+        if (!empty($GLOBALS['convoca_test_http_get_queue'])) {
+            $r = array_shift($GLOBALS['convoca_test_http_get_queue']);
+            if (!empty($r['error'])) {
+                return new WP_Error('http_request_failed', $r['error']);
+            }
+            return array('response' => array('code' => (int) ($r['code'] ?? 200)), 'body' => (string) ($r['body'] ?? '{}'));
+        }
+
+        return ['response' => ['code' => 200], 'body' => '{}'];
+    }
+}
 if (!function_exists('wp_remote_post')) {
     /**
      * POST remoto bajo control de la prueba (`$GLOBALS['convoca_test_http']`): código, error o cuerpo. Se apunta

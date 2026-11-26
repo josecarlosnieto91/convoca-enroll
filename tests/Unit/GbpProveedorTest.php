@@ -45,7 +45,7 @@ class GbpProveedorTest extends TestCase {
 	 */
 	private function proveedor(
 		string $token = 'TOKEN',
-		string $location = 'locations/123',
+		string $location = 'accounts/1/locations/2',
 		string $refresh = '',
 		string $caduca = ''
 	): GBP_Provider {
@@ -106,8 +106,19 @@ class GbpProveedorTest extends TestCase {
 		$resultado = $this->proveedor( 'TOKEN', '' )->publish( 'hola' );
 
 		$this->assertFalse( $resultado['success'] );
-		$this->assertStringContainsString( 'No hay location_id', $resultado['message'] );
+		$this->assertStringContainsString( 'ubicación válida', $resultado['message'] );
 		$this->assertSame( array(), $GLOBALS['_wp_http_posts'], 'no se llama a Google sin saber la ficha' );
+	}
+
+	/**
+	 * Un `account_id` de Google no es una ubicación: publicar con él no puede llegar a la red.
+	 */
+	public function test_el_account_id_no_vale_como_ubicacion(): void {
+		$resultado = $this->proveedor( 'TOKEN', '1234567890' )->publish( 'hola' );
+
+		$this->assertFalse( $resultado['success'] );
+		$this->assertStringContainsString( 'ubicación válida', $resultado['message'] );
+		$this->assertSame( array(), $GLOBALS['_wp_http_posts'] );
 	}
 
 	/**
@@ -126,7 +137,8 @@ class GbpProveedorTest extends TestCase {
 		$this->assertCount( 1, $GLOBALS['_wp_http_posts'] );
 		$llamada = $GLOBALS['_wp_http_posts'][0];
 
-		$this->assertStringContainsString( '/v1/locations/123/localPosts', $llamada['url'] );
+		$this->assertStringContainsString( 'mybusiness.googleapis.com/v4/accounts/1/locations/2/localPosts', $llamada['url'] );
+		$this->assertStringNotContainsString( 'businessprofileperformance', $llamada['url'], 'la API de métricas no publica localPosts' );
 		$this->assertSame( 'Bearer TOKEN', $llamada['args']['headers']['Authorization'] );
 		$this->assertSame( 'application/json', $llamada['args']['headers']['Content-Type'] );
 		$cuerpo = json_decode( (string) $llamada['args']['body'], true );
@@ -181,7 +193,7 @@ class GbpProveedorTest extends TestCase {
 	 * Un token que caduca pronto se refresca antes de publicar, y el nuevo token es el que se usa.
 	 */
 	public function test_el_token_caducado_se_refresca(): void {
-		$proveedor = $this->proveedor( 'VIEJO', 'locations/123', 'REFRESCO', gmdate( 'Y-m-d H:i:s', time() - 3600 ) );
+		$proveedor = $this->proveedor( 'VIEJO', 'accounts/1/locations/2', 'REFRESCO', gmdate( 'Y-m-d H:i:s', time() - 3600 ) );
 
 		$this->assertTrue( $proveedor->is_authenticated() );
 		$this->assertSame( '', (string) ( get_option( 'convoca_gbp_refresco' ) ?? '' ) );
@@ -191,7 +203,7 @@ class GbpProveedorTest extends TestCase {
 	 * Sin credenciales de cliente de Google no se intenta refrescar (no hay con qué).
 	 */
 	public function test_sin_credenciales_no_se_intenta_refrescar(): void {
-		$proveedor = $this->proveedor( 'TOKEN', 'locations/123', 'REFRESCO', gmdate( 'Y-m-d H:i:s', time() - 3600 ) );
+		$proveedor = $this->proveedor( 'TOKEN', 'accounts/1/locations/2', 'REFRESCO', gmdate( 'Y-m-d H:i:s', time() - 3600 ) );
 
 		$metodo = new \ReflectionMethod( GBP_Provider::class, 'maybe_refresh_token' );
 		$metodo->invoke( $proveedor );
@@ -203,7 +215,7 @@ class GbpProveedorTest extends TestCase {
 	 * Con el token todavía válido no se refresca nada.
 	 */
 	public function test_con_el_token_vigente_no_se_refresca(): void {
-		$proveedor = $this->proveedor( 'TOKEN', 'locations/123', 'REFRESCO', gmdate( 'Y-m-d H:i:s', time() + 3600 ) );
+		$proveedor = $this->proveedor( 'TOKEN', 'accounts/1/locations/2', 'REFRESCO', gmdate( 'Y-m-d H:i:s', time() + 3600 ) );
 
 		$metodo = new \ReflectionMethod( GBP_Provider::class, 'maybe_refresh_token' );
 		$metodo->invoke( $proveedor );
