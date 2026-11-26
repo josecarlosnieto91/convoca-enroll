@@ -163,13 +163,16 @@ final class AdminPantallasTest extends TestCase {
 	 * @return \WP_Post
 	 */
 	private function actividad( int $id, string $título, int $total = 20, int $disp = 20 ): \WP_Post {
+		// Fecha futura relativa: con una fecha fija, la prueba caduca sola el día que esa fecha pasa
+		// y el listado deja de considerarla próxima (medido: 20/11/2026 en rojo el 26/11/2026).
+		$GLOBALS['_convoca_fecha_prueba'] = gmdate( 'Y-m-d H:i:s', time() + DAY_IN_SECONDS );
 		$post                  = new \WP_Post();
 		$post->ID              = $id;
 		$post->post_type       = 'actividad';
 		$post->post_title      = $título;
 		$GLOBALS['_wp_stores']['posts'][ $id ] = $post;
 		$GLOBALS['_wp_stores']['post_meta'][ $id ] = array(
-			'_convoca_fecha_inicio'       => '2026-11-20 10:00:00',
+			'_convoca_fecha_inicio'       => $GLOBALS['_convoca_fecha_prueba'],
 			'_convoca_plazas_totales'     => (string) $total,
 			'_convoca_plazas_disponibles' => (string) $disp,
 			'_convoca_ubicacion'          => 'Centro Social',
@@ -190,7 +193,7 @@ final class AdminPantallasTest extends TestCase {
 		$this->assertStringContainsString( '5 / 20', $html, '5 ocupadas de 20' );
 		$this->assertStringNotContainsString( '15 / 20', $html, 'las disponibles no son las ocupadas' );
 		$this->assertStringContainsString( 'Centro Social', $html );
-		$this->assertStringContainsString( '2026-11-20 10:00:00', $html );
+		$this->assertStringContainsString( (string) $GLOBALS['_convoca_fecha_prueba'], $html );
 	}
 
 	/**
