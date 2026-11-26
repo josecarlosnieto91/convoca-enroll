@@ -216,6 +216,19 @@ class GBP_Provider implements Social_Provider_Interface {
 			return [ "success" => false, "message" => "Token no encontrado." ];
 		}
 
+		return $this->comprobar_conexion( (string) $token["access_token"] );
+	}
+
+	/**
+	 * Comprueba la conexión contra el MISMO endpoint que usa la publicación.
+	 *
+	 * Antes miraba `mybusinessbusinessinformation` y podía decir «Conexión OK» con la publicación
+	 * rota: el diagnóstico bueno y el camino roto no compartían endpoint (issue #92).
+	 *
+	 * @param string $token Access token.
+	 * @return array{success: bool, message: string}
+	 */
+	private function comprobar_conexion( string $token ): array {
 		if ( ! $this->ubicacion_valida() ) {
 			return [
 				"success" => false,
@@ -223,12 +236,14 @@ class GBP_Provider implements Social_Provider_Interface {
 			];
 		}
 
-		// El mismo endpoint que usa la publicación: si esto responde, publicar puede funcionar.
-		$url = "https://mybusiness.googleapis.com/v4/{$this->location_id}/localPosts?pageSize=1";
-		$resp = wp_remote_get( $url, [
-			"timeout" => 10,
-			"headers" => [ "Authorization" => "Bearer " . $token["access_token"] ]
-		] );
+		$url  = "https://mybusiness.googleapis.com/v4/{$this->location_id}/localPosts?pageSize=1";
+		$resp = wp_remote_get(
+			$url,
+			[
+				"timeout" => 10,
+				"headers" => [ "Authorization" => "Bearer " . $token ],
+			]
+		);
 
 		if ( is_wp_error( $resp ) ) {
 			return [ "success" => false, "message" => "Error de conexion: " . $resp->get_error_message() ];
@@ -237,7 +252,7 @@ class GBP_Provider implements Social_Provider_Interface {
 		$code = wp_remote_retrieve_response_code( $resp );
 		$body = json_decode( wp_remote_retrieve_body( $resp ), true );
 
-		if ( $code !== 200 || isset( $body["error"] ) ) {
+		if ( 200 !== $code || isset( $body["error"] ) ) {
 			Social_OAuth::update_token_status( $this->account_id, "token_expired", $body["error"]["message"] ?? "La red no ha explicado el fallo" );
 			$this->maybe_refresh_token();
 			return [ "success" => false, "message" => $body["error"]["message"] ?? "HTTP $code" ];

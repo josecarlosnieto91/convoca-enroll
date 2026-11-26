@@ -24,6 +24,8 @@ class GbpProveedorTest extends TestCase {
 		$GLOBALS['_wp_stores']        = array( 'options' => array(), 'transients' => array() );
 		$GLOBALS['_wp_http_posts']    = array();
 		$GLOBALS['convoca_test_http'] = array( 'code' => 200, 'body' => '{"name":"accounts/1/locations/2/localPosts/3"}' );
+		$GLOBALS['_wp_http_gets'] = array();
+		$GLOBALS['convoca_test_http_get_queue'] = array();
 	}
 
 	/**
@@ -31,7 +33,7 @@ class GbpProveedorTest extends TestCase {
 	 */
 	protected function tearDown(): void {
 		$GLOBALS['_wp_stores'] = array( 'options' => array() );
-		unset( $GLOBALS['_wp_http_posts'], $GLOBALS['convoca_test_http'] );
+		unset( $GLOBALS['_wp_http_posts'], $GLOBALS['convoca_test_http'], $GLOBALS['_wp_http_gets'], $GLOBALS['convoca_test_http_get_queue'] );
 	}
 
 	/**
@@ -234,6 +236,49 @@ class GbpProveedorTest extends TestCase {
 		$this->assertTrue( $estado['connected'] );
 		$this->assertSame( 'Ficha', $estado['account_name'] );
 		$this->assertArrayHasKey( 'expires_at', $estado );
+	}
+
+	/**
+	 * La comprobación de conexión usa el endpoint de publicar y la ubicación guardada.
+	 */
+	public function test_la_conexion_comprueba_los_local_posts_de_la_ubicacion(): void {
+		$proveedor = $this->proveedor();
+		$metodo    = new \ReflectionMethod( GBP_Provider::class, 'comprobar_conexion' );
+		$metodo->invoke( $proveedor, 'TOKEN' );
+
+		$this->assertCount( 1, $GLOBALS['_wp_http_gets'] );
+		$llamada = $GLOBALS['_wp_http_gets'][0];
+		$this->assertStringContainsString( 'mybusiness.googleapis.com/v4/accounts/1/locations/2/localPosts', $llamada['url'] );
+		$this->assertStringNotContainsString( 'businessprofileperformance', $llamada['url'] );
+		$this->assertSame( 'Bearer TOKEN', $llamada['args']['headers']['Authorization'] );
+	}
+
+	/**
+	 * Sin ubicación, la conexión es un error de configuración y no llama a Google.
+	 */
+	public function test_la_conexion_sin_ubicacion_es_error_de_configuracion(): void {
+		$proveedor = $this->proveedor( 'TOKEN', '' );
+		$metodo    = new \ReflectionMethod( GBP_Provider::class, 'comprobar_conexion' );
+		$resultado = $metodo->invoke( $proveedor, 'TOKEN' );
+
+		$this->assertFalse( $resultado['success'] );
+		$this->assertStringContainsString( 'falta la ubicación', $resultado['message'] );
+		$this->assertSame( array(), $GLOBALS['_wp_http_gets'] );
+	}
+
+	/**
+	 * Si Google contesta con error, la conexión lo cuenta.
+	 */
+	public function test_la_conexion_con_error_de_google(): void {
+		$GLOBALS['convoca_test_http_get_queue'] = array(
+			array( 'code' => 403, 'body' => '{"error":{"message":"The caller does not have permission"}}' ),
+		);
+		$proveedor = $this->proveedor();
+		$metodo    = new \ReflectionMethod( GBP_Provider::class, 'comprobar_conexion' );
+		$resultado = $metodo->invoke( $proveedor, 'TOKEN' );
+
+		$this->assertFalse( $resultado['success'] );
+		$this->assertSame( 'The caller does not have permission', $resultado['message'] );
 	}
 
 	/**
