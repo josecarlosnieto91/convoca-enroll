@@ -1,3 +1,11 @@
+## [2.17.5] — 2026-11-26
+
+### Corregido
+
+- **La columna `location_id` no se creaba en instalaciones existentes.** `dbDelta` no la añadió en los
+  tres sitios aunque el esquema 1.1.0 estaba desplegado. Ahora, después de `dbDelta`, se comprueba y se
+  añade con `ALTER TABLE` si falta.
+
 ## [2.17.4] — 2026-11-26
 
 ### Corregido
