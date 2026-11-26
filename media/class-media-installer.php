@@ -132,6 +132,23 @@ class Media_Installer {
 		foreach ( $tables as $sql ) {
 			dbDelta( $sql );
 		}
+
+		self::asegurar_location_id();
+	}
+
+	/**
+	 * `dbDelta` no siempre añade una columna nueva a una tabla que ya existe (medido: la 1.1.0 se
+	 * quedó sin `location_id` en los tres sitios). Se comprueba y se añade a mano si falta.
+	 */
+	private static function asegurar_location_id(): void {
+		global $wpdb;
+
+		$tabla = $wpdb->prefix . 'convoca_social_accounts';
+		$col   = $wpdb->get_results( "SHOW COLUMNS FROM {$tabla} LIKE 'location_id'", ARRAY_A );
+
+		if ( empty( $col ) ) {
+			$wpdb->query( "ALTER TABLE {$tabla} ADD COLUMN location_id VARCHAR(255) DEFAULT NULL" );
+		}
 	}
 
 	/**
