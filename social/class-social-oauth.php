@@ -43,7 +43,7 @@ class Social_OAuth {
 	/**
 	 * Encrypt and store a token.
 	 */
-	public static function store_token( string $network, string $account_id, string $account_name, string $access_token, ?string $refresh_token = null, ?int $expires_in = null ): int {
+	public static function store_token( string $network, string $account_id, string $account_name, string $access_token, ?string $refresh_token = null, ?int $expires_in = null, ?string $location_id = null ): int {
 		global $wpdb;
 
 		$encrypted = self::encrypt( $access_token );
@@ -55,6 +55,7 @@ class Social_OAuth {
 				'network'          => $network,
 				'account_id'       => $account_id,
 				'account_name'     => $account_name,
+				'location_id'      => $location_id ?: null,
 				'access_token'     => $encrypted,
 				'refresh_token'    => $refresh,
 				'token_expires_at' => $expires_in ? gmdate( 'Y-m-d H:i:s', time() + $expires_in ) : null,
@@ -64,6 +65,55 @@ class Social_OAuth {
 		);
 
 		return $wpdb->insert_id;
+	}
+
+	/**
+	 * Ubicación de Google Business Profile de la cuenta conectada.
+	 *
+	 * El `account_id` de Google no es una ubicación: la API de Local Posts necesita el `name`
+	 * completo (`accounts/{cuenta}/locations/{ficha}`). Se resuelve al conectar para no tener
+	 * que adivinarlo al publicar (issue #92).
+	 *
+	 * @param string $access_token Token de Google.
+	 * @return array{name: string, title: string, error: string}
+	 */
+	public static function resolver_ubicacion_google( string $access_token ): array {
+		$cabeceras = array( 'Authorization' => "Bearer {$access_token}" );
+
+		$cuentas = wp_remote_get(
+			'https://mybusinessaccountmanagement.googleapis.com/v1/accounts', // convoca-hygiene-ignore: dominio público de Google
+			array(
+				'timeout' => 15,
+				'headers' => $cabeceras,
+			)
+		);
+		$cuerpo  = json_decode( (string) wp_remote_retrieve_body( $cuentas ), true );
+		$cuenta  = (string) ( $cuerpo['accounts'][0]['name'] ?? '' );
+
+		if ( is_wp_error( $cuentas ) || '' === $cuenta ) {
+			return array( 'name' => '', 'title' => '', 'error' => 'sin_cuenta' );
+		}
+
+		$fichas = wp_remote_get(
+			"https://mybusinessbusinessinformation.googleapis.com/v1/{$cuenta}/locations?readMask=name,title&pageSize=1",
+			array(
+				'timeout' => 15,
+				'headers' => $cabeceras,
+			)
+		);
+		$datos  = json_decode( (string) wp_remote_retrieve_body( $fichas ), true );
+		$ficha  = (array) ( $datos['locations'][0] ?? array() );
+		$nombre = (string) ( $ficha['name'] ?? '' );
+
+		if ( is_wp_error( $fichas ) || ! preg_match( '#^accounts/[^/]+/locations/[^/]+$#', $nombre ) ) {
+			return array( 'name' => '', 'title' => '', 'error' => 'sin_ubicacion' );
+		}
+
+		return array(
+			'name'  => $nombre,
+			'title' => (string) ( $ficha['title'] ?? '' ),
+			'error' => '',
+		);
 	}
 
 	/**

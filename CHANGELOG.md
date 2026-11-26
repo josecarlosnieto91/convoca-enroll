@@ -1,3 +1,18 @@
+## [2.17.4] — 2026-11-26
+
+### Corregido
+
+- **Google Business Profile publicaba contra la API equivocada (#92).** `GBP_Provider::publish()` mandaba el
+  Local Post a `businessprofileperformance.googleapis.com`, que solo sirve métricas y no tiene
+  `localPosts`: cualquier publicación habría fallado. Ahora usa `mybusiness.googleapis.com/v4`.
+- **La ubicación era el `account_id`.** Se guardaba el id de la cuenta en el campo de la ficha y la ruta
+  quedaba mal. Al conectar Google se resuelven las cuentas y ubicaciones y se guarda el `name` completo
+  (`accounts/{cuenta}/locations/{ficha}`) en la nueva columna `location_id` (esquema 1.1.0). Publicar sin
+  una ubicación válida devuelve error de configuración y no llama a la red.
+- **La prueba de conexión ya usa el endpoint de publicar.** Antes comprobaba otro host y podía decir
+  «Conexión OK» con la publicación rota; ahora consulta los `localPosts` de la ubicación guardada y, si
+  falta, lo dice como error de configuración.
+
 ## [2.17.3] — 2026-11-11
 
 ### Corregido

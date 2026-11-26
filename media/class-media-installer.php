@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Media_Installer {
 
 	const DB_VERSION_OPTION = 'convoca_media_db_version';
-	const DB_VERSION        = '1.0.0';
+	const DB_VERSION        = '1.1.0';
 
 	/**
 	 * Run on plugin activation / version check.
@@ -75,6 +75,7 @@ class Media_Installer {
 			label VARCHAR(255) NOT NULL,
 			account_id VARCHAR(255) DEFAULT NULL,
 			account_name VARCHAR(255) DEFAULT NULL,
+			location_id VARCHAR(255) DEFAULT NULL COMMENT 'GBP: accounts/{id}/locations/{id}',
 			access_token TEXT NOT NULL COMMENT 'Encrypted with wp_salt()',
 			refresh_token TEXT,
 			token_expires_at DATETIME DEFAULT NULL,
