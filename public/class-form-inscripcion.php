@@ -29,6 +29,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Form_Inscripcion {
 
+	/**
+	 * ¿Hay que abrir pasarela para esta inscripción?
+	 *
+	 * Solo cuando el motor la dejó pendiente de pago y hay importe. Una lista de espera
+	 * de una actividad de pago no se cobra.
+	 *
+	 * @param string $estado       Estado real devuelto por el motor.
+	 * @param int    $amount_cents Importe en céntimos.
+	 * @return bool
+	 */
+	public static function debe_cobrar( string $estado, int $amount_cents ): bool {
+		return 'pendiente_pago' === $estado && $amount_cents > 0;
+	}
+
 
 	public function __construct() {
 		add_shortcode( 'convoca_form_inscripcion', array( $this, 'shortcode' ) );
@@ -395,8 +409,11 @@ class Form_Inscripcion {
 		wp_cache_delete( (int) $actividad_id, 'post_meta' );
 		$act_meta = CPT_Actividad::get_meta( $actividad_id );
 
+		// El estado real manda: si el motor dejó la inscripción en lista de espera, no se cobra.
+		$estado = (string) get_post_meta( $result, '_convoca_estado', true );
+
 		// If payment is needed and amount > 0, create payment and redirect.
-		if ( $requiere_pago && $amount_eur > 0 ) {
+		if ( self::debe_cobrar( $estado, $amount_cents ) ) {
 			$actividad = get_post( $actividad_id );
 
 			// 1. Prevenir doble creación de pago por race condition (doble clic)
@@ -481,8 +498,6 @@ class Form_Inscripcion {
 				}
 			}
 		}
-
-		$estado = get_post_meta( $result, '_convoca_estado', true );
 
 		$success_data = array(
 			'estado'         => $estado,

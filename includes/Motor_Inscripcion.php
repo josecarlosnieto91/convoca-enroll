@@ -495,99 +495,110 @@ class Motor_Inscripcion {
 			return new \WP_Error( 'not_found', __( 'Inscripción no encontrada.', 'convoca-enroll' ) );
 		}
 
-		$estado_actual = CPT_Inscripcion::get_meta( $inscripcion_id, 'estado' );
-		if ( $estado_actual === 'cancelada' ) {
-			return true; // Already cancelled.
+		// Un cerrojo por inscripción: dos cancelaciones simultáneas de la misma fila no pueden
+		// promover dos personas para una sola plaza (issue #98).
+		$lock_key = 'convoca_enroll_cancel_' . $inscripcion_id;
+		if ( ! \Convoca\Core\Utils::acquire_lock( $lock_key, 30 ) ) {
+			return new \WP_Error( 'cancel_busy', __( 'Ya hay una cancelación en curso para esta inscripción.', 'convoca-enroll' ) );
 		}
-
-		$actividad_id = (int) CPT_Inscripcion::get_meta( $inscripcion_id, 'actividad_id' );
-
-		// D9: ventana de cancelación configurable (convoca_enroll_settings.cancel_window_hours).
-		$settings     = get_option( 'convoca_enroll_settings', array() );
-		$window_hours = absint( $settings['cancel_window_hours'] ?? 24 );
-		$fecha_inicio = (string) get_post_meta( $actividad_id, '_convoca_fecha_inicio', true );
-		$now          = time();
-		$privilegiado = $force || current_user_can( 'manage_options' ) || current_user_can( 'convoca_manage_enroll' );
-
-		$ventana = self::validar_ventana_cancelacion( $fecha_inicio, $window_hours, $now, $privilegiado );
-		if ( is_wp_error( $ventana ) ) {
-			return $ventana;
-		}
-
-		// ¿La cancelación ocurre dentro de la ventana (cancelación tardía)?
-		$es_tardia = self::es_cancelacion_tardia( $fecha_inicio, $window_hours, $now );
-
-		$asistencia_previa = (string) CPT_Inscripcion::get_meta( $inscripcion_id, 'asistencia' );
-
-		// Use transaction for atomicity.
-		global $wpdb;
-		$wpdb->query( 'START TRANSACTION' );
 
 		try {
-			// E2E-10: liberar la plaza para CUALQUIER estado que la consumió al
-			// inscribirse ('confirmada', 'pendiente', 'pendiente_pago' — todos
-			// decrementan plazas_disponibles en inscribir()). Antes solo
-			// 'confirmada' liberaba, así que cancelar una 'pendiente' dejaba la
-			// plaza ocupada para siempre.
-			$estados_que_consumen_plaza = self::estados_que_ocupan_plaza();
-			if ( in_array( $estado_actual, $estados_que_consumen_plaza, true ) ) {
-				$promovido_id = self::promote_waitlist( $actividad_id );
+			$estado_actual = CPT_Inscripcion::get_meta( $inscripcion_id, 'estado' );
+			if ( $estado_actual === 'cancelada' ) {
+				return true; // Already cancelled.
+			}
 
-				// If nobody was promoted from waitlist, we officially have +1 capacity.
-				if ( ! $promovido_id ) {
-					$affected = $wpdb->query(
-						$wpdb->prepare(
-							"UPDATE {$wpdb->postmeta}
+			$actividad_id = (int) CPT_Inscripcion::get_meta( $inscripcion_id, 'actividad_id' );
+
+			// D9: ventana de cancelación configurable (convoca_enroll_settings.cancel_window_hours).
+			$settings     = get_option( 'convoca_enroll_settings', array() );
+			$window_hours = absint( $settings['cancel_window_hours'] ?? 24 );
+			$fecha_inicio = (string) get_post_meta( $actividad_id, '_convoca_fecha_inicio', true );
+			$now          = time();
+			$privilegiado = $force || current_user_can( 'manage_options' ) || current_user_can( 'convoca_manage_enroll' );
+
+			$ventana = self::validar_ventana_cancelacion( $fecha_inicio, $window_hours, $now, $privilegiado );
+			if ( is_wp_error( $ventana ) ) {
+				return $ventana;
+			}
+
+			// ¿La cancelación ocurre dentro de la ventana (cancelación tardía)?
+			$es_tardia = self::es_cancelacion_tardia( $fecha_inicio, $window_hours, $now );
+
+			$asistencia_previa = (string) CPT_Inscripcion::get_meta( $inscripcion_id, 'asistencia' );
+
+			// Use transaction for atomicity.
+			global $wpdb;
+			$wpdb->query( 'START TRANSACTION' );
+
+			try {
+				// E2E-10: liberar la plaza para CUALQUIER estado que la consumió al
+				// inscribirse ('confirmada', 'pendiente', 'pendiente_pago' — todos
+				// decrementan plazas_disponibles en inscribir()). Antes solo
+				// 'confirmada' liberaba, así que cancelar una 'pendiente' dejaba la
+				// plaza ocupada para siempre.
+				$estados_que_consumen_plaza = self::estados_que_ocupan_plaza();
+				if ( in_array( $estado_actual, $estados_que_consumen_plaza, true ) ) {
+					$promovido_id = self::promote_waitlist( $actividad_id );
+
+					// If nobody was promoted from waitlist, we officially have +1 capacity.
+					if ( ! $promovido_id ) {
+						$affected = $wpdb->query(
+							$wpdb->prepare(
+								"UPDATE {$wpdb->postmeta}
                         SET meta_value = CAST(meta_value AS SIGNED) + 1
                         WHERE post_id = %d AND meta_key = %s",
-							$actividad_id,
-							CPT_Actividad::META_PREFIX . 'plazas_disponibles'
-						)
-					);
+								$actividad_id,
+								CPT_Actividad::META_PREFIX . 'plazas_disponibles'
+							)
+						);
+					}
 				}
+
+				// Update state.
+				CPT_Inscripcion::update_meta( $inscripcion_id, 'estado', 'cancelada' );
+
+				// Una cancelada no puede seguir contando como asistente en el informe ni en las horas
+				// de voluntariado (enroll#77). Se limpia también el rastro horario y quién lo marcó.
+				CPT_Inscripcion::update_meta( $inscripcion_id, 'asistencia', 'no_registrada' );
+				delete_post_meta( $inscripcion_id, '_convoca_checkin_hora' );
+				delete_post_meta( $inscripcion_id, '_convoca_checkin_by' );
+
+				// IMPORTANT: Invalidate QR token on cancellation for security.
+				CPT_Inscripcion::update_meta( $inscripcion_id, 'checkin_token', '' );
+
+				if ( $nota ) {
+					CPT_Inscripcion::update_meta( $inscripcion_id, 'notas', $nota );
+				}
+
+				// D9: contador de cancelaciones tardías por persona (avisa al admin al llegar a 3/año).
+				if ( $es_tardia && $contar_tardia ) {
+					self::registrar_cancelacion_tardia( $inscripcion_id, $now );
+				}
+
+				$wpdb->query( 'COMMIT' );
+
+				// El aviso de asistencia va DESPUÉS del commit: el libro de horas abre su propia
+				// transacción y una anidada confirmaría la de fuera antes de tiempo.
+				if ( 'no_registrada' !== $asistencia_previa ) {
+					\Convoca\Core\Utils::do_action( 'convoca_enroll_asistencia_cambiada', 'convoca_asistencia_cambiada', $inscripcion_id, 'no_registrada' );
+				}
+
+				\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_cancelada', 'convoca_inscripcion_cancelada', $inscripcion_id, $actividad_id );
+
+				// La promoción se avisa AHORA, con la transacción ya cerrada.
+				if ( ! empty( $promovido_id ) ) {
+					\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_promovida', 'convoca_inscripcion_promovida', (int) $promovido_id, $actividad_id );
+				}
+
+				return true;
+			} catch ( \Throwable $e ) {
+				$wpdb->query( 'ROLLBACK' );
+				\Convoca\Core\Logger::error( 'Transaction failed in cancelar: ' . $e->getMessage(), 'Enroll/Motor', $inscripcion_id );
+				return new \WP_Error( 'cancel_failed', __( 'Error al cancelar la inscripción.', 'convoca-enroll' ) );
 			}
-
-			// Update state.
-			CPT_Inscripcion::update_meta( $inscripcion_id, 'estado', 'cancelada' );
-
-			// Una cancelada no puede seguir contando como asistente en el informe ni en las horas
-			// de voluntariado (enroll#77). Se limpia también el rastro horario y quién lo marcó.
-			CPT_Inscripcion::update_meta( $inscripcion_id, 'asistencia', 'no_registrada' );
-			delete_post_meta( $inscripcion_id, '_convoca_checkin_hora' );
-			delete_post_meta( $inscripcion_id, '_convoca_checkin_by' );
-
-			// IMPORTANT: Invalidate QR token on cancellation for security.
-			CPT_Inscripcion::update_meta( $inscripcion_id, 'checkin_token', '' );
-
-			if ( $nota ) {
-				CPT_Inscripcion::update_meta( $inscripcion_id, 'notas', $nota );
-			}
-
-			// D9: contador de cancelaciones tardías por persona (avisa al admin al llegar a 3/año).
-			if ( $es_tardia && $contar_tardia ) {
-				self::registrar_cancelacion_tardia( $inscripcion_id, $now );
-			}
-
-			$wpdb->query( 'COMMIT' );
-
-			// El aviso de asistencia va DESPUÉS del commit: el libro de horas abre su propia
-			// transacción y una anidada confirmaría la de fuera antes de tiempo.
-			if ( 'no_registrada' !== $asistencia_previa ) {
-				\Convoca\Core\Utils::do_action( 'convoca_enroll_asistencia_cambiada', 'convoca_asistencia_cambiada', $inscripcion_id, 'no_registrada' );
-			}
-
-			\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_cancelada', 'convoca_inscripcion_cancelada', $inscripcion_id, $actividad_id );
-
-			// La promoción se avisa AHORA, con la transacción ya cerrada.
-			if ( ! empty( $promovido_id ) ) {
-				\Convoca\Core\Utils::do_action( 'convoca_enroll_inscripcion_promovida', 'convoca_inscripcion_promovida', (int) $promovido_id, $actividad_id );
-			}
-
-			return true;
-		} catch ( \Throwable $e ) {
-			$wpdb->query( 'ROLLBACK' );
-			\Convoca\Core\Logger::error( 'Transaction failed in cancelar: ' . $e->getMessage(), 'Enroll/Motor', $inscripcion_id );
-			return new \WP_Error( 'cancel_failed', __( 'Error al cancelar la inscripción.', 'convoca-enroll' ) );
+		} finally {
+			\Convoca\Core\Utils::release_lock( $lock_key );
 		}
 	}
 
@@ -715,13 +726,15 @@ class Motor_Inscripcion {
 			return new \WP_Error( 'invalid_state', __( 'Solo se pueden confirmar inscripciones pendientes o en lista de espera.', 'convoca-enroll' ) );
 		}
 
-		// Una inscripción impagada no se confirma por la cara: solo el cobro, que ya lo ha comprobado,
-		// pasa `$pago_verificado`. Antes bastaba con llamar a este método para dar plaza gratis.
-		if ( 'pendiente_pago' === $estado_actual && ! $pago_verificado ) {
-			return new \WP_Error( 'payment_required', __( 'Esta inscripción está pendiente de pago: no se puede confirmar sin cobro.', 'convoca-enroll' ) );
-		}
-
 		$actividad_id = (int) CPT_Inscripcion::get_meta( $inscripcion_id, 'actividad_id' );
+		$meta_act     = CPT_Actividad::get_meta( $actividad_id );
+
+		// Una inscripción de una actividad de pago no se confirma por la cara, venga de
+		// `pendiente_pago` o de `lista_espera`: solo el cobro, que ya lo ha comprobado, pasa
+		// `$pago_verificado`. Antes la lista de espera se colaba y regalaba la plaza.
+		if ( ! $pago_verificado && ( 'pendiente_pago' === $estado_actual || ! empty( $meta_act['requiere_pago'] ) ) ) {
+			return new \WP_Error( 'payment_required', __( 'Esta actividad requiere pago: no se puede confirmar sin cobro.', 'convoca-enroll' ) );
+		}
 
 		// Use transaction for atomicity.
 		global $wpdb;
