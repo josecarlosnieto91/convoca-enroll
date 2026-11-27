@@ -1,3 +1,16 @@
+## [2.17.6] — 2026-11-27
+
+### Corregido
+
+- **La lista de espera ya no se cobra (#96).** El formulario crea el pago solo si el motor devolvió
+  `pendiente_pago`; una actividad llena deja la inscripción en espera, sin pasarela y con su aviso.
+- **Una plaza de pago no se regala al promoverla (#97).** `confirmar()` exige cobro verificado también para
+  `lista_espera` cuando la actividad requiere pago.
+- **Dos cancelaciones simultáneas no promueven a dos personas (#98).** La cancelación toma un cerrojo por
+  inscripción y lo libera en todos los caminos.
+- **GBP acepta el nombre real de Business Information (#95).** Si Google devuelve `locations/{id}`, se compone
+  con la cuenta antes de validar y publicar.
+
 ## [2.17.5] — 2026-11-26
 
 ### Corregido

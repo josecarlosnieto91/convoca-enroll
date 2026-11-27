@@ -105,6 +105,11 @@ class Social_OAuth {
 		$ficha  = (array) ( $datos['locations'][0] ?? array() );
 		$nombre = (string) ( $ficha['name'] ?? '' );
 
+		// Business Information devuelve `locations/{id}`; Local Posts exige el nombre completo.
+		if ( preg_match( '#^locations/[^/]+$#', $nombre ) ) {
+			$nombre = $cuenta . '/' . $nombre;
+		}
+
 		if ( is_wp_error( $fichas ) || ! preg_match( '#^accounts/[^/]+/locations/[^/]+$#', $nombre ) ) {
 			return array( 'name' => '', 'title' => '', 'error' => 'sin_ubicacion' );
 		}

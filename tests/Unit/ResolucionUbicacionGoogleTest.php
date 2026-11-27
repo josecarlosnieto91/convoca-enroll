@@ -30,7 +30,7 @@ class ResolucionUbicacionGoogleTest extends TestCase {
 	public function test_resuelve_la_primera_ubicacion(): void {
 		$GLOBALS['convoca_test_http_get_queue'] = array(
 			array( 'code' => 200, 'body' => '{"accounts":[{"name":"accounts/1"}]}' ),
-			array( 'code' => 200, 'body' => '{"locations":[{"name":"accounts/1/locations/2","title":"Centro Social"}]}' ),
+			array( 'code' => 200, 'body' => '{"locations":[{"name":"locations/2","title":"Centro Social"}]}' ),
 		);
 
 		$ubicacion = Social_OAuth::resolver_ubicacion_google( 'TOKEN' );
@@ -47,6 +47,20 @@ class ResolucionUbicacionGoogleTest extends TestCase {
 	/**
 	 * Sin cuentas de Business Profile no se inventa una ubicación.
 	 */
+	/**
+	 * Si Google ya devuelve el nombre completo, no se duplica la cuenta.
+	 */
+	public function test_acepta_el_nombre_completo(): void {
+		$GLOBALS['convoca_test_http_get_queue'] = array(
+			array( 'code' => 200, 'body' => '{"accounts":[{"name":"accounts/1"}]}' ),
+			array( 'code' => 200, 'body' => '{"locations":[{"name":"accounts/1/locations/2","title":"Centro"}]}' ),
+		);
+
+		$ubicacion = Social_OAuth::resolver_ubicacion_google( 'TOKEN' );
+
+		$this->assertSame( 'accounts/1/locations/2', $ubicacion['name'] );
+	}
+
 	public function test_sin_cuentas_devuelve_error(): void {
 		$GLOBALS['convoca_test_http_get_queue'] = array(
 			array( 'code' => 200, 'body' => '{"accounts":[]}' ),
