@@ -375,7 +375,12 @@ class CPT_Actividad {
 		// `conv_enroll_<clave>` y aquí se buscaba `convoca_enroll_<clave>`: `$_POST` no traía ninguna de las 20 y
 		// cada guardado escribía **vacío** en todas las metas de la actividad, borrando lo que hubiera (enroll#38).
 		foreach ( $fields as $key => $sanitizer ) {
-			$raw = $_POST[ 'conv_enroll_' . $key ] ?? '';
+			// Un campo que el formulario no emite no se toca: escribir '' borraba la meta y,
+			// con plazas_disponibles, reabría todas las plazas de una actividad llena (#111).
+			if ( ! array_key_exists( 'conv_enroll_' . $key, $_POST ) ) {
+				continue;
+			}
+			$raw = $_POST[ 'conv_enroll_' . $key ];
 			$val = $sanitizer( $raw );
 			update_post_meta( $post_id, '_convoca_' . $key, $val );
 		}
@@ -426,12 +431,12 @@ class CPT_Actividad {
 		// Auto-set plazas_disponibles if empty and plazas_totales is set.
 		$disponibles = get_post_meta( $post_id, '_convoca_plazas_disponibles', true );
 		$totales     = get_post_meta( $post_id, '_convoca_plazas_totales', true );
-		if ( empty( $disponibles ) && ! empty( $totales ) ) {
+		if ( '' === (string) $disponibles && ! empty( $totales ) ) {
 			update_post_meta( $post_id, '_convoca_plazas_disponibles', $totales );
 		}
 
 		// Auto-set plazas_totales if empty and plazas_disponibles is set (defensive).
-		if ( empty( $totales ) && ! empty( $disponibles ) ) {
+		if ( '' === (string) $totales && ! empty( $disponibles ) ) {
 			update_post_meta( $post_id, '_convoca_plazas_totales', $disponibles );
 		}
 
