@@ -232,7 +232,7 @@ class Admin_Checkin {
 											<span class="view"><a href="<?php echo esc_url( admin_url( 'post.php?post=' . $id . '&action=edit' ) ); ?>"><?php esc_html_e( 'Ver inscripción', 'convoca-enroll' ); ?></a>
 											<?php
 											// Y la ficha de la persona, que es la que se busca cuando alguien no aparece (enroll#25).
-											$miembro_id = (int) get_post_meta( $id, '_convoca_miembro_id', true );
+											$miembro_id = (int) get_post_meta( $id, '_convoca_member_id', true );
 											if ( $miembro_id > 0 && 'miembro' === get_post_type( $miembro_id ) ) :
 												?>
 												| <span class="socio"><a href="<?php echo esc_url( admin_url( 'post.php?post=' . $miembro_id . '&action=edit' ) ); ?>"><?php esc_html_e( 'Ficha de socio', 'convoca-enroll' ); ?></a></span>

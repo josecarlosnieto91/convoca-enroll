@@ -1,3 +1,12 @@
+## [2.17.9] — 2026-11-27
+
+### Corregido
+
+- **El publicador antiguo de Google usa Local Posts (#112).** Apunta a `mybusiness.googleapis.com/v4` con el
+  `location_id` completo; sin ubicación no llama a la red. Antes usaba la API de métricas y el id de cuenta.
+- **El check-in enlaza la ficha con la clave canónica (#117).** Lee `_convoca_member_id`, no
+  `_convoca_miembro_id`, así el enlace «Ficha de socio» aparece.
+
 ## [2.17.8] — 2026-11-27
 
 ### Corregido

@@ -182,8 +182,12 @@ class Social_Publisher {
 	 * @return array<string, mixed>
 	 */
 	private static function publish_google( array $account, string $message, string $image_url, string $link_url ): array {
-		$token     = $account['access_token'];
-		$location_id = $account['account_id'];
+		$token       = $account['access_token'];
+		$location_id = (string) ( $account['location_id'] ?? '' );
+
+		if ( ! preg_match( '#^accounts/[^/]+/locations/[^/]+$#', $location_id ) ) {
+			return array( 'success' => false, 'message' => __( 'GBP: falta la ubicación de la ficha.', 'convoca-enroll' ) );
+		}
 
 		$post_body = array(
 			'languageCode' => 'es',
@@ -204,7 +208,7 @@ class Social_Publisher {
 		}
 
 		$response = wp_remote_post(
-			"https://businessprofileperformance.googleapis.com/v1/{$location_id}/localPosts",
+			"https://mybusiness.googleapis.com/v4/{$location_id}/localPosts",
 			array(
 				'headers' => array(
 					'Authorization' => "Bearer $token",
