@@ -156,6 +156,11 @@ class Motor_Inscripcion {
 			return new \WP_Error( 'invalid_activity', __( 'Actividad no encontrada.', 'convoca-enroll' ) );
 		}
 
+		// Un borrador o una actividad privada no se puede inscribir por un POST directo (#116).
+		if ( 'publish' !== $actividad->post_status ) {
+			return new \WP_Error( 'invalid_activity', __( 'Actividad no disponible.', 'convoca-enroll' ) );
+		}
+
 		// Prevent enrollment in past activities.
 		if ( ! self::esta_abierta( $actividad_id ) ) {
 			return new \WP_Error( 'activity_ended', __( 'Esta actividad ya ha finalizado.', 'convoca-enroll' ) );

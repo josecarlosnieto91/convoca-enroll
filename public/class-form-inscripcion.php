@@ -43,6 +43,22 @@ class Form_Inscripcion {
 		return 'pendiente_pago' === $estado && $amount_cents > 0;
 	}
 
+	/**
+	 * Estado que fuerza el formulario. Una actividad marcada de pago pero con importe 0
+	 * se trata como gratuita: antes quedaba en `pendiente_pago` sin pasarela (#113).
+	 *
+	 * @param bool  $requiere_pago Actividad de pago.
+	 * @param float $amount_eur    Importe calculado.
+	 * @return string|null
+	 */
+	public static function estado_inicial( bool $requiere_pago, float $amount_eur ): ?string {
+		if ( ! $requiere_pago ) {
+			return null;
+		}
+
+		return $amount_eur > 0 ? 'pendiente_pago' : 'confirmada';
+	}
+
 
 	public function __construct() {
 		add_shortcode( 'convoca_form_inscripcion', array( $this, 'shortcode' ) );
@@ -353,12 +369,8 @@ class Form_Inscripcion {
 			};
 		}
 
-		$amount_cents   = 0;
-		$estado_forzado = null;
-		if ( $requiere_pago && $amount_eur > 0 ) {
-			$amount_cents   = (int) round( $amount_eur * 100 );
-			$estado_forzado = 'pendiente_pago';
-		}
+		$amount_cents   = (int) round( $amount_eur * 100 );
+		$estado_forzado = self::estado_inicial( $requiere_pago, $amount_eur );
 
 		$result = Motor_Inscripcion::inscribir(
 			$actividad_id,
