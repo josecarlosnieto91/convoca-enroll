@@ -1,3 +1,12 @@
+## [2.17.7] — 2026-11-27
+
+### Corregido
+
+- **Un borrador no admite inscripciones (#116).** `Motor_Inscripcion::inscribir()` exige `publish`; antes un
+  POST directo con el id de un borrador creaba inscripción, enviaba correos y consumía cupo.
+- **Actividad de pago con importe 0 se trata como gratuita (#113).** El formulario fuerza `confirmada` en vez
+  de dejar la inscripción atascada en `pendiente_pago` sin pasarela.
+
 ## [2.17.6] — 2026-11-27
 
 ### Corregido

@@ -52,6 +52,38 @@ final class CobroListaEsperaTest extends TestCase {
 		$this->assertFalse( Form_Inscripcion::debe_cobrar( 'pendiente_pago', 0 ) );
 	}
 
+	public function test_pago_con_importe_cero_se_trata_como_gratuita(): void {
+		$this->assertSame( 'confirmada', Form_Inscripcion::estado_inicial( true, 0.0 ) );
+		$this->assertSame( 'pendiente_pago', Form_Inscripcion::estado_inicial( true, 10.0 ) );
+		$this->assertNull( Form_Inscripcion::estado_inicial( false, 0.0 ) );
+	}
+
+	/**
+	 * Un borrador no admite inscripciones por POST directo (#116).
+	 */
+	public function test_no_se_inscribe_en_un_borrador(): void {
+		$GLOBALS['_wp_stores']['posts'][501] = (object) array(
+			'ID'          => 501,
+			'post_type'   => 'actividad',
+			'post_status' => 'draft',
+			'post_title'  => 'Borrador',
+		);
+
+		$resultado = Motor_Inscripcion::inscribir(
+			501,
+			array(
+				'nombre'           => 'Prueba',
+				'email'            => 'prueba@example.test',
+				'es_socio'         => false,
+				'tipo_inscripcion' => 'invitado',
+				'rgpd'             => true,
+			)
+		);
+
+		$this->assertInstanceOf( \WP_Error::class, $resultado );
+		$this->assertSame( 'invalid_activity', $resultado->get_error_code() );
+	}
+
 	/**
 	 * Confirmar una lista de espera de pago sin cobro no da la plaza.
 	 */
