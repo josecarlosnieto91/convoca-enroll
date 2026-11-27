@@ -1,3 +1,10 @@
+## [2.17.8] — 2026-11-27
+
+### Corregido
+
+- **Guardar una actividad no reabre sus plazas (#111).** Un campo que el formulario no emite ya no se
+  escribe como vacío, y el aforo disponible `0` no se confunde con «sin estrenar» al autoasignar el total.
+
 ## [2.17.7] — 2026-11-27
 
 ### Corregido

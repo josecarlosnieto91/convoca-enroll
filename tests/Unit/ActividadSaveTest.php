@@ -98,6 +98,21 @@ final class ActividadSaveTest extends TestCase {
 	}
 
 	/**
+	 * Un guardado que no envía `plazas_disponibles` no reabre las plazas (#111).
+	 */
+	public function test_no_reabre_plazas_si_el_campo_no_viene(): void {
+		$GLOBALS['_wp_stores']['post_meta'][61] = array(
+			'_convoca_plazas_totales'     => '10',
+			'_convoca_plazas_disponibles' => '0',
+		);
+		$this->enviar( array( 'plazas_totales' => '10' ) );
+
+		$this->cpt->save_metabox( 61 );
+
+		$this->assertSame( 0, (int) $this->meta( 'plazas_disponibles' ) );
+	}
+
+	/**
 	 * Cada campo se guarda saneado: la coma decimal pasa a punto y la fecha del formulario pierde la `T`.
 	 */
 	public function test_guarda_los_campos(): void {
