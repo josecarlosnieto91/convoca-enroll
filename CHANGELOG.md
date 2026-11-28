@@ -1,3 +1,11 @@
+## [2.17.19] — 2026-11-27
+
+### Corregido
+
+- **Los códigos de reserva usan la tabla como garantía real (#110).** `generar_codigo()` inserta en
+  `convoca_reservation_codes` y reintenta si la clave primaria choca; al crear la inscripción se
+  vincula la fila al `post_id`.
+
 ## [2.17.18] — 2026-11-27
 
 ### Corregido

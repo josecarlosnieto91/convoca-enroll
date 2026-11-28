@@ -55,6 +55,22 @@ class MotorInscripcionTest extends TestCase
             $codes[] = Motor_Inscripcion::generar_codigo();
         }
         $this->assertCount(100, array_unique($codes), 'All generated codes should be unique');
+
+        $filas = array_slice( (array) $GLOBALS['db_inserts'], -100 );
+        $this->assertCount( 100, $filas, 'una fila por código' );
+        $codigos_insertados = array_map( static fn( $f ) => $f['datos']['code'], $filas );
+        $this->assertCount( 100, array_unique( $codigos_insertados ), 'una fila por código distinto' );
+    }
+
+    /**
+     * Vincular el código a su inscripción es una actualización, no otra fila (enroll#110).
+     */
+    public function test_registrar_codigo_vincula_la_inscripcion(): void
+    {
+        $this->assertTrue( Motor_Inscripcion::registrar_codigo( 'ABCD2345', 77 ) );
+        $fila = end( $GLOBALS['db_updates'] );
+        $this->assertSame( 77, $fila['datos']['post_id'] );
+        $this->assertSame( 'ABCD2345', $fila['donde']['code'] );
     }
 
     /**
