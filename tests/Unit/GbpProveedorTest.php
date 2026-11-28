@@ -91,7 +91,7 @@ class GbpProveedorTest extends TestCase {
 	 * Con el bloqueo puesto no se duplica la publicación.
 	 */
 	public function test_con_bloqueo_activo_no_se_duplica(): void {
-		$llave = 'convoca_lock_' . md5( 'hola' . '' . 'gbp' );
+		$llave = 'convoca_lock_' . md5( 'accounts/1/locations/2|hola||gbp' );
 		set_transient( $llave, time(), 300 );
 
 		$resultado = $this->proveedor()->publish( 'hola' );
@@ -99,6 +99,30 @@ class GbpProveedorTest extends TestCase {
 		$this->assertFalse( $resultado['success'] );
 		$this->assertStringContainsString( 'Lock activo', $resultado['message'] );
 		$this->assertSame( array(), $GLOBALS['_wp_http_posts'] );
+	}
+
+	/**
+	 * Una salida temprana no deja el bloqueo puesto cinco minutos (enroll#119).
+	 */
+	public function test_sin_token_no_deja_bloqueo(): void {
+		$resultado = $this->proveedor( '' )->publish( 'hola' );
+
+		$this->assertFalse( $resultado['success'] );
+		$llave = 'convoca_lock_' . md5( 'accounts/1/locations/2|hola||gbp' );
+		$this->assertArrayNotHasKey( $llave, $GLOBALS['_wp_stores']['transients'], 'el bloqueo se libera' );
+	}
+
+	/**
+	 * Dos fichas con el mismo texto no se bloquean entre sí (enroll#119).
+	 */
+	public function test_dos_fichas_no_comparten_bloqueo(): void {
+		$otra = 'convoca_lock_' . md5( 'accounts/9/locations/8|hola||gbp' );
+		set_transient( $otra, time(), 300 );
+
+		$resultado = $this->proveedor( 'TOKEN', 'accounts/1/locations/2' )->publish( 'hola' );
+
+		$this->assertTrue( $resultado['success'], 'la ficha 2 publica aunque la 9 tenga el mismo texto' );
+		$this->assertCount( 1, $GLOBALS['_wp_http_posts'] );
 	}
 
 	/**
