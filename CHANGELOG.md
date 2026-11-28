@@ -1,3 +1,10 @@
+## [2.17.27] — 2026-11-27
+
+### Corregido
+
+- **La caducidad libera la plaza real (#102).** Cierra `pendiente` y `pendiente_pago` pasando por
+  `Estados::cambiar`, así que el aforo se ajusta una sola vez y se promueve la lista de espera.
+
 ## [2.17.26] — 2026-11-27
 
 ### Corregido
