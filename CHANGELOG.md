@@ -1,3 +1,11 @@
+## [2.17.24] — 2026-11-27
+
+### Corregido
+
+- **Los cambios manuales de estado ajustan el aforo (#105).** Una única transición calcula el delta:
+  liberar al salir de un estado que ocupa, descontar al entrar, error si no hay plazas.
+- **`hay_aforo()` cuenta `confirmada` y `pendiente_pago`**, igual que el motor.
+
 ## [2.17.23] — 2026-11-27
 
 ### Corregido

@@ -77,6 +77,22 @@ final class AdminPagePiezasTest extends TestCase {
 	}
 
 	/**
+	 * El aforo cuenta también `pendiente_pago`, como el motor (enroll#105).
+	 */
+	public function test_hay_aforo_cuenta_pendiente_pago(): void {
+		$GLOBALS['_wp_stores']['post_meta'][62] = array( '_convoca_plazas_totales' => '2' );
+		$confirmada         = new \stdClass();
+		$confirmada->estado = 'confirmada';
+		$confirmada->total  = '1';
+		$pendiente          = new \stdClass();
+		$pendiente->estado  = 'pendiente_pago';
+		$pendiente->total   = '1';
+		$GLOBALS['_wp_stores']['results_mapa']['COUNT(*) AS total'] = array( $confirmada, $pendiente );
+
+		$this->assertFalse( Admin_Page::hay_aforo( 62 ), 'las dos plazas están comprometidas' );
+	}
+
+	/**
 	 * Aforo: sin tope configurado siempre cabe alguien; con tope, manda el recuento de confirmadas.
 	 */
 	public function test_hay_aforo(): void {

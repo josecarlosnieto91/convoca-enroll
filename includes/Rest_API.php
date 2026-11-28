@@ -303,10 +303,7 @@ class Rest_API {
 			// efectivo): su permiso ES la prueba. El cobro automático también pasa `true`.
 			$result = Motor_Inscripcion::confirmar( $id, true );
 		} else {
-			if ( $estado ) {
-				CPT_Inscripcion::update_meta( $id, 'estado', $estado );
-			}
-			$result = true;
+			$result = $estado ? Estados::cambiar( $id, $estado, 'REST' ) : true;
 		}
 
 		$asistencia = sanitize_text_field( $req->get_param( 'asistencia' ) );

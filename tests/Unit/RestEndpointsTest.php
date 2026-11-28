@@ -273,12 +273,12 @@ final class RestEndpointsTest extends TestCase {
 	public function test_estado_libre_y_asistencia(): void {
 		$this->inscripcion();
 
-		$r = $this->api->update_inscription( $this->peticion( array( 'id' => 70, 'estado' => 'pagada', 'asistencia' => 'si' ) ) );
+		$r = $this->api->update_inscription( $this->peticion( array( 'id' => 70, 'estado' => 'pendiente', 'asistencia' => 'si' ) ) );
 
-		// El estado libre se guarda tal cual, pero la asistencia pasa por la puerta del check-in:
-		// `pagada` no es vigente, así que no se marca (enroll#77/#81).
+		// El estado válido se guarda, pero la asistencia pasa por la puerta del check-in: `pendiente`
+		// no es vigente, así que no se marca (enroll#77/#81).
 		$this->assertInstanceOf( \WP_Error::class, $r );
-		$this->assertSame( 'pagada', $GLOBALS['_wp_stores']['post_meta'][70]['_convoca_estado'] );
+		$this->assertSame( 'pendiente', $GLOBALS['_wp_stores']['post_meta'][70]['_convoca_estado'] );
 		$this->assertSame( 'no_registrada', $GLOBALS['_wp_stores']['post_meta'][70]['_convoca_asistencia'] );
 	}
 
