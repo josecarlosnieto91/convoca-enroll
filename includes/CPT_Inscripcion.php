@@ -105,9 +105,23 @@ class CPT_Inscripcion {
 	 * When an inscription is saved, link it to the member with matching email.
 	 */
 	public static function on_save_link_member( int $post_id, \WP_Post $post, bool $update ): void {
-		$email = get_post_meta( $post_id, '_convoca_email', true );
-		if ( ! $email ) {
-			return;
+		self::vincular_miembro( $post_id );
+	}
+
+	/**
+	 * Vincula la inscripción con la ficha del socio por correo.
+	 *
+	 * `save_post` llega antes de que el motor escriba `_convoca_email`, así que el motor llama aquí
+	 * después de guardar las metas (#101).
+	 *
+	 * @param int         $post_id Inscripción.
+	 * @param string|null $email   Correo explícito; si falta, se lee de la inscripción.
+	 * @return int Ficha vinculada, o 0 si no hay socio con ese correo.
+	 */
+	public static function vincular_miembro( int $post_id, ?string $email = null ): int {
+		$email = $email ?? (string) get_post_meta( $post_id, '_convoca_email', true );
+		if ( '' === $email ) {
+			return 0;
 		}
 
 		$members = get_posts(
@@ -121,11 +135,15 @@ class CPT_Inscripcion {
 			)
 		);
 
-		if ( ! empty( $members ) ) {
-			// convoca-acoplamiento-ignore: meta compartido por diseño; unificarlo exige migrar los datos.
-			// (Lo escribe Enroll al crear la inscripción y lo lee Members para resolver la cuota.)
-			update_post_meta( $post_id, '_convoca_member_id', (int) $members[0] );
+		if ( empty( $members ) ) {
+			return 0;
 		}
+
+		// convoca-acoplamiento-ignore: meta compartido por diseño; unificarlo exige migrar los datos.
+		// (Lo escribe Enroll al crear la inscripción y lo lee Members para resolver la cuota.)
+		update_post_meta( $post_id, '_convoca_member_id', (int) $members[0] );
+
+		return (int) $members[0];
 	}
 
 	public static function redirect_default_editor(): void {

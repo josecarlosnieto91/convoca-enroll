@@ -330,6 +330,22 @@ final class MotorInscribirTest extends TestCase {
 	}
 
 	/**
+	 * El alta deja el vínculo con la ficha del socio (#101).
+	 */
+	public function test_el_alta_vincula_la_ficha_del_socio(): void {
+		$this->actividad();
+		$miembro = new \WP_Post();
+		$miembro->ID = 77;
+		$miembro->post_type = 'miembro';
+		$GLOBALS['convoca_test_posts'] = array( $miembro );
+		$GLOBALS['_wp_stores']['post_meta'][77]['_convoca_email'] = 'ana@example.com';
+
+		$id = Motor_Inscripcion::inscribir( 61, $this->datos() );
+
+		$this->assertSame( 77, (int) $GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_member_id'] );
+	}
+
+	/**
 	 * Sin plazas: **lista de espera**. Ocupar una butaca que no hay es el fallo que se nota en el mostrador.
 	 */
 	public function test_sin_plazas_va_a_la_espera(): void {

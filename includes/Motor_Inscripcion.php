@@ -485,6 +485,9 @@ class Motor_Inscripcion {
 				CPT_Inscripcion::update_meta( $post_id, $key, $val );
 			}
 
+			// Las metas ya existen: ahora sí se puede resolver la ficha por correo (#101).
+			CPT_Inscripcion::vincular_miembro( (int) $post_id, $email );
+
 			$wpdb->query( 'COMMIT' );
 
 			// Fire hooks.
