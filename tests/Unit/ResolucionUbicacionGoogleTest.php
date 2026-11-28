@@ -61,6 +61,43 @@ class ResolucionUbicacionGoogleTest extends TestCase {
 		$this->assertSame( 'accounts/1/locations/2', $ubicacion['name'] );
 	}
 
+	/**
+	 * Con dos cuentas y dos fichas no se elige una en silencio (enroll#107).
+	 */
+	public function test_dos_fichas_piden_elegir(): void {
+		$GLOBALS['convoca_test_http_get_queue'] = array(
+			array( 'code' => 200, 'body' => '{"accounts":[{"name":"accounts/1"},{"name":"accounts/2"}]}' ),
+			array( 'code' => 200, 'body' => '{"locations":[{"name":"locations/2","title":"Centro"}]}' ),
+			array( 'code' => 200, 'body' => '{"locations":[{"name":"locations/9","title":"Tienda"}]}' ),
+		);
+
+		$ubicacion = Social_OAuth::resolver_ubicacion_google( 'TOKEN' );
+
+		$this->assertSame( 'elegir_ubicacion', $ubicacion['error'] );
+		$this->assertSame( '', $ubicacion['name'] );
+	}
+
+	/**
+	 * La ficha se selecciona por configuración explícita (enroll#107).
+	 */
+	public function test_la_ficha_se_elige_por_filtro(): void {
+		$GLOBALS['_wp_filters']['convoca_enroll_gbp_location'] = array( 10 => array( static fn(): string => 'Tienda' ) );
+		$GLOBALS['convoca_test_http_get_queue'] = array(
+			array( 'code' => 200, 'body' => '{"accounts":[{"name":"accounts/1"},{"name":"accounts/2"}]}' ),
+			array( 'code' => 200, 'body' => '{"locations":[{"name":"locations/2","title":"Centro"}]}' ),
+			array( 'code' => 200, 'body' => '{"locations":[{"name":"locations/9","title":"Tienda"}]}' ),
+		);
+
+		try {
+			$ubicacion = Social_OAuth::resolver_ubicacion_google( 'TOKEN' );
+		} finally {
+			unset( $GLOBALS['_wp_filters']['convoca_enroll_gbp_location'] );
+		}
+
+		$this->assertSame( 'accounts/2/locations/9', $ubicacion['name'] );
+		$this->assertSame( 'Tienda', $ubicacion['title'] );
+	}
+
 	public function test_sin_cuentas_devuelve_error(): void {
 		$GLOBALS['convoca_test_http_get_queue'] = array(
 			array( 'code' => 200, 'body' => '{"accounts":[]}' ),
