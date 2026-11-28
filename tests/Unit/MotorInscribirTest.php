@@ -484,6 +484,62 @@ final class MotorInscribirTest extends TestCase {
 		$this->assertCount( 1, $GLOBALS['pagos'], 'un solo pago' );
 	}
 
+	/**
+	 * Cambios manuales de estado: el aforo sigue la misma regla que el motor (enroll#105).
+	 */
+	public function test_confirmada_a_pendiente_libera_plaza(): void {
+		$this->actividad( array( 'plazas_disponibles' => 0 ) );
+		$this->inscripcion_estado( 95, 'confirmada' );
+
+		$this->assertTrue( \Convoca\Enroll\Estados::cambiar( 95, 'pendiente', 'prueba' ) );
+		$this->assertSame( 'pendiente', $GLOBALS['_wp_stores']['post_meta'][95]['_convoca_estado'] );
+		$this->assertSame( '1', (string) $GLOBALS['_wp_stores']['post_meta'][61]['_convoca_plazas_disponibles'] );
+	}
+
+	/**
+	 * Pasar una pendiente a confirmada descuenta una plaza.
+	 */
+	public function test_pendiente_a_confirmada_ocupa_plaza(): void {
+		$this->actividad( array( 'plazas_disponibles' => 1 ) );
+		$this->inscripcion_estado( 96, 'pendiente' );
+
+		$this->assertTrue( \Convoca\Enroll\Estados::cambiar( 96, 'confirmada', 'prueba' ) );
+		$this->assertSame( '0', (string) $GLOBALS['_wp_stores']['post_meta'][61]['_convoca_plazas_disponibles'] );
+	}
+
+	/**
+	 * Sin plazas no se puede confirmar desde la interfaz.
+	 */
+	public function test_confirmar_sin_plazas_falla(): void {
+		$this->actividad( array( 'plazas_disponibles' => 0 ) );
+		$this->inscripcion_estado( 97, 'pendiente' );
+
+		$error = \Convoca\Enroll\Estados::cambiar( 97, 'confirmada', 'prueba' );
+
+		$this->assertInstanceOf( \WP_Error::class, $error );
+		$this->assertSame( 'no_slots', $error->get_error_code() );
+		$this->assertSame( 'pendiente', $GLOBALS['_wp_stores']['post_meta'][97]['_convoca_estado'] );
+	}
+
+	/**
+	 * Siembra una inscripción con estado.
+	 *
+	 * @param int    $id     Id.
+	 * @param string $estado Estado.
+	 * @return void
+	 */
+	private function inscripcion_estado( int $id, string $estado ): void {
+		$post                        = new \WP_Post();
+		$post->ID                    = $id;
+		$post->post_type             = 'inscripcion';
+		$post->post_title            = 'Inscripción ' . $id;
+		$GLOBALS['_wp_stores']['posts'][ $id ] = $post;
+		$GLOBALS['_wp_stores']['post_meta'][ $id ] = array(
+			'_convoca_actividad_id' => 61,
+			'_convoca_estado'       => $estado,
+		);
+	}
+
 	private function assertWPErrorCode( string $esperado, $error ): void {
 		$this->assertInstanceOf( \WP_Error::class, $error, 'se esperaba un error, no una inscripción' );
 		$this->assertSame( $esperado, $error->get_error_code() );

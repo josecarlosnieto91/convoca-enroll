@@ -500,8 +500,13 @@ class Admin_Page {
 			return true;
 		}
 
-		$stats = CPT_Inscripcion::count_by_activity( $actividad_id );
-		return (int) ( $stats['confirmada'] ?? 0 ) < $aforo_max;
+		$stats    = CPT_Inscripcion::count_by_activity( $actividad_id );
+		$ocupadas = 0;
+		foreach ( \Convoca\Enroll\Estados::ocupan_plaza() as $estado_que_ocupa ) {
+			$ocupadas += (int) ( $stats[ $estado_que_ocupa ] ?? 0 );
+		}
+
+		return $ocupadas < $aforo_max;
 	}
 
 	private function handle_bulk_actions(): void {
@@ -764,8 +769,7 @@ class Admin_Page {
 			} elseif ( $estado === 'confirmada' ) {
 				$result = Motor_Inscripcion::confirmar( $id );
 			} else {
-				CPT_Inscripcion::update_meta( $id, 'estado', $estado );
-				$result = true;
+				$result = \Convoca\Enroll\Estados::cambiar( $id, $estado, 'cambio manual' );
 			}
 
 			if ( is_wp_error( $result ) ) {
