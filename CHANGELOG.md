@@ -1,3 +1,11 @@
+## [2.17.23] — 2026-11-27
+
+### Corregido
+
+- **Una promoción en actividad de pago tiene forma de pagar (#106).** Si hay gateway se crea un solo
+  pago y el correo/panel llevan el enlace; sin gateway, el correo indica el canal manual y el plazo.
+- **La caducidad también cierra `pendiente_pago`** y devuelve la plaza a la lista sin intervención.
+
 ## [2.17.22] — 2026-11-27
 
 ### Corregido

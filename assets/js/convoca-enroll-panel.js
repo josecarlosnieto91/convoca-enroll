@@ -91,7 +91,7 @@
                 <div class="conv-panel-card-footer">
                     <span class="conv-panel-code">🔑 ${escHtml(r.codigo)}</span>
                     <span class="conv-small">Inscripción: ${escHtml(r.fecha_inscripcion)}</span>
-                    ${r.cancelable ? `<button class="btn btn-danger btn-sm conv-cancel-btn" data-id="${r.id}" data-actividad="${escHtml(r.actividad)}">✖ Cancelar</button>` : `<button class="btn btn-sm" disabled title="${escHtml(r.motivo_cancelacion || '')}">${escHtml(r.motivo_cancelacion || 'No se puede cancelar')}</button>`}
+                    ${r.payment_url ? `<a class="btn btn-primary btn-sm" href="${escHtml(r.payment_url)}">💳 Pagar</a> ` : ''}${r.cancelable ? `<button class="btn btn-danger btn-sm conv-cancel-btn" data-id="${r.id}" data-actividad="${escHtml(r.actividad)}">✖ Cancelar</button>` : `<button class="btn btn-sm" disabled title="${escHtml(r.motivo_cancelacion || '')}">${escHtml(r.motivo_cancelacion || 'No se puede cancelar')}</button>`}
                 </div>
             </div>
         `).join('');

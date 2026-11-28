@@ -195,12 +195,28 @@ class Panel_Reservas {
 				'es_menor'           => $es_menor,
 				'participante'       => $es_menor ? $m( 'nombre_participante' ) : $m( 'nombre' ),
 				'cancelable'         => $cancelable[0],
+				'payment_url'        => self::enlace_pago( $post->ID ),
 				'motivo_cancelacion' => $cancelable[1],
 				'fecha_inscripcion'  => get_the_date( 'd/m/Y H:i', $post ),
 			);
 		}
 
 		return $reservas;
+	}
+
+	/**
+	 * URL de pago de la reserva, si tiene un pago pendiente y el gateway está disponible.
+	 *
+	 * @param int $inscripcion_id Inscripción.
+	 * @return string
+	 */
+	private static function enlace_pago( int $inscripcion_id ): string {
+		$pago_id = (int) CPT_Inscripcion::get_meta( $inscripcion_id, 'pago_id' );
+		if ( $pago_id <= 0 || ! class_exists( '\\Convoca\\Gateway\\Payment_Handler' ) ) {
+			return '';
+		}
+
+		return (string) \Convoca\Gateway\Payment_Handler::build_payment_url( $pago_id );
 	}
 
 	/**

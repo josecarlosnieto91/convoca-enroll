@@ -93,8 +93,13 @@ final class Caducidad {
 				'numberposts'   => 100,
 				'fields'        => 'ids',
 				'no_found_rows' => true,
-				'meta_key'      => '_convoca_estado',
-				'meta_value'    => 'pendiente',
+				'meta_query'    => array(
+					array(
+						'key'     => '_convoca_estado',
+						'value'   => array( 'pendiente', 'pendiente_pago' ),
+						'compare' => 'IN',
+					),
+				),
 				'date_query'    => array(
 					array(
 						'column'    => 'post_date',
@@ -114,7 +119,8 @@ final class Caducidad {
 	 * @return bool
 	 */
 	private static function expirar_una( int $id, int $ahora ): bool {
-		if ( 'pendiente' !== (string) get_post_meta( $id, '_convoca_estado', true ) ) {
+		$estado = (string) get_post_meta( $id, '_convoca_estado', true );
+		if ( ! in_array( $estado, array( 'pendiente', 'pendiente_pago' ), true ) ) {
 			return false;
 		}
 
@@ -148,11 +154,14 @@ final class Caducidad {
 	private static function cerrar( int $id, int $actividad_id, int $horas ): void {
 		update_post_meta( $id, '_convoca_estado', 'expirada' );
 		update_post_meta( $id, '_convoca_expirada_en', current_time( 'mysql' ) );
+		update_post_meta( $id, '_convoca_asistencia', 'no_registrada' );
+		update_post_meta( $id, '_convoca_checkin_token', '' );
 
-		// La plaza se devuelve en el acto: el contador de la actividad es lo que lee el formulario.
-		$ocupadas = (int) get_post_meta( $actividad_id, '_convoca_plazas_ocupadas', true );
-		if ( $ocupadas > 0 ) {
-			update_post_meta( $actividad_id, '_convoca_plazas_ocupadas', max( 0, $ocupadas - 1 ) );
+		// La plaza vuelve en el acto: si hay alguien esperando, la ocupa; si no, sube el cupo.
+		$promovido = Motor_Inscripcion::promover_hasta_cubrir( $actividad_id, 1 );
+		if ( ! $promovido ) {
+			$disponibles = (int) get_post_meta( $actividad_id, '_convoca_plazas_disponibles', true );
+			update_post_meta( $actividad_id, '_convoca_plazas_disponibles', max( 0, $disponibles + 1 ) );
 		}
 
 		\Convoca\Core\Logger::info(

@@ -863,6 +863,7 @@ class Motor_Inscripcion {
 				$affected = $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->postmeta} SET meta_value = %s WHERE post_id = %d AND meta_key = %s AND meta_value = 'lista_espera'", $nuevo_estado, $promoted->ID, CPT_Inscripcion::META_PREFIX . 'estado' ) );
 				if ( $affected > 0 ) {
 					CPT_Inscripcion::update_meta( $promoted->ID, 'pagado', 0 ); // Reset payment just in case.
+					Promocion_Pago::crear( (int) $promoted->ID, $actividad_id, $nuevo_estado );
 					return (int) $promoted->ID;
 				}
 			}

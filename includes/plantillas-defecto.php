@@ -85,7 +85,7 @@ return array(
 		'subject' => __( '¡Tienes una plaza disponible! — {actividad}', 'convoca-enroll' ),
 		'body'    => __( '<h1>¡Buenas noticias, {nombre}! 🎉</h1>', 'convoca-enroll' )
 			. __( '<p>Se ha liberado una plaza para <strong>{actividad}</strong> y se te ha asignado automáticamente.</p>', 'convoca-enroll' )
-			. __( '<p>Tu inscripción se encuentra ahora <strong>pendiente de validación</strong>. Te confirmaremos tu plaza definitiva lo antes posible.</p>', 'convoca-enroll' )
+			. __( '<p>Tu inscripción queda <strong>pendiente de pago</strong>. Completa la aportación antes de <strong>{plazo_pago}</strong>; si no, la plaza vuelve a la lista de espera. Si prefieres pagar en mano, contacta con la organización.</p>', 'convoca-enroll' )
 			. Email_Layout::meta_table(
 				array(
 					array(
