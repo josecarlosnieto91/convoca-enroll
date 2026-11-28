@@ -1,3 +1,11 @@
+## [2.17.22] — 2026-11-27
+
+### Corregido
+
+- **Google Business Profile ya no elige la primera cuenta y ficha (#107).** Se recorren cuentas y
+  páginas; si hay varias, se pide elegir y se fija con los filtros `convoca_enroll_gbp_account` y
+  `convoca_enroll_gbp_location`.
+
 ## [2.17.21] — 2026-11-27
 
 ### Corregido

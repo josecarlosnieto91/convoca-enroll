@@ -80,45 +80,88 @@ class Social_OAuth {
 	public static function resolver_ubicacion_google( string $access_token ): array {
 		$cabeceras = array( 'Authorization' => "Bearer {$access_token}" );
 
-		$cuentas = wp_remote_get(
-			'https://mybusinessaccountmanagement.googleapis.com/v1/accounts', // convoca-hygiene-ignore: dominio público de Google
-			array(
-				'timeout' => 15,
-				'headers' => $cabeceras,
-			)
-		);
-		$cuerpo  = json_decode( (string) wp_remote_retrieve_body( $cuentas ), true );
-		$cuenta  = (string) ( $cuerpo['accounts'][0]['name'] ?? '' );
+		$cuentas = array();
+		$pagina  = '';
+		for ( $i = 0; $i < 10; $i++ ) {
+			$url = 'https://mybusinessaccountmanagement.googleapis.com/v1/accounts?pageSize=100'; // convoca-hygiene-ignore: dominio público de Google
+			if ( '' !== $pagina ) {
+				$url .= '&pageToken=' . rawurlencode( $pagina );
+			}
+			$respuesta = wp_remote_get( $url, array( 'timeout' => 15, 'headers' => $cabeceras ) );
+			if ( is_wp_error( $respuesta ) ) {
+				break;
+			}
+			$cuerpo = json_decode( (string) wp_remote_retrieve_body( $respuesta ), true );
+			foreach ( (array) ( $cuerpo['accounts'] ?? array() ) as $cuenta ) {
+				if ( ! empty( $cuenta['name'] ) ) {
+					$cuentas[] = (string) $cuenta['name'];
+				}
+			}
+			$pagina = (string) ( $cuerpo['nextPageToken'] ?? '' );
+			if ( '' === $pagina ) {
+				break;
+			}
+		}
 
-		if ( is_wp_error( $cuentas ) || '' === $cuenta ) {
+		if ( empty( $cuentas ) ) {
 			return array( 'name' => '', 'title' => '', 'error' => 'sin_cuenta' );
 		}
 
-		$fichas = wp_remote_get(
-			"https://mybusinessbusinessinformation.googleapis.com/v1/{$cuenta}/locations?readMask=name,title&pageSize=1",
-			array(
-				'timeout' => 15,
-				'headers' => $cabeceras,
-			)
-		);
-		$datos  = json_decode( (string) wp_remote_retrieve_body( $fichas ), true );
-		$ficha  = (array) ( $datos['locations'][0] ?? array() );
-		$nombre = (string) ( $ficha['name'] ?? '' );
+		$filtro_cuenta = (string) apply_filters( 'convoca_enroll_gbp_account', '' );
+		$filtro_ficha  = (string) apply_filters( 'convoca_enroll_gbp_location', '' );
 
-		// Business Information devuelve `locations/{id}`; Local Posts exige el nombre completo.
-		if ( preg_match( '#^locations/[^/]+$#', $nombre ) ) {
-			$nombre = $cuenta . '/' . $nombre;
+		$fichas = array();
+		foreach ( $cuentas as $cuenta ) {
+			if ( '' !== $filtro_cuenta && $cuenta !== $filtro_cuenta ) {
+				continue;
+			}
+			$pagina = '';
+			for ( $i = 0; $i < 10; $i++ ) {
+				$url = "https://mybusinessbusinessinformation.googleapis.com/v1/{$cuenta}/locations?readMask=name,title&pageSize=100";
+				if ( '' !== $pagina ) {
+					$url .= '&pageToken=' . rawurlencode( $pagina );
+				}
+				$respuesta = wp_remote_get( $url, array( 'timeout' => 15, 'headers' => $cabeceras ) );
+				if ( is_wp_error( $respuesta ) ) {
+					break;
+				}
+				$datos = json_decode( (string) wp_remote_retrieve_body( $respuesta ), true );
+				foreach ( (array) ( $datos['locations'] ?? array() ) as $ficha ) {
+					$nombre = (string) ( $ficha['name'] ?? '' );
+					if ( preg_match( '#^locations/[^/]+$#', $nombre ) ) {
+						$nombre = $cuenta . '/' . $nombre;
+					}
+					if ( preg_match( '#^accounts/[^/]+/locations/[^/]+$#', $nombre ) ) {
+						$fichas[] = array(
+							'name'  => $nombre,
+							'title' => (string) ( $ficha['title'] ?? '' ),
+						);
+					}
+				}
+				$pagina = (string) ( $datos['nextPageToken'] ?? '' );
+				if ( '' === $pagina ) {
+					break;
+				}
+			}
 		}
 
-		if ( is_wp_error( $fichas ) || ! preg_match( '#^accounts/[^/]+/locations/[^/]+$#', $nombre ) ) {
-			return array( 'name' => '', 'title' => '', 'error' => 'sin_ubicacion' );
+		if ( '' !== $filtro_ficha ) {
+			$fichas = array_values( array_filter( $fichas, static fn( $f ) => $f['name'] === $filtro_ficha || $f['title'] === $filtro_ficha ) );
 		}
 
-		return array(
-			'name'  => $nombre,
-			'title' => (string) ( $ficha['title'] ?? '' ),
-			'error' => '',
-		);
+		if ( 1 === count( $fichas ) ) {
+			return array(
+				'name'  => $fichas[0]['name'],
+				'title' => $fichas[0]['title'],
+				'error' => '',
+			);
+		}
+
+		if ( count( $fichas ) > 1 ) {
+			return array( 'name' => '', 'title' => '', 'error' => 'elegir_ubicacion' );
+		}
+
+		return array( 'name' => '', 'title' => '', 'error' => 'sin_ubicacion' );
 	}
 
 	/**
