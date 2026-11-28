@@ -50,7 +50,7 @@ final class MotorInscribirTest extends TestCase {
 		$GLOBALS['convoca_test_get_posts_args'] = array();
 		$GLOBALS['convoca_test_dns']            = array( 'example.com' );
 		$GLOBALS['_wp_insert_args']             = array();
-		unset( $GLOBALS['__identidad'] );
+		unset( $GLOBALS['__identidad'], $GLOBALS['convoca_test_get_posts_cola'] );
 	}
 
 	/**
@@ -62,6 +62,7 @@ final class MotorInscribirTest extends TestCase {
 		$GLOBALS['convoca_test_get_posts_args'] = array();
 		$GLOBALS['convoca_test_dns']            = null;
 		$GLOBALS['_wp_insert_args']             = array();
+		unset( $GLOBALS['convoca_test_get_posts_cola'] );
 	}
 
 	/**
@@ -372,6 +373,41 @@ final class MotorInscribirTest extends TestCase {
 	 * @param mixed  $error    Resultado.
 	 * @return void
 	 */
+	/**
+	 * Ampliar promueve la lista de espera hasta cubrir los huecos (enroll#114).
+	 */
+	public function test_promover_hasta_cubrir_promueve_tres_de_tres(): void {
+		$this->actividad( array( 'plazas_totales' => 8, 'plazas_disponibles' => 3, 'requiere_pago' => 0 ) );
+
+		$espera = array();
+		foreach ( array( 71, 72, 73 ) as $id ) {
+			$post                        = new \WP_Post();
+			$post->ID                    = $id;
+			$post->post_type             = 'inscripcion';
+			$post->post_title            = 'Espera ' . $id;
+			$GLOBALS['_wp_stores']['posts'][ $id ] = $post;
+			$GLOBALS['_wp_stores']['post_meta'][ $id ] = array(
+				'_convoca_actividad_id' => 61,
+				'_convoca_estado'       => 'lista_espera',
+				'_convoca_es_socio'     => '0',
+			);
+			$espera[] = $post;
+		}
+
+		$GLOBALS['convoca_test_get_posts_cola'] = array( $espera, array_slice( $espera, 1 ), array_slice( $espera, 2 ) );
+
+		$promovidos = Motor_Inscripcion::promover_hasta_cubrir( 61, 3 );
+
+		$this->assertSame( 3, $promovidos, 'cubre los tres huecos' );
+		$updates = array_values(
+			array_filter(
+				(array) $GLOBALS['_wp_stores']['queries'],
+				static fn( $q ) => false !== strpos( (string) $q, "meta_value = 'confirmada'" )
+			)
+		);
+		$this->assertCount( 3, $updates, 'tres promociones reales' );
+	}
+
 	private function assertWPErrorCode( string $esperado, $error ): void {
 		$this->assertInstanceOf( \WP_Error::class, $error, 'se esperaba un error, no una inscripción' );
 		$this->assertSame( $esperado, $error->get_error_code() );

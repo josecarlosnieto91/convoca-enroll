@@ -189,6 +189,43 @@ final class AdminActividadesSaveTest extends TestCase {
 	}
 
 	/**
+	 * Al ampliar se promueve la lista de espera hasta cubrir el hueco (enroll#114).
+	 */
+	public function test_ampliar_promueve_la_lista_de_espera(): void {
+		$GLOBALS['convoca_test_tipos'][61]      = 'actividad';
+		$GLOBALS['_wp_stores']['post_meta'][61] = array( '_convoca_plazas_totales' => '5' );
+
+		$fila         = new \stdClass();
+		$fila->estado = 'confirmada';
+		$fila->total  = '3';
+		$GLOBALS['_wp_stores']['results_mapa']['COUNT(*) AS total'] = array( $fila );
+
+		$espera = array();
+		foreach ( array( 81, 82, 83 ) as $id ) {
+			$post                        = new \stdClass();
+			$post->ID                    = $id;
+			$post->post_type             = 'inscripcion';
+			$post->post_title            = 'Espera ' . $id;
+			$post->post_date             = '2026-11-01 10:00:00';
+			$GLOBALS['_wp_stores']['posts'][ $id ] = $post;
+			$GLOBALS['_wp_stores']['post_meta'][ $id ] = array(
+				'_convoca_actividad_id' => 61,
+				'_convoca_estado'       => 'lista_espera',
+				'_convoca_es_socio'     => '0',
+			);
+			$espera[] = $post;
+		}
+		$GLOBALS['convoca_test_get_posts_cola'] = array( $espera, array_slice( $espera, 1 ), array_slice( $espera, 2 ) );
+
+		$this->enviar( array( 'id' => '61', 'plazas_totales' => '8' ) );
+		$this->guardar();
+
+		$this->assertSame( 2, (int) $GLOBALS['_wp_stores']['post_meta'][61]['_convoca_plazas_disponibles'], '8 − 3 confirmadas − 3 promovidas' );
+		$updates = array_filter( (array) $GLOBALS['_wp_stores']['queries'], static fn( $q ) => false !== strpos( (string) $q, "meta_value = 'confirmada'" ) );
+		$this->assertCount( 3, $updates, 'tres promociones' );
+	}
+
+	/**
 	 * Si el número de plazas no cambia, no se toca el cupo.
 	 */
 	public function test_sin_cambio_de_plazas_no_toca_el_cupo(): void {

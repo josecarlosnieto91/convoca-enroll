@@ -796,6 +796,24 @@ class Motor_Inscripcion {
 	 * @param int $actividad_id Actividad.
 	 * @return int ID de la inscripción promovida, o 0.
 	 */
+	/**
+	 * Promueve de la lista de espera hasta cubrir los huecos indicados.
+	 *
+	 * Lo usa ampliar plazas: las plazas nuevas no pueden quedarse libres mientras hay gente esperando.
+	 *
+	 * @param int $actividad_id Actividad.
+	 * @param int $huecos       Plazas libres que se pueden cubrir.
+	 * @return int Promovidos.
+	 */
+	public static function promover_hasta_cubrir( int $actividad_id, int $huecos ): int {
+		$promovidos = 0;
+		while ( $promovidos < $huecos && self::promote_waitlist( $actividad_id ) > 0 ) {
+			++$promovidos;
+		}
+
+		return $promovidos;
+	}
+
 	private static function promote_waitlist( int $actividad_id ): int {
 		$meta_actividad = CPT_Actividad::get_meta( $actividad_id );
 		$nuevo_estado   = ! empty( $meta_actividad['requiere_pago'] ) ? 'pendiente_pago' : 'confirmada';
