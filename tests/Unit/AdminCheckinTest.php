@@ -213,6 +213,28 @@ final class AdminCheckinTest extends TestCase {
 	}
 
 	/**
+	 * Solo las confirmadas son accionables; las demás se ven con su motivo (enroll#122).
+	 */
+	public function test_lista_espera_y_pago_pendiente_no_son_accionables(): void {
+		$this->actividad( 14, current_time( 'Y-m-d' ) );
+		$ana   = $this->inscripcion( 30, 'Ana', 'ana@example.test' );
+		$eva   = $this->inscripcion( 31, 'Eva', 'eva@example.test' );
+		$pablo = $this->inscripcion( 32, 'Pablo', 'pablo@example.test' );
+		$GLOBALS['_wp_stores']['post_meta'][31]['_convoca_estado'] = 'lista_espera';
+		$GLOBALS['_wp_stores']['post_meta'][32]['_convoca_estado'] = 'pendiente_pago';
+
+		$_GET['actividad_id'] = '14';
+		$GLOBALS['convoca_test_get_posts_cola'] = array( array( $GLOBALS['_wp_stores']['posts'][14] ), array( $ana, $eva, $pablo ) );
+
+		$html = $this->pintar();
+
+		$this->assertMatchesRegularExpression( '/<button[^>]*disabled[^>]*>\s*Lista de espera/s', $html );
+		$this->assertMatchesRegularExpression( '/<button[^>]*disabled[^>]*>\s*Pago pendiente/s', $html );
+		preg_match( '/<button[^>]*data-id="30"[^>]*>/', $html, $boton );
+		$this->assertStringNotContainsString( 'disabled', $boton[0] ?? '', 'la confirmada sigue accionable' );
+	}
+
+	/**
 	 * La búsqueda viaja **a la consulta**: se filtra por nombre y correo, no en PHP después.
 	 */
 	public function test_la_busqueda_va_a_la_consulta(): void {
