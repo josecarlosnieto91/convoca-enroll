@@ -150,6 +150,22 @@ class MotorInscripcionDecisionesTest extends TestCase
         $this->assertSame(array('admin@test.com'), $GLOBALS['_wp_stores']['sent_mail'][0]['to']);
     }
 
+    public function test_dos_cancelaciones_del_mismo_socio_acumulan_en_su_ficha(): void
+    {
+        $now = strtotime('2026-01-10 12:00:00');
+        $key = '_convoca_late_cancellations_' . gmdate('Y', $now);
+        $GLOBALS['_wp_stores']['post_meta'][77]['_convoca_member_id'] = 77;
+        $GLOBALS['_wp_stores']['post_meta'][201]['_convoca_member_id'] = 77;
+        $GLOBALS['_wp_stores']['post_meta'][202]['_convoca_member_id'] = 77;
+
+        $this->assertSame(1, Motor_Inscripcion::registrar_cancelacion_tardia(201, $now));
+        $this->assertSame(2, Motor_Inscripcion::registrar_cancelacion_tardia(202, $now));
+
+        $this->assertSame('2', (string) $GLOBALS['_wp_stores']['post_meta'][77][$key], 'el contador vive en la ficha' );
+        $this->assertArrayNotHasKey($key, $GLOBALS['_wp_stores']['post_meta'][201] ?? array());
+        $this->assertArrayNotHasKey($key, $GLOBALS['_wp_stores']['post_meta'][202] ?? array());
+    }
+
     public function test_registrar_cancelacion_tardia_agrega_por_anio(): void
     {
         $id  = 123;

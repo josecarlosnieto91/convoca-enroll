@@ -1,3 +1,10 @@
+## [2.17.28] — 2026-11-27
+
+### Corregido
+
+- **La inscripción nueva se vincula con la ficha del socio (#101).** El vínculo se resuelve después de
+  escribir las metas, con el correo explícito; las cancelaciones tardías se acumulan en la ficha.
+
 ## [2.17.27] — 2026-11-27
 
 ### Corregido
