@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Enlace de check-in: construcción y validación de la firma.
+ * Enlace de check-in: construcción y resolución del token.
  */
 class Checkin_Link {
 
@@ -30,21 +30,6 @@ class Checkin_Link {
 	 * Clave del meta donde vive el token de check-in.
 	 */
 	const META_TOKEN = '_convoca_checkin_token';
-
-	/**
-	 * Firma de una inscripción.
-	 *
-	 * El `h` autoriza el check-in de ESA inscripción y de ninguna otra: es lo que permite
-	 * que el enlace funcione para quien recibe el QR sin darle permisos de personal.
-	 * Se firma el identificador con la sal persistente del sitio (estable, no rota al
-	 * cambiar las claves de WordPress), para que un QR enviado ayer siga valiendo.
-	 *
-	 * @param int $inscripcion_id Identificador de la inscripción.
-	 * @return string Firma hexadecimal.
-	 */
-	public static function hmac( int $inscripcion_id ): string {
-		return hash_hmac( 'sha256', (string) $inscripcion_id, \Convoca\Core\Utils::get_persistent_salt() );
-	}
 
 	/**
 	 * URL de check-in de una inscripción, tal y como la espera el handler.
@@ -58,22 +43,7 @@ class Checkin_Link {
 			return '';
 		}
 
-		return home_url( '/checkin/' . $token . '/?h=' . self::hmac( $inscripcion_id ) );
-	}
-
-	/**
-	 * ¿La firma corresponde a esa inscripción?
-	 *
-	 * @param int    $inscripcion_id Identificador de la inscripción.
-	 * @param string $h              Firma recibida.
-	 * @return bool
-	 */
-	public static function verify( int $inscripcion_id, string $h ): bool {
-		if ( $inscripcion_id <= 0 || '' === $h ) {
-			return false;
-		}
-
-		return hash_equals( self::hmac( $inscripcion_id ), $h );
+		return home_url( '/checkin/' . $token . '/' );
 	}
 
 	/**

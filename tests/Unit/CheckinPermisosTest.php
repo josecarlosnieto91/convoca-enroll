@@ -78,8 +78,6 @@ class CheckinPermisosTest extends TestCase
 			$this->handler->puede_checkin_directo( 77 ),
 			'la firma h del correo ya no sirve para marcar'
 		);
-		// El HMAC sigue existiendo para identificar la inscripción del QR, no para autorizar.
-		$this->assertNotSame( '', Checkin_Link::hmac( 77 ) );
 	}
 
 	public function test_los_codigos_http_dicen_lo_que_pasa(): void
