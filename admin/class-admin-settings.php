@@ -159,6 +159,7 @@ class Admin_Settings {
 
 		if ( $tab === 'general' ) {
 			$settings['admin_email']                 = sanitize_email( $conv['admin_email'] ?? '' );
+			$settings['admin_copy_emails']           = ! empty( $conv['admin_copy_emails'] ) ? 1 : 0;
 			$settings['rgpd_version']                = sanitize_text_field( $conv['rgpd_version'] ?? '1.0' );
 			$settings['limite_una_reserva']          = ! empty( $conv['limite_una_reserva'] ) ? 1 : 0;
 			$settings['permitir_menores']            = ! empty( $conv['permitir_menores'] ) ? 1 : 0;

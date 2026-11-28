@@ -141,10 +141,19 @@ final class EmailSendTest extends TestCase {
 	}
 
 	/**
+	 * Por defecto no hay copia: una inscripción, un correo (enroll#124).
+	 */
+	public function test_por_defecto_no_copia_al_admin(): void {
+		$GLOBALS['_wp_stores']['options']['convoca_enroll_settings'] = array( 'admin_email' => 'equipo@example.test' );
+
+		$this->assertCount( 1, $this->enviar( 'recepcion' ), 'solo el participante' );
+	}
+
+	/**
 	 * El admin recibe su copia, marcada, para saber qué correo ha salido.
 	 */
 	public function test_el_admin_recibe_copia(): void {
-		$GLOBALS['_wp_stores']['options']['convoca_enroll_settings'] = array( 'admin_email' => 'equipo@example.test' );
+		$GLOBALS['_wp_stores']['options']['convoca_enroll_settings'] = array( 'admin_email' => 'equipo@example.test', 'admin_copy_emails' => 1 );
 
 		$encolados = $this->enviar( 'recepcion' );
 
@@ -157,7 +166,7 @@ final class EmailSendTest extends TestCase {
 	 * Si el admin es el propio socio, no se duplica.
 	 */
 	public function test_no_duplica_si_el_admin_es_el_socio(): void {
-		$GLOBALS['_wp_stores']['options']['convoca_enroll_settings'] = array( 'admin_email' => 'ana@example.test' );
+		$GLOBALS['_wp_stores']['options']['convoca_enroll_settings'] = array( 'admin_email' => 'ana@example.test', 'admin_copy_emails' => 1 );
 
 		$this->assertCount( 1, $this->enviar( 'recepcion' ) );
 	}
