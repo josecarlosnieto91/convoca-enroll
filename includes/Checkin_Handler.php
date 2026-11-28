@@ -460,7 +460,7 @@ class Checkin_Handler {
 				}
 
 				/**
-				 * El QR del correo es una URL (/checkin/<token>/?h=…), no un token suelto. Antes se
+				 * El QR del correo es una URL (/checkin/<token>/), no un token suelto. Antes se
 				 * mandaba la URL entera como `id` y el servidor la rechazaba: el escáner nunca
 				 * encontraba la inscripción. Acepta también token suelto y ?token=.
 				 */

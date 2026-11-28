@@ -1,3 +1,10 @@
+## [2.17.10] — 2026-11-27
+
+### Corregido
+
+- **El enlace de check-in ya no lleva una firma muerta (#118).** Se retira `h`/`verify()`: el token
+  identifica la inscripción y el check-in directo exige personal. Los QR antiguos siguen funcionando.
+
 ## [2.17.9] — 2026-11-27
 
 ### Corregido
