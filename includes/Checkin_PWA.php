@@ -34,6 +34,11 @@ class Checkin_PWA {
 	 * Initialize PWA hooks.
 	 */
 	public static function init(): void {
+		// El check-in instalable es PRO: sin licencia no se engancha nada (enroll#123).
+		if ( ! \Convoca\Core\License_Manager::has_pro( 'pwa_checkin' ) ) {
+			return;
+		}
+
 		add_action( 'init', array( __CLASS__, 'register_rewrites' ) );
 		// Priority 1: run before the Checkin_Handler (which fires at 10).
 		add_action( 'template_redirect', array( __CLASS__, 'serve_manifest' ), 1 );

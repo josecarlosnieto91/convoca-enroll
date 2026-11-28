@@ -25,6 +25,7 @@ class CheckinPwaTest extends TestCase {
 	 * Prepara el caso.
 	 */
 	protected function setUp(): void {
+		$GLOBALS['convoca_test_pro']['pwa_checkin'] = true;
 		$GLOBALS['_wp_stores']          = array( 'options' => array(), 'rewrite_rules' => array() );
 		$GLOBALS['_wp_query_vars']   = array();
 		$GLOBALS['_convoca_acciones']   = array();
@@ -38,6 +39,7 @@ class CheckinPwaTest extends TestCase {
 	 */
 	protected function tearDown(): void {
 		$GLOBALS['_wp_stores'] = array( 'options' => array() );
+		$GLOBALS['convoca_test_pro'] = array();
 		unset( $GLOBALS['_wp_query_vars'], $GLOBALS['_convoca_acciones'], $GLOBALS['_enr_routes'], $_SERVER['REQUEST_URI'] );
 	}
 
@@ -64,6 +66,19 @@ class CheckinPwaTest extends TestCase {
 		$rutas = (array) ( $GLOBALS['_enr_routes'] ?? array() );
 		$this->assertNotEmpty( $rutas, 'sin el endpoint, la cola offline no se puede vaciar' );
 		$this->assertStringContainsString( 'flush', (string) ( $rutas[0]['route'] ?? '' ), 'el endpoint es el de vaciar la cola' );
+	}
+
+	/**
+	 * Sin licencia no se engancha nada: el aviso PRO y el comportamiento coinciden (enroll#123).
+	 */
+	public function test_sin_licencia_no_engancha_nada(): void {
+		$GLOBALS['convoca_test_pro'] = array();
+
+		Checkin_PWA::init();
+
+		$acciones = (array) ( $GLOBALS['_convoca_acciones'] ?? array() );
+		$this->assertEmpty( $acciones['wp_head'] ?? array(), 'sin licencia no hay etiquetas PWA' );
+		$this->assertEmpty( $acciones['rest_api_init'] ?? array(), 'sin licencia no hay endpoint de cola' );
 	}
 
 	/**

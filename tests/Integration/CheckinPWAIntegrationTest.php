@@ -6,6 +6,8 @@
 
 namespace Convoca\Enroll\Tests;
 
+use Convoca\Enroll\Checkin_PWA;
+
 class CheckinPWAIntegrationTest extends IntegrationTestCase
 {
     public function test_class_exists(): void
@@ -13,12 +15,36 @@ class CheckinPWAIntegrationTest extends IntegrationTestCase
         $this->assertTrue(class_exists('Convoca\Enroll\Checkin_PWA'));
     }
 
-    public function test_rest_routes_registered(): void
+    public function test_sin_licencia_no_registra_la_ruta(): void
     {
-        // La ruta real que registra el plugin es 'convoca-enroll/v1/checkin/flush'
-        // (includes/Checkin_PWA.php). La prueba pedia '/convoca/v1/checkin', que no existe en
-        // ningun sitio del codigo: pasaba sin comprobar nada y habria pasado igual con la ruta rota.
+        delete_option('convoca_license');
+
+        Checkin_PWA::init();
+        do_action('rest_api_init');
+
         $routes = rest_get_server()->get_routes();
-        $this->assertArrayHasKey( '/convoca-enroll/v1/checkin/flush', $routes );
+        $this->assertArrayNotHasKey('/convoca-enroll/v1/checkin/flush', $routes, 'sin licencia no hay endpoint PWA');
+    }
+
+    public function test_con_licencia_registra_la_ruta(): void
+    {
+        update_option(
+            'convoca_license',
+            array(
+                'key'      => 'TEST-LICENSE',
+                'status'   => 'active',
+                'type'     => 'unlimited',
+                'features' => array(),
+                'expires'  => '',
+            )
+        );
+
+        Checkin_PWA::init();
+        do_action('rest_api_init');
+
+        $routes = rest_get_server()->get_routes();
+        $this->assertArrayHasKey('/convoca-enroll/v1/checkin/flush', $routes);
+
+        delete_option('convoca_license');
     }
 }
