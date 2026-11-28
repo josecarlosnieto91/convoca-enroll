@@ -154,7 +154,13 @@ class Checkin_Handler {
 	 * @return bool
 	 */
 	public function puede_checkin_directo( int $inscripcion_id = 0 ): bool {
-		return $inscripcion_id > 0 && $this->es_personal();
+		if ( $inscripcion_id <= 0 || ! $this->es_personal() ) {
+			return false;
+		}
+
+		$actividad_id = (int) CPT_Inscripcion::get_meta( $inscripcion_id, 'actividad_id' );
+
+		return $actividad_id > 0 && CPT_Actividad::is_user_responsible( get_current_user_id(), $actividad_id );
 	}
 
 	/**

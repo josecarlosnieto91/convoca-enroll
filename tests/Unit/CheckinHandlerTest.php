@@ -52,6 +52,7 @@ final class CheckinHandlerTest extends TestCase {
 		// El arnés concede por omisión: para probar «no es personal» hay que negarlo explícitamente.
 		$GLOBALS['convoca_test_caps']  = array( 'manage_inscripciones' => false, 'convoca_manage_checkin' => false );
 		$GLOBALS['convoca_test_roles'] = array();
+		$GLOBALS['_wp_stores']['post_meta'][410] = array( '_convoca_actividad_id' => 7 );
 		$GLOBALS['_wp_query_vars']     = array();
 		$_GET                          = array();
 
