@@ -1,3 +1,10 @@
+## [2.17.12] — 2026-11-27
+
+### Corregido
+
+- **La lista de check-in no ofrece acciones imposibles (#122).** Solo las inscripciones confirmadas
+  son accionables; lista de espera y pago pendiente se muestran deshabilitadas con su motivo.
+
 ## [2.17.11] — 2026-11-27
 
 ### Corregido

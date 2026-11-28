@@ -254,10 +254,26 @@ class Admin_Checkin {
 										<?php endif; ?>
 									</td>
 									<td>
+										<?php
+										$puede_checkin = \Convoca\Enroll\Estados::es_vigente( (string) $estado );
+										$motivo        = array(
+											'lista_espera' => __( 'Lista de espera', 'convoca-enroll' ),
+											'pendiente_pago' => __( 'Pago pendiente', 'convoca-enroll' ),
+											'pendiente'    => __( 'Sin confirmar', 'convoca-enroll' ),
+										)[ (string) $estado ] ?? ucfirst( str_replace( '_', ' ', (string) $estado ) );
+										?>
 										<button type="button"
 												class="button conv-toggle-checkin <?php echo ( $asistencia === 'si' ) ? 'button-primary' : ''; ?>"
-												data-id="<?php echo esc_attr( (string) $id ); ?>">
-											<?php echo ( $asistencia === 'si' ) ? esc_html__( 'Registrado', 'convoca-enroll' ) : esc_html__( 'Pendiente', 'convoca-enroll' ); ?>
+												data-id="<?php echo esc_attr( (string) $id ); ?>"
+												<?php echo $puede_checkin ? '' : 'disabled'; ?>
+												title="<?php echo esc_attr( $puede_checkin ? '' : $motivo ); ?>">
+											<?php
+											if ( ! $puede_checkin ) {
+												echo esc_html( $motivo );
+											} else {
+												echo ( $asistencia === 'si' ) ? esc_html__( 'Registrado', 'convoca-enroll' ) : esc_html__( 'Pendiente', 'convoca-enroll' );
+											}
+											?>
 										</button>
 									</td>
 								</tr>
