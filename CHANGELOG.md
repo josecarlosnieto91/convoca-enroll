@@ -1,3 +1,11 @@
+## [2.17.15] — 2026-11-27
+
+### Corregido
+
+- **La cola de correo respeta el límite con object cache persistente (#120).** El contador horario se
+  lee y se escribe con `get_transient()`/`set_transient()`, sin SQL que se salte la caché.
+- **Los reintentos ya no se adelantan (#120).** `next_retry_at` se guarda y se compara en UTC.
+
 ## [2.17.14] — 2026-11-27
 
 ### Corregido
