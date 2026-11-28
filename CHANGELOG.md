@@ -1,3 +1,10 @@
+## [2.17.13] — 2026-11-27
+
+### Corregido
+
+- **La PWA de check-in es PRO de verdad (#123).** `Checkin_PWA::init()` no engancha nada sin licencia,
+  igual que dice el aviso de la pantalla; con licencia se activa.
+
 ## [2.17.12] — 2026-11-27
 
 ### Corregido
