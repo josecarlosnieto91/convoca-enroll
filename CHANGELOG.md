@@ -1,3 +1,10 @@
+## [2.17.21] — 2026-11-27
+
+### Corregido
+
+- **El healthcheck social reconoce `google` y comprueba de verdad (#108).** Las cuentas inactivas se
+  consultan aparte para el aviso y `get_token()` ya no las oculta, así que se pueden reconectar.
+
 ## [2.17.20] — 2026-11-27
 
 ### Corregido
