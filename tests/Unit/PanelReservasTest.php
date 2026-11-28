@@ -198,7 +198,7 @@ class PanelReservasTest extends TestCase {
 			'_convoca_es_menor'        => '0',
 		);
 		$GLOBALS['_wp_stores']['post_meta'][77] = array(
-			'_convoca_fecha_inicio' => '2026-11-14 10:00:00',
+			'_convoca_fecha_inicio' => '2027-12-31 10:00:00',
 			'_convoca_ubicacion'    => 'Aula del centro',
 		);
 
@@ -220,6 +220,36 @@ class PanelReservasTest extends TestCase {
 		$args = (array) $GLOBALS['convoca_test_get_posts_args'][0];
 		$this->assertSame( 'inscripcion', $args['post_type'] );
 		$this->assertSame( '_convoca_codigo_reserva', $args['meta_query'][1]['key'] );
+	}
+
+	/**
+	 * Fuera de la ventana, el listado no ofrece cancelar y dice por qué (enroll#121).
+	 */
+	public function test_fuera_de_plazo_no_se_ofrece_cancelar(): void {
+		$GLOBALS['convoca_test_caps'] = array( 'manage_options' => false, 'convoca_manage_enroll' => false );
+		$_POST['email']  = 'socia@example.test';
+		$_POST['codigo'] = 'abc123';
+		$GLOBALS['convoca_test_get_posts_cola'] = array(
+			array( $this->inscripcion( 501 ) ),
+			array( $this->inscripcion( 501 ) ),
+		);
+		$GLOBALS['_wp_stores']['posts'][77] = $this->actividad( 77, 'Taller de setas' );
+		$GLOBALS['_wp_stores']['post_meta'][501] = array(
+			'_convoca_actividad_id'   => 77,
+			'_convoca_estado'         => 'confirmada',
+			'_convoca_codigo_reserva' => 'ABC123',
+			'_convoca_nombre'         => 'Ana',
+			'_convoca_es_menor'       => '0',
+		);
+		$GLOBALS['_wp_stores']['post_meta'][77] = array(
+			'_convoca_fecha_inicio' => '2020-01-01 10:00:00',
+		);
+
+		$respuesta = $this->json( array( new Panel_Reservas(), 'ajax_login' ) );
+		$reserva   = $respuesta['data']['reservas'][0];
+
+		$this->assertFalse( $reserva['cancelable'] );
+		$this->assertStringContainsString( 'plazo', $reserva['motivo_cancelacion'] );
 	}
 
 	/**

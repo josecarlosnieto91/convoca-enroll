@@ -1,3 +1,10 @@
+## [2.17.14] — 2026-11-27
+
+### Corregido
+
+- **El panel de reservas no ofrece cancelar fuera de plazo (#121).** Calcula la misma ventana que el
+  motor; si no se puede, el botón queda deshabilitado con el motivo.
+
 ## [2.17.13] — 2026-11-27
 
 ### Corregido
