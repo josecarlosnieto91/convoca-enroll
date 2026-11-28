@@ -231,6 +231,26 @@ final class EmailSendTest extends TestCase {
 	}
 
 	/**
+	 * El aviso de 7 días alcanza cualquier hora del día y solo sale una vez (#99).
+	 */
+	public function test_7dias_cubre_todo_el_dia_y_no_duplica(): void {
+		$GLOBALS['convoca_test_meta_estricto'] = true;
+		$GLOBALS['db_inserts']                 = array();
+		$GLOBALS['convoca_test_posts']         = array( $GLOBALS['_wp_stores']['posts'][62], (object) array( 'ID' => 470 ) );
+		$GLOBALS['wpdb']->rows_affected        = 1;
+		$GLOBALS['_wp_stores']['post_meta'][62]['_convoca_reminder_7dias'] = '1';
+		$GLOBALS['_wp_stores']['post_meta'][62]['_convoca_fecha_inicio']   = wp_date( 'Y-m-d\TH:i', strtotime( '+7 days 23:30' ) );
+
+		$this->correos->cron_reminder_7dias();
+		$primera = count( $GLOBALS['db_inserts'] );
+		$this->assertGreaterThan( 0, $primera, 'la hora 23:30 también recibe el aviso' );
+
+		$this->correos->cron_reminder_7dias();
+		$this->assertSame( $primera, count( $GLOBALS['db_inserts'] ), 'la segunda pasada no duplica' );
+		unset( $GLOBALS['convoca_test_meta_estricto'] );
+	}
+
+	/**
 	 * Los crons que se prueban.
 	 *
 	 * @return array

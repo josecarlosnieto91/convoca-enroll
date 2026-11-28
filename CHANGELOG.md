@@ -1,3 +1,11 @@
+## [2.17.30] — 2026-11-27
+
+### Corregido
+
+- **Los recordatorios de 7 días y 24 h ya no se pierden (#99).** El de 7 días cubre dos días
+  completos con cron diario; el de 24 h pasa a cron horario. El marcado por inscripción evita
+  duplicados si el cron se retrasa.
+
 ## [2.17.29] — 2026-11-27
 
 ### Corregido

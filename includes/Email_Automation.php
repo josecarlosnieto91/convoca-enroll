@@ -200,8 +200,10 @@ class Email_Automation {
 	/* Cron: 7 days before */
 
 	public function cron_reminder_7dias(): void {
-		$target_start = (string) wp_date( 'Y-m-d\TH:i', (int) strtotime( '+7 days' ) );
-		$target_end   = (string) wp_date( 'Y-m-d\TH:i', (int) strtotime( '+7 days +2 hours' ) );
+		// Ventana de dos días completos con cron diario: cubre cualquier hora y un retraso de un día;
+		// `Recordatorios` marca el envío y evita repetirlo (#99).
+		$target_start = (string) wp_date( 'Y-m-d\T00:00', (int) strtotime( '+7 days' ) );
+		$target_end   = (string) wp_date( 'Y-m-d\T23:59', (int) strtotime( '+8 days' ) );
 
 		$activities = $this->get_activities_for_reminder( 'reminder_7dias', $target_start, $target_end, '_convoca_fecha_inicio' );
 
