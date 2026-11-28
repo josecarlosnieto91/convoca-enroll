@@ -1,3 +1,10 @@
+## [2.17.20] — 2026-11-27
+
+### Corregido
+
+- **El alta manual como «Socio/a» se guarda como socio (#109).** El formulario envía `alta_admin` y el
+  tipo elegido; el motor conserva `es_socio=1` y `tipo_inscripcion=socio`. Invitado sigue en 0.
+
 ## [2.17.19] — 2026-11-27
 
 ### Corregido
