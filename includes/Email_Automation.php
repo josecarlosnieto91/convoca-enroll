@@ -461,10 +461,10 @@ class Email_Automation {
 			)
 		);
 
-		// Notify admin in queue too.
+		// Copia al admin: solo si se pide; por defecto cada inscripción no genera un duplicado (enroll#124).
 		$settings    = get_option( 'convoca_enroll_settings', array() );
 		$admin_email = $settings['admin_email'] ?? get_option( 'admin_email' );
-		if ( $admin_email !== $email ) {
+		if ( ! empty( $settings['admin_copy_emails'] ) && $admin_email !== $email ) {
 			Email_Queue::enqueue(
 				array(
 					'to'             => $admin_email,

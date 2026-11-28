@@ -48,6 +48,14 @@ trait Admin_Settings_General {
 		</div>
 
 		<div class="convoca-field">
+			<div class="convoca-check-group">
+				<input type="checkbox" id="admin_copy_emails" name="conv[admin_copy_emails]" value="1" <?php checked( ! empty( $s['admin_copy_emails'] ) ); ?>>
+				<label for="admin_copy_emails"><?php esc_html_e( 'Recibir una copia de cada correo a participantes', 'convoca-enroll' ); ?></label>
+			</div>
+			<small class="convoca-small"><?php esc_html_e( 'Desactivado por defecto: con muchas inscripciones llena la cola de duplicados.', 'convoca-enroll' ); ?></small>
+		</div>
+
+		<div class="convoca-field">
 			<label for="admin_email_domains"><?php esc_html_e( 'Dominios de correo del equipo', 'convoca-enroll' ); ?></label>
 			<input type="text" id="admin_email_domains" name="conv[admin_email_domains]"
 				value="<?php echo esc_attr( $s['admin_email_domains'] ?? '' ); ?>">

@@ -1,3 +1,10 @@
+## [2.17.11] — 2026-11-27
+
+### Corregido
+
+- **La copia de correos al administrador es opcional (#124).** Desactivada por defecto; activarla en
+  Ajustes → General evita que cada inscripción llene la cola con un duplicado.
+
 ## [2.17.10] — 2026-11-27
 
 ### Corregido
