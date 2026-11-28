@@ -1,3 +1,10 @@
+## [2.17.29] — 2026-11-27
+
+### Corregido
+
+- **Los recordatorios de evaluación vuelven a salir (#100).** El alta guarda `_convoca_user_id`
+  resolviéndolo por correo; el cron encola y el formulario autoriza a quien participó.
+
 ## [2.17.28] — 2026-11-27
 
 ### Corregido

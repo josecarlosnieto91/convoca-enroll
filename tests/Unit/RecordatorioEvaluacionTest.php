@@ -202,6 +202,34 @@ class RecordatorioEvaluacionTest extends TestCase {
 	}
 
 	/**
+	 * Una inscripción con asistencia y usuario encola su evaluación (#100).
+	 */
+	public function test_una_inscripcion_con_usuario_encola_la_evaluacion(): void {
+		$GLOBALS['convoca_test_meta_estricto'] = true;
+		$this->ajustes( array( 'active' => true, 'body' => 'Evalúa {nombre_actividad}' ) );
+		$this->usuario( 7, array( 'voluntario_aprobado' ) );
+
+		$GLOBALS['_wp_stores']['posts'][21] = (object) array( 'ID' => 21, 'post_title' => 'Ruta del Cares', 'post_type' => 'actividad', 'post_status' => 'publish' );
+		$GLOBALS['_wp_stores']['post_meta'][21]['_convoca_fecha_fin'] = '2026-10-20 18:00:00';
+
+		$inscripcion                  = new \stdClass();
+		$inscripcion->ID              = 55;
+		$inscripcion->post_type       = 'inscripcion';
+		$inscripcion->post_status     = 'publish';
+		$GLOBALS['convoca_test_posts'][55] = $inscripcion;
+		$GLOBALS['_wp_stores']['post_meta'][55]['_convoca_actividad_id'] = '21';
+		$GLOBALS['_wp_stores']['post_meta'][55]['_convoca_estado']       = 'confirmada';
+		$GLOBALS['_wp_stores']['post_meta'][55]['_convoca_asistencia']   = 'si';
+		$GLOBALS['_wp_stores']['post_meta'][55]['_convoca_user_id']      = '7';
+		$GLOBALS['_wp_stores']['post_meta'][55]['_convoca_email']        = 'persona7@example.test';
+
+		$enviados = $this->privado( 'process_activity', array( 21, 'Asunto', 'Cuerpo', '', '', 30 ) );
+
+		$this->assertSame( 1, $enviados );
+		$this->assertNotEmpty( $GLOBALS['db_inserts'], 'el correo queda encolado' );
+	}
+
+	/**
 	 * El tope por pasada es 30: con más inscripciones elegibles no se encola la 31.
 	 *
 	 * Enciende el filtro de meta del arnés (`convoca_test_meta_estricto`): sin él, `get_posts()` devuelve todo
