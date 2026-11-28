@@ -1,3 +1,10 @@
+## [2.17.18] — 2026-11-27
+
+### Corregido
+
+- **Ampliar plazas promueve la lista de espera (#114).** Las plazas nuevas se cubren con el mismo
+  criterio de prioridad y el cupo queda descontado; solo las sobrantes quedan libres.
+
 ## [2.17.17] — 2026-11-27
 
 ### Corregido

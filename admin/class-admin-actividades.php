@@ -384,6 +384,59 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 	 * @param int $post_id Actividad.
 	 * @return void
 	 */
+	/**
+	 * Crea o actualiza la actividad y devuelve su id (0 si falla).
+	 *
+	 * @param int    $post_id Id existente o 0.
+	 * @param string $title   Título.
+	 * @param string $content Contenido.
+	 * @param string $excerpt Extracto.
+	 * @return int
+	 */
+	private function guardar_actividad( int $post_id, string $title, string $content, string $excerpt ): int {
+		$post_data = array(
+			'post_type'    => 'actividad',
+			'post_title'   => $title,
+			'post_content' => $content,
+			'post_excerpt' => $excerpt,
+			'post_status'  => 'publish',
+		);
+
+		if ( $post_id ) {
+			$post_data['ID'] = $post_id;
+			return (int) wp_update_post( $post_data );
+		}
+
+		return (int) wp_insert_post( $post_data );
+	}
+
+	/**
+	 * Recalcula el cupo al cambiar las plazas totales y promueve la lista de espera.
+	 *
+	 * @param int $post_id    Actividad.
+	 * @param int $old_plazas Plazas anteriores.
+	 * @param int $new_plazas Plazas nuevas.
+	 * @return void
+	 */
+	private function recalcular_plazas( int $post_id, int $old_plazas, int $new_plazas ): void {
+		if ( $new_plazas === $old_plazas ) {
+			return;
+		}
+
+		$stats    = CPT_Inscripcion::count_by_activity( $post_id );
+		$ocupadas = 0;
+		foreach ( Motor_Inscripcion::estados_que_ocupan_plaza() as $estado_que_ocupa ) {
+			$ocupadas += (int) ( $stats[ $estado_que_ocupa ] ?? 0 );
+		}
+
+		$disponibles = max( 0, $new_plazas - $ocupadas );
+		if ( $new_plazas > $old_plazas && $disponibles > 0 ) {
+			$disponibles -= Motor_Inscripcion::promover_hasta_cubrir( $post_id, $disponibles );
+		}
+
+		update_post_meta( $post_id, '_convoca_plazas_disponibles', $disponibles );
+	}
+
 	private function guardar_campos_extra( int $post_id ): void {
 		update_post_meta( $post_id, '_convoca_precio_socio_dia', (float) str_replace( ',', '.', (string) wp_unslash( $_POST['precio_socio_dia'] ?? '0' ) ) );
 		update_post_meta( $post_id, '_convoca_horas_actividad', (float) str_replace( ',', '.', (string) wp_unslash( $_POST['horas_actividad'] ?? '0' ) ) );
@@ -411,23 +464,8 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 		$content = wp_kses_post( wp_unslash( $_POST['post_content'] ?? '' ) );
 		$excerpt = sanitize_textarea_field( wp_unslash( $_POST['post_excerpt'] ?? '' ) );
 
-		$post_data = array(
-			'post_type'    => 'actividad',
-			'post_title'   => $title,
-			'post_content' => $content,
-			'post_excerpt' => $excerpt,
-			'post_status'  => 'publish',
-		);
-
-		if ( $post_id ) {
-			$post_data['ID'] = $post_id;
-			$result          = wp_update_post( $post_data );
-		} else {
-			$result  = wp_insert_post( $post_data );
-			$post_id = $result;
-		}
-
-		if ( ! $result ) {
+		$post_id = $this->guardar_actividad( $post_id, $title, $content, $excerpt );
+		if ( ! $post_id ) {
 			wp_die( esc_html__( 'Error al guardar la actividad.', 'convoca-enroll' ) );
 		}
 
@@ -440,19 +478,8 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 		$new_plazas = (int) $_POST['plazas_totales'];
 		update_post_meta( $post_id, '_convoca_plazas_totales', $new_plazas );
 
-		// Si cambian las plazas totales se recalcula el cupo con LA MISMA regla que usa el motor para
-		// descontar (estados_que_ocupan_plaza). Antes solo restaba las 'confirmada', así que ampliar
-		// las plazas de una actividad llena —el caso real «amplío porque está completo»— devolvía al
-		// cupo las plazas ya ocupadas por inscripciones pendientes y se producía sobreventa (medido en
-		// la pasada 11: 7 personas con plaza reservada en una actividad de 5).
-		if ( $new_plazas !== $old_plazas ) {
-			$stats    = CPT_Inscripcion::count_by_activity( $post_id );
-			$ocupadas = 0;
-			foreach ( Motor_Inscripcion::estados_que_ocupan_plaza() as $estado_que_ocupa ) {
-				$ocupadas += (int) ( $stats[ $estado_que_ocupa ] ?? 0 );
-			}
-			update_post_meta( $post_id, '_convoca_plazas_disponibles', max( 0, $new_plazas - $ocupadas ) );
-		}
+		// Recalcula el cupo y cubre el hueco con la lista de espera si se amplió (enroll#114).
+		$this->recalcular_plazas( $post_id, $old_plazas, $new_plazas );
 
 		update_post_meta( $post_id, '_convoca_precio_socio', sanitize_text_field( wp_unslash( $_POST['precio_socio'] ?? '' ) ) );
 		update_post_meta( $post_id, '_convoca_requiere_pago', isset( $_POST['requiere_pago'] ) ? 1 : 0 );
@@ -526,6 +553,41 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 		return $dt->modify( sprintf( '%+d days', $dias ) )->getTimestamp();
 	}
 
+	/**
+	 * Copia las metas de la actividad y desplaza sus fechas siete días.
+	 *
+	 * @param int $orig_id Original.
+	 * @param int $new_id  Copia.
+	 * @return void
+	 */
+	private function copiar_meta_y_fechas( int $orig_id, int $new_id ): void {
+		$skip_meta = array( 'fecha_inicio', 'fecha_fin' );
+		foreach ( CPT_Actividad::META_KEYS as $key ) {
+			if ( in_array( $key, $skip_meta, true ) ) {
+				continue;
+			}
+			$val = get_post_meta( $orig_id, '_convoca_' . $key, true );
+			if ( '' !== $val ) {
+				update_post_meta( $new_id, '_convoca_' . $key, $val );
+			}
+		}
+
+		$fecha_ini = get_post_meta( $orig_id, '_convoca_fecha_inicio', true );
+		$fecha_fin = get_post_meta( $orig_id, '_convoca_fecha_fin', true );
+		if ( $fecha_ini ) {
+			$ts_ini = self::desplazar_dias( (string) $fecha_ini, 7 );
+			if ( null !== $ts_ini ) {
+				update_post_meta( $new_id, '_convoca_fecha_inicio', wp_date( 'Y-m-d\TH:i', $ts_ini ) );
+			}
+		}
+		if ( $fecha_fin ) {
+			$ts_fin = self::desplazar_dias( (string) $fecha_fin, 7 );
+			if ( null !== $ts_fin ) {
+				update_post_meta( $new_id, '_convoca_fecha_fin', wp_date( 'Y-m-d\TH:i', $ts_fin ) );
+			}
+		}
+	}
+
 	public function handle_duplicate(): void {
 		$orig_id = (int) ( wp_unslash( $_GET['id'] ?? 0 ) );
 		if ( ! $orig_id || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ?? '' ), 'convoca_enroll_duplicate_' . $orig_id ) ) {
@@ -555,33 +617,7 @@ class Admin_Actividades extends \Convoca\Core\Admin\Pantalla_Admin {
 			wp_die( esc_html__( 'Error al duplicar la actividad.', 'convoca-enroll' ) );
 		}
 
-		// Copy meta keys.
-		$skip_meta = array( 'fecha_inicio', 'fecha_fin' );
-		foreach ( CPT_Actividad::META_KEYS as $key ) {
-			if ( in_array( $key, $skip_meta, true ) ) {
-				continue;
-			}
-			$val = get_post_meta( $orig_id, '_convoca_' . $key, true );
-			if ( $val !== '' ) {
-				update_post_meta( $new_id, '_convoca_' . $key, $val );
-			}
-		}
-
-		// Shift dates by 7 days.
-		$fecha_ini = get_post_meta( $orig_id, '_convoca_fecha_inicio', true );
-		$fecha_fin = get_post_meta( $orig_id, '_convoca_fecha_fin', true );
-		if ( $fecha_ini ) {
-			$ts_ini = self::desplazar_dias( (string) $fecha_ini, 7 );
-			if ( null !== $ts_ini ) {
-				update_post_meta( $new_id, '_convoca_fecha_inicio', wp_date( 'Y-m-d\TH:i', $ts_ini ) );
-			}
-		}
-		if ( $fecha_fin ) {
-			$ts_fin = self::desplazar_dias( (string) $fecha_fin, 7 );
-			if ( null !== $ts_fin ) {
-				update_post_meta( $new_id, '_convoca_fecha_fin', wp_date( 'Y-m-d\TH:i', $ts_fin ) );
-			}
-		}
+		$this->copiar_meta_y_fechas( $orig_id, $new_id );
 
 		\Convoca\Core\Logger::info(
 			sprintf( 'Actividad #%d duplicada como #%d.', $orig_id, $new_id ),
