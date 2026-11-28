@@ -375,6 +375,46 @@ final class EmailQueueProcesoTest extends TestCase {
 	}
 
 	/**
+	 * El contador suma sobre el valor de la caché, sin saltarse el object cache (enroll#120).
+	 */
+	public function test_el_contador_horario_suma_sobre_el_valor_cacheado(): void {
+		$GLOBALS['_wp_stores']['col']     = array( 24 );
+		$GLOBALS['_wp_stores']['results'] = array( $this->correo( 24 ) );
+		$clave = 'convoca_enroll_email_hourly_count_' . gmdate( 'YmdH' );
+		$GLOBALS['_wp_stores']['transients'][ $clave ] = 4;
+
+		( new Email_Queue() )->process_queue();
+
+		$this->assertSame( 5, $GLOBALS['_wp_stores']['transients'][ $clave ] ?? null, 'suma uno al valor leído, no lo reinicia' );
+		$this->assertStringNotContainsString( 'UPDATE ' . $GLOBALS['wpdb']->options, implode( "\n", $GLOBALS['db_prepares'] ), 'no se escribe el transient por SQL' );
+	}
+
+	/**
+	 * El reintento compara en UTC, la misma base con la que se guarda (enroll#120).
+	 */
+	public function test_el_reintento_compara_en_utc(): void {
+		$anterior = date_default_timezone_get();
+		date_default_timezone_set( 'Pacific/Kiritimati' );
+		try {
+			$GLOBALS['_wp_stores']['col']     = array( 26 );
+			$GLOBALS['_wp_stores']['results'] = array( $this->correo( 26 ) );
+
+			( new Email_Queue() )->process_queue();
+
+			$consulta = '';
+			foreach ( $GLOBALS['db_reads'] as $leida ) {
+				if ( str_contains( (string) $leida, 'next_retry_at' ) ) {
+					$consulta = (string) $leida;
+				}
+			}
+			$this->assertStringContainsString( gmdate( 'Y-m-d H:i:s' ), $consulta, 'compara con UTC' );
+			$this->assertStringNotContainsString( date( 'Y-m-d H:i:s' ), $consulta, 'no con la hora local' );
+		} finally {
+			date_default_timezone_set( $anterior );
+		}
+	}
+
+	/**
 	 * La función de envío que se le pasa a la copia manda de verdad (y devuelve si salió).
 	 *
 	 * Se ejerce la closure porque es el camino por el que el núcleo manda la copia: si devolviera siempre true sin

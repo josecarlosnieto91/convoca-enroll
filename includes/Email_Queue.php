@@ -227,7 +227,7 @@ class Email_Queue {
                 ORDER BY retries ASC, created_at ASC
                 LIMIT %d",
 					$max_retries,
-					current_time( 'mysql' ),
+					gmdate( 'Y-m-d H:i:s' ),
 					$batch_size
 				)
 			);
@@ -326,17 +326,12 @@ class Email_Queue {
 						array( 'id' => $email->id )
 					);
 
-					// Update rate limit counter atomically.
-					$option_name = '_transient_' . $hour_key;
-					$affected    = $wpdb->query(
-						$wpdb->prepare(
-							"UPDATE {$wpdb->options} SET option_value = CAST(option_value AS UNSIGNED) + 1 WHERE option_name = %s",
-							$option_name
-						)
-					);
-					if ( $affected === 0 ) {
-						set_transient( $hour_key, 1, HOUR_IN_SECONDS );
-					}
+					// Contador por la API de transients: si hay object cache persistente, la lectura
+					// y la escritura pasan por la misma caché (enroll#120).
+					$nuevo_contador = (int) get_transient( $hour_key ) + 1;
+					$timeout        = (int) get_option( '_transient_timeout_' . $hour_key );
+					$ttl            = $timeout > time() ? $timeout - time() : HOUR_IN_SECONDS;
+					set_transient( $hour_key, $nuevo_contador, $ttl );
 
 					\Convoca\Core\Logger::log( 'Email enviado: ' . $email->recipient . ' (ID: ' . $email->id . ')', 'info', 'Enroll/Email', (int) $email->inscripcion_id );
 
