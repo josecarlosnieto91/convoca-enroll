@@ -28,8 +28,8 @@ final class Cronograma {
 	 */
 	public static function eventos(): array {
 		$eventos = array(
-			'convoca_enroll_reminder_7dias'        => 'convoca_weekly',
-			'convoca_enroll_reminder_24h'          => 'daily',
+			'convoca_enroll_reminder_7dias'        => 'daily',
+			'convoca_enroll_reminder_24h'          => 'hourly',
 			'convoca_enroll_reminder_1hora'        => 'hourly',
 			'convoca_enroll_feedback'              => 'daily',
 			'convoca_enroll_google_photos_share'   => 'daily',
