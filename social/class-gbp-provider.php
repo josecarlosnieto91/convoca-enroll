@@ -66,7 +66,7 @@ class GBP_Provider implements Social_Provider_Interface {
 			);
 		}
 
-		$lock_key = 'convoca_lock_' . md5( $message . $image_url . 'gbp' );
+		$lock_key = 'convoca_lock_' . md5( $this->location_id . '|' . $message . '|' . $image_url . '|gbp' );
 		if ( get_transient( $lock_key ) ) {
 			return array( 'success' => false, 'message' => __( 'Lock activo para este contenido en GBP.', 'convoca-enroll' ) );
 		}
@@ -82,10 +82,12 @@ class GBP_Provider implements Social_Provider_Interface {
 			// En simulación se deja rastro de la operación, pero no del payload: llevaba textos, enlaces e
 			// imágenes del sitio al debug.log (#68).
 			\Convoca\Core\Logger::debug( 'Simulación de publicación en Google: ' . $this->location_id, 'Enroll/Social' );
+			delete_transient( $lock_key );
 			return array( 'success' => true, 'message' => __( '[DRY-RUN] Simulated GBP', 'convoca-enroll' ), 'id' => 'dry_gbp_' . time() );
 		}
 
 		if ( empty( $this->access_token ) ) {
+			delete_transient( $lock_key );
 			return array( 'success' => false, 'message' => __( 'Token no disponible. Reconecta la cuenta.', 'convoca-enroll' ) );
 		}
 
@@ -130,6 +132,7 @@ class GBP_Provider implements Social_Provider_Interface {
 		);
 
 		if ( is_wp_error( $response ) ) {
+			delete_transient( $lock_key );
 			return array( 'success' => false, 'message' => 'GBP: ' . $response->get_error_message() );
 		}
 

@@ -1,3 +1,10 @@
+## [2.17.16] — 2026-11-27
+
+### Corregido
+
+- **El bloqueo de publicación en GBP se libera siempre (#119).** También en simulación, sin token y
+  con error de red; la clave incluye la ficha, así que dos cuentas con el mismo texto no se bloquean.
+
 ## [2.17.15] — 2026-11-27
 
 ### Corregido
