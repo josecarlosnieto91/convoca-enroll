@@ -399,6 +399,11 @@ class Motor_Inscripcion {
 				return new \WP_Error( 'insert_failed', __( 'No se pudo crear la inscripción.', 'convoca-enroll' ) );
 			}
 
+			if ( ! self::registrar_codigo( $codigo_reserva, (int) $post_id ) ) {
+				$wpdb->query( 'ROLLBACK' );
+				return new \WP_Error( 'code_failed', __( 'No se pudo reservar el código de inscripción. Inténtalo de nuevo.', 'convoca-enroll' ) );
+			}
+
 			$estado = $datos['estado_forzado'] ?? null;
 
 			// La actividad se lee SIEMPRE, fuera del if: el estado final también depende de ella
@@ -972,22 +977,42 @@ class Motor_Inscripcion {
 			$code .= $chars[ wp_rand( 0, strlen( $chars ) - 1 ) ];
 		}
 
-		// Ensure uniqueness.
-		$exists = get_posts(
+		global $wpdb;
+		$tabla = $wpdb->prefix . 'convoca_reservation_codes';
+
+		// La clave primaria es la que garantiza unicidad; si choca, se reintenta (enroll#110).
+		$insertado = $wpdb->insert(
+			$tabla,
 			array(
-				'post_type'      => 'inscripcion',
-				'posts_per_page' => 1,
-				'post_status'    => 'any',
-				'meta_query'     => array(
-					array(
-						'key'   => CPT_Inscripcion::META_PREFIX . 'codigo_reserva',
-						'value' => $code,
-					),
-				),
-			)
+				'code'    => $code,
+				'post_id' => 0,
+			),
+			array( '%s', '%d' )
 		);
 
-		return empty( $exists ) ? $code : self::generar_codigo( $attempt + 1 );
+		return $insertado ? $code : self::generar_codigo( $attempt + 1 );
+	}
+
+	/**
+	 * Vincula un código reservado con su inscripción.
+	 *
+	 * @param string $codigo Código.
+	 * @param int    $post_id Inscripción.
+	 * @return bool
+	 */
+	public static function registrar_codigo( string $codigo, int $post_id ): bool {
+		global $wpdb;
+		$tabla = $wpdb->prefix . 'convoca_reservation_codes';
+
+		$afectadas = $wpdb->update(
+			$tabla,
+			array( 'post_id' => $post_id ),
+			array( 'code' => $codigo ),
+			array( '%d' ),
+			array( '%s' )
+		);
+
+		return false !== $afectadas && $afectadas > 0;
 	}
 
 	/**
