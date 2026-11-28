@@ -138,7 +138,7 @@ final class Caducidad {
 			return false;
 		}
 
-		self::cerrar( $id, $actividad_id, $horas );
+		self::cerrar( $id, $horas );
 
 		return true;
 	}
@@ -146,23 +146,19 @@ final class Caducidad {
 	/**
 	 * Marca la inscripción como caducada, devuelve la plaza y deja rastro.
 	 *
-	 * @param int $id           Inscripción.
-	 * @param int $actividad_id Actividad.
-	 * @param int $horas        Plazo aplicado.
+	 * @param int $id    Inscripción.
+	 * @param int $horas Plazo aplicado.
 	 * @return void
 	 */
-	private static function cerrar( int $id, int $actividad_id, int $horas ): void {
-		update_post_meta( $id, '_convoca_estado', 'expirada' );
+	private static function cerrar( int $id, int $horas ): void {
+		$cambio = Estados::cambiar( $id, 'expirada', 'caducidad' );
+		if ( is_wp_error( $cambio ) ) {
+			return;
+		}
+
 		update_post_meta( $id, '_convoca_expirada_en', current_time( 'mysql' ) );
 		update_post_meta( $id, '_convoca_asistencia', 'no_registrada' );
 		update_post_meta( $id, '_convoca_checkin_token', '' );
-
-		// La plaza vuelve en el acto: si hay alguien esperando, la ocupa; si no, sube el cupo.
-		$promovido = Motor_Inscripcion::promover_hasta_cubrir( $actividad_id, 1 );
-		if ( ! $promovido ) {
-			$disponibles = (int) get_post_meta( $actividad_id, '_convoca_plazas_disponibles', true );
-			update_post_meta( $actividad_id, '_convoca_plazas_disponibles', max( 0, $disponibles + 1 ) );
-		}
 
 		\Convoca\Core\Logger::info(
 			sprintf( 'Inscripción #%d caducada sin confirmar tras %d h; la plaza queda libre.', $id, $horas ),

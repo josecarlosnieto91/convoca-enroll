@@ -55,7 +55,7 @@ class CaducidadTest extends TestCase {
 	}
 
 	/**
-	 * Una pendiente vieja pasa a expirada; una recién creada se queda.
+	 * Una pendiente de pago vieja pasa a expirada y libera la plaza; una recién creada se queda.
 	 */
 	public function test_expirar_solo_las_viejas(): void {
 		$ahora = 1700000000;
@@ -70,7 +70,7 @@ class CaducidadTest extends TestCase {
 			'post_type' => 'inscripcion',
 			'post_date' => gmdate( 'Y-m-d H:i:s', $ahora - ( 2 * HOUR_IN_SECONDS ) ),
 		);
-		$GLOBALS['_wp_stores']['post_meta'][1] = array( '_convoca_estado' => 'pendiente', '_convoca_actividad_id' => 50, '_convoca_email' => 'a@example.test' );
+		$GLOBALS['_wp_stores']['post_meta'][1] = array( '_convoca_estado' => 'pendiente_pago', '_convoca_actividad_id' => 50, '_convoca_email' => 'a@example.test' );
 		$GLOBALS['_wp_stores']['post_meta'][2] = array( '_convoca_estado' => 'pendiente', '_convoca_actividad_id' => 50, '_convoca_email' => 'b@example.test' );
 		$GLOBALS['convoca_test_posts']         = array(
 			(object) array( 'ID' => 1, 'post_type' => 'inscripcion', 'post_date' => gmdate( 'Y-m-d H:i:s', $ahora - ( 72 * HOUR_IN_SECONDS ) ) ),
@@ -84,6 +84,8 @@ class CaducidadTest extends TestCase {
 		$this->assertSame( 'expirada', (string) get_post_meta( 1, '_convoca_estado', true ) );
 		$this->assertSame( 'pendiente', (string) get_post_meta( 2, '_convoca_estado', true ), 'la reciente sigue viva' );
 		$this->assertSame( '5', (string) get_post_meta( 50, '_convoca_plazas_disponibles', true ), 'la plaza vuelve al cupo real' );
+		$this->assertSame( 0, Caducidad::expirar( $ahora ), 'la segunda pasada no vuelve a liberar' );
+		$this->assertSame( '5', (string) get_post_meta( 50, '_convoca_plazas_disponibles', true ), 'el contador sube una sola vez' );
 	}
 
 	/**
