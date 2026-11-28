@@ -28,7 +28,7 @@ class Social_Healthcheck {
 	}
 
 	public static function run(): void {
-		$accounts = Social_OAuth::get_accounts();
+		$accounts = Social_OAuth::get_accounts( '', true );
 		if ( empty( $accounts ) ) {
 			return;
 		}
@@ -55,7 +55,7 @@ class Social_Healthcheck {
 		if ( ! current_user_can( 'convoca_manage_social' ) ) {
 			return;
 		}
-		$accounts = Social_OAuth::get_accounts();
+		$accounts = Social_OAuth::get_accounts( '', true );
 		$expired  = array();
 		foreach ( $accounts as $acct ) {
 			if ( empty( $acct['is_active'] ) ) {
@@ -88,7 +88,7 @@ class Social_Healthcheck {
 	private static function get_provider( array $acct ) {
 		return match ( $acct['network'] ) {
 			'facebook', 'instagram' => new Meta_Provider( (int) $acct['id'] ),
-			'google_my_business' => new GBP_Provider( (int) $acct['id'] ),
+			'google', 'google_my_business' => new GBP_Provider( (int) $acct['id'] ),
 			default => null,
 		};
 	}

@@ -72,6 +72,36 @@ class SaludSocialTest extends TestCase {
 	}
 
 	/**
+	 * El healthcheck reconoce la red `google` que guarda OAuth (enroll#108).
+	 */
+	public function test_google_se_comprueba_con_su_proveedor(): void {
+		$GLOBALS['_wp_stores']['results'] = array(
+			array( 'id' => 7, 'network' => 'google', 'access_token' => 'token', 'is_active' => 1 ),
+		);
+
+		Social_Healthcheck::run();
+
+		$this->assertNotEmpty( $GLOBALS['db_inserts'], 'se prueba y se registra' );
+		$this->assertSame( 'google', $GLOBALS['db_inserts'][0]['datos']['network'] ?? 'google' );
+	}
+
+	/**
+	 * Las inactivas se consultan aparte para poder avisar y reconectar (enroll#108).
+	 */
+	public function test_las_inactivas_se_pueden_consultar(): void {
+		$GLOBALS['db_reads'] = array();
+
+		\Convoca\Enroll\Social\Social_OAuth::get_accounts( '', true );
+		$todas = end( $GLOBALS['db_reads'] );
+
+		\Convoca\Enroll\Social\Social_OAuth::get_accounts();
+		$activas = end( $GLOBALS['db_reads'] );
+
+		$this->assertStringNotContainsString( 'is_active = 1', (string) $todas, 'sin filtro para el aviso' );
+		$this->assertStringContainsString( 'is_active = 1', (string) $activas, 'el listado normal sigue activo' );
+	}
+
+	/**
 	 * Sin permiso, el aviso no se pinta.
 	 */
 	public function test_sin_permiso_no_hay_aviso(): void {
