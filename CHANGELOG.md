@@ -1,3 +1,10 @@
+## [2.17.17] — 2026-11-27
+
+### Corregido
+
+- **El mantenimiento reconcilia `plazas_disponibles`, no el contador retirado (#115).** Calcula
+  `totales − inscripciones que ocupan` y repara la diferencia bajo cerrojo.
+
 ## [2.17.16] — 2026-11-27
 
 ### Corregido
