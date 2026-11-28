@@ -330,6 +330,18 @@ final class MotorInscribirTest extends TestCase {
 	}
 
 	/**
+	 * El alta guarda la cuenta de la persona por correo (#100).
+	 */
+	public function test_el_alta_guarda_el_usuario_por_correo(): void {
+		$this->actividad();
+		$GLOBALS['convoca_test_users']['ana@example.com'] = (object) array( 'ID' => 55 );
+
+		$id = Motor_Inscripcion::inscribir( 61, $this->datos() );
+
+		$this->assertSame( 55, (int) $GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_user_id'] );
+	}
+
+	/**
 	 * El alta deja el vínculo con la ficha del socio (#101).
 	 */
 	public function test_el_alta_vincula_la_ficha_del_socio(): void {

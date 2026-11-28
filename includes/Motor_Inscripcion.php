@@ -458,6 +458,15 @@ class Motor_Inscripcion {
 				}
 			}
 
+			// Cuenta de la persona: por correo (fiable también en altas de mostrador) o la sesión si coincide (#100).
+			$usuario      = get_user_by( 'email', $email );
+			$user_id      = $usuario ? (int) $usuario->ID : 0;
+			$sesion       = wp_get_current_user();
+			$email_sesion = isset( $sesion->user_email ) ? (string) $sesion->user_email : '';
+			if ( ! $user_id && '' !== $email_sesion && strtolower( $email_sesion ) === strtolower( $email ) ) {
+				$user_id = (int) $sesion->ID;
+			}
+
 			// Save meta.
 			$meta = array(
 				'actividad_id'             => $actividad_id,
@@ -474,6 +483,7 @@ class Motor_Inscripcion {
 				'consentimiento_timestamp' => current_time( 'mysql' ),
 				'consentimiento_version'   => $settings['rgpd_version'] ?? '1.0',
 				'codigo_reserva'           => $codigo_reserva,
+				'user_id'                  => $user_id,
 				'es_menor'                 => $es_menor ? '1' : '0',
 				'nombre_participante'      => $nombre_participante,
 				'edad_participante'        => $edad_participante,
