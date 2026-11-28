@@ -75,6 +75,8 @@ class Email_Automation {
 		'{plazas_restantes}',
 		'{codigo_reserva}',
 		'{panel_reservas}',
+		'{enlace_pago}',
+		'{plazo_pago}',
 		'{qr_code}',
 		'{url_checkin}',
 		'{album_url}',
@@ -595,6 +597,8 @@ class Email_Automation {
 			'{importe}'          => $importe,
 			'{plazas_restantes}' => $am( 'plazas_disponibles' ) ?: '0',
 			'{codigo_reserva}'   => $m( 'codigo_reserva' ) ?: '—',
+			'{enlace_pago}'      => self::enlace_pago( (int) $m( 'pago_id' ) ),
+			'{plazo_pago}'       => self::plazo_pago( $actividad_id ),
 			'{panel_reservas}'   => $panel_url,
 			'{qr_code}'          => Estados::es_vigente( (string) $m( 'estado' ) ) && null !== $this->qr_inline( $inscripcion_id ) ? 'cid:' . self::qr_cid( $inscripcion_id ) : '',
 			// El enlace de check-in ya no se ofrece a la persona: la ruta directa es solo del
@@ -684,11 +688,43 @@ class Email_Automation {
 	 *
 	 * @return array<int, mixed> mixed>
 	 */
+	/**
+	 * Plazo que tiene una promoción para completar el pago.
+	 *
+	 * @param int $actividad_id Actividad.
+	 * @return string
+	 */
+	private static function plazo_pago( int $actividad_id ): string {
+		$horas = Caducidad::horas( $actividad_id );
+
+		return $horas > 0 ? $horas . ' h' : __( 'sin plazo fijado', 'convoca-enroll' );
+	}
+
+	/**
+	 * URL de pago de una inscripción, si tiene un pago creado y el gateway está disponible.
+	 *
+	 * @param int $pago_id Pago.
+	 * @return string
+	 */
+	private static function enlace_pago( int $pago_id ): string {
+		if ( $pago_id <= 0 || ! class_exists( '\\Convoca\\Gateway\\Payment_Handler' ) ) {
+			return '';
+		}
+
+		return (string) \Convoca\Gateway\Payment_Handler::build_payment_url( $pago_id );
+	}
+
+	/**
+	 * CTA por defecto de una plantilla.
+	 *
+	 * @param string $slug Plantilla.
+	 * @return array<int, string>
+	 */
 	private static function default_cta( string $slug ): array {
 		$panel = array( '{panel_reservas}', __( 'Ver mis reservas', 'convoca-enroll' ) );
 		$ctas  = array(
 			'lista_espera'                   => array( '{panel_reservas}', __( 'Ver mi inscripción', 'convoca-enroll' ) ),
-			'promocion_lista_espera'         => array( '{panel_reservas}', __( 'Confirmar mi plaza', 'convoca-enroll' ) ),
+			'promocion_lista_espera'         => array( '{enlace_pago}', __( 'Pagar mi plaza', 'convoca-enroll' ) ),
 			'confirmacion_plaza'             => array( '{panel_reservas}', __( 'Ver mi reserva', 'convoca-enroll' ) ),
 			'google_photos_album_creado'     => array( '{album_url}', __( 'Subir fotos', 'convoca-enroll' ) ),
 			'google_photos_album_compartido' => array( '{album_url}', __( 'Ver fotos', 'convoca-enroll' ) ),

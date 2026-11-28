@@ -72,15 +72,18 @@ class CaducidadTest extends TestCase {
 		);
 		$GLOBALS['_wp_stores']['post_meta'][1] = array( '_convoca_estado' => 'pendiente', '_convoca_actividad_id' => 50, '_convoca_email' => 'a@example.test' );
 		$GLOBALS['_wp_stores']['post_meta'][2] = array( '_convoca_estado' => 'pendiente', '_convoca_actividad_id' => 50, '_convoca_email' => 'b@example.test' );
-		$GLOBALS['convoca_test_posts']         = array( 1, 2 );
-		$GLOBALS['_wp_stores']['post_meta'][50] = array( '_convoca_plazas_ocupadas' => '3' );
+		$GLOBALS['convoca_test_posts']         = array(
+			(object) array( 'ID' => 1, 'post_type' => 'inscripcion', 'post_date' => gmdate( 'Y-m-d H:i:s', $ahora - ( 72 * HOUR_IN_SECONDS ) ) ),
+			(object) array( 'ID' => 2, 'post_type' => 'inscripcion', 'post_date' => gmdate( 'Y-m-d H:i:s', $ahora - ( 2 * HOUR_IN_SECONDS ) ) ),
+		);
+		$GLOBALS['_wp_stores']['post_meta'][50] = array( '_convoca_plazas_disponibles' => '4' );
 
 		$cerradas = Caducidad::expirar( $ahora );
 
 		$this->assertSame( 1, $cerradas );
 		$this->assertSame( 'expirada', (string) get_post_meta( 1, '_convoca_estado', true ) );
 		$this->assertSame( 'pendiente', (string) get_post_meta( 2, '_convoca_estado', true ), 'la reciente sigue viva' );
-		$this->assertSame( '2', (string) get_post_meta( 50, '_convoca_plazas_ocupadas', true ), 'la plaza vuelve' );
+		$this->assertSame( '5', (string) get_post_meta( 50, '_convoca_plazas_disponibles', true ), 'la plaza vuelve al cupo real' );
 	}
 
 	/**

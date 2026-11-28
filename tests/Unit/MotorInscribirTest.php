@@ -450,6 +450,40 @@ final class MotorInscribirTest extends TestCase {
 		$this->assertSame( 'general', $GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_tipo_inscripcion'] );
 	}
 
+	/**
+	 * Promover en una actividad de pago crea un solo pago y deja el id para el correo/panel (enroll#106).
+	 */
+	public function test_promocion_de_pago_crea_el_pago(): void {
+		if ( ! class_exists( 'Convoca\\Core\\Features' ) ) {
+			eval( 'namespace Convoca\\Core; class Features { public static function is_gateway_active(): bool { return true; } }' );
+		}
+		if ( ! class_exists( 'Convoca\\Gateway\\Payment_Handler' ) ) {
+			eval( 'namespace Convoca\\Gateway; class Payment_Handler { public static function create_payment( array $a ): array { $GLOBALS["pago_creado"] = $a; $GLOBALS["pagos"][] = $a; return array( "pago_id" => 99, "payment_url" => "https://pago.test/99" ); } public static function build_payment_url( int $id ): string { return "https://pago.test/" . $id; } }' );
+		}
+		$GLOBALS['pago_creado'] = null;
+		$GLOBALS['pagos']        = array();
+		$this->actividad( array( 'requiere_pago' => true, 'precio_socio_dia' => 15 ) );
+
+		$post                        = new \WP_Post();
+		$post->ID                    = 91;
+		$post->post_type             = 'inscripcion';
+		$post->post_title            = 'Espera';
+		$GLOBALS['_wp_stores']['posts'][91] = $post;
+		$GLOBALS['_wp_stores']['post_meta'][91] = array(
+			'_convoca_actividad_id'   => 61,
+			'_convoca_estado'         => 'lista_espera',
+			'_convoca_tipo_inscripcion' => 'socio_dia',
+			'_convoca_email'          => 'espera@example.test',
+		);
+		$GLOBALS['convoca_test_get_posts_cola'] = array( array( $post ), array() );
+
+		$this->assertSame( 1, Motor_Inscripcion::promover_hasta_cubrir( 61, 1 ) );
+		$this->assertSame( 99, (int) $GLOBALS['_wp_stores']['post_meta'][91]['_convoca_pago_id'] );
+		$this->assertSame( 1500, $GLOBALS['pago_creado']['amount_cents'] );
+		$this->assertSame( 91, $GLOBALS['pago_creado']['origin_id'] );
+		$this->assertCount( 1, $GLOBALS['pagos'], 'un solo pago' );
+	}
+
 	private function assertWPErrorCode( string $esperado, $error ): void {
 		$this->assertInstanceOf( \WP_Error::class, $error, 'se esperaba un error, no una inscripción' );
 		$this->assertSame( $esperado, $error->get_error_code() );
