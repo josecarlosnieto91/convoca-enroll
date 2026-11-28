@@ -324,6 +324,8 @@ class Admin_Inscripcion_Form {
 				'dni'              => sanitize_text_field( $data['dni'] ?? '' ),
 				'whatsapp'         => sanitize_text_field( $data['whatsapp'] ?? 'si' ),
 				'tipo_inscripcion' => sanitize_text_field( $data['tipo_inscripcion'] ?? 'general' ),
+				'es_socio'         => 'socio' === ( $data['tipo_inscripcion'] ?? '' ),
+				'alta_admin'       => true,
 				'notas'            => sanitize_textarea_field( $data['notas'] ?? '' ),
 				'estado_forzado'   => $estado,
 				'rgpd'             => $rgpd,

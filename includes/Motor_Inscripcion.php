@@ -168,8 +168,9 @@ class Motor_Inscripcion {
 
 		// Quién es el socio lo dice el contrato del núcleo, no una clase de otro plugin con su código de
 		// reserva detrás: sin gestión de socios, el contrato contesta «nadie» y el camino es el mismo.
-		$is_member   = \Convoca\Core\Member_Identity::is_authenticated();
-		$member_data = $is_member ? \Convoca\Core\Member_Identity::current_member_data() : null;
+		$tipo_admin_solicitado = (string) ( $datos['tipo_inscripcion'] ?? 'general' );
+		$is_member             = \Convoca\Core\Member_Identity::is_authenticated();
+		$member_data           = $is_member ? \Convoca\Core\Member_Identity::current_member_data() : null;
 
 		// El formulario ofrece inscribir a un menor o persona a cargo («Estoy inscribiendo a un menor o
 		// persona a mi cargo» → `es_menor`), así que la sesión de socio no basta para decidir de quién es
@@ -252,6 +253,14 @@ class Motor_Inscripcion {
 			$meta_tarifa               = CPT_Actividad::get_meta( $actividad_id );
 			$datos['tipo_inscripcion'] = empty( $meta_tarifa['requiere_pago'] ) ? 'invitado' : 'socio_dia';
 			$datos['es_socio']         = false;
+		}
+
+		// Alta manual desde el panel: el tipo elegido manda, también «socio» (enroll#109).
+		if ( ! empty( $datos['alta_admin'] ) && current_user_can( 'edit_posts' ) ) {
+			$tipo_admin                = $tipo_admin_solicitado;
+			$tipos_admin               = array( 'socio', 'socio_dia', 'general' );
+			$datos['tipo_inscripcion'] = in_array( $tipo_admin, $tipos_admin, true ) ? $tipo_admin : 'general';
+			$datos['es_socio']         = 'socio' === $datos['tipo_inscripcion'];
 		}
 
 		// Validate RGDP consent.

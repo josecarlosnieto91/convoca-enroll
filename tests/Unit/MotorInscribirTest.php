@@ -408,6 +408,48 @@ final class MotorInscribirTest extends TestCase {
 		$this->assertCount( 3, $updates, 'tres promociones reales' );
 	}
 
+	/**
+	 * El alta manual como socio conserva socio y tipo socio (enroll#109).
+	 */
+	public function test_alta_manual_como_socio_conserva_el_tipo(): void {
+		$GLOBALS['convoca_test_caps'] = array( 'edit_posts' => true );
+		$this->actividad();
+		$id = Motor_Inscripcion::inscribir(
+			61,
+			$this->datos(
+				array(
+					'tipo_inscripcion' => 'socio',
+					'es_socio'         => true,
+					'alta_admin'       => true,
+				)
+			)
+		);
+
+		$this->assertIsInt( $id );
+		$meta = $GLOBALS['_wp_stores']['post_meta'][ $id ];
+		$this->assertSame( '1', $meta['_convoca_es_socio'] );
+		$this->assertSame( 'socio', $meta['_convoca_tipo_inscripcion'] );
+	}
+
+	/**
+	 * El alta manual como invitado sigue siendo no socio.
+	 */
+	public function test_alta_manual_como_invitado_no_es_socio(): void {
+		$this->actividad();
+		$id = Motor_Inscripcion::inscribir(
+			61,
+			$this->datos(
+				array(
+					'tipo_inscripcion' => 'general',
+					'alta_admin'       => true,
+				)
+			)
+		);
+
+		$this->assertSame( '0', $GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_es_socio'] );
+		$this->assertSame( 'general', $GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_tipo_inscripcion'] );
+	}
+
 	private function assertWPErrorCode( string $esperado, $error ): void {
 		$this->assertInstanceOf( \WP_Error::class, $error, 'se esperaba un error, no una inscripción' );
 		$this->assertSame( $esperado, $error->get_error_code() );
