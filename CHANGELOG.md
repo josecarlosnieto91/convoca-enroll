@@ -1,3 +1,10 @@
+## [2.17.26] — 2026-11-27
+
+### Corregido
+
+- **Reconectar una red social ya no duplica la cuenta (#103).** `UNIQUE(network, account_id)`, upsert
+  que conserva el id, `label` siempre presente y fallo de persistencia mostrado como error.
+
 ## [2.17.25] — 2026-11-27
 
 ### Corregido

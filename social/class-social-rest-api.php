@@ -173,6 +173,7 @@ class Social_Rest_API {
 		$pages      = $pages_body['data'] ?? array();
 
 		$connected = 0;
+		$failed    = false;
 		foreach ( $pages as $page ) {
 			$page_token = $page['access_token'] ?? '';
 			$page_id    = $page['id'] ?? '';
@@ -181,7 +182,10 @@ class Social_Rest_API {
 				continue;
 			}
 
-			Social_OAuth::store_token( 'facebook', $page_id, $page_name, $page_token, $long_token, $expires_in );
+			if ( Social_OAuth::store_token( 'facebook', $page_id, $page_name, $page_token, $long_token, $expires_in ) <= 0 ) {
+				$failed = true;
+				continue;
+			}
 			++$connected;
 
 			// Check for linked Instagram account.
@@ -191,11 +195,13 @@ class Social_Rest_API {
 			if ( ! empty( $ig_body['instagram_business_account']['id'] ) ) {
 				$ig_id   = $ig_body['instagram_business_account']['id'];
 				$ig_name = $ig_body['instagram_business_account']['username'] ?? 'Instagram';
-				Social_OAuth::store_token( 'instagram', $ig_id, $ig_name, $page_token, $long_token, $expires_in );
+				if ( Social_OAuth::store_token( 'instagram', $ig_id, $ig_name, $page_token, $long_token, $expires_in ) <= 0 ) {
+					$failed = true;
+				}
 			}
 		}
 
-		$msg = $connected > 0 ? 'connected' : 'no_pages';
+		$msg = $failed ? 'save_failed' : ( $connected > 0 ? 'connected' : 'no_pages' );
 		wp_redirect( admin_url( "admin.php?page=convoca-media-accounts&convoca_success={$msg}" ) );
 		exit;
 	}
@@ -286,7 +292,7 @@ class Social_Rest_API {
 		$ubicacion    = Social_OAuth::resolver_ubicacion_google( $access_token );
 		$account_name = '' !== $ubicacion['title'] ? $ubicacion['title'] : $account_name;
 
-		Social_OAuth::store_token(
+		$guardado = Social_OAuth::store_token(
 			'google',
 			$info_body['id'] ?? 'google_1',
 			$account_name,
@@ -296,9 +302,11 @@ class Social_Rest_API {
 			$ubicacion['name']
 		);
 
-		$destino = '' === $ubicacion['name']
-			? 'admin.php?page=convoca-media-accounts&convoca_error=google_sin_ubicacion'
-			: 'admin.php?page=convoca-media-accounts&convoca_success=connected';
+		$destino = 0 >= $guardado
+			? 'admin.php?page=convoca-media-accounts&convoca_error=save_failed'
+			: ( '' === $ubicacion['name']
+				? 'admin.php?page=convoca-media-accounts&convoca_error=google_sin_ubicacion'
+				: 'admin.php?page=convoca-media-accounts&convoca_success=connected' );
 
 		wp_redirect( admin_url( $destino ) );
 		exit;
