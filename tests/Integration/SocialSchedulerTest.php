@@ -33,11 +33,13 @@ class SocialSchedulerTest extends IntegrationTestCase {
 		$id = Social_OAuth::store_token( 'facebook', '12345', 'Test Page', 'test_token_abc', 'refresh_xyz', 3600 );
 		$this->assertGreaterThan( 0, $id );
 
+		$id2 = Social_OAuth::store_token( 'facebook', '12345', 'Test Page', 'nuevo_token', 'refresh_xyz', 3600 );
+		$this->assertSame( $id, $id2, 'reconectar conserva el mismo registro' );
+
 		$account = Social_OAuth::get_token( $id );
 		$this->assertNotNull( $account );
+		$this->assertSame( 'nuevo_token', $account['access_token'], 'y actualiza el token' );
 		$this->assertEquals( 'facebook', $account['network'] );
-		// Token should be decrypted
-		$this->assertEquals( 'test_token_abc', $account['access_token'] );
 	}
 
 	public function test_get_accounts_by_network(): void {

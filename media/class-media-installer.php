@@ -72,7 +72,7 @@ class Media_Installer {
 		$tables[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}convoca_social_accounts (
 			id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 			network VARCHAR(50) NOT NULL,
-			label VARCHAR(255) NOT NULL,
+			label VARCHAR(255) NOT NULL DEFAULT '',
 			account_id VARCHAR(255) DEFAULT NULL,
 			account_name VARCHAR(255) DEFAULT NULL,
 			location_id VARCHAR(255) DEFAULT NULL COMMENT 'GBP: accounts/{id}/locations/{id}',
@@ -86,7 +86,8 @@ class Media_Installer {
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			INDEX idx_network (network),
-			INDEX idx_active (is_active)
+			INDEX idx_active (is_active),
+			UNIQUE KEY network_account (network, account_id)
 		) $charset;";
 
 		// ── Social publish queue ──
@@ -134,6 +135,7 @@ class Media_Installer {
 		}
 
 		self::asegurar_location_id();
+		self::asegurar_unique_social();
 	}
 
 	/**
@@ -149,6 +151,52 @@ class Media_Installer {
 		if ( empty( $col ) ) {
 			$wpdb->query( "ALTER TABLE {$tabla} ADD COLUMN location_id VARCHAR(255) DEFAULT NULL" );
 		}
+	}
+
+	/**
+	 * Garantiza `UNIQUE(network, account_id)` preservando las referencias de la cola.
+	 */
+	private static function asegurar_unique_social(): void {
+		global $wpdb;
+		$tabla = $wpdb->prefix . 'convoca_social_accounts';
+
+		$indice = $wpdb->get_results( "SHOW INDEX FROM {$tabla} WHERE Key_name = 'network_account'", ARRAY_A );
+		if ( ! empty( $indice ) ) {
+			return;
+		}
+
+		$duplicadas = $wpdb->get_results(
+			"SELECT network, account_id, MIN(id) AS keep_id FROM {$tabla}
+			 WHERE account_id IS NOT NULL AND account_id <> ''
+			 GROUP BY network, account_id HAVING COUNT(*) > 1",
+			ARRAY_A
+		);
+
+		foreach ( (array) $duplicadas as $grupo ) {
+			$keep = (int) $grupo['keep_id'];
+			$viejas = $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT id FROM {$tabla} WHERE network = %s AND account_id = %s AND id <> %d",
+					$grupo['network'],
+					$grupo['account_id'],
+					$keep
+				)
+			);
+			foreach ( (array) $viejas as $old ) {
+				$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}convoca_social_queue SET account_id = %d WHERE account_id = %d", $keep, (int) $old ) );
+				$wpdb->query(
+					$wpdb->prepare(
+						"UPDATE {$wpdb->prefix}convoca_social_queue SET content = REPLACE(content, %s, %s) WHERE content LIKE %s",
+						'"' . (int) $old . '"',
+						'"' . $keep . '"',
+						'%"' . (int) $old . '"%'
+					)
+				);
+				$wpdb->query( $wpdb->prepare( "DELETE FROM {$tabla} WHERE id = %d", (int) $old ) );
+			}
+		}
+
+		$wpdb->query( "ALTER TABLE {$tabla} ADD UNIQUE KEY network_account (network, account_id)" );
 	}
 
 	/**

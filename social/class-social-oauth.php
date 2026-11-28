@@ -48,23 +48,37 @@ class Social_OAuth {
 
 		$encrypted = self::encrypt( $access_token );
 		$refresh   = $refresh_token ? self::encrypt( $refresh_token ) : null;
+		$tabla     = $wpdb->prefix . 'convoca_social_accounts';
 
-		$wpdb->replace(
-			$wpdb->prefix . 'convoca_social_accounts',
-			array(
-				'network'          => $network,
-				'account_id'       => $account_id,
-				'account_name'     => $account_name,
-				'location_id'      => $location_id ?: null,
-				'access_token'     => $encrypted,
-				'refresh_token'    => $refresh,
-				'token_expires_at' => $expires_in ? gmdate( 'Y-m-d H:i:s', time() + $expires_in ) : null,
-				'is_active'        => 1,
-				'last_sync_at'     => current_time( 'mysql' ),
+		// Upsert idempotente: la clave única (network, account_id) mantiene el mismo id al reconectar.
+		$ok = $wpdb->query(
+			$wpdb->prepare(
+				"INSERT INTO {$tabla}
+				(network, label, account_id, account_name, location_id, access_token, refresh_token, token_expires_at, is_active, last_sync_at)
+				VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 1, %s)
+				ON DUPLICATE KEY UPDATE
+					id = LAST_INSERT_ID(id),
+					label = VALUES(label),
+					account_name = VALUES(account_name),
+					location_id = VALUES(location_id),
+					access_token = VALUES(access_token),
+					refresh_token = VALUES(refresh_token),
+					token_expires_at = VALUES(token_expires_at),
+					is_active = 1,
+					last_sync_at = VALUES(last_sync_at)",
+				$network,
+				'' !== $account_name ? $account_name : $network,
+				$account_id,
+				$account_name,
+				$location_id ?: null,
+				$encrypted,
+				$refresh,
+				$expires_in ? gmdate( 'Y-m-d H:i:s', time() + $expires_in ) : null,
+				current_time( 'mysql' )
 			)
 		);
 
-		return $wpdb->insert_id;
+		return false === $ok ? 0 : (int) $wpdb->insert_id;
 	}
 
 	/**
