@@ -41,7 +41,7 @@ class MantenimientoTest extends TestCase {
 	protected function tearDown(): void {
 		$GLOBALS['_wp_stores']         = array( 'options' => array() );
 		$GLOBALS['convoca_test_posts'] = array();
-		unset( $GLOBALS['_convoca_acciones'], $GLOBALS['_wp_posts_borrados'] );
+		unset( $GLOBALS['_convoca_acciones'], $GLOBALS['_wp_posts_borrados'], $GLOBALS['convoca_test_lock'] );
 	}
 
 	/**
@@ -93,20 +93,20 @@ class MantenimientoTest extends TestCase {
 	 * El recuento real manda: si la meta dice otra cosa, se detecta la discrepancia.
 	 */
 	public function test_validar_detecta_el_descuadre_de_plazas(): void {
-		$this->post( 20, 'actividad', array( 'plazas_ocupadas' => '5' ) );
+		$this->post( 20, 'actividad', array( 'plazas_totales' => '10', 'plazas_disponibles' => '5' ) );
 		$GLOBALS['_wp_stores']['get_var_mapa'] = array( 'SELECT COUNT(*) FROM' => '3' );
 
 		$resultado = Maintenance::validar_integridad();
 
 		$this->assertSame( 1, $resultado['capacity_mismatch'] );
-		$this->assertStringContainsString( 'recuento real es 3', $resultado['errors'][0] );
+		$this->assertStringContainsString( 'deberían ser 7', $resultado['errors'][0] );
 	}
 
 	/**
 	 * Sin problemas no hay avisos: ni errores ni ruido en el registro.
 	 */
 	public function test_sin_problemas_no_hay_errores(): void {
-		$this->post( 30, 'actividad', array( 'plazas_ocupadas' => '2' ) );
+		$this->post( 30, 'actividad', array( 'plazas_totales' => '10', 'plazas_disponibles' => '8' ) );
 		$GLOBALS['_wp_stores']['get_var_mapa'] = array( 'SELECT COUNT(*) FROM' => '2' );
 
 		$resultado = Maintenance::validar_integridad();
@@ -120,7 +120,7 @@ class MantenimientoTest extends TestCase {
 	 * Reparar borra SOLO las huérfanas: una inscripción con actividad válida no se toca aunque el contador esté mal.
 	 */
 	public function test_reparar_solo_borra_las_huerfanas(): void {
-		$this->post( 40, 'actividad', array( 'plazas_ocupadas' => '9' ) );
+		$this->post( 40, 'actividad', array( 'plazas_totales' => '10', 'plazas_disponibles' => '1' ) );
 		$this->post( 41, 'inscripcion', array( 'actividad_id' => '40' ) ); // Buena: su actividad existe.
 		$this->post( 42, 'inscripcion', array( 'actividad_id' => '777' ) ); // Huérfana.
 		$GLOBALS['_wp_stores']['get_var_mapa'] = array( 'SELECT COUNT(*) FROM' => '1' );
@@ -136,14 +136,28 @@ class MantenimientoTest extends TestCase {
 	/**
 	 * El contador se reescribe con el recuento real.
 	 */
-	public function test_reparar_reescribe_el_contador_con_el_recuento_real(): void {
-		$this->post( 50, 'actividad', array( 'plazas_ocupadas' => '9' ) );
+	public function test_reparar_corrige_las_plazas_disponibles_con_el_recuento_real(): void {
+		$this->post( 50, 'actividad', array( 'plazas_totales' => '10', 'plazas_disponibles' => '9' ) );
 		$GLOBALS['_wp_stores']['get_var_mapa'] = array( 'SELECT COUNT(*) FROM' => '4' );
 
 		$stats = Maintenance::reparar_integridad();
 
-		$this->assertSame( 1, $stats['activities_recounted'] );
-		$this->assertSame( '4', (string) $GLOBALS['_wp_stores']['post_meta'][50]['_convoca_plazas_ocupadas'], 'manda el recuento real' );
+		$this->assertSame( 1, $stats['capacities_repaired'] );
+		$this->assertSame( '6', (string) $GLOBALS['_wp_stores']['post_meta'][50]['_convoca_plazas_disponibles'], 'totales menos ocupadas' );
+	}
+
+	/**
+	 * Con el cerrojo ocupado no se repara nada: no se pisa una inscripción en curso (enroll#115).
+	 */
+	public function test_sin_cerrojo_no_repara(): void {
+		$GLOBALS['convoca_test_lock'] = false;
+		$this->post( 60, 'actividad', array( 'plazas_totales' => '10', 'plazas_disponibles' => '9' ) );
+		$GLOBALS['_wp_stores']['get_var_mapa'] = array( 'SELECT COUNT(*) FROM' => '4' );
+
+		$stats = Maintenance::reparar_integridad();
+
+		$this->assertSame( 'locked', $stats['skipped'] );
+		$this->assertSame( '9', (string) $GLOBALS['_wp_stores']['post_meta'][60]['_convoca_plazas_disponibles'], 'no se toca' );
 	}
 
 	/**

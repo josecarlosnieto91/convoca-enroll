@@ -78,32 +78,13 @@ class Maintenance {
 		);
 
 		foreach ( $activities as $act_id ) {
-			$current_meta = (int) CPT_Actividad::get_meta_value( $act_id, 'plazas_ocupadas' );
-			$real_count   = (int) $wpdb->get_var(
-				$wpdb->prepare(
-					"
-                SELECT COUNT(*) FROM {$wpdb->postmeta} pm
-                JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-                WHERE p.post_type = 'inscripcion'
-                  AND p.post_status = 'publish'
-                  AND pm.meta_key = %s
-                  AND pm.meta_value = %d
-                  AND EXISTS (
-                      SELECT 1 FROM {$wpdb->postmeta} pm2
-                      WHERE pm2.post_id = p.ID
-                      AND pm2.meta_key = %s
-                      AND pm2.meta_value IN ('confirmada', 'pendiente_pago')
-                  )
-            ",
-					CPT_Inscripcion::META_PREFIX . 'actividad_id',
-					$act_id,
-					CPT_Inscripcion::META_PREFIX . 'estado'
-				)
-			);
+			$real_count = self::contar_ocupadas( $act_id );
+			$esperadas  = self::disponibles_esperadas( $act_id, $real_count );
+			$actuales   = (int) CPT_Actividad::get_meta_value( $act_id, 'plazas_disponibles' );
 
-			if ( $current_meta !== $real_count ) {
+			if ( $actuales !== $esperadas ) {
 				++$results['capacity_mismatch'];
-				$results['errors'][] = "Actividad #$act_id: metadata indica $current_meta plazas, recuento real es $real_count.";
+				$results['errors'][] = "Actividad #$act_id: disponibles indica $actuales, deberían ser $esperadas ($real_count ocupadas).";
 			}
 		}
 
@@ -126,10 +107,15 @@ class Maintenance {
 	public static function reparar_integridad(): array {
 		global $wpdb;
 		$stats = array(
-			'orphans_deleted'      => 0,
-			'activities_recounted' => 0,
-			'logs_cleaned'         => 0,
+			'orphans_deleted'     => 0,
+			'capacities_repaired' => 0,
+			'logs_cleaned'        => 0,
 		);
+
+		if ( ! \Convoca\Core\Utils::acquire_lock( 'convoca_enroll_maintenance_lock', 300 ) ) {
+			$stats['skipped'] = 'locked';
+			return $stats;
+		}
 
 		// 1. Delete orphan inscriptions (only if activity is missing).
 		$inscriptions = get_posts(
@@ -156,29 +142,14 @@ class Maintenance {
 			)
 		);
 		foreach ( $activities as $act_id ) {
-			$real_count = (int) $wpdb->get_var(
-				$wpdb->prepare(
-					"
-                SELECT COUNT(*) FROM {$wpdb->postmeta} pm
-                JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-                WHERE p.post_type = 'inscripcion'
-                  AND p.post_status = 'publish'
-                  AND pm.meta_key = %s
-                  AND pm.meta_value = %d
-                  AND EXISTS (
-                      SELECT 1 FROM {$wpdb->postmeta} pm2
-                      WHERE pm2.post_id = p.ID
-                      AND pm2.meta_key = %s
-                      AND pm2.meta_value IN ('confirmada', 'pendiente_pago')
-                  )
-            ",
-					CPT_Inscripcion::META_PREFIX . 'actividad_id',
-					$act_id,
-					CPT_Inscripcion::META_PREFIX . 'estado'
-				)
-			);
-			CPT_Actividad::update_meta( $act_id, 'plazas_ocupadas', $real_count );
-			++$stats['activities_recounted'];
+			$real_count = self::contar_ocupadas( $act_id );
+			$esperadas  = self::disponibles_esperadas( $act_id, $real_count );
+			$actuales   = (int) CPT_Actividad::get_meta_value( $act_id, 'plazas_disponibles' );
+
+			if ( $actuales !== $esperadas ) {
+				CPT_Actividad::update_meta( $act_id, 'plazas_disponibles', $esperadas );
+				++$stats['capacities_repaired'];
+			}
 		}
 
 		// 3. Clean old logs.
@@ -203,15 +174,66 @@ class Maintenance {
 
 		\Convoca\Core\Logger::log(
 			sprintf(
-				'Reparación completada: %d huérfanos borrados, %d actividades recontadas, %d logs antiguos eliminados.',
+				'Reparación completada: %d huérfanos borrados, %d aforos corregidos, %d logs antiguos eliminados.',
 				$stats['orphans_deleted'],
-				$stats['activities_recounted'],
+				$stats['capacities_repaired'],
 				$stats['logs_cleaned']
 			),
 			'success',
 			'Enroll/Maintenance'
 		);
 
+		\Convoca\Core\Utils::release_lock( 'convoca_enroll_maintenance_lock' );
+
 		return $stats;
+	}
+
+	/**
+	 * Inscripciones que ocupan plaza ahora mismo.
+	 *
+	 * @param int $act_id Actividad.
+	 * @return int
+	 */
+	private static function contar_ocupadas( int $act_id ): int {
+		global $wpdb;
+
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"
+                SELECT COUNT(*) FROM {$wpdb->postmeta} pm
+                JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+                WHERE p.post_type = 'inscripcion'
+                  AND p.post_status = 'publish'
+                  AND pm.meta_key = %s
+                  AND pm.meta_value = %d
+                  AND EXISTS (
+                      SELECT 1 FROM {$wpdb->postmeta} pm2
+                      WHERE pm2.post_id = p.ID
+                      AND pm2.meta_key = %s
+                      AND pm2.meta_value IN ('confirmada', 'pendiente_pago')
+                  )
+            ",
+				CPT_Inscripcion::META_PREFIX . 'actividad_id',
+				$act_id,
+				CPT_Inscripcion::META_PREFIX . 'estado'
+			)
+		);
+	}
+
+	/**
+	 * Plazas que deberían quedar libres: totales menos las ocupadas.
+	 *
+	 * @param int $act_id     Actividad.
+	 * @param int $real_count Inscripciones que ocupan.
+	 * @return int
+	 */
+	private static function disponibles_esperadas( int $act_id, int $real_count ): int {
+		$totales = (int) CPT_Actividad::get_meta_value( $act_id, 'plazas_totales' );
+
+		if ( $totales <= 0 ) {
+			return 0;
+		}
+
+		return max( 0, $totales - $real_count );
 	}
 }
