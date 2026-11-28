@@ -210,6 +210,78 @@ class Checkin_PWA {
 	}
 
 	/**
+	 * Valida token y nonce de un elemento.
+	 *
+	 * @param string $token Token.
+	 * @param string $nonce Nonce.
+	 * @return string|null Estado de error o null si vale.
+	 */
+	private static function validar_item( string $token, string $nonce ): ?string {
+		if ( ! $token || ! $nonce ) {
+			return 'invalid';
+		}
+
+		return wp_verify_nonce( $nonce, 'convoca_enroll_qr_checkin' ) ? null : 'expired_nonce';
+	}
+
+	/**
+	 * ¿La persona puede marcar esa inscripción?
+	 *
+	 * @param string $token Token.
+	 * @return bool
+	 */
+	private static function puede_marcar( string $token ): bool {
+		$inscripcion_id = Checkin_Link::id_for_token( $token );
+		$actividad_id   = $inscripcion_id ? (int) CPT_Inscripcion::get_meta( $inscripcion_id, 'actividad_id' ) : 0;
+
+		return $actividad_id > 0 && CPT_Actividad::is_user_responsible( get_current_user_id(), $actividad_id );
+	}
+
+	/**
+	 * Procesa un elemento de la cola offline.
+	 *
+	 * @param array<string, mixed> $item Elemento con `body`.
+	 * @return array<string, mixed> Resultado para el cliente.
+	 */
+	private static function procesar_item_cola( array $item ): array {
+		parse_str( (string) ( $item['body'] ?? '' ), $data );
+		$raw_id    = $data['id'] ?? '';
+		$raw_nonce = $data['nonce'] ?? '';
+		$token     = is_string( $raw_id ) ? sanitize_text_field( $raw_id ) : '';
+		$nonce     = is_string( $raw_nonce ) ? sanitize_text_field( $raw_nonce ) : '';
+
+		$error = self::validar_item( $token, $nonce );
+		if ( null !== $error ) {
+			return array(
+				'token'  => $token,
+				'status' => $error,
+			);
+		}
+
+		if ( ! self::puede_marcar( $token ) ) {
+			return array(
+				'token'  => $token,
+				'status' => 'forbidden',
+			);
+		}
+
+		$result = ( new Checkin_Handler() )->mark_as_attended_by_token( $token, get_current_user_id() );
+		if ( is_wp_error( $result ) ) {
+			return array(
+				'token'   => $token,
+				'status'  => 'error',
+				'message' => $result->get_error_message(),
+			);
+		}
+
+		return array(
+			'token'           => $token,
+			'status'          => 'success',
+			'already_checked' => (bool) $result['ya_marcada'],
+		);
+	}
+
+	/**
 	 * REST endpoint: flush pending offline check-in queue.
 	 */
 	public static function rest_flush_queue( \WP_REST_Request $request ): \WP_REST_Response {
@@ -217,47 +289,7 @@ class Checkin_PWA {
 		$results = array();
 
 		foreach ( $items as $item ) {
-			$body = $item['body'] ?? '';
-			parse_str( $body, $data );
-
-			$raw_id    = $data['id'] ?? '';
-			$raw_nonce = $data['nonce'] ?? '';
-			$token     = sanitize_text_field( is_scalar( $raw_id ) ? (string) $raw_id : '' );
-			$nonce     = sanitize_text_field( is_scalar( $raw_nonce ) ? (string) $raw_nonce : '' );
-
-			if ( ! $token || ! $nonce ) {
-				$results[] = array(
-					'token'  => $token,
-					'status' => 'invalid',
-				);
-				continue;
-			}
-
-			// Verify nonce.
-			if ( ! wp_verify_nonce( $nonce, 'convoca_enroll_qr_checkin' ) ) {
-				$results[] = array(
-					'token'  => $token,
-					'status' => 'expired_nonce',
-				);
-				continue;
-			}
-
-			$checkin = new Checkin_Handler();
-			$result  = $checkin->mark_as_attended_by_token( $token, get_current_user_id() );
-
-			if ( is_wp_error( $result ) ) {
-				$results[] = array(
-					'token'   => $token,
-					'status'  => 'error',
-					'message' => $result->get_error_message(),
-				);
-			} else {
-				$results[] = array(
-					'token'           => $token,
-					'status'          => 'success',
-					'already_checked' => (bool) $result['ya_marcada'],
-				);
-			}
+			$results[] = self::procesar_item_cola( (array) $item );
 		}
 
 		return new \WP_REST_Response(

@@ -31,7 +31,9 @@ class CheckinPermisosTest extends TestCase
 		$GLOBALS['convoca_test_salt']        = 'sal-de-prueba';
 		$GLOBALS['convoca_test_caps']        = array();
 		$GLOBALS['convoca_test_roles']       = array();
+		$GLOBALS['convoca_test_user_can']    = array();
 		$GLOBALS['_wp_stores']['post_meta'][77]['_convoca_checkin_token'] = 'abc123';
+		$GLOBALS['_wp_stores']['post_meta'][77]['_convoca_actividad_id'] = 7;
 	}
 
 	/**
@@ -99,9 +101,20 @@ class CheckinPermisosTest extends TestCase
 		$this->assertSame( 403, $this->handler->respuesta_checkin_directo( 77 ) );
 	}
 
+	public function test_personal_no_responsable_no_entra(): void
+	{
+		$GLOBALS['convoca_test_caps'] = array( 'manage_inscripciones' => true );
+		$GLOBALS['convoca_test_user_can'] = array( 'manage_options' => false );
+		$GLOBALS['_wp_stores']['post_meta'][77]['_convoca_responsables'] = '99';
+
+		$this->assertSame( 403, $this->handler->respuesta_checkin_directo( 77 ) );
+		$this->assertFalse( $this->handler->puede_checkin_directo( 77 ) );
+	}
+
 	public function test_el_personal_entra_aunque_el_token_no_le_pertenezca(): void
 	{
 		$GLOBALS['convoca_test_caps'] = array( 'manage_inscripciones' => true );
+		$GLOBALS['_wp_stores']['post_meta'][88] = array( '_convoca_actividad_id' => 7 );
 
 		$this->assertSame( 200, $this->handler->respuesta_checkin_directo( 88 ) );
 		// Pero un enlace que no corresponde a ninguna inscripción sigue siendo 404.

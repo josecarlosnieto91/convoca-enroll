@@ -1,3 +1,10 @@
+## [2.17.25] — 2026-11-27
+
+### Corregido
+
+- **El check-in directo y la cola offline exigen responsabilidad sobre la actividad (#104).** No basta
+  con ser personal; la persona debe poder gestionar esa actividad.
+
 ## [2.17.24] — 2026-11-27
 
 ### Corregido
